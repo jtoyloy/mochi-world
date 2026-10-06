@@ -4,12 +4,12 @@
 <title>Mochi visual review · offline fixture</title>
 <link rel="stylesheet" href="../social.css" />
 <style>
-body{margin:0;background:#e7ddc7}#world{height:calc(100vh - 64px);position:relative;overflow:hidden}
+body{margin:0;background:#e7ddc7}.review-controls{box-sizing:border-box}#result{position:fixed;left:12px;bottom:8px;z-index:50;max-width:calc(100vw - 24px);background:#fff8e9ed;padding:8px;border-radius:8px;font:11px system-ui;overflow-wrap:anywhere}#world{height:calc(100vh - 64px);position:relative;overflow:hidden}
 .review-controls{height:64px;display:flex;align-items:center;gap:12px;padding:10px 18px;background:#fff8e9;color:#504a38;flex-wrap:wrap;font:13px system-ui}
 .review-controls label{display:flex;gap:8px;align-items:center}.review-controls select{padding:6px}.review-controls span{font-size:11px}
 @media(max-width:650px){.review-controls{height:104px}#world{height:calc(100vh - 104px)}}
 </style>
-<div class="review-controls"><strong>Visual review</strong><label>Room <select id="room"><option value="town">Town</option><option value="yard">Training Yard</option><option value="forest">Forest</option><option value="lake">Lake</option><option value="ruins">Ruins</option><option value="exchange">Trading Hall</option><option value="market">Marketplace</option></select></label><span>Offline presentation only · no gameplay, rewards or network authority</span></div>
+<div class="review-controls"><strong>Visual review</strong><label>Room <select id="room"><option value="town">Town</option><option value="yard">Training Yard</option><option value="forest">Forest</option><option value="lake">Lake</option><option value="ruins">Ruins</option><option value="exchange">Trading Hall</option><option value="market">Marketplace</option></select></label><button id="remount" type="button">Remount renderer</button><span>Offline presentation only · no gameplay, rewards or network authority</span></div>
 <div id="world"></div>
 <p id="result" role="status" hidden></p>
 <script type="module">
@@ -60,7 +60,7 @@ body{margin:0;background:#e7ddc7}#world{height:calc(100vh - 64px);position:relat
     { get: (o, k) => o[k] ?? noop },
   );
   try {
-    const world = new IsometricWorld(
+    let world = new IsometricWorld(
       document.querySelector("#world"),
       bridge,
       { development: true },
@@ -79,6 +79,27 @@ body{margin:0;background:#e7ddc7}#world{height:calc(100vh - 64px);position:relat
         }));
       scene.adventure = {roomId:room,mobs};
       world.sync();
+    };
+    let mount = 1;
+    const remount = document.querySelector("#remount");
+    remount.onclick = async () => {
+      remount.disabled = true;
+      const previous = world;
+      const shared = previous.animationAtlases.map(art => art.texture);
+      previous.destroy();
+      world = new IsometricWorld(document.querySelector("#world"), bridge, {development:true}, scene);
+      await world.init();
+      result.hidden = false;
+      result.textContent = JSON.stringify({
+        mount: ++mount,
+        previousReleased: previous.textureOwnership.released && previous.textures.length === 0,
+        sharedSheetsReused: world.animationAtlases.every((art,i) => art.texture === shared[i]),
+        sharedSourcesValid: shared.every(texture => !texture.destroyed && !texture.source.destroyed),
+        ownedFrames: world.textureOwnership.owned.size,
+        ownedCanvasSources: world.textureOwnership.sources.size,
+        hostCanvases: document.querySelectorAll("#world canvas").length,
+      });
+      remount.disabled = false;
     };
     addEventListener("pagehide", () => world.destroy(), {once:true});
   } catch (error) {

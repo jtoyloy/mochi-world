@@ -48,3 +48,9 @@ The source audit remains [ACTION_ART_AUDIT.md](ACTION_ART_AUDIT.md); architectur
 ## Checks
 
 19 animation tests passed; asset validation passed with original source-edge/continuation warnings retained; Vite production build passed. Browser checked motion toggle off→on with the accessible pressed state at desktop and narrow width. These checks do not certify full WCAG compliance, live multiplayer, sustained FPS, final eight-direction art or the complete new-player path.
+
+## Shared texture ownership follow-up
+
+Installed Pixi `assets/loader/parsers/textures/utils/createTexture.mjs` removes its cache entry and warns when an Assets-owned Texture is destroyed directly. The original World teardown destroyed those cached PNG wrappers while leaving their sources alive, forcing repeat loads and retaining registrations. World now retains shared Assets PNGs for the document and explicitly releases its own frame views, generated split canvases and appearance canvases. Optional frames arriving after unmount release immediately; generated sources release exactly once. Texture-frame lists include unselected action registration cells, so none leaves a resize listener attached to a shared source.
+
+The visual fixture's **Remount renderer** button destroys and reconstructs the actual renderer without page navigation, reports cached sheet identity/source validity, prior ownership release and current allocation/canvas counts. Automated follow-up: 22 animation tests passed, including actual installed Pixi TextureSource listener counts across three ownership lifecycles; production build and asset validation passed. Same-document browser remount evidence remains pending until the parent browser session runs the fixture; source/test evidence alone is not browser acceptance.

@@ -69,7 +69,7 @@ export function loadAnimationAtlas(texture, set, metadata) {
       );
     return { walk: frames("walk"), idle: frames("idle") };
   });
-  return { set, texture, metadata, rows };
+  return { set, texture, metadata, rows, ownedTextures: rows.flatMap(row => [...row.walk, ...row.idle]) };
 }
 // Action art is optional: follow explicit aliases then a compatible idle pose.
 export function stateFrames(art, state, direction) {
@@ -153,6 +153,7 @@ export function loadActionAtlas(texture, set, m, baseArt) {
   return {
     ...baseArt,
     texture,
+    ownedTextures: frames,
     set,
     metadata: {
       ...baseArt.metadata,
