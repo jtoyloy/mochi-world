@@ -44,12 +44,12 @@ test('same ID retries return owned receipt once; reordered resource keys are can
  const user=await account();await grant(user,'softwood',2);await grant(user,'hardwood',1);
  const id=randomUUID(),p=actor(user,COIN_BUYERS.wood);
  const result=await commerce.sell(user.id,{id,vendor:'wood',items:{softwood:2,hardwood:1}},p);
- const replay=await commerce.sell(user.id,{id,vendor:'wood',items:{hardwood:1,softwood:2}},p);
+ const replay=await commerce.sell(user.id,{id,vendor:'wood',items:{hardwood:1,softwood:2}},null);
  assert.equal(replay.replayed,true);assert.equal(replay.amount,result.amount);assert.equal(await coins(user),542);
  assert.equal((await commerce.catalog(user.id)).woodSales,1);
  await assert.rejects(commerce.sell(user.id,{id,vendor:'wood',items:{softwood:1}},p),/different request/);
  const buyer=actor(user,COIN_SHOPS.apothecary),purchase={id:randomUUID(),vendor:'apothecary',itemId:'small-potion',quantity:2};
- await commerce.buy(user.id,purchase,buyer);await commerce.buy(user.id,purchase,buyer);
+ await commerce.buy(user.id,purchase,buyer);await commerce.buy(user.id,purchase,{...buyer,roomId:'forest'});
  assert.equal(await quantity(user,'small-potion'),2);assert.equal(await coins(user),502);
  await assert.rejects(commerce.buy(user.id,{...purchase,itemId:'mana-potion'},buyer),/different request/);
 });

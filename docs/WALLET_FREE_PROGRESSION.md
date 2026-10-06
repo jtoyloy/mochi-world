@@ -24,7 +24,8 @@ sales 1–999 of each accepted item. There is no rotating scarcity for essential
 A per-user advisory transaction lock owns Coins, inventory, currency ledger,
 event and receipt commits together. A receipt ID accepts only its original
 normalized request; an identical retry returns the stored result without another
-trade. User-scoped receipt keys prevent one account from replaying another account's
+trade, including after departure when no live body remains. The replay path only
+reads the authenticated owner's receipt and permits no new mutation. User-scoped receipt keys prevent one account from replaying another account's
 trade. Failed quantities, funds, inventory, position or downstream writes roll back
 the entire transaction. Receipt history forbids update and delete. `woodSales`
 counts committed ordinary Coins wood sale receipts, which onboarding may use as
