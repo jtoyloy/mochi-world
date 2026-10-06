@@ -1,7 +1,7 @@
 # Deployment
 
 Local development runs Node 22+, PostgreSQL 16+, Python 3.12/NumPy/bundled Cadence and local
-React Three Fiber/Three.js; Redis, external LLM and Solana funds are not required. Build with npm run build and use npm run db:migrate before
+PixiJS painterly isometric world with DOM/React overlays; Redis, external LLM and Solana funds are not required. Build with npm run build and use npm run db:migrate before
 npm start. The server serves web files plus /socket and reuses a single serial native brain host.
 
 Initial production topology: HTTPS reverse proxy → Node web/game/socket server → PostgreSQL;
@@ -19,12 +19,13 @@ Treasury execution stays offline/admin-authorized; enable neither arbitrary sign
 wallets. No deployment was performed. Railway deployment must be reported successful only
 after the specific deployment reaches SUCCESS; the Railway skill was used for this guidance.
 
-## Current3D presentation
+## Current world presentation
 
-The main world now uses React Three Fiber/Three.js. The previous Phaser section is
-historical. See [3D_DELIVERY.md](3D_DELIVERY.md) for implemented scope and limits and
-[ASSET_PIPELINE.md](ASSET_PIPELINE.md) for models/rigs. Domain services and Cadence
-contracts remain preserved. Build with `npm run build` before serving/deploying.
+The main world uses PixiJS and painterly isometric atlases, with DOM/React overlays.
+Three.js and React Three Fiber are historical prototype tooling. See
+[ASSET_PIPELINE.md](ASSET_PIPELINE.md) for the current atlas pipeline and
+[3D_DELIVERY.md](3D_DELIVERY.md) for the historical prototype scope. Domain services
+and Cadence contracts remain preserved. Build with `npm run build` before serving/deploying.
 
 ## Checkpoint retention release configuration
 

@@ -50,12 +50,11 @@ Rendering (60 FPS), authoritative movement (10 Hz), environmental speech/encount
 frame triggers a brain or financial decision. One server is the initial deployment; production
 requires real identity, shared presence/queues, durable checkpoint storage and integrity work.
 
-## Current3D presentation
+## Current world presentation
 
-The main world now uses React Three Fiber/Three.js. The previous Phaser section is
-historical. See [3D_DELIVERY.md](3D_DELIVERY.md) for implemented scope and limits and
-[ASSET_PIPELINE.md](ASSET_PIPELINE.md) for models/rigs. Domain services and Cadence
-contracts remain preserved. Build with `npm run build` before serving/deploying.
+The main world uses PixiJS painterly isometric rendering with DOM/React overlays.
+Three.js and React Three Fiber are historical prototype tooling. Domain services and
+Cadence contracts remain preserved. Build with `npm run build` before serving/deploying.
 
 
 ## Adventure milestone — 2026-10-05

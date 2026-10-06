@@ -55,7 +55,7 @@ adds adapters and additive schema rather than replacing these domain services.
 
 ## Current social-world implementation
 
-Phaser is now the primary `/home`/`/world/:room` experience. New routes `/home/:username`,
+The PixiJS painterly isometric world is now the primary `/home`/`/world/:room` experience. New routes `/home/:username`,
 `/wallet`, `/treasury`, `/pets` coexist with the prior domain pages. Nine original rooms,
 player penguins, active companions, real sockets/instances, emotes, owner/private dialogue,
 owned cosmetics, token-intent settlement and reviewed treasury accounting are implemented.
@@ -84,7 +84,8 @@ React/R3F will own the world; established domain panels remain compatible during
 
 ## Current3D migration
 
-React Three Fiber is now the primary world renderer; Vite builds a local ES bundle.
+PixiJS is now the primary world renderer; Vite builds a local ES bundle. React Three Fiber
+and Three.js remain historical prototype tooling.
 Shared navigation includes A* routes around actual static prop footprints and server
 acceleration/rotation. Original rigged GLBs, socket cosmetics, React conversation and
 backpack,3D room props and owned home snap placement are implemented. No neural

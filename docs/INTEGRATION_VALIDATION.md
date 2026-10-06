@@ -112,13 +112,33 @@ forged battle envelopes. Existing isolation tests keep trading checkpoints intac
   to distance-driven locomotion. These are short fixture checks, not sustained
   live browser/network acceptance or production art approval.
 
+## Final Wave 3 validation
+
+- JavaScript: 219 passed, 0 failed, 0 skipped with PostgreSQL enabled.
+- Python: 33 passed, 0 failed, 0 skipped.
+- Asset validation: passed.
+- Build: passed.
+- Movement tests: passed, including network protocol/queue coverage.
+- Checkpoint tests: 21 passed, 0 failed, 0 skipped, including wall-clock
+  stabilization and deleted-byte accounting.
+- Multiplayer protocol tests: passed; the fresh 10- and 40-user short soaks
+  both passed with zero rejections, unexpected disconnects or missing companions.
+- Battle tests: 21 passed, 0 failed, 0 skipped for the deterministic smoke and
+  shared production helper regressions. The documented multi-arm evaluation remains
+  historical; no hours-long reproduction was run during this cleanup.
+- `git diff --check`: passed.
+
 ## Launch blockers and limits
 
 150 CCU remains **not launch-certified**: historical tick overruns, invalid
 intents, checkpoint disk errors and conflated send-skip counts remain failures.
-Checkpoint append-only retention/storage sizing is unresolved: median 6.23 MiB
-per life and approximately 10.9 GiB/hour for 150 awake pets. No production
-checkpoint was deleted and no retention policy was introduced.
+Bounded checkpoint retention is implemented. Current, lease, recent, pinned,
+age-window and unverifiable checkpoints remain protected. The BEFORE condition was
+median 6.23 MiB per life and approximately 10.9 GiB/hour for 150 awake pets under
+append-only writes; the modeled keepRecent=3 example remains approximately 281.25 GB
+after 24 hours reduced to approximately 2.92 GB retained. Production retention values
+are not finalized, legacy unmanaged checkpoint cleanup remains conservative/manual,
+and production-hardware GC throughput still needs measurement.
 
 Repeat isolated 30-minute and multi-hour runs with final tooling on candidate
 hardware, verify encounter TTL and active-combat departure settlement, and test

@@ -14,9 +14,8 @@ Color is a body tint. Socket refresh propagates appearance changes to actual roo
 Profiles retain their existing pet/trophy/friend/shop/collection data; richer avatar previews
 and item-instance occupancy are follow-up work.
 
-## Current3D presentation
+## Current world presentation
 
-The main world now uses React Three Fiber/Three.js. The previous Phaser section is
-historical. See [3D_DELIVERY.md](3D_DELIVERY.md) for implemented scope and limits and
-[ASSET_PIPELINE.md](ASSET_PIPELINE.md) for models/rigs. Domain services and Cadence
-contracts remain preserved. Build with `npm run build` before serving/deploying.
+The main world uses PixiJS painterly isometric rendering with DOM/React overlays.
+Three.js and React Three Fiber are historical prototype tooling. Domain services and
+Cadence contracts remain preserved. Build with `npm run build` before serving/deploying.
