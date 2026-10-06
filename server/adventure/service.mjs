@@ -690,7 +690,7 @@ export class AdventureService {
           y: pet.y + ((m.y - pet.y) / d) * 65 * direction,
         };
       if (
-        walkable(p.roomId, q.x, q.y) &&
+        walkable(p.roomId, q) &&
         validSegment(p.roomId, pet, q) &&
         dist(q, p) < 350
       ) {
@@ -988,7 +988,7 @@ export class AdventureService {
                 x: m.x + ((m.home.x - m.x) / d) * Math.min(d, m.speed * dt),
                 y: m.y + ((m.home.y - m.y) / d) * Math.min(d, m.speed * dt),
               };
-            if (walkable(room.roomId, q.x, q.y)) Object.assign(m, q);
+            if (walkable(room.roomId, q)) Object.assign(m, q);
           }
           continue;
         }
@@ -1008,7 +1008,7 @@ export class AdventureService {
                   Math.min(d, m.speed * dt * (m.slowUntil > now ? 0.5 : 1)),
             };
           if (
-            walkable(room.roomId, q.x, q.y) &&
+            walkable(room.roomId, q) &&
             validSegment(room.roomId, m, q)
           )
             Object.assign(m, q);

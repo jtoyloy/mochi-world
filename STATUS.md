@@ -302,3 +302,47 @@ Cadence mechanism, published pack or learned-behaviour claim changed.
 Each Mochi has an independent battle-v1 Cadence checkpoint, version and counters in mochi_battle_brains. The native Python host uses Brain.compose(16, 7, modules=(64,)) with the simplest library defaults. Observations contain normalized current physical state, never a teacher answer or mob instance identity. Seven motor actions are ATTACK, DEFEND_OWNER, DEFEND_SELF, USE_SPECIAL, MOVE_CLOSER, MOVE_AWAY and WAIT. Actual executed action windows accumulate damage, protection, suffering, waste and terminal outcomes; bounded reward credits the preceding decision. A refused settle holds still. Native host failure holds safely. Finish closes an owed outcome without manufacturing another action. Checkpoints preserve full brain, working trace, memory, RNG and pending state. No teacher is called by gameplay. The new immutable battle-0.74.0-v1 pack records source/wheel hashes; trading packs are untouched.
 
 Measured limitation: these brains are plastic, not demonstrated competent fighters. A same-observation 600-step acquisition control reinforces three different actions: Cadence 578/578/570 hits versus random 89/84/74 and mother 600 each. In the 600-step combat assay across seeds 42/7/18, current Cadence wins 0/0/3 versus random 8/7/9 and mother 100 each. Defeats are 7/23/21 versus random 15/16/14 and mother zero. This failed arm remains recorded; it is not promoted as better-than-random combat. The original reward arm won 0/0/1. Guided noisy-context candidates also failed: fresh 18/80 correct became 16/80 after 1600 demonstrations; a wider candidate reached 37/80. None of those trained candidates ships. See assays/*.json and sim/battle_assay.py, sim/battle_acquisition.py. Public profiles expose action counts and damage/protection, not hidden reasoning or checkpoints.
+
+## Battle learning investigation — 2026-10-06
+
+Matched controlled results
+Eight seeds; each arm has 960 training episodes and 480 frozen evaluation episodes.
+| Arm | Training wins / defeats / timeouts | Frozen wins / defeats / timeouts |
+| --- | --- | --- |
+| Uniform random | 249 / 711 / 0 | 121 / 359 / 0 |
+| Published control | 176 / 263 / 521 | 20 / 160 / 300 |
+| Trace 0.3 | 109 / 106 / 745 | 20 / 40 / 420 |
+| Trace 0.3 + reward ×3 | 155 / 115 / 690 | 20 / 100 / 360 |
+| No protection bonus | 317 / 551 / 92 | 180 / 240 / 60 |
+| Mother reference | 960 / 0 / 0 | 480 / 0 / 0 |
+
+The no-protection-bonus arm improves aggregate training win rate from the published
+control’s 18.33% to 33.02% (random 25.94%), and frozen evaluation from 4.17% to 37.50%
+(random 25.21%). Its frozen wins by seed are **20/20/40/0/20/0/40/40**, versus random
+**17/21/14/12/11/14/17/15**. Five of eight seed pairs improve. Its paired win-rate
+difference is +12.29 percentage points; the 10,000-resample seed-bootstrap 95% interval
+is **−5.21 to +29.79 points**. Training’s interval also spans zero. Repeated deterministic
+episodes are correlated, so uncertainty is computed over seeds, never by treating all
+episodes as independent. Eight seeds and three starting distances remain a limited panel.
+
+**No reproducible-success claim and no promotion.** Removing the protection bonus is a
+promising failed-to-qualify arm; weak trace and reward amplification are failed arms.
+The simpler published settings remain the control. No new pack was created, no published
+pack changed and no trading brain changed. The only gameplay change repairs movement
+execution. The Cadence mechanism is unchanged; experimental trace/reward changes stay in
+the harness. All arms had zero refused settlements. All pet survival counts are perfect
+because this arena never attacks the pet.
+
+[Summary counts](docs/assays/battle-summary.json) include damage dealt/taken, owner damage,
+special use, protection, waste, action distributions, reward and per-seed uncertainty in
+both phases. Training rewards differ across reward arms; frozen rewards share the original
+signal. Defense-heavy arms can score higher reward while winning less. Curves end at
+120 episodes; more training has not been shown to solve collapse. Further validation needs
+a server-physics arena with pet damage, attack phase, geometry, live movement and latency;
+a larger predeclared seed panel; and transfer to varied enemies/owner behavior. No claim
+that this result resolves delayed guard attribution or missing-context optimal decisions
+is justified.
+
+Validation: **27 Python tests and 162 JavaScript tests pass, with no skips**. The full JS
+suite used the existing local database test environment. Published pack hashes are pinned
+and checkpoint continuation covers both the control and experimental trace setting.
