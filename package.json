@@ -6,7 +6,7 @@
   "description": "Raise it. Train it. Watch it paper trade.",
   "license": "MIT",
   "scripts": {
-    "test": "node --env-file-if-exists=.env --test tests/test_world.mjs tests/traders/*.test.mjs tests/world/*.test.mjs tests/social/*.test.mjs tests/adventure/*.test.mjs",
+    "test": "node --env-file-if-exists=.env --test tests/test_world.mjs tests/traders/*.test.mjs tests/world/*.test.mjs tests/social/*.test.mjs tests/adventure/*.test.mjs tests/movement/*.test.mjs",
     "start": "node --env-file-if-exists=.env server/index.mjs",
     "simulate": "node sim/traders.mjs",
     "db:migrate": "node --env-file-if-exists=.env server/world/migrate.mjs",
@@ -21,7 +21,9 @@
     "build:watch": "vite build --watch",
     "assets:models": "node tools/build-models.mjs",
     "test:adventure": "node --env-file-if-exists=.env --test tests/adventure/*.test.mjs",
-    "rewards:record": "node --env-file-if-exists=.env tools/record-resource-reward.mjs"
+    "rewards:record": "node --env-file-if-exists=.env tools/record-resource-reward.mjs",
+    "test:movement": "node --test tests/movement/*.test.mjs",
+    "bench:movement": "node tools/movement-benchmark.mjs"
   },
   "devDependencies": {
     "pyodide": "^314.0.7",

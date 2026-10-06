@@ -180,9 +180,41 @@ export async function mountWorld(
     selfId: null,
     homeName: world.user.displayName,
     send(type, data) {
-      if (socket?.readyState === WebSocket.OPEN)
-        socket.send(JSON.stringify({ type, data }));
-      else showNotice("Reconnecting to the world…");
+      if (socket?.readyState !== WebSocket.OPEN) {
+        showNotice("Reconnecting to the world…");
+        return false;
+      }
+      if (type === "move" && bridge.scene?.prepareMove) {
+        data = bridge.scene.prepareMove(data);
+        if (!data) return false;
+      }
+      if (socket?.readyState === WebSocket.OPEN) {
+        const text = JSON.stringify({ type, data }),
+          wire = socket,
+          net = bridge.scene?.network;
+        const delay =
+          config.development && ["move", "ping"].includes(type)
+            ? Math.max(
+                0,
+                (net?.latency ?? 0) +
+                  (Math.random() * 2 - 1) * (net?.jitter ?? 0),
+              )
+            : 0;
+        if (delay)
+          setTimeout(() => {
+            if (
+              !closed &&
+              wire === socket &&
+              wire.readyState === WebSocket.OPEN
+            )
+              wire.send(text);
+          }, delay);
+        else wire.send(text);
+      } else {
+        showNotice("Reconnecting to the world…");
+        return false;
+      }
+      return true;
     },
     status: showNotice,
     connect() {
@@ -199,9 +231,10 @@ export async function mountWorld(
         if (!closed && e.code !== 4001)
           reconnectTimer = setTimeout(() => bridge.connect(), 2000);
       };
-      socket.onmessage = (e) => {
+      const consume = (e) => {
         const { type, data } = JSON.parse(e.data);
         adventure?.event(type, data);
+        bridge.scene?.motionEvent?.(type, data);
         if (type === "ready") {
           bridge.selfId = data.userId;
           status.textContent = "Online";
@@ -226,7 +259,11 @@ export async function mountWorld(
         }
         if (type === "playerMoved") {
           const old = players.get(data.userId);
-          if (old) {
+          if (
+            old &&
+            (!(data.serverTime && old.serverTime) ||
+              data.serverTime >= old.serverTime)
+          ) {
             const p = { ...old, ...data };
             players.set(data.userId, p);
             bridge.scene.put(p);
@@ -334,6 +371,33 @@ export async function mountWorld(
           if (self) self.prediction = null;
           showNotice(data.message);
         }
+      };
+      socket.onmessage = (event) => {
+        const msg = JSON.parse(event.data),
+          net = bridge.scene?.network;
+        if (
+          config.development &&
+          ["playerMoved", "moveAccepted", "moveRejected", "pong"].includes(
+            msg.type,
+          )
+        ) {
+          if (
+            msg.type === "playerMoved" &&
+            Math.random() * 100 < (net?.loss ?? 0)
+          )
+            return;
+          const delay = Math.max(
+            0,
+            (net?.latency ?? 0) + (Math.random() * 2 - 1) * (net?.jitter ?? 0),
+          );
+          if (delay) {
+            setTimeout(() => {
+              if (!closed) consume(event);
+            }, delay);
+            return;
+          }
+        }
+        consume(event);
       };
     },
     join(roomId) {

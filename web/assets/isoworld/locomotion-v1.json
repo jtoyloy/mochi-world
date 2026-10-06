@@ -1,0 +1,76 @@
+{
+  "format": "mochi-locomotion-atlas/1",
+  "source": "Code-native temporary cutout rig in web/js/isoworld/WalkFrames.js, using existing original character upper bodies",
+  "characters": [
+    "chestnut-sage",
+    "dark-curls-coral",
+    "moonfox",
+    "woodland-deer"
+  ],
+  "directions": [
+    "SE",
+    "SW",
+    "NW",
+    "NE"
+  ],
+  "directionLogic": "Eight logical sectors with hysteresis; current art maps paired sectors to four diagonal sets",
+  "states": {
+    "idle": {
+      "frames": 1,
+      "source": "characters-v1.png"
+    },
+    "walk": {
+      "frames": 8,
+      "columns": 8,
+      "rows": 16,
+      "cell": [
+        160,
+        180
+      ],
+      "anchor": [
+        0.5,
+        0.8666666666666667
+      ],
+      "trimmed": false
+    }
+  },
+  "walkRow": "archetypeIndex * 4 + directionIndex",
+  "walkColumn": "floor(distancePhase * 8)",
+  "phaseEvents": {
+    "0": "footstep_left",
+    "0.5": "footstep_right"
+  },
+  "worldUnitsPerLoop": {
+    "human": 105,
+    "Mochi": 82
+  },
+  "contact": "Alternating grounded backwards stance and lifted forwards swing; articulated hips, knees and feet; diagonal quadruped pairs",
+  "artistReplacement": "Implement rows[archetype][direction] = {idle: Texture, walk: Texture[8], height: sourceFrameHeight}; return fixed cell/anchor metadata. Preserve Pixi original source rectangle and trim offset when using packed trimmed art. Do not independently trim each frame or auto-normalize by silhouette. Full eight-direction artist art remains needed.",
+  "texture": "walk-rig-v1.png",
+  "sourceBodyHeights": [
+    [
+      140,
+      140,
+      140,
+      140
+    ],
+    [
+      140,
+      140,
+      140,
+      140
+    ],
+    [
+      133.42960288808663,
+      139.6153846153846,
+      140,
+      130.58064516129033
+    ],
+    [
+      140,
+      140,
+      140,
+      140
+    ]
+  ]
+}

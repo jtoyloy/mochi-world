@@ -1,0 +1,354 @@
+[
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "7",
+      "speed": "130.26",
+      "worldX": "1029.94",
+      "worldY": "210.09"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "1",
+      "speed": "22.59",
+      "worldX": "923.84",
+      "worldY": "249.41"
+    },
+    "remote": [
+      "60 FPS · p95 18.6 ms · 3 entities · 14 depth objects · CPU update 0.60 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 50.0 ms · ping 203 ms · buffers 32/2 · interpolation 237 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "0",
+      "speed": "129.62",
+      "worldX": "1022.44",
+      "worldY": "213.39"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "1",
+      "speed": "48.85",
+      "worldX": "927.87",
+      "worldY": "248.62"
+    },
+    "remote": [
+      "60 FPS · p95 18.6 ms · 3 entities · 14 depth objects · CPU update 0.60 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 50.0 ms · ping 203 ms · buffers 32/2 · interpolation 237 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "0",
+      "speed": "160.70",
+      "worldX": "1015.32",
+      "worldY": "216.53"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "2",
+      "speed": "100.00",
+      "worldX": "930.60",
+      "worldY": "248.11"
+    },
+    "remote": [
+      "60 FPS · p95 18.6 ms · 3 entities · 14 depth objects · CPU update 0.60 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 50.0 ms · ping 203 ms · buffers 32/2 · interpolation 237 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "1",
+      "speed": "181.58",
+      "worldX": "1007.08",
+      "worldY": "220.16"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "2",
+      "speed": "98.27",
+      "worldX": "935.61",
+      "worldY": "247.19"
+    },
+    "remote": [
+      "60 FPS · p95 18.6 ms · 3 entities · 14 depth objects · CPU update 0.60 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 50.0 ms · ping 203 ms · buffers 32/2 · interpolation 237 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "2",
+      "speed": "180.25",
+      "worldX": "996.17",
+      "worldY": "224.96"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "3",
+      "speed": "141.00",
+      "worldX": "944.01",
+      "worldY": "245.75"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 50.0 ms · ping 203 ms · buffers 32/2 · interpolation 237 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "3",
+      "speed": "178.20",
+      "worldX": "985.37",
+      "worldY": "229.72"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "4",
+      "speed": "162.19",
+      "worldX": "953.88",
+      "worldY": "244.15"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 50.0 ms · ping 203 ms · buffers 32/2 · interpolation 237 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "3",
+      "speed": "179.28",
+      "worldX": "976.90",
+      "worldY": "233.45"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "5",
+      "speed": "197.66",
+      "worldX": "963.89",
+      "worldY": "242.83"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "4",
+      "speed": "178.88",
+      "worldX": "968.73",
+      "worldY": "237.05"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "6",
+      "speed": "213.26",
+      "worldX": "973.96",
+      "worldY": "241.55"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "5",
+      "speed": "179.66",
+      "worldX": "957.92",
+      "worldY": "241.81"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "7",
+      "speed": "252.25",
+      "worldX": "989.99",
+      "worldY": "240.21"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "6",
+      "speed": "180.92",
+      "worldX": "947.02",
+      "worldY": "246.61"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "1",
+      "speed": "176.97",
+      "worldX": "1003.98",
+      "worldY": "239.62"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "7",
+      "speed": "180.37",
+      "worldX": "938.65",
+      "worldY": "250.30"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "2",
+      "speed": "180.99",
+      "worldX": "1013.46",
+      "worldY": "239.71"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "7",
+      "speed": "157.20",
+      "worldX": "931.70",
+      "worldY": "253.35"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "3",
+      "speed": "170.09",
+      "worldX": "1022.41",
+      "worldY": "241.31"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "0",
+      "speed": "172.57",
+      "worldX": "921.42",
+      "worldY": "257.88"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "0",
+      "frame": "4",
+      "speed": "178.57",
+      "worldX": "1033.81",
+      "worldY": "244.46"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "0",
+      "speed": "175.88",
+      "worldX": "916.29",
+      "worldY": "260.14"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "4",
+      "speed": "113.88",
+      "worldX": "1032.23",
+      "worldY": "247.59"
+    },
+    "remote": [
+      "31 FPS · p95 33.4 ms · 3 entities · 14 depth objects · CPU update 0.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "1",
+      "speed": "178.34",
+      "worldX": "907.95",
+      "worldY": "263.81"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "5",
+      "speed": "119.74",
+      "worldX": "1028.14",
+      "worldY": "254.41"
+    },
+    "remote": [
+      "20 FPS · p95 33.7 ms · 3 entities · 14 depth objects · CPU update 0.50 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 35.0 ms · ping 203 ms · buffers 32/2 · interpolation 346 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 42.0 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  },
+  {
+    "local": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "2",
+      "speed": "176.78",
+      "worldX": "902.72",
+      "worldY": "266.12"
+    },
+    "pet": {
+      "animation": "walk",
+      "facing": "3",
+      "frame": "5",
+      "speed": "178.73",
+      "worldX": "1022.95",
+      "worldY": "256.87"
+    },
+    "remote": [
+      "20 FPS · p95 33.7 ms · 3 entities · 14 depth objects · CPU update 0.50 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 622 triangles · 4 atlas sources + ground.",
+      "Movement: 10 Hz server · frame 49.5 ms · ping 203 ms · buffers 32/2 · interpolation 360 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 181.8 · idle facing 0 · 0 path nodes · waypoint none"
+    ]
+  }
+]

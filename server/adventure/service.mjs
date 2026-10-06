@@ -534,6 +534,7 @@ export class AdventureService {
         durationMs: node.durationMs,
       };
     });
+    p.rotation = Math.atan2(node.x - p.x, node.y - p.y);
     p.target = null;
     p.path = [];
     this.nodeAvailability.set(node.id, now + node.durationMs + node.cooldownMs);
@@ -693,8 +694,7 @@ export class AdventureService {
         validSegment(p.roomId, pet, q) &&
         dist(q, p) < 350
       ) {
-        pet.x = q.x;
-        pet.y = q.y;
+        pet.motorPath = [q];
         pet.state = action;
       } else s.outcome.wasted = true;
     } else if (action === "ATTACK" || action === "USE_SPECIAL") {

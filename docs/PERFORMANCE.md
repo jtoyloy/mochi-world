@@ -83,3 +83,7 @@ See ISOMETRIC_DELIVERY.md and isometric-*-performance.png for proof.
 ## Adventure milestone — 2026-10-05
 
 Adventure mobs use viewport culling/interpolation; effects use a 16-entry pool and a bounded event ring. Combat ticks avoid overlapping queues. No new 40-player benchmark was performed; capacity and sustained latency remain unverified.
+
+## Locomotion measurements — 2026-10-05
+
+See MOVEMENT_AUDIT.md for isolated route/transport tests and browser samples. The old latest-target chase caused stationary presentation frames despite near-60 FPS. Movement now carries waypoint distance, predicts locally and buffers remote snapshots. Default movement stays 10 Hz. A 144-case synthetic network sweep across 10/15/20 Hz found no hard snaps/backsteps on straight paths and at most 0.36% stationary remote frames. Town two-client samples were 57–62 FPS, p95 17.2–18.7 ms with 1.0–2.1 ms sampled CPU update. Screenshot capture affected stress-run frame time. These are local samples, not a capacity guarantee or a GC analysis.

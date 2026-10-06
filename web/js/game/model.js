@@ -248,27 +248,41 @@ export function moveToward(p, target, speed, dt) {
   return { x: p.x + (target.x - p.x) * t, y: p.y + (target.y - p.y) * t };
 }
 export function companionStep(p, owner, dt, now) {
-  const distance = Math.hypot(p.x - owner.x, p.y - owner.y);
-  let state =
-    distance > 230
-      ? "RETURNING"
-      : distance > 120
-        ? "FOLLOWING"
-        : (p.state ?? "FOLLOWING");
-  let target = { x: owner.x - 95, y: owner.y + 40 };
-  if (distance < 120 && !owner.moving) {
-    const phase = Math.floor(now / 8000) % 3;
-    state = phase === 0 ? "WANDERING" : phase === 1 ? "RESTING" : "INTERACTING";
-    target =
-      phase === 0
-        ? {
-            x: owner.x - 105 + Math.sin(now / 2400) * 16,
-            y: owner.y + 40 + Math.cos(now / 2400) * 10,
-          }
-        : { x: p.x, y: p.y };
-  }
-  const next = moveToward(p, target, state === "RETURNING" ? 235 : 165, dt);
-  return { ...p, ...next, state };
+  dt = Math.min(0.25, Math.max(0, dt));
+  const angle = owner.rotation ?? 0,
+    forward = { x: Math.sin(angle), y: Math.cos(angle) };
+  const target = {
+    x: owner.x - forward.x * 95 + forward.y * 40,
+    y: owner.y - forward.y * 95 - forward.x * 40,
+  };
+  const distance = Math.hypot(target.x - p.x, target.y - p.y),
+    ownerDistance = Math.hypot(owner.x - p.x, owner.y - p.y);
+  const near = owner.moving ? 8 : 18;
+  const following =
+    !owner.moving && ownerDistance < 95
+      ? false
+      : distance > (p.following ? near : near + 16);
+  const desired = following
+    ? Math.min(250, Math.max(owner.speed ?? 0, distance * 3))
+    : 0;
+  const speed =
+    (p.followSpeed ?? 0) +
+    Math.max(-700 * dt, Math.min(500 * dt, desired - (p.followSpeed ?? 0)));
+  const next = moveToward(p, target, speed, dt);
+  return {
+    ...p,
+    ...next,
+    followSpeed: speed,
+    following,
+    state:
+      ownerDistance > 350
+        ? "RETURNING"
+        : following
+          ? "FOLLOWING"
+          : owner.moving
+            ? "FOLLOWING"
+            : "RESTING",
+  };
 }
 export function plainText(text, max = 220) {
   return String(text ?? "")

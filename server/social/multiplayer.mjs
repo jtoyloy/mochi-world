@@ -1,3 +1,4 @@
+import { advance, traverse } from "../../web/js/game/locomotion/core.js";
 import { nearbyResident, TOWN_INTERACTIONS } from "../../web/js/game/town.js";
 import { CompanionFollowController } from "../../web/js/game/CompanionFollowController.js";
 import { NavigationService } from "../../web/js/game/NavigationService.js";
@@ -72,7 +73,10 @@ export class Multiplayer {
     this.followController = new CompanionFollowController();
     this.encounters = new Map();
     this.tickAt = this.now();
-    this.timer = setInterval(() => this.tick(), 100);
+    this.movementHz = Number(process.env.MOVEMENT_HZ ?? 10);
+    if (![10, 15, 20].includes(this.movementHz))
+      throw new Error("MOVEMENT_HZ must be 10, 15 or 20");
+    this.timer = setInterval(() => this.tick(), 1000 / this.movementHz);
     this.timer.unref();
     this.speechTimer = setInterval(
       () =>
@@ -100,8 +104,17 @@ export class Multiplayer {
       y: p.y,
       moving: !!p.target,
       rotation: p.rotation ?? 0,
+      serverTime: this.now(),
+      moveSeq: p.moveSeq ?? 0,
+      speed: p.speed ?? 0,
+      path: p.target ? [p.target, ...(p.path ?? [])] : [],
       companion: p.companion
-        ? { ...p.companion, route: undefined, routeAt: undefined }
+        ? {
+            ...p.companion,
+            route: undefined,
+            routeAt: undefined,
+            motorPath: undefined,
+          }
         : null,
       presence: p.presence,
       seated: p.seated ?? null,
@@ -142,7 +155,9 @@ export class Multiplayer {
           const msg = JSON.parse(raw.toString());
           await this.handle(p, msg);
         })
-        .catch((e) => this.send(p, "error", { message: e.message }));
+        .catch((e) => {
+          if (!e.responseSent) this.send(p, "error", { message: e.message });
+        });
     });
     ws.on("close", () => this.disconnect(p));
     ws.on("error", () => this.disconnect(p));
@@ -195,6 +210,7 @@ export class Multiplayer {
     }
     p.room = instance.id;
     p.roomId = roomId;
+    new NavigationService(roomId).grid();
     p.seated = null;
     p.target = null;
     p.path = [];
@@ -400,24 +416,52 @@ export class Multiplayer {
       return;
     }
     switch (type) {
-      case "move":
-        if (now - p.lastMove < 120)
-          throw new GameError("Movement updates are limited");
-        p.lastMove = now;
-        if (!walkable(p.roomId, data.x, data.y))
-          throw new GameError("That path is blocked");
-        if (p.seated) {
-          p.x = p.seated.approach.x;
-          p.y = p.seated.approach.y;
-          p.seated = null;
-        }
-        p.path = new NavigationService(p.roomId).findPath(p, data);
-        if (!p.path?.length)
-          throw new GameError("That destination is unreachable");
-        p.target = p.path.shift();
-        p.presence = "online";
-        this.send(p, "moveAccepted", { x: data.x, y: data.y });
+      case "ping":
+        this.send(p, "pong", { clientTime: data.clientTime, serverTime: now });
         break;
+      case "move": {
+        try {
+          if (data.roomId && data.roomId !== p.roomId)
+            throw new GameError("Movement belongs to a previous room");
+          if (
+            data.seq !== undefined &&
+            (!Number.isSafeInteger(data.seq) ||
+              data.seq <= 0 ||
+              data.seq <= (p.moveSeq ?? 0))
+          )
+            throw new GameError("Invalid movement sequence");
+          if (now - p.lastMove < 120)
+            throw new GameError("Movement updates are limited");
+          p.lastMove = now;
+          if (!walkable(p.roomId, data.x, data.y))
+            throw new GameError("That path is blocked");
+          if (p.seated) {
+            p.x = p.seated.approach.x;
+            p.y = p.seated.approach.y;
+            p.seated = null;
+          }
+          p.path = new NavigationService(p.roomId).findPath(p, data);
+          if (!p.path?.length)
+            throw new GameError("That destination is unreachable");
+          p.target = p.path.shift();
+          p.moveSeq = data.seq ?? (p.moveSeq ?? 0) + 1;
+          p.presence = "online";
+          this.send(p, "moveAccepted", {
+            ...this.public(p),
+            destination: { x: data.x, y: data.y },
+            movementHz: this.movementHz,
+          });
+        } catch (e) {
+          this.send(p, "moveRejected", {
+            ...this.public(p),
+            rejectedSeq: data.seq,
+            message: e.message,
+          });
+          e.responseSent = true;
+          throw e;
+        }
+        break;
+      }
       case "emote":
       case "phrase":
         if (now - p.lastEvent < 1500) throw new GameError("Emote cooldown");
@@ -532,21 +576,25 @@ export class Multiplayer {
       }
       if (!p.room) continue;
       if (p.target) {
-        p.rotation = Math.atan2(p.target.x - p.x, p.target.y - p.y);
-        p.speed = Math.min(180, (p.speed ?? 0) + 600 * dt);
-        const remaining = Math.hypot(p.target.x - p.x, p.target.y - p.y);
-        const speed = p.path?.length
-          ? p.speed
-          : Math.min(p.speed, Math.max(35, remaining * 5));
-        const next = moveToward(p, p.target, speed, dt);
-        p.x = next.x;
-        p.y = next.y;
-        if (Math.hypot(p.x - p.target.x, p.y - p.target.y) < 1) {
-          p.target = p.path?.shift() ?? null;
-          this.persist(p).catch(() => {});
-        }
+        const path = [p.target, ...(p.path ?? [])];
+        const result = advance(p, path, dt, 0.25);
+        if (result.moved) p.rotation = Math.atan2(result.dx, result.dy);
+        p.target = path.shift() ?? null;
+        p.path = path;
+        if (!p.target) this.persist(p).catch(() => {});
       }
       if (!p.target) p.speed = 0;
+      if (p.companion?.motorPath?.length) {
+        const active = this.adventure?.states.get(p.userId);
+        if (active?.target && active.petHp > 0)
+          traverse(
+            p.companion,
+            p.companion.motorPath,
+            165 * Math.min(dt, 0.25),
+            (a, b) => validSegment(p.roomId, a.x, a.y, b.x, b.y),
+          );
+        else p.companion.motorPath = [];
+      }
       if (
         p.companion &&
         !(
@@ -556,7 +604,13 @@ export class Multiplayer {
       ) {
         const next = this.followController.step(
           p.companion,
-          { x: p.x, y: p.y, moving: !!p.target },
+          {
+            x: p.x,
+            y: p.y,
+            moving: !!p.target,
+            rotation: p.rotation ?? 0,
+            speed: p.speed ?? 0,
+          },
           p.roomId,
           dt,
           now,
@@ -566,7 +620,7 @@ export class Multiplayer {
           if (this.adventure?.states.get(p.userId)?.petHp <= 0)
             p.companion.state = "EXHAUSTED";
         } else p.companion.state = "RETURNING";
-        if (Math.hypot(p.companion.x - p.x, p.companion.y - p.y) > 210) {
+        if (Math.hypot(p.companion.x - p.x, p.companion.y - p.y) > 650) {
           for (const [dx, dy] of [
             [-45, 15],
             [45, 15],
@@ -586,10 +640,19 @@ export class Multiplayer {
         x: p.x,
         y: p.y,
         rotation: p.rotation ?? 0,
+        serverTime: now,
+        moveSeq: p.moveSeq ?? 0,
+        speed: p.speed ?? 0,
+        path: p.target ? [p.target, ...(p.path ?? [])] : [],
         moving: !!p.target,
         seated: p.seated ?? null,
         companion: p.companion
-          ? { ...p.companion, route: undefined, routeAt: undefined }
+          ? {
+              ...p.companion,
+              route: undefined,
+              routeAt: undefined,
+              motorPath: undefined,
+            }
           : null,
       });
       if (

@@ -386,7 +386,9 @@ check(
       const left = await b.wait("playerLeft");
       assert.equal(left.userId, snapA.selfId);
       b.send("move", { x: -999, y: 0 });
-      assert.match((await b.wait("error")).message, /blocked/);
+      const rejected=await b.wait("moveRejected");
+      assert.match(rejected.message,/blocked/);
+      assert.ok(Number.isFinite(rejected.x)&&Number.isFinite(rejected.serverTime));
     } finally {
       a.ws.close();
       b.ws.close();

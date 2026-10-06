@@ -33,3 +33,8 @@ artist animation certification or a guarantee of perfect seamlessness.
 ## adventure-v1.png
 
 Original transparent painted 4×2 atlas: friendly slime, bramble boar, thornling, river beast, masked scavenger, lantern guardian, training dummy and merchant resource cart. Existing project character atlas supplied the style reference. Generated with the built-in image generation tool; no external game assets.
+
+
+## walk-rig-v1.png
+
+Code-native temporary locomotion art, not an image-generation prompt: original project character upper bodies plus articulated hip/knee/foot drawing. Eight frames per direction, 128 untrimmed source cells, generated from WalkFrames.js and exported through the visible developer gallery. See locomotion-v1.json for anchors and provenance.

@@ -120,3 +120,7 @@ GPU benchmarks remain future work. No Phaser runtime is loaded by the main world
 ## Adventure milestone
 
 Combat, separate persistent Cadence battle brains, fishing, woodcutting and resource buyers are available in the existing world. See [the delivery and exact setup](docs/ADVENTURE_DELIVERY.md). Battle plasticity is measured, but combat competence remains below random in the current assay. Real resource rewards require an explicitly configured, funded treasury; local rewards are labelled mock currency.
+
+## Locomotion
+
+Local movement is predicted immediately; remote players and Mochis use timestamped interpolation. Walk cycles have eight articulated frames per diagonal direction, driven by distance rather than render FPS. See [movement audit](docs/MOVEMENT_AUDIT.md) and [locomotion delivery](docs/LOCOMOTION_DELIVERY.md). Development diagnostics include network simulation, FPS caps and frame previews. `npm run test:movement` and `npm run bench:movement` reproduce logic checks and the transport sweep.

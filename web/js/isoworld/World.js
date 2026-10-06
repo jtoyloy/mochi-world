@@ -1,3 +1,11 @@
+import {
+  Gait,
+  MOTION,
+  facing4,
+  facing8,
+  spring,
+} from "../game/locomotion/core.js";
+import { walkFramesFromAtlas } from "./WalkFrames.js";
 import { VENDORS, COMBAT_VENDORS, RESOURCE_NODES } from "../game/adventure.js";
 import {
   Application,
@@ -86,11 +94,16 @@ export class IsometricWorld {
       "aria-label",
       "Painterly isometric world. Click paths to walk, residents to talk, or buildings to enter.",
     );
-    const [buildings, props, characters, terrain, adventure] =
+    const [buildings, props, characters, terrain, adventure, walk] =
       await Promise.all(
-        ["buildings", "props", "characters", "terrain", "adventure"].map((n) =>
-          Assets.load("/assets/isoworld/" + n + "-v1.png"),
-        ),
+        [
+          "buildings",
+          "props",
+          "characters",
+          "terrain",
+          "adventure",
+          "walk-rig",
+        ].map((n) => Assets.load("/assets/isoworld/" + n + "-v1.png")),
       );
     this.terrain = terrain;
     this.atlases = {
@@ -98,6 +111,23 @@ export class IsometricWorld {
       props: this.split(props, 4, 2),
       adventure: this.split(adventure, 4, 2),
       characters: this.split(characters, 4, 4),
+    };
+    const walkMetadata = await (
+      await fetch("/assets/isoworld/locomotion-v1.json")
+    ).json();
+    this.walkFrames = walkFramesFromAtlas(
+      this.atlases.characters,
+      walk,
+      walkMetadata,
+    );
+    this.textures.push(this.walkFrames.texture);
+    this.cameraVelocity = { x: 0, y: 0 };
+    this.motionMetrics = {
+      snaps: 0,
+      corrections: 0,
+      localSpeed: 0,
+      remoteSpeed: 0,
+      frameMs: 0,
     };
     this.seatedFrames = this.atlases.characters.slice(0, 8).map((t) => {
       const f = t.frame;
@@ -826,6 +856,7 @@ export class IsometricWorld {
       facing: 0,
       name: data.name ?? data.avatar?.display_name,
       pose: 0,
+      gait: new Gait(type === "pet" ? MOTION.petStride : MOTION.stride),
     };
     this.actors.set(key, a);
     if (onClick) this.click(group, onClick);
@@ -1204,6 +1235,86 @@ export class IsometricWorld {
       }
       this.metrics = el("p", "");
       this.dev.append(this.metrics);
+      const fpsLabel = el("label", "", "Render cap FPS"),
+        fpsSelect = el("select", "");
+      for (const value of [0, 30, 60, 120]) {
+        const option = el(
+          "option",
+          "",
+          value ? String(value) : "Display refresh",
+        );
+        option.value = value;
+        fpsSelect.append(option);
+      }
+      fpsSelect.setAttribute("aria-label", "Render cap FPS");
+      fpsSelect.onchange = () =>
+        (this.app.ticker.maxFPS = Number(fpsSelect.value));
+      fpsLabel.append(fpsSelect);
+      this.dev.append(fpsLabel);
+      this.motionDebug = el("p", "");
+      this.dev.append(this.motionDebug);
+      const preview = el("button", "", "Preview walk frames");
+      preview.onclick = () => {
+        const dialog = el("dialog", "world-dialog"),
+          close = el("button", "", "Close walk preview"),
+          title = el("h2", "", "Temporary locomotion atlas"),
+          description = el(
+            "p",
+            "",
+            "Eight genuine articulated gait frames per direction. Rows: four directions each for two villagers, Moonfox and Woodland Deer. Fixed cells and foot anchors; artist replacements retain this contract.",
+          ),
+          canvas = document.createElement("canvas");
+        canvas.width = this.walkFrames.texture.width;
+        canvas.height = this.walkFrames.texture.height;
+        canvas.style.width = "100%";
+        canvas
+          .getContext("2d")
+          .drawImage(this.walkFrames.texture.source.resource, 0, 0);
+        canvas.setAttribute(
+          "aria-label",
+          "Articulated walk atlas: 128 fixed-pivot frames",
+        );
+        close.onclick = () => {
+          dialog.close();
+          dialog.remove();
+        };
+        const atlasImage = el("img", "");
+        atlasImage.alt = "Articulated walk atlas: 128 fixed-pivot frames";
+        atlasImage.src = canvas.toDataURL("image/png");
+        atlasImage.style.width = "100%";
+        atlasImage.dataset.heights = JSON.stringify(
+          this.walkFrames.rows.map((row) => row.map((d) => d.height)),
+        );
+        dialog.append(close, title, description, atlasImage);
+        document.body.append(dialog);
+        dialog.showModal();
+      };
+      this.dev.append(preview);
+      for (const [name, values] of [
+        ["latency", [0, 50, 100, 200]],
+        ["jitter", [0, 25, 50]],
+        ["loss", [0, 1, 3, 5]],
+      ]) {
+        const label = el(
+            "label",
+            "",
+            name === "loss" ? "Snapshot loss %" : "Network " + name + " ms",
+          ),
+          select = el("select", "");
+        for (const value of values) {
+          const option = el("option", "", String(value));
+          option.value = value;
+          select.append(option);
+        }
+        select.setAttribute(
+          "aria-label",
+          name === "loss" ? "Snapshot loss %" : "Network " + name + " ms",
+        );
+        select.onchange = () =>
+          (this.scene.network[name] = Number(select.value));
+        label.append(select);
+        this.dev.append(label);
+      }
       this.host.append(this.dev);
     }
   }
@@ -1244,6 +1355,8 @@ export class IsometricWorld {
   frame(dt) {
     if (this.dead) return;
     const start = performance.now();
+    this.motionMetrics.frameMs = dt * 1000;
+    dt = Math.min(0.1, dt);
     this.elapsed += dt;
     this.frames++;
     this.frameTimes.push(dt * 1000);
@@ -1256,39 +1369,90 @@ export class IsometricWorld {
     for (const a of this.actors.values()) {
       if (a.definition) {
         a.group.visible = residentAvailable(a.definition, now + offset);
-        const due =
-          now - (a.poseAt ?? 0) >
-          (self && Math.hypot(self.p.x - a.p.x, self.p.y - a.p.y) > 900
-            ? 500
-            : 200);
-        if (due) {
-          a.target = residentPosition(a.definition, now + offset);
-          a.poseAt = now;
-        }
       }
-      const old = { ...a.p };
-      a.p = visualStep(a.p, a.target, dt, a.type === "pet" ? 290 : 265);
-      const moving = Math.hypot(a.p.x - old.x, a.p.y - old.y) > 0.08;
-      a.facing = direction(a.p.x - old.x, a.p.y - old.y, a.facing);
-      a.s.texture = this.atlases.characters[frameIndex(a.row, a.facing)];
+      const oldX = a.p.x,
+        oldY = a.p.y;
+      if (a.definition) {
+        a.p = residentPosition(a.definition, now + offset);
+      } else if (a.key === "player:" + this.bridge.selfId) {
+        const m = this.scene.motion.get(this.bridge.selfId);
+        if (m) {
+          a.p = m.prediction.step(dt);
+          this.motionMetrics.error = m.prediction.error;
+          this.motionMetrics.corrections = m.prediction.corrections;
+          this.motionMetrics.snaps = m.prediction.snaps;
+          this.motionMetrics.nodes = m.prediction.path.length;
+          this.motionMetrics.waypoint = m.prediction.path[0];
+        }
+      } else {
+        const buffer =
+          a.type === "pet"
+            ? this.scene.petMotion.get(a.data.id)
+            : this.scene.motion.get(a.data.userId)?.buffer;
+        const sampled = buffer?.sample(now + offset);
+        if (sampled) a.p = sampled;
+      }
+      const teleport =
+        Math.hypot(a.p.x - oldX, a.p.y - oldY) > MOTION.snapError;
+      const speed = a.gait.update(
+          teleport ? 0 : a.p.x - oldX,
+          teleport ? 0 : a.p.y - oldY,
+          dt,
+        ),
+        moving = a.gait.state === "walk";
+      if (
+        a.gait.state === "idle" &&
+        a.type === "player" &&
+        Number.isFinite(a.data.rotation)
+      )
+        a.gait.facing = facing8(
+          Math.sin(a.data.rotation),
+          Math.cos(a.data.rotation),
+          a.gait.facing,
+        );
+      a.facing = facing4(a.gait.facing);
+      if (this.config.development) {
+        a.node.dataset.animation = a.gait.state;
+        a.node.dataset.frame = a.gait.frame;
+        a.node.dataset.speed = speed.toFixed(2);
+        a.node.dataset.worldX = a.p.x.toFixed(2);
+        a.node.dataset.worldY = a.p.y.toFixed(2);
+        a.node.dataset.facing = a.gait.facing;
+      }
+      const seated = !!a.data.seated || a.definition?.state === "sit";
+      const art =
+        this.walkFrames.rows[a.row][
+          this.walkFrames.directions === 8 ? a.gait.facing : a.facing
+        ];
+      a.s.texture =
+        seated && a.type !== "pet"
+          ? this.seatedFrames[frameIndex(a.row, a.facing)]
+          : moving
+            ? art.walk[a.gait.frame]
+            : art.idle;
+      // Fixed source rectangle: changing gait frame never changes the foot pivot.
+      const height = a.type === "pet" ? 83 : 124;
+      a.s.scale.set(
+        height /
+          (seated && a.type !== "pet"
+            ? art.idle.height
+            : moving
+              ? art.height
+              : a.s.texture.height),
+      );
+      a.s.anchor.set(0.5, moving && !seated ? this.walkFrames.anchor.y : 1);
+      a.s.y = seated ? -18 : 0;
+      a.s.rotation = 0;
       const q = project(a.p);
       a.group.position.set(q.x, q.y);
       a.group.zIndex = depth(a.p) + (a.type === "pet" ? 0.01 : 0.02);
-      const seated = !!a.data.seated || a.definition?.state === "sit",
-        bob = this.bridge.reducedMotion
-          ? 0
-          : moving
-            ? Math.sin(this.elapsed * 12 + hash(a.key)) * 2.2
-            : Math.sin(this.elapsed * 2 + hash(a.key)) * 0.7;
-      if (seated && a.type !== "pet")
-        a.s.texture = this.seatedFrames[frameIndex(a.row, a.facing)];
       a.seatLegs.visible = seated && a.type !== "pet";
-      a.s.y = seated ? -18 : -Math.abs(bob);
-      a.s.rotation =
-        moving && !this.bridge.reducedMotion
-          ? Math.sin(this.elapsed * 12) * 0.014
-          : 0;
-      a.s.scale.y = Math.abs(a.s.scale.x);
+      if (a.key === "player:" + this.bridge.selfId) {
+        this.motionMetrics.localSpeed = speed;
+        this.motionMetrics.animation = a.gait.state;
+        this.motionMetrics.facing = a.gait.facing;
+        for (const event of a.gait.events) this.scene.audio.cue("step");
+      } else if (a.type === "player") this.motionMetrics.remoteSpeed = speed;
       const emote = this.scene.emotes.get(a.data.userId),
         reaction = this.scene.reactions.get(a.data.id);
       if (emote && now - emote.at < 3500 && emote.kind === "dance")
@@ -1302,18 +1466,6 @@ export class IsometricWorld {
       }
       a.cosmetics.y = a.s.y;
       a.cape.y = a.s.y;
-      if (
-        a.key === "player:" + this.bridge.selfId &&
-        moving &&
-        this.elapsed - (this.lastStep ?? 0) > 0.5
-      ) {
-        this.lastStep = this.elapsed;
-        this.scene.audio.cue("step");
-      }
-      if (a.type === "npc") {
-        a.s.y +=
-          a.definition.state === "perform" ? Math.sin(this.elapsed * 4) * 2 : 0;
-      }
       const screen = this.root.toGlobal(q),
         inView =
           screen.x > -200 &&
@@ -1395,9 +1547,7 @@ export class IsometricWorld {
             x: center.x + (q.x - center.x) * 0.75,
             y: center.y + (q.y - center.y) * 0.75,
           };
-      const f = 1 - Math.exp(-dt * 3);
-      this.camera.x += (desired.x - this.camera.x) * f;
-      this.camera.y += (desired.y - this.camera.y) * f;
+      spring(this.camera, this.cameraVelocity, desired, dt, 16);
     }
     this.root.scale.set(this.zoom);
     this.root.position.set(
@@ -1405,6 +1555,21 @@ export class IsometricWorld {
       this.host.clientHeight * (this.host.clientWidth < 650 ? 0.46 : 0.48) -
         this.camera.y * this.zoom,
     );
+    if (this.motionDebug && this.frames % 15 === 0) {
+      const m = this.motionMetrics,
+        b = [...this.scene.motion.values()].map((v) => v.buffer.samples.length);
+      const elapsed = Math.max(
+        0.001,
+        (now - (this.correctionAt ?? now)) / 1000,
+      );
+      if (elapsed >= 1 || !this.correctionAt) {
+        m.correctionsPerSecond =
+          (m.corrections - (this.previousCorrections ?? 0)) / elapsed;
+        this.previousCorrections = m.corrections;
+        this.correctionAt = now;
+      }
+      this.motionDebug.textContent = `Movement: ${this.scene.movementHz} Hz server · frame ${m.frameMs.toFixed(1)} ms · ping ${this.scene.ping.toFixed(0)} ms · buffers ${b.join("/")} · interpolation ${this.scene.motion.get(this.bridge.selfId)?.buffer.delay.toFixed(0) ?? MOTION.interpolationDelay} ms · arrival max ${Math.max(0, ...(this.scene.motion.get(this.bridge.selfId)?.buffer.arrivalIntervals ?? [])).toFixed(0)} ms · error ${(m.error ?? 0).toFixed(2)} · corrections ${m.corrections} (${(m.correctionsPerSecond ?? 0).toFixed(1)}/s) · hard snaps ${m.snaps} · speed local ${m.localSpeed.toFixed(1)} / remote ${m.remoteSpeed.toFixed(1)} · ${m.animation ?? "idle"} facing ${m.facing ?? 0} · ${m.nodes ?? 0} path nodes · waypoint ${m.waypoint ? Math.round(m.waypoint.x) + "," + Math.round(m.waypoint.y) : "none"}`;
+    }
     this.app.stage.hitArea = this.app.screen;
     for (const label of this.labels) {
       const q = this.root.toGlobal(project(label.p));
@@ -1475,7 +1640,7 @@ export class IsometricWorld {
       if (this.metrics) {
         const sorted = [...this.frameTimes].sort((a, b) => a - b),
           p95 = sorted[Math.floor(sorted.length * 0.95)] ?? 0;
-        this.metrics.textContent = `${Math.round(this.app.ticker.FPS)} FPS · p95 ${p95.toFixed(1)} ms · ${this.actors.size} entities · ${this.objects.children.length} depth objects · CPU update ${(performance.now() - start).toFixed(2)} ms · PixiJS/WebGL · DPR ${this.app.renderer.resolution}. ${this.gpuCounts?.draws ?? "…"} GL draws · ${Math.round(this.gpuCounts?.triangles ?? 0)} triangles · 4 atlas sources + ground.`;
+        this.metrics.textContent = `${Math.round(this.app.ticker.FPS)} FPS · p95 ${p95.toFixed(1)} ms · ${this.actors.size} entities · ${this.objects.children.length} depth objects · CPU update ${(performance.now() - start).toFixed(2)} ms · PixiJS/WebGL · DPR ${this.app.renderer.resolution}. ${this.gpuCounts?.draws ?? "…"} GL draws · ${Math.round(this.gpuCounts?.triangles ?? 0)} triangles · painted atlases + walk frames + ground.`;
       }
     }
   }

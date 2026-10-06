@@ -72,6 +72,12 @@
         "resource-cart"
       ],
       "provenance": "Original built-in imagegen asset, character atlas as in-repository style reference only, 2026-10-05"
+    },
+    "walk-rig-v1.png": {
+      "columns": 8,
+      "rows": 16,
+      "metadata": "locomotion-v1.json",
+      "provenance": "Original project character cutout bodies with code-native articulated legs; generated and visually inspected in the developer gallery on 2026-10-05. Temporary art, not AI-generated walk poses."
     }
   },
   "runtime": {

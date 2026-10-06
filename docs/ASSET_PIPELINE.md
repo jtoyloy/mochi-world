@@ -216,3 +216,11 @@ Resident bubble/label React updates run on a timer; the pose loop stays imperati
 ## Adventure milestone — 2026-10-05
 
 web/assets/isoworld/adventure-v1.png is a new original transparent painted atlas generated for this project: slime, boar, thornling, rippleback, scavenger, guardian, dummy and resource cart. Only existing project art was used as a style reference. No third-party game imagery was imported.
+
+## Locomotion frames — 2026-10-05
+
+The current primary renderer uses actual eight-frame walk sets rather than static-pose sway. `web/js/isoworld/WalkFrames.js` bakes original painted upper bodies and articulated alternating legs into a fixed untrimmed 8-column ×16-row atlas (128 frames). Each row is archetype×4 + diagonal direction (SE, SW, NW, NE); each column is gait phase×8. Two villagers, Moonfox and Woodland Deer are included. Ground pivot is (0.5, 156/180) in 160×180 source cells. Rendering normalizes to the recorded source-body height, not a changing trimmed silhouette. Eight logical directions retain phase and map to four art directions until artist replacements exist.
+
+`web/assets/isoworld/locomotion-v1.json` records the contract; developer World diagnostics → Preview walk frames exposes the source atlas. The temporary rig draws real hip/knee/foot changes, grounded stance and lifted swing; code-native leg detail is explicitly prototype art. Human stride is 105 logical units/loop; Mochi 82. Ground contact displacement is projected consistently with that distance. Future artist sprites should retain original rectangles, pivots and trim offsets and implement the same rows/archetype/direction texture interface. Do not run silhouette trimming on individual walk frames. Foot-contact hooks are at phase 0 and 0.5; surface audio can be extended later.
+
+The generated original `walk-rig-v1.png` is checked in and loaded by the renderer with `locomotion-v1.json`. The metadata records source-body heights for stable scale across directional frames. Startup validates dimensions/pivots; automated checks verify all 128 frame rectangles and reject malformed metadata. The generator remains available in WalkFrames.js for future rig adjustments.

@@ -1,3 +1,4 @@
+import { Prediction, SnapshotBuffer } from "../game/locomotion/core.js";
 import { NavigationService } from "../game/NavigationService.js";
 import { plainText } from "../game/model.js";
 import { WorldAudio } from "../world3d/audio.js";
@@ -8,13 +9,25 @@ export async function mountIsometric(container, bridge, config) {
     bubbles = new Map(),
     queues = new Map(),
     timers = new Set();
+  const motion = new Map(),
+    petMotion = new Map();
+  let moveSeq = 0;
   let roomId = "town",
     home = null,
     marker = null,
     loading = true;
-  const publish = () => listeners.forEach((fn) => fn());
+  let cachedSnapshot = null;
+  const publish = () => {
+    cachedSnapshot = null;
+    listeners.forEach((fn) => fn());
+  };
   const scene = {
     data,
+    motion,
+    petMotion,
+    movementHz: 10,
+    ping: 0,
+    network: { latency: 0, jitter: 0, loss: 0 },
     publish,
     adventure: null,
     combatEffects: [],
@@ -23,23 +36,28 @@ export async function mountIsometric(container, bridge, config) {
     emotes: new Map(),
     reactions: new Map(),
     audio: new WorldAudio(),
-    snapshot: () => ({
-      roomId,
-      home,
-      marker,
-      loading,
-      players: [...data.values()],
-      bubbles: new Map(bubbles),
-    }),
+    snapshot: () =>
+      (cachedSnapshot ??= {
+        roomId,
+        home,
+        marker,
+        loading,
+        players: [...data.values()],
+        bubbles: new Map(bubbles),
+      }),
     subscribe(fn) {
       listeners.add(fn);
       return () => listeners.delete(fn);
     },
     setRoomSnapshot(s) {
       roomId = s.roomId;
+      this.roomEnteredAt = s.serverTime ?? 0;
+      new NavigationService(roomId).grid();
       this.adventure = null;
       this.combatEffects = [];
       this.serverClockOffset = (s.serverTime ?? Date.now()) - Date.now();
+      motion.clear();
+      petMotion.clear();
       home = s.home;
       marker = null;
       this.emotes.clear();
@@ -60,6 +78,39 @@ export async function mountIsometric(container, bridge, config) {
     },
     put(p, notify = true) {
       data.set(p.userId, p);
+      const t = p.serverTime ?? Date.now();
+      let m = motion.get(p.userId);
+      if (!m) {
+        m = { buffer: new SnapshotBuffer(), prediction: new Prediction(p) };
+        motion.set(p.userId, m);
+      }
+      m.buffer.push(
+        { t, x: p.x, y: p.y, moving: p.moving },
+        Date.now() + (this.serverClockOffset ?? 0),
+      );
+      if (p.userId === bridge.selfId && p.serverTime)
+        m.prediction.reconcile(p, Date.now(), this.serverClockOffset ?? 0);
+      if (p.companion) {
+        let pm = petMotion.get(p.companion.id);
+        if (!pm) {
+          pm = new SnapshotBuffer();
+          petMotion.set(p.companion.id, pm);
+        }
+        pm.push(
+          {
+            t,
+            x: p.companion.x,
+            y: p.companion.y,
+            moving:
+              Math.hypot(
+                p.companion.x - (pm.samples.at(-1)?.x ?? p.companion.x),
+                p.companion.y - (pm.samples.at(-1)?.y ?? p.companion.y),
+              ) > 0.01,
+          },
+          Date.now() + (this.serverClockOffset ?? 0),
+        );
+      }
+
       this.players.set(p.userId, {
         root: { id: "player:" + p.userId },
         prediction: null,
@@ -73,10 +124,47 @@ export async function mountIsometric(container, bridge, config) {
       if (notify) publish();
     },
     remove(id) {
+      motion.delete(id);
+      const previous = data.get(id);
+      if (previous?.companion) petMotion.delete(previous.companion.id);
       data.delete(id);
       this.players.delete(id);
       this.pets.delete(id);
       publish();
+    },
+    prepareMove(goal) {
+      const self = data.get(bridge.selfId),
+        m = motion.get(bridge.selfId);
+      if (!self || !m) return null;
+      const start = self.seated ? self.seated.approach : m.prediction.p;
+      const path = new NavigationService(roomId).findPath(start, goal);
+      if (!path) {
+        bridge.status("Choose a reachable path to walk.");
+        return null;
+      }
+      m.prediction.start(path, ++moveSeq);
+      marker = { x: goal.x, y: goal.y };
+      publish();
+      return { ...goal, seq: moveSeq, clientTime: Date.now() };
+    },
+    motionEvent(type, s) {
+      if (s.serverTime && s.serverTime < this.roomEnteredAt) return;
+      const m = motion.get(bridge.selfId);
+      if (type === "moveAccepted") {
+        this.movementHz = s.movementHz ?? 10;
+        m?.prediction.reconcile(s, Date.now(), this.serverClockOffset ?? 0);
+      }
+      if (type === "moveRejected" && s.rejectedSeq === m?.prediction.seq) {
+        m.prediction.reject({ ...s, moveSeq: s.rejectedSeq });
+        marker = null;
+        bridge.status(s.message ?? "That movement was refused.");
+        publish();
+      }
+      if (type === "pong") {
+        const rtt = Date.now() - s.clientTime;
+        this.ping = rtt;
+        this.serverClockOffset = s.serverTime - (s.clientTime + rtt / 2);
+      }
     },
     moveTo(end, options = {}) {
       if (!options.interaction) bridge.cancelInteraction?.();
@@ -84,19 +172,11 @@ export async function mountIsometric(container, bridge, config) {
       if (!self) return false;
       const nav = new NavigationService(roomId),
         goal = nav.nearestWalkable(end);
-      if (
-        !goal ||
-        Math.hypot(goal.x - end.x, goal.y - end.y) > 70 ||
-        !nav.findPath(self, goal)
-      ) {
+      if (!goal || Math.hypot(goal.x - end.x, goal.y - end.y) > 70) {
         bridge.status("Choose a nearby path to walk.");
         return false;
       }
-      marker = goal;
-      bridge.send("move", goal);
-      this.audio.cue("step");
-      publish();
-      return true;
+      return bridge.send("move", goal) !== false;
     },
     transition() {
       loading = true;
@@ -145,8 +225,13 @@ export async function mountIsometric(container, bridge, config) {
   const renderer = new IsometricWorld(container, bridge, config, scene);
   await renderer.init();
   bridge.connect();
+  const pingTimer = setInterval(
+    () => bridge.send("ping", { clientTime: Date.now() }),
+    3000,
+  );
   return {
     destroy() {
+      clearInterval(pingTimer);
       scene.audio.dispose?.();
       renderer.destroy();
       for (const timer of timers) clearTimeout(timer);
