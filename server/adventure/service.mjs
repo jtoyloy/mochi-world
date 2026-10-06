@@ -755,7 +755,7 @@ export class AdventureService {
     }
     if (!inserted) return;
     Object.assign(s, next);
-    await this.progress(p.userId, s, "kills", m.type === "dummy" ? 0 : 1);
+    await this.progress(p.userId, s, m.type === "dummy" ? "trainingDummy" : "kills");
     await this.save(p.userId, s);
     this.effect(p, "victory", { targetId: m.id, loot, xp: m.xp });
   }

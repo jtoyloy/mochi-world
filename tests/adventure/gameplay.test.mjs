@@ -662,3 +662,18 @@ check(
     game.multiplayer = null;
   },
 );
+
+check("dummy defeat persists onboarding progress once without real kills, XP or loot", async () => {
+  const trainee = {...p,roomId:"yard",room:"training-yard"};
+  const dummy = [...game.instance(trainee).mobs.values()].find(m=>m.type==="dummy");
+  const state = await game.state(a.id), beforeXp=state.xp.combat, beforeKills=state.progress.kills??0;
+  const inventory = async()=> (await pool.query("SELECT item_id,quantity FROM player_inventory WHERE user_id=$1 ORDER BY item_id",[a.id])).rows;
+  const beforeInventory=await inventory();
+  await game.hit(trainee,state,dummy,9999);
+  await game.hit(trainee,state,dummy,9999);
+  const persisted=(await pool.query("SELECT state FROM player_adventure WHERE user_id=$1",[a.id])).rows[0].state;
+  assert.equal(persisted.progress.trainingDummy,1);
+  assert.equal(persisted.progress.kills??0,beforeKills);
+  assert.equal(persisted.xp.combat,beforeXp);
+  assert.deepEqual(await inventory(),beforeInventory);
+});
