@@ -72,3 +72,22 @@ are a host-specific experiment, not a universal deployment default. Reserve room
 for PostgreSQL, movement/trading and other jobs; provision against repeated **actual
 Adventure** motor/tick tail on production hardware. Shared-room ordering remains a
 serialization limit. Final repeats are required after lifecycle changes stabilize.
+
+## Final post-lifecycle gate measurements
+
+The final tree was measured with eight workers, three repeats, one synchronized burst per
+50/100/150-brain row, and the Adventure fixture grouped five actors per room. Direct
+BattleBrains had zero responses over 1400 ms in all three repeats: 50-brain p50/p95/p99/max
+ranges were 161–352/327–603/347–741/347–741 ms; 100-brain ranges were
+324–351/515–643/535–658/535–658 ms; 150-brain ranges were 536–733/960–1178/
+992–1217/1011–1246 ms. A separate one-repeat 150 smoke recorded three misses and remains
+an honest host-jitter outlier. Queue, step, save and DB phase timings are retained in the
+local final assay.
+
+Adventure motor completion remained the limiting path after lifecycle batching. Across
+repeats, motor p50/p95/p99/max ranges were 775–1094/1519–1969/1612–2037/1612–2037 ms
+at 50, 1611–1819/3058–3416/3268–3561/3268–3561 ms at 100, and
+2510–2765/4611–5082/4830–5297/4864–5335 ms at 150. Motor deadline misses were
+9–18, 56–63 and 108–109 respectively; tick maxima were 1.64–2.06 s, 3.30–3.59 s
+and 4.89–5.37 s. These figures include authoritative action application and durable
+acknowledgement and do not certify Adventure capacity.

@@ -170,3 +170,42 @@ races were independently reproduced using real PostgreSQL and BattleBrains.
 No brain mechanism, checkpoint domain, trading policy or published pack changed.
 **150 CCU is NOT CERTIFIED.** Full validation and exact stage/profile results are
 recorded in the certification report and its compact assay.
+
+## Final Wave 4 release gate — 2026-10-06
+
+Final tree: `0705d70bd6064e6ad05550b7aeae83da91404428`; base:
+`925cdbec4399b249bbf1872a26edfaad217d2547`. The release gate passed 262 JavaScript
+tests and 49 Python tests, with zero failures and zero skips. Lifecycle coverage passed
+28 native PostgreSQL/BattleBrain cases. Asset validation, 19 animation tests, 42 movement
+tests, build and `git diff --check` passed.
+
+The final lifecycle code rejects stale motors across disconnect, room change, reconnect,
+pet switch, target death/removal/change, TTL, shutdown and response loss. It preserves
+prior owed feedback, rejects duplicate/old receipts, recovers persisted proposals and
+evicts abandoned combat. A persisted disconnected state without an in-memory encounter
+is covered by the recovery regression.
+
+On final code with eight workers, three direct repeats produced zero >1400 ms misses:
+50 brains had p50/p95/p99/max ranges 161–352/327–603/347–741/347–741 ms; 100 had
+324–351/515–643/535–658/535–658 ms; 150 had 536–733/960–1178/992–1217/1011–1246 ms.
+The separate one-repeat 150 smoke had three misses and remains reported as host-jitter
+evidence. Direct queue, step, save and DB timings are retained in
+`runs/wave4-final-gate.json` locally.
+
+The concentrated Adventure fixture used five actors per room. Motor completion maxima
+were 1.61–2.04 s at 50, 3.27–3.56 s at 100 and 4.86–5.34 s at 150, with 9–18,
+56–63 and 108–109 motor deadline misses. Tick maxima were 1.64–2.06 s, 3.30–3.59 s
+and 4.89–5.37 s respectively. This is a remaining shared-room/acknowledgement blocker;
+it is not a capacity certification.
+
+The physical checkpoint fixture still passed byte-exact latest recovery and repeated
+fourth-write → GC delete → three-file plateau cycles. Warm lives measure about 9.16 MB;
+the documented 150-pet peak and 3 GiB floor require about 8.12 GiB free. The 150-user,
+30-minute CCU run remains **NOT CERTIFIED** and was not rerun unsafely.
+
+Cadence remains **NO PROMOTION**: random 211/432, published 203/432, curriculum 219/432,
+reference 286/432; curriculum interval −1.39 to +5.09 pp and pet damage 4.18% versus
+random 14.96%. Context diagnostics still fail to acquire the required strategic split.
+Sword, fishing and Deer cleanup art are integrated and validated; remaining directional,
+staff/bow/dagger, chopping, Moonfox, mob and cosmetic alignment work remains provisional.
+Remaining launch blockers are Adventure-level tail latency and full CCU resource headroom.
