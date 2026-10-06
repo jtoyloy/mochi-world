@@ -1,0 +1,5071 @@
+{
+  "selection": {
+    "arm": "affordance",
+    "criterion": "after all training/validation and before any held-out: among affordance/penalty/persistent maximize pooled validation pet damage share, excluding >10pp win loss versus published; ties favor simpler arm; if none eligible choose affordance",
+    "validation": {
+      "affordance": {
+        "wins": 86,
+        "pet": 378,
+        "total": 7897
+      },
+      "penalty": {
+        "wins": 87,
+        "pet": 101,
+        "total": 7887
+      },
+      "persistent": {
+        "wins": 87,
+        "pet": 282,
+        "total": 7810
+      }
+    },
+    "sealedBeforeHeldout": true
+  },
+  "sources": {
+    "sim/action_learning_protocol.json": "92a596d8ac4e9c5695683875c02bd7cc8570530973c008ec73a6fb39a6edf91b",
+    "sim/action_learning.mjs": "078aa5b4de9a3011c410f24396aa47c72359bbc4a8afe2cf063eecd6b7ffab8e",
+    "sim/action_learning_host.py": "0e71da94bb1a93bc4de762d356c119cda5811480b4ff3ee2bc0d0efbbba171b4",
+    "sim/server_battle.mjs": "50df6a90a435b75b3e96bbfadea7f93199740ac2475e77ca4db0b6bb6be89385",
+    "server/adventure/service.mjs": "5c475fead995391cb06e0123ec009c9dc29360d96fae1ea565c4b82671dc205f",
+    "web/js/game/NavigationService.js": "ed7aff888f7438f71f8c73c2b3aa3f8e9f97332bf830a70efe235210825ff59f"
+  },
+  "arms": {
+    "random": {
+      "training": {
+        "wins": 416,
+        "petDamageDealt": 5253,
+        "ownerDamageDealt": 31309,
+        "ownerDamage": 21473,
+        "petDamage": 8869,
+        "wasted": 2333,
+        "decisions": 7776,
+        "invalidAttack": 756,
+        "invalidSpecial": 848,
+        "approaches": 1135,
+        "attackAfterApproach": 141,
+        "movingMs": 575000,
+        "shapedReward": 0,
+        "reward": -476.5550427350428,
+        "pathFailures": 729,
+        "episodes": 720,
+        "actions": [
+          1114,
+          1074,
+          1148,
+          1130,
+          1135,
+          1080,
+          1095
+        ],
+        "petDamageShare": 0.14367375964115747,
+        "validRate": 0.699974279835391,
+        "validAttackRate": 0.3213644524236984,
+        "validSpecialRate": 0.24955752212389382,
+        "confusion": {
+          "0": {
+            "out-of-range": 395,
+            "blocked-line": 361,
+            "valid": 358
+          },
+          "1": {
+            "valid": 1074
+          },
+          "2": {
+            "valid": 1148
+          },
+          "3": {
+            "blocked-line": 600,
+            "out-of-range": 56,
+            "valid": 282,
+            "cooldown": 192
+          },
+          "4": {
+            "valid": 767,
+            "blocked": 368
+          },
+          "5": {
+            "valid": 719,
+            "blocked": 358,
+            "owner-tether": 3
+          },
+          "6": {
+            "valid": 1095
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 395,
+            "blocked-line": 582,
+            "valid": 358
+          },
+          "1": {
+            "valid": 1074
+          },
+          "2": {
+            "valid": 1148
+          },
+          "3": {
+            "blocked-line": 600,
+            "cooldown": 249,
+            "out-of-range": 56,
+            "valid": 282
+          },
+          "4": {
+            "valid": 767,
+            "blocked": 368
+          },
+          "5": {
+            "valid": 719,
+            "blocked": 358,
+            "owner-tether": 3
+          },
+          "6": {
+            "valid": 1095
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 5413,
+          "0->0": 2333,
+          "0->1": 30
+        },
+        "maxInvalidStreak": 10,
+        "episodesWithValidAttack": 239,
+        "firstValidAttackMedianMs": 3400.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      },
+      "validation": {
+        "wins": 89,
+        "petDamageDealt": 1185,
+        "ownerDamageDealt": 6963,
+        "ownerDamage": 3144,
+        "petDamage": 2165,
+        "wasted": 475,
+        "decisions": 1533,
+        "invalidAttack": 150,
+        "invalidSpecial": 176,
+        "approaches": 217,
+        "attackAfterApproach": 24,
+        "movingMs": 110800,
+        "shapedReward": 0,
+        "reward": -82.23811965811966,
+        "pathFailures": 195,
+        "episodes": 144,
+        "actions": [
+          215,
+          228,
+          193,
+          248,
+          217,
+          219,
+          213
+        ],
+        "petDamageShare": 0.14543446244477173,
+        "validRate": 0.690150032615786,
+        "validAttackRate": 0.3023255813953488,
+        "validSpecialRate": 0.29032258064516125,
+        "confusion": {
+          "0": {
+            "out-of-range": 94,
+            "blocked-line": 56,
+            "valid": 65
+          },
+          "1": {
+            "valid": 228
+          },
+          "2": {
+            "valid": 193
+          },
+          "3": {
+            "cooldown": 47,
+            "valid": 72,
+            "blocked-line": 122,
+            "out-of-range": 7
+          },
+          "4": {
+            "valid": 151,
+            "blocked": 66
+          },
+          "5": {
+            "valid": 136,
+            "blocked": 83
+          },
+          "6": {
+            "valid": 213
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 94,
+            "blocked-line": 112,
+            "valid": 65
+          },
+          "1": {
+            "valid": 228
+          },
+          "2": {
+            "valid": 193
+          },
+          "3": {
+            "cooldown": 58,
+            "valid": 72,
+            "blocked-line": 122,
+            "out-of-range": 7
+          },
+          "4": {
+            "valid": 151,
+            "blocked": 66
+          },
+          "5": {
+            "valid": 136,
+            "blocked": 83
+          },
+          "6": {
+            "valid": 213
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1048,
+          "0->0": 475,
+          "0->1": 10
+        },
+        "maxInvalidStreak": 7,
+        "episodesWithValidAttack": 43,
+        "firstValidAttackMedianMs": 3400.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      },
+      "evaluation": {
+        "wins": 211,
+        "petDamageDealt": 2796.0,
+        "ownerDamageDealt": 15897.5,
+        "ownerDamage": 10707,
+        "petDamage": 3314,
+        "wasted": 1406,
+        "decisions": 4633,
+        "invalidAttack": 481,
+        "invalidSpecial": 534,
+        "approaches": 677,
+        "attackAfterApproach": 71,
+        "movingMs": 342600,
+        "shapedReward": 0,
+        "reward": -273.5581196581197,
+        "pathFailures": 391,
+        "episodes": 432,
+        "actions": [
+          653,
+          722,
+          642,
+          685,
+          677,
+          610,
+          644
+        ],
+        "petDamageShare": 0.1495707063952711,
+        "validRate": 0.6965249298510684,
+        "validAttackRate": 0.26339969372128635,
+        "validSpecialRate": 0.22043795620437956,
+        "confusion": {
+          "0": {
+            "out-of-range": 347,
+            "valid": 172,
+            "blocked-line": 134
+          },
+          "1": {
+            "valid": 722
+          },
+          "2": {
+            "valid": 642
+          },
+          "3": {
+            "blocked-line": 406,
+            "valid": 151,
+            "cooldown": 101,
+            "out-of-range": 27
+          },
+          "4": {
+            "valid": 457,
+            "blocked": 220
+          },
+          "5": {
+            "valid": 439,
+            "blocked": 171
+          },
+          "6": {
+            "valid": 644
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 347,
+            "valid": 172,
+            "blocked-line": 389
+          },
+          "1": {
+            "valid": 722
+          },
+          "2": {
+            "valid": 642
+          },
+          "3": {
+            "blocked-line": 406,
+            "cooldown": 121,
+            "valid": 151,
+            "out-of-range": 27
+          },
+          "4": {
+            "valid": 457,
+            "blocked": 220
+          },
+          "5": {
+            "valid": 439,
+            "blocked": 171
+          },
+          "6": {
+            "valid": 644
+          }
+        },
+        "observationExecutionConfusion": {
+          "0->0": 1406,
+          "1->1": 3216,
+          "0->1": 11
+        },
+        "maxInvalidStreak": 8,
+        "episodesWithValidAttack": 116,
+        "firstValidAttackMedianMs": 3400.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null,
+        "winGain": 0.0,
+        "pairedReplicaBootstrap95": [
+          0.0,
+          0.0
+        ],
+        "familywise95": [
+          0.0,
+          0.0
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 67,
+            "randomWins": 67,
+            "winGain": 0.0,
+            "petDamageShare": 0.14908704130473321
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 107,
+            "randomWins": 107,
+            "winGain": 0.0,
+            "petDamageShare": 0.18183243610515862
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 37,
+            "randomWins": 37,
+            "winGain": 0.0,
+            "petDamageShare": 0.12756961656218108
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 43,
+            "randomWins": 43,
+            "winGain": 0.0,
+            "petDamageShare": 0.15055435370470524
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 62,
+            "randomWins": 62,
+            "winGain": 0.0,
+            "petDamageShare": 0.2246276162651468
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 106,
+            "randomWins": 106,
+            "winGain": 0.0,
+            "petDamageShare": 0.10912206224586349
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 80,
+            "randomWins": 80,
+            "winGain": 0.0,
+            "petDamageShare": 0.15525467839881027
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 131,
+            "randomWins": 131,
+            "winGain": 0.0,
+            "petDamageShare": 0.14525389430090827
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 105,
+            "randomWins": 105,
+            "winGain": 0.0,
+            "petDamageShare": 0.13098429720413635
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 106,
+            "randomWins": 106,
+            "winGain": 0.0,
+            "petDamageShare": 0.1673469387755102
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 109,
+            "randomWins": 109,
+            "winGain": 0.0,
+            "petDamageShare": 0.20111946020548996
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 102,
+            "randomWins": 102,
+            "winGain": 0.0,
+            "petDamageShare": 0.09299259425493717
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 92,
+            "randomWins": 92,
+            "winGain": 0.0,
+            "petDamageShare": 0.15246469796350928
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 119,
+            "randomWins": 119,
+            "winGain": 0.0,
+            "petDamageShare": 0.14703594992599284
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 57,
+            "randomWins": 57,
+            "winGain": 0.0,
+            "petDamageShare": 0.21931701870289383
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 154,
+            "randomWins": 154,
+            "winGain": 0.0,
+            "petDamageShare": 0.12143393393393394
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 102,
+            "randomWins": 102,
+            "winGain": 0.0,
+            "petDamageShare": 0.13997900173093838
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 109,
+            "randomWins": 109,
+            "winGain": 0.0,
+            "petDamageShare": 0.1581210634153745
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 68,
+            "randomWins": 68,
+            "winGain": 0.0,
+            "petDamageShare": 0.13886591305946144
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 73,
+            "randomWins": 73,
+            "winGain": 0.0,
+            "petDamageShare": 0.13697604790419163
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 70,
+            "randomWins": 70,
+            "winGain": 0.0,
+            "petDamageShare": 0.1695743448675257
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 120,
+            "randomWins": 120,
+            "winGain": 0.0,
+            "petDamageShare": 0.15454953438797261
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 91,
+            "randomWins": 91,
+            "winGain": 0.0,
+            "petDamageShare": 0.14503348499565463
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "control",
+          "win-gain-under-5pp",
+          "confidence-includes-no-gain",
+          "validity-not-above-controls",
+          "pet-share-not-above-controls"
+        ]
+      }
+    },
+    "published": {
+      "training": {
+        "wins": 391,
+        "petDamageDealt": 2481,
+        "ownerDamageDealt": 31849,
+        "ownerDamage": 20759,
+        "petDamage": 8286,
+        "wasted": 1984,
+        "decisions": 8404,
+        "invalidAttack": 789,
+        "invalidSpecial": 303,
+        "approaches": 78,
+        "attackAfterApproach": 9,
+        "movingMs": 162800,
+        "shapedReward": -431.77076923076925,
+        "reward": -431.77076923076925,
+        "pathFailures": 892,
+        "episodes": 720,
+        "actions": [
+          1043,
+          1353,
+          3669,
+          374,
+          78,
+          1231,
+          656
+        ],
+        "petDamageShare": 0.07226915234488786,
+        "validRate": 0.7639219419324131,
+        "validAttackRate": 0.24352828379674019,
+        "validSpecialRate": 0.18983957219251335,
+        "confusion": {
+          "0": {
+            "valid": 254,
+            "blocked-line": 505,
+            "out-of-range": 284
+          },
+          "1": {
+            "valid": 1353
+          },
+          "2": {
+            "valid": 3669
+          },
+          "3": {
+            "out-of-range": 32,
+            "cooldown": 79,
+            "valid": 71,
+            "blocked-line": 192
+          },
+          "4": {
+            "valid": 57,
+            "blocked": 21
+          },
+          "5": {
+            "valid": 360,
+            "blocked": 835,
+            "owner-tether": 36
+          },
+          "6": {
+            "valid": 656
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 254,
+            "blocked-line": 627,
+            "out-of-range": 284
+          },
+          "1": {
+            "valid": 1353
+          },
+          "2": {
+            "valid": 3669
+          },
+          "3": {
+            "out-of-range": 32,
+            "cooldown": 124,
+            "valid": 71,
+            "blocked-line": 192
+          },
+          "4": {
+            "valid": 57,
+            "blocked": 21
+          },
+          "5": {
+            "valid": 360,
+            "blocked": 835,
+            "owner-tether": 36
+          },
+          "6": {
+            "valid": 656
+          }
+        },
+        "observationExecutionConfusion": {
+          "0->0": 1984,
+          "1->1": 6411,
+          "0->1": 9
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 125,
+        "firstValidAttackMedianMs": 1800.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8417679402372344,
+        "meanEntropy": 0.4162723543417354
+      },
+      "validation": {
+        "wins": 82,
+        "petDamageDealt": 366,
+        "ownerDamageDealt": 7287,
+        "ownerDamage": 2978,
+        "petDamage": 1996,
+        "wasted": 554,
+        "decisions": 1741,
+        "invalidAttack": 121,
+        "invalidSpecial": 178,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 22800,
+        "shapedReward": 0,
+        "reward": -81.03538461538463,
+        "pathFailures": 255,
+        "episodes": 144,
+        "actions": [
+          160,
+          338,
+          654,
+          189,
+          0,
+          312,
+          88
+        ],
+        "petDamageShare": 0.04782438259506076,
+        "validRate": 0.6817920735209649,
+        "validAttackRate": 0.24375000000000002,
+        "validSpecialRate": 0.05820105820105825,
+        "confusion": {
+          "0": {
+            "valid": 39,
+            "blocked-line": 110,
+            "out-of-range": 11
+          },
+          "1": {
+            "valid": 338
+          },
+          "2": {
+            "valid": 654
+          },
+          "3": {
+            "valid": 11,
+            "cooldown": 31,
+            "out-of-range": 5,
+            "blocked-line": 142
+          },
+          "4": {},
+          "5": {
+            "blocked": 241,
+            "valid": 57,
+            "owner-tether": 14
+          },
+          "6": {
+            "valid": 88
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 39,
+            "blocked-line": 110,
+            "out-of-range": 11
+          },
+          "1": {
+            "valid": 338
+          },
+          "2": {
+            "valid": 654
+          },
+          "3": {
+            "valid": 11,
+            "cooldown": 42,
+            "out-of-range": 5,
+            "blocked-line": 142
+          },
+          "4": {},
+          "5": {
+            "blocked": 241,
+            "valid": 57,
+            "owner-tether": 14
+          },
+          "6": {
+            "valid": 88
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1184,
+          "0->0": 554,
+          "0->1": 3
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 11,
+        "firstValidAttackMedianMs": 1600.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.827716475838168,
+        "meanEntropy": 0.38926463816357354
+      },
+      "evaluation": {
+        "wins": 203,
+        "petDamageDealt": 729.25,
+        "ownerDamageDealt": 16840.75,
+        "ownerDamage": 10324,
+        "petDamage": 2517,
+        "wasted": 1220,
+        "decisions": 4917,
+        "invalidAttack": 216,
+        "invalidSpecial": 293,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 70800,
+        "shapedReward": 0,
+        "reward": -254.91012820512825,
+        "pathFailures": 711,
+        "episodes": 432,
+        "actions": [
+          281,
+          920,
+          2075,
+          319,
+          0,
+          897,
+          425
+        ],
+        "petDamageShare": 0.041505406943653955,
+        "validRate": 0.7518812283912955,
+        "validAttackRate": 0.23131672597864772,
+        "validSpecialRate": 0.08150470219435735,
+        "confusion": {
+          "0": {
+            "out-of-range": 127,
+            "valid": 65,
+            "blocked-line": 89
+          },
+          "1": {
+            "valid": 920
+          },
+          "2": {
+            "valid": 2075
+          },
+          "3": {
+            "out-of-range": 12,
+            "blocked-line": 195,
+            "cooldown": 86,
+            "valid": 26
+          },
+          "4": {},
+          "5": {
+            "valid": 186,
+            "blocked": 669,
+            "owner-tether": 42
+          },
+          "6": {
+            "valid": 425
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 127,
+            "valid": 65,
+            "blocked-line": 178
+          },
+          "1": {
+            "valid": 920
+          },
+          "2": {
+            "valid": 2075
+          },
+          "3": {
+            "out-of-range": 12,
+            "blocked-line": 195,
+            "cooldown": 120,
+            "valid": 26
+          },
+          "4": {},
+          "5": {
+            "valid": 186,
+            "blocked": 669,
+            "owner-tether": 42
+          },
+          "6": {
+            "valid": 425
+          }
+        },
+        "observationExecutionConfusion": {
+          "0->0": 1220,
+          "1->1": 3688,
+          "0->1": 9
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 26,
+        "firstValidAttackMedianMs": 1800.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8638256364129754,
+        "meanEntropy": 0.33458787901328924,
+        "winGain": -0.018518518518518517,
+        "pairedReplicaBootstrap95": [
+          -0.05324074074074075,
+          0.01620370370370371
+        ],
+        "familywise95": [
+          -0.0625,
+          0.027777777777777776
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 64,
+            "randomWins": 67,
+            "winGain": -0.02142857142857143,
+            "petDamageShare": 0.03433428186311218
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 102,
+            "randomWins": 107,
+            "winGain": -0.033783783783783786,
+            "petDamageShare": 0.06152149944873209
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 37,
+            "randomWins": 37,
+            "winGain": 0.0,
+            "petDamageShare": 0.034759358288770054
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 42,
+            "randomWins": 43,
+            "winGain": -0.0072992700729927005,
+            "petDamageShare": 0.044787024183531816
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 53,
+            "randomWins": 62,
+            "winGain": -0.058823529411764705,
+            "petDamageShare": 0.06048476762285968
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 108,
+            "randomWins": 106,
+            "winGain": 0.014084507042253521,
+            "petDamageShare": 0.03149851055562751
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 77,
+            "randomWins": 80,
+            "winGain": -0.013953488372093023,
+            "petDamageShare": 0.04711936232468974
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 126,
+            "randomWins": 131,
+            "winGain": -0.02304147465437788,
+            "petDamageShare": 0.0373887093989691
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 97,
+            "randomWins": 105,
+            "winGain": -0.037383177570093455,
+            "petDamageShare": 0.04596233641876796
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 106,
+            "randomWins": 106,
+            "winGain": 0.0,
+            "petDamageShare": 0.037216964011502915
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 103,
+            "randomWins": 109,
+            "winGain": -0.026785714285714284,
+            "petDamageShare": 0.05284810126582278
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 100,
+            "randomWins": 102,
+            "winGain": -0.009615384615384616,
+            "petDamageShare": 0.030405405405405407
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 89,
+            "randomWins": 92,
+            "winGain": -0.014778325123152709,
+            "petDamageShare": 0.04169086407677965
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 114,
+            "randomWins": 119,
+            "winGain": -0.021834061135371178,
+            "petDamageShare": 0.04134387562228789
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 52,
+            "randomWins": 57,
+            "winGain": -0.022727272727272728,
+            "petDamageShare": 0.04140076151659784
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 151,
+            "randomWins": 154,
+            "winGain": -0.014150943396226415,
+            "petDamageShare": 0.04154319911684388
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 98,
+            "randomWins": 102,
+            "winGain": -0.020512820512820513,
+            "petDamageShare": 0.04641530121215813
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 105,
+            "randomWins": 109,
+            "winGain": -0.016877637130801686,
+            "petDamageShare": 0.037200235005073974
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 65,
+            "randomWins": 68,
+            "winGain": -0.02127659574468085,
+            "petDamageShare": 0.03375283282704084
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 69,
+            "randomWins": 73,
+            "winGain": -0.027210884353741496,
+            "petDamageShare": 0.040621971261219504
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 69,
+            "randomWins": 70,
+            "winGain": -0.006944444444444444,
+            "petDamageShare": 0.04854707477721813
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 113,
+            "randomWins": 120,
+            "winGain": -0.0319634703196347,
+            "petDamageShare": 0.04806572068707991
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 90,
+            "randomWins": 91,
+            "winGain": -0.004694835680751174,
+            "petDamageShare": 0.03553864963999456
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "control",
+          "win-gain-under-5pp",
+          "confidence-includes-no-gain",
+          "validity-not-above-controls",
+          "pet-share-not-above-controls",
+          "forest-moon-transfer-regression"
+        ]
+      }
+    },
+    "expanded": {
+      "training": {
+        "wins": 424,
+        "petDamageDealt": 2257,
+        "ownerDamageDealt": 33803,
+        "ownerDamage": 19172,
+        "petDamage": 10324,
+        "wasted": 1300,
+        "decisions": 8314,
+        "invalidAttack": 268,
+        "invalidSpecial": 576,
+        "approaches": 903,
+        "attackAfterApproach": 38,
+        "movingMs": 368800,
+        "shapedReward": -331.4623931623932,
+        "reward": -331.4623931623932,
+        "pathFailures": 1029,
+        "episodes": 720,
+        "actions": [
+          426,
+          4341,
+          709,
+          688,
+          903,
+          498,
+          749
+        ],
+        "petDamageShare": 0.06259012756516916,
+        "validRate": 0.8436372383930719,
+        "validAttackRate": 0.37089201877934275,
+        "validSpecialRate": 0.16279069767441856,
+        "confusion": {
+          "0": {
+            "out-of-range": 126,
+            "blocked-line": 142,
+            "valid": 158
+          },
+          "1": {
+            "valid": 4341
+          },
+          "2": {
+            "valid": 709
+          },
+          "3": {
+            "cooldown": 218,
+            "blocked-line": 330,
+            "valid": 112,
+            "out-of-range": 28
+          },
+          "4": {
+            "valid": 720,
+            "blocked": 183
+          },
+          "5": {
+            "valid": 225,
+            "blocked": 238,
+            "owner-tether": 35
+          },
+          "6": {
+            "valid": 749
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 126,
+            "blocked-line": 209,
+            "valid": 158
+          },
+          "1": {
+            "valid": 4341
+          },
+          "2": {
+            "valid": 709
+          },
+          "3": {
+            "cooldown": 269,
+            "blocked-line": 330,
+            "valid": 112,
+            "out-of-range": 28
+          },
+          "4": {
+            "valid": 720,
+            "blocked": 183
+          },
+          "5": {
+            "valid": 225,
+            "blocked": 238,
+            "owner-tether": 35
+          },
+          "6": {
+            "valid": 749
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 6984,
+          "0->0": 1300,
+          "0->1": 30
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 68,
+        "firstValidAttackMedianMs": 2400.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7743291948100703,
+        "meanEntropy": 0.5252301996548908
+      },
+      "validation": {
+        "wins": 92,
+        "petDamageDealt": 318,
+        "ownerDamageDealt": 7692,
+        "ownerDamage": 2693,
+        "petDamage": 2506,
+        "wasted": 206,
+        "decisions": 1660,
+        "invalidAttack": 65,
+        "invalidSpecial": 93,
+        "approaches": 196,
+        "attackAfterApproach": 2,
+        "movingMs": 97600,
+        "shapedReward": 0,
+        "reward": -52.889914529914535,
+        "pathFailures": 48,
+        "episodes": 144,
+        "actions": [
+          98,
+          937,
+          100,
+          102,
+          196,
+          97,
+          130
+        ],
+        "petDamageShare": 0.039700374531835204,
+        "validRate": 0.8759036144578313,
+        "validAttackRate": 0.33673469387755106,
+        "validSpecialRate": 0.08823529411764708,
+        "confusion": {
+          "0": {
+            "valid": 33,
+            "out-of-range": 9,
+            "blocked-line": 56
+          },
+          "1": {
+            "valid": 937
+          },
+          "2": {
+            "valid": 100
+          },
+          "3": {
+            "cooldown": 24,
+            "valid": 9,
+            "out-of-range": 5,
+            "blocked-line": 64
+          },
+          "4": {
+            "valid": 196
+          },
+          "5": {
+            "valid": 49,
+            "blocked": 41,
+            "owner-tether": 7
+          },
+          "6": {
+            "valid": 130
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 33,
+            "out-of-range": 9,
+            "blocked-line": 56
+          },
+          "1": {
+            "valid": 937
+          },
+          "2": {
+            "valid": 100
+          },
+          "3": {
+            "cooldown": 40,
+            "valid": 9,
+            "out-of-range": 5,
+            "blocked-line": 64
+          },
+          "4": {
+            "valid": 196
+          },
+          "5": {
+            "valid": 49,
+            "blocked": 41,
+            "owner-tether": 7
+          },
+          "6": {
+            "valid": 130
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1453,
+          "0->0": 206,
+          "0->1": 1
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 9,
+        "firstValidAttackMedianMs": 1600.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8448990544502908,
+        "meanEntropy": 0.3611910811208979
+      },
+      "evaluation": {
+        "wins": 0,
+        "petDamageDealt": 0,
+        "ownerDamageDealt": 0,
+        "ownerDamage": 0,
+        "petDamage": 0,
+        "wasted": 0,
+        "decisions": 0,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 0,
+        "shapedReward": 0,
+        "reward": 0,
+        "pathFailures": 0,
+        "episodes": 0,
+        "actions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "petDamageShare": 0.0,
+        "validRate": 0.0,
+        "validAttackRate": null,
+        "validSpecialRate": null,
+        "confusion": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {},
+        "maxInvalidStreak": 0,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      }
+    },
+    "affordance": {
+      "training": {
+        "wins": 402,
+        "petDamageDealt": 2096,
+        "ownerDamageDealt": 32948,
+        "ownerDamage": 20027,
+        "petDamage": 9717,
+        "wasted": 1184,
+        "decisions": 8121,
+        "invalidAttack": 349,
+        "invalidSpecial": 330,
+        "approaches": 1973,
+        "attackAfterApproach": 92,
+        "movingMs": 709000,
+        "shapedReward": -383.85880341880346,
+        "reward": -383.85880341880346,
+        "pathFailures": 505,
+        "episodes": 720,
+        "actions": [
+          564,
+          2126,
+          1808,
+          387,
+          1973,
+          355,
+          908
+        ],
+        "petDamageShare": 0.059810523912795344,
+        "validRate": 0.8542051471493658,
+        "validAttackRate": 0.38120567375886527,
+        "validSpecialRate": 0.1472868217054264,
+        "confusion": {
+          "0": {
+            "out-of-range": 80,
+            "valid": 215,
+            "blocked-line": 269
+          },
+          "1": {
+            "valid": 2126
+          },
+          "2": {
+            "valid": 1808
+          },
+          "3": {
+            "cooldown": 85,
+            "valid": 57,
+            "out-of-range": 40,
+            "blocked-line": 205
+          },
+          "4": {
+            "valid": 1680,
+            "blocked": 293
+          },
+          "5": {
+            "blocked": 212,
+            "valid": 143
+          },
+          "6": {
+            "valid": 908
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 80,
+            "valid": 215,
+            "blocked-line": 270
+          },
+          "1": {
+            "valid": 2126
+          },
+          "2": {
+            "valid": 1808
+          },
+          "3": {
+            "cooldown": 123,
+            "valid": 57,
+            "out-of-range": 40,
+            "blocked-line": 205
+          },
+          "4": {
+            "valid": 1680,
+            "blocked": 293
+          },
+          "5": {
+            "blocked": 212,
+            "valid": 143
+          },
+          "6": {
+            "valid": 908
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 6928,
+          "0->0": 1184,
+          "0->1": 9
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 89,
+        "firstValidAttackMedianMs": 3200.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7848673163611228,
+        "meanEntropy": 0.49036759898011356
+      },
+      "validation": {
+        "wins": 86,
+        "petDamageDealt": 378,
+        "ownerDamageDealt": 7519,
+        "ownerDamage": 2741,
+        "petDamage": 2261,
+        "wasted": 133,
+        "decisions": 1701,
+        "invalidAttack": 2,
+        "invalidSpecial": 101,
+        "approaches": 205,
+        "attackAfterApproach": 11,
+        "movingMs": 74800,
+        "shapedReward": 0,
+        "reward": -43.62435897435898,
+        "pathFailures": 30,
+        "episodes": 144,
+        "actions": [
+          45,
+          508,
+          702,
+          110,
+          205,
+          25,
+          106
+        ],
+        "petDamageShare": 0.047866278333544385,
+        "validRate": 0.9218106995884774,
+        "validAttackRate": 0.9555555555555556,
+        "validSpecialRate": 0.08181818181818179,
+        "confusion": {
+          "0": {
+            "valid": 43,
+            "out-of-range": 2
+          },
+          "1": {
+            "valid": 508
+          },
+          "2": {
+            "valid": 702
+          },
+          "3": {
+            "blocked-line": 77,
+            "out-of-range": 4,
+            "valid": 9,
+            "cooldown": 20
+          },
+          "4": {
+            "valid": 189,
+            "blocked": 16
+          },
+          "5": {
+            "blocked": 14,
+            "valid": 11
+          },
+          "6": {
+            "valid": 106
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 43,
+            "out-of-range": 2
+          },
+          "1": {
+            "valid": 508
+          },
+          "2": {
+            "valid": 702
+          },
+          "3": {
+            "blocked-line": 77,
+            "cooldown": 29,
+            "out-of-range": 4,
+            "valid": 9
+          },
+          "4": {
+            "valid": 189,
+            "blocked": 16
+          },
+          "5": {
+            "blocked": 14,
+            "valid": 11
+          },
+          "6": {
+            "valid": 106
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1566,
+          "0->0": 133,
+          "0->1": 2
+        },
+        "maxInvalidStreak": 36,
+        "episodesWithValidAttack": 13,
+        "firstValidAttackMedianMs": 2400.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7361258314443543,
+        "meanEntropy": 0.501204930503679
+      },
+      "evaluation": {
+        "wins": 208,
+        "petDamageDealt": 836.5,
+        "ownerDamageDealt": 17002.5,
+        "ownerDamage": 10078,
+        "petDamage": 3632,
+        "wasted": 890,
+        "decisions": 5024,
+        "invalidAttack": 105,
+        "invalidSpecial": 238,
+        "approaches": 980,
+        "attackAfterApproach": 26,
+        "movingMs": 191000,
+        "shapedReward": 0,
+        "reward": -207.65196581196585,
+        "pathFailures": 547,
+        "episodes": 432,
+        "actions": [
+          198,
+          1346,
+          1838,
+          256,
+          980,
+          74,
+          332
+        ],
+        "petDamageShare": 0.04689164190817871,
+        "validRate": 0.8228503184713376,
+        "validAttackRate": 0.4696969696969697,
+        "validSpecialRate": 0.0703125,
+        "confusion": {
+          "0": {
+            "valid": 93,
+            "out-of-range": 45,
+            "blocked-line": 60
+          },
+          "1": {
+            "valid": 1346
+          },
+          "2": {
+            "valid": 1838
+          },
+          "3": {
+            "cooldown": 47,
+            "valid": 18,
+            "out-of-range": 20,
+            "blocked-line": 171
+          },
+          "4": {
+            "valid": 469,
+            "blocked": 511
+          },
+          "5": {
+            "valid": 38,
+            "blocked": 36
+          },
+          "6": {
+            "valid": 332
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 93,
+            "out-of-range": 45,
+            "blocked-line": 86
+          },
+          "1": {
+            "valid": 1346
+          },
+          "2": {
+            "valid": 1838
+          },
+          "3": {
+            "cooldown": 74,
+            "valid": 18,
+            "out-of-range": 20,
+            "blocked-line": 171
+          },
+          "4": {
+            "valid": 469,
+            "blocked": 511
+          },
+          "5": {
+            "valid": 38,
+            "blocked": 36
+          },
+          "6": {
+            "valid": 332
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 4131,
+          "0->0": 890,
+          "0->1": 3
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 27,
+        "firstValidAttackMedianMs": 4000.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7468705894550486,
+        "meanEntropy": 0.4852967534594254,
+        "winGain": -0.006944444444444443,
+        "pairedReplicaBootstrap95": [
+          -0.043981481481481476,
+          0.02777777777777778
+        ],
+        "familywise95": [
+          -0.053240740740740734,
+          0.03703703703703704
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 64,
+            "randomWins": 67,
+            "winGain": -0.02142857142857143,
+            "petDamageShare": 0.04593088071348941
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 104,
+            "randomWins": 107,
+            "winGain": -0.02027027027027027,
+            "petDamageShare": 0.04502753482345319
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 40,
+            "randomWins": 37,
+            "winGain": 0.020833333333333332,
+            "petDamageShare": 0.04922079925937355
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 46,
+            "randomWins": 43,
+            "winGain": 0.021897810218978103,
+            "petDamageShare": 0.04950495049504951
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 55,
+            "randomWins": 62,
+            "winGain": -0.0457516339869281,
+            "petDamageShare": 0.07898441165736927
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 107,
+            "randomWins": 106,
+            "winGain": 0.007042253521126761,
+            "petDamageShare": 0.029577016855719285
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 79,
+            "randomWins": 80,
+            "winGain": -0.004651162790697674,
+            "petDamageShare": 0.03916405010297444
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 129,
+            "randomWins": 131,
+            "winGain": -0.009216589861751152,
+            "petDamageShare": 0.05237559000407312
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 100,
+            "randomWins": 105,
+            "winGain": -0.02336448598130841,
+            "petDamageShare": 0.034657265516162966
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 108,
+            "randomWins": 106,
+            "winGain": 0.009174311926605505,
+            "petDamageShare": 0.05878451206367631
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 108,
+            "randomWins": 109,
+            "winGain": -0.004464285714285714,
+            "petDamageShare": 0.04412132669798994
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 100,
+            "randomWins": 102,
+            "winGain": -0.009615384615384616,
+            "petDamageShare": 0.049707519710628194
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 88,
+            "randomWins": 92,
+            "winGain": -0.019704433497536946,
+            "petDamageShare": 0.047595438770451165
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 120,
+            "randomWins": 119,
+            "winGain": 0.004366812227074236,
+            "petDamageShare": 0.04631051069491352
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 56,
+            "randomWins": 57,
+            "winGain": -0.004545454545454545,
+            "petDamageShare": 0.09474119227192891
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 152,
+            "randomWins": 154,
+            "winGain": -0.009433962264150943,
+            "petDamageShare": 0.029078041463133197
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 104,
+            "randomWins": 102,
+            "winGain": 0.010256410256410256,
+            "petDamageShare": 0.054726221383054045
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 104,
+            "randomWins": 109,
+            "winGain": -0.02109704641350211,
+            "petDamageShare": 0.03980245595301655
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 66,
+            "randomWins": 68,
+            "winGain": -0.014184397163120567,
+            "petDamageShare": 0.026405203378312786
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 71,
+            "randomWins": 73,
+            "winGain": -0.013605442176870748,
+            "petDamageShare": 0.03673247902491965
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 71,
+            "randomWins": 70,
+            "winGain": 0.006944444444444444,
+            "petDamageShare": 0.07172444676642908
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 118,
+            "randomWins": 120,
+            "winGain": -0.0091324200913242,
+            "petDamageShare": 0.048467737191929885
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 90,
+            "randomWins": 91,
+            "winGain": -0.004694835680751174,
+            "petDamageShare": 0.045456979172243936
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "win-gain-under-5pp",
+          "confidence-includes-no-gain",
+          "pet-share-not-above-controls"
+        ]
+      }
+    },
+    "expanded_affordance": {
+      "training": {
+        "wins": 405,
+        "petDamageDealt": 2070,
+        "ownerDamageDealt": 32952,
+        "ownerDamage": 20350,
+        "petDamage": 8555,
+        "wasted": 1829,
+        "decisions": 8443,
+        "invalidAttack": 350,
+        "invalidSpecial": 801,
+        "approaches": 697,
+        "attackAfterApproach": 14,
+        "movingMs": 392800,
+        "shapedReward": -412.58991452991455,
+        "reward": -412.58991452991455,
+        "pathFailures": 1012,
+        "episodes": 720,
+        "actions": [
+          459,
+          1716,
+          3243,
+          927,
+          697,
+          988,
+          413
+        ],
+        "petDamageShare": 0.059105704985437726,
+        "validRate": 0.7833708397489044,
+        "validAttackRate": 0.23747276688453156,
+        "validSpecialRate": 0.13592233009708743,
+        "confusion": {
+          "0": {
+            "out-of-range": 102,
+            "blocked-line": 248,
+            "valid": 109
+          },
+          "1": {
+            "valid": 1716
+          },
+          "2": {
+            "valid": 3243
+          },
+          "3": {
+            "out-of-range": 47,
+            "cooldown": 228,
+            "blocked-line": 526,
+            "valid": 126
+          },
+          "4": {
+            "valid": 624,
+            "blocked": 73
+          },
+          "5": {
+            "valid": 383,
+            "blocked": 552,
+            "owner-tether": 53
+          },
+          "6": {
+            "valid": 413
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 102,
+            "blocked-line": 275,
+            "valid": 109
+          },
+          "1": {
+            "valid": 1716
+          },
+          "2": {
+            "valid": 3243
+          },
+          "3": {
+            "out-of-range": 47,
+            "cooldown": 325,
+            "blocked-line": 526,
+            "valid": 126
+          },
+          "4": {
+            "valid": 624,
+            "blocked": 73
+          },
+          "5": {
+            "valid": 383,
+            "blocked": 552,
+            "owner-tether": 53
+          },
+          "6": {
+            "valid": 413
+          }
+        },
+        "observationExecutionConfusion": {
+          "0->0": 1829,
+          "1->1": 6593,
+          "0->1": 21
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 61,
+        "firstValidAttackMedianMs": 3200.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8366423822761507,
+        "meanEntropy": 0.4385120844876261
+      },
+      "validation": {
+        "wins": 83,
+        "petDamageDealt": 322,
+        "ownerDamageDealt": 7532,
+        "ownerDamage": 2832,
+        "petDamage": 2272,
+        "wasted": 496,
+        "decisions": 1640,
+        "invalidAttack": 93,
+        "invalidSpecial": 264,
+        "approaches": 197,
+        "attackAfterApproach": 0,
+        "movingMs": 90400,
+        "shapedReward": 0,
+        "reward": -89.9591452991453,
+        "pathFailures": 139,
+        "episodes": 144,
+        "actions": [
+          111,
+          267,
+          601,
+          284,
+          197,
+          168,
+          12
+        ],
+        "petDamageShare": 0.040998217468805706,
+        "validRate": 0.697560975609756,
+        "validAttackRate": 0.16216216216216217,
+        "validSpecialRate": 0.07042253521126762,
+        "confusion": {
+          "0": {
+            "valid": 18,
+            "out-of-range": 15,
+            "blocked-line": 78
+          },
+          "1": {
+            "valid": 267
+          },
+          "2": {
+            "valid": 601
+          },
+          "3": {
+            "valid": 20,
+            "cooldown": 64,
+            "blocked-line": 195,
+            "out-of-range": 5
+          },
+          "4": {
+            "valid": 197
+          },
+          "5": {
+            "valid": 29,
+            "blocked": 133,
+            "owner-tether": 6
+          },
+          "6": {
+            "valid": 12
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 18,
+            "out-of-range": 15,
+            "blocked-line": 78
+          },
+          "1": {
+            "valid": 267
+          },
+          "2": {
+            "valid": 601
+          },
+          "3": {
+            "valid": 20,
+            "cooldown": 84,
+            "blocked-line": 195,
+            "out-of-range": 5
+          },
+          "4": {
+            "valid": 197
+          },
+          "5": {
+            "valid": 29,
+            "blocked": 133,
+            "owner-tether": 6
+          },
+          "6": {
+            "valid": 12
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1139,
+          "0->0": 496,
+          "0->1": 5
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 7,
+        "firstValidAttackMedianMs": 2400.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8202036680041261,
+        "meanEntropy": 0.37271543512545624
+      },
+      "evaluation": {
+        "wins": 0,
+        "petDamageDealt": 0,
+        "ownerDamageDealt": 0,
+        "ownerDamage": 0,
+        "petDamage": 0,
+        "wasted": 0,
+        "decisions": 0,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 0,
+        "shapedReward": 0,
+        "reward": 0,
+        "pathFailures": 0,
+        "episodes": 0,
+        "actions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "petDamageShare": 0.0,
+        "validRate": 0.0,
+        "validAttackRate": null,
+        "validSpecialRate": null,
+        "confusion": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {},
+        "maxInvalidStreak": 0,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      }
+    },
+    "penalty": {
+      "training": {
+        "wins": 412,
+        "petDamageDealt": 2047,
+        "ownerDamageDealt": 33517,
+        "ownerDamage": 19661,
+        "petDamage": 9616,
+        "wasted": 1250,
+        "decisions": 8316,
+        "invalidAttack": 151,
+        "invalidSpecial": 451,
+        "approaches": 1400,
+        "attackAfterApproach": 75,
+        "movingMs": 475400,
+        "shapedReward": -638.2079487179487,
+        "reward": -343.84128205128206,
+        "pathFailures": 648,
+        "episodes": 720,
+        "actions": [
+          318,
+          2771,
+          2027,
+          542,
+          1400,
+          484,
+          774
+        ],
+        "petDamageShare": 0.057558204926329994,
+        "validRate": 0.8496873496873497,
+        "validAttackRate": 0.5251572327044025,
+        "validSpecialRate": 0.16789667896678961,
+        "confusion": {
+          "0": {
+            "out-of-range": 50,
+            "valid": 167,
+            "blocked-line": 101
+          },
+          "1": {
+            "valid": 2771
+          },
+          "2": {
+            "valid": 2027
+          },
+          "3": {
+            "cooldown": 130,
+            "out-of-range": 21,
+            "valid": 91,
+            "blocked-line": 300
+          },
+          "4": {
+            "valid": 1002,
+            "blocked": 398
+          },
+          "5": {
+            "blocked": 245,
+            "valid": 234,
+            "owner-tether": 5
+          },
+          "6": {
+            "valid": 774
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 50,
+            "valid": 167,
+            "blocked-line": 104
+          },
+          "1": {
+            "valid": 2771
+          },
+          "2": {
+            "valid": 2027
+          },
+          "3": {
+            "cooldown": 172,
+            "out-of-range": 21,
+            "valid": 91,
+            "blocked-line": 300
+          },
+          "4": {
+            "valid": 1002,
+            "blocked": 398
+          },
+          "5": {
+            "blocked": 245,
+            "valid": 234,
+            "owner-tether": 5
+          },
+          "6": {
+            "valid": 774
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 7053,
+          "0->0": 1250,
+          "0->1": 13
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 70,
+        "firstValidAttackMedianMs": 2800.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8019979707827303,
+        "meanEntropy": 0.4443157033805623
+      },
+      "validation": {
+        "wins": 87,
+        "petDamageDealt": 101,
+        "ownerDamageDealt": 7786,
+        "ownerDamage": 2960,
+        "petDamage": 2505,
+        "wasted": 285,
+        "decisions": 1723,
+        "invalidAttack": 0,
+        "invalidSpecial": 157,
+        "approaches": 260,
+        "attackAfterApproach": 0,
+        "movingMs": 106000,
+        "shapedReward": 0,
+        "reward": -74.24769230769232,
+        "pathFailures": 128,
+        "episodes": 144,
+        "actions": [
+          0,
+          717,
+          324,
+          166,
+          260,
+          147,
+          109
+        ],
+        "petDamageShare": 0.012805883098770128,
+        "validRate": 0.8345908299477656,
+        "validAttackRate": null,
+        "validSpecialRate": 0.054216867469879526,
+        "confusion": {
+          "0": {},
+          "1": {
+            "valid": 717
+          },
+          "2": {
+            "valid": 324
+          },
+          "3": {
+            "cooldown": 31,
+            "out-of-range": 6,
+            "valid": 9,
+            "blocked-line": 120
+          },
+          "4": {
+            "valid": 248,
+            "blocked": 12
+          },
+          "5": {
+            "valid": 31,
+            "blocked": 114,
+            "owner-tether": 2
+          },
+          "6": {
+            "valid": 109
+          }
+        },
+        "allReasons": {
+          "0": {},
+          "1": {
+            "valid": 717
+          },
+          "2": {
+            "valid": 324
+          },
+          "3": {
+            "cooldown": 47,
+            "out-of-range": 6,
+            "valid": 9,
+            "blocked-line": 120
+          },
+          "4": {
+            "valid": 248,
+            "blocked": 12
+          },
+          "5": {
+            "valid": 31,
+            "blocked": 114,
+            "owner-tether": 2
+          },
+          "6": {
+            "valid": 109
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1436,
+          "0->0": 285,
+          "0->1": 2
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7861872343837224,
+        "meanEntropy": 0.45881788791660216
+      },
+      "evaluation": {
+        "wins": 211,
+        "petDamageDealt": 332.75,
+        "ownerDamageDealt": 17767.5,
+        "ownerDamage": 10051,
+        "petDamage": 3873,
+        "wasted": 1163,
+        "decisions": 5082,
+        "invalidAttack": 0,
+        "invalidSpecial": 405,
+        "approaches": 1233,
+        "attackAfterApproach": 0,
+        "movingMs": 271400,
+        "shapedReward": 0,
+        "reward": -234.05196581196586,
+        "pathFailures": 758,
+        "episodes": 432,
+        "actions": [
+          0,
+          1908,
+          939,
+          435,
+          1233,
+          234,
+          333
+        ],
+        "petDamageShare": 0.01838372398171296,
+        "validRate": 0.7711530893349076,
+        "validAttackRate": null,
+        "validSpecialRate": 0.06896551724137934,
+        "confusion": {
+          "0": {},
+          "1": {
+            "valid": 1908
+          },
+          "2": {
+            "valid": 939
+          },
+          "3": {
+            "valid": 30,
+            "cooldown": 77,
+            "blocked-line": 313,
+            "out-of-range": 15
+          },
+          "4": {
+            "blocked": 597,
+            "valid": 636
+          },
+          "5": {
+            "valid": 73,
+            "blocked": 156,
+            "owner-tether": 5
+          },
+          "6": {
+            "valid": 333
+          }
+        },
+        "allReasons": {
+          "0": {},
+          "1": {
+            "valid": 1908
+          },
+          "2": {
+            "valid": 939
+          },
+          "3": {
+            "valid": 30,
+            "cooldown": 108,
+            "blocked-line": 313,
+            "out-of-range": 15
+          },
+          "4": {
+            "blocked": 597,
+            "valid": 636
+          },
+          "5": {
+            "valid": 73,
+            "blocked": 156,
+            "owner-tether": 5
+          },
+          "6": {
+            "valid": 333
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 3910,
+          "0->0": 1163,
+          "0->1": 9
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7894342285674536,
+        "meanEntropy": 0.44659021978461416,
+        "winGain": 4.625929269271485e-18,
+        "pairedReplicaBootstrap95": [
+          -0.03703703703703703,
+          0.03703703703703704
+        ],
+        "familywise95": [
+          -0.04629629629629629,
+          0.04861111111111111
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 67,
+            "randomWins": 67,
+            "winGain": 0.0,
+            "petDamageShare": 0.010311936065996391
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 102,
+            "randomWins": 107,
+            "winGain": -0.033783783783783786,
+            "petDamageShare": 0.019183989385227775
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 42,
+            "randomWins": 37,
+            "winGain": 0.034722222222222224,
+            "petDamageShare": 0.025920471281296025
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 44,
+            "randomWins": 43,
+            "winGain": 0.0072992700729927005,
+            "petDamageShare": 0.032303370786516857
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 55,
+            "randomWins": 62,
+            "winGain": -0.0457516339869281,
+            "petDamageShare": 0.027716068972812865
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 112,
+            "randomWins": 106,
+            "winGain": 0.04225352112676056,
+            "petDamageShare": 0.008839638262641702
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 84,
+            "randomWins": 80,
+            "winGain": 0.018604651162790697,
+            "petDamageShare": 0.022893481717011128
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 127,
+            "randomWins": 131,
+            "winGain": -0.018433179723502304,
+            "petDamageShare": 0.014920270567263316
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 102,
+            "randomWins": 105,
+            "winGain": -0.014018691588785047,
+            "petDamageShare": 0.017903682719546742
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 109,
+            "randomWins": 106,
+            "winGain": 0.013761467889908258,
+            "petDamageShare": 0.018840462521225843
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 108,
+            "randomWins": 109,
+            "winGain": -0.004464285714285714,
+            "petDamageShare": 0.02824456729979747
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 103,
+            "randomWins": 102,
+            "winGain": 0.004807692307692308,
+            "petDamageShare": 0.008337283551292419
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 94,
+            "randomWins": 92,
+            "winGain": 0.009852216748768473,
+            "petDamageShare": 0.016038208673604764
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 117,
+            "randomWins": 119,
+            "winGain": -0.008733624454148471,
+            "petDamageShare": 0.02045112000415779
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 54,
+            "randomWins": 57,
+            "winGain": -0.013636363636363636,
+            "petDamageShare": 0.015497382198952879
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 157,
+            "randomWins": 154,
+            "winGain": 0.014150943396226415,
+            "petDamageShare": 0.019418022175944166
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 107,
+            "randomWins": 102,
+            "winGain": 0.02564102564102564,
+            "petDamageShare": 0.013454075032341526
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 104,
+            "randomWins": 109,
+            "winGain": -0.02109704641350211,
+            "petDamageShare": 0.022942364951084645
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 68,
+            "randomWins": 68,
+            "winGain": 0.0,
+            "petDamageShare": 0.014794007490636705
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 71,
+            "randomWins": 73,
+            "winGain": -0.013605442176870748,
+            "petDamageShare": 0.022501654533421574
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 72,
+            "randomWins": 70,
+            "winGain": 0.013888888888888888,
+            "petDamageShare": 0.017532104969290897
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 122,
+            "randomWins": 120,
+            "winGain": 0.0091324200913242,
+            "petDamageShare": 0.026865417859268284
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 89,
+            "randomWins": 91,
+            "winGain": -0.009389671361502348,
+            "petDamageShare": 0.01031955596270949
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "win-gain-under-5pp",
+          "confidence-includes-no-gain",
+          "pet-share-not-above-controls",
+          "moon-forest-not-qualified-by-transfer",
+          "forest-moon-not-qualified-by-transfer"
+        ]
+      }
+    },
+    "persistent": {
+      "training": {
+        "wins": 408,
+        "petDamageDealt": 2124,
+        "ownerDamageDealt": 33358,
+        "ownerDamage": 20017,
+        "petDamage": 9018,
+        "wasted": 583,
+        "decisions": 8213,
+        "invalidAttack": 142,
+        "invalidSpecial": 296,
+        "approaches": 1124,
+        "attackAfterApproach": 94,
+        "movingMs": 89000,
+        "shapedReward": -303.73529914529917,
+        "reward": -303.73529914529917,
+        "pathFailures": 145,
+        "episodes": 720,
+        "actions": [
+          342,
+          2292,
+          2769,
+          367,
+          1124,
+          307,
+          1012
+        ],
+        "petDamageShare": 0.05986133814328392,
+        "validRate": 0.9290149762571533,
+        "validAttackRate": 0.5847953216374269,
+        "validSpecialRate": 0.19346049046321523,
+        "confusion": {
+          "0": {
+            "out-of-range": 77,
+            "valid": 200,
+            "blocked-line": 65
+          },
+          "1": {
+            "valid": 2292
+          },
+          "2": {
+            "valid": 2769
+          },
+          "3": {
+            "cooldown": 101,
+            "valid": 71,
+            "out-of-range": 45,
+            "blocked-line": 150
+          },
+          "4": {
+            "valid": 1124
+          },
+          "5": {
+            "blocked": 144,
+            "valid": 162,
+            "owner-tether": 1
+          },
+          "6": {
+            "valid": 1012
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 77,
+            "valid": 200,
+            "blocked-line": 68
+          },
+          "1": {
+            "valid": 2292
+          },
+          "2": {
+            "valid": 2769
+          },
+          "3": {
+            "cooldown": 138,
+            "valid": 71,
+            "out-of-range": 45,
+            "blocked-line": 150
+          },
+          "4": {
+            "valid": 1124
+          },
+          "5": {
+            "blocked": 144,
+            "valid": 162,
+            "owner-tether": 1
+          },
+          "6": {
+            "valid": 1012
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 7623,
+          "0->0": 583,
+          "0->1": 7
+        },
+        "maxInvalidStreak": 32,
+        "episodesWithValidAttack": 79,
+        "firstValidAttackMedianMs": 3400.0,
+        "motorStops": {
+          "in-range": 121,
+          "target-changed": 65,
+          "path-failure": 8
+        },
+        "meanMaxPolicy": 0.8125348904815082,
+        "meanEntropy": 0.4639902839767472
+      },
+      "validation": {
+        "wins": 87,
+        "petDamageDealt": 282,
+        "ownerDamageDealt": 7528,
+        "ownerDamage": 2492,
+        "petDamage": 2444,
+        "wasted": 48,
+        "decisions": 1774,
+        "invalidAttack": 45,
+        "invalidSpecial": 3,
+        "approaches": 107,
+        "attackAfterApproach": 0,
+        "movingMs": 1600,
+        "shapedReward": 0,
+        "reward": -32.46008547008547,
+        "pathFailures": 0,
+        "episodes": 144,
+        "actions": [
+          86,
+          847,
+          624,
+          3,
+          107,
+          0,
+          107
+        ],
+        "petDamageShare": 0.03610755441741357,
+        "validRate": 0.9729425028184893,
+        "validAttackRate": 0.4767441860465116,
+        "validSpecialRate": 0.0,
+        "confusion": {
+          "0": {
+            "blocked-line": 37,
+            "valid": 41,
+            "out-of-range": 8
+          },
+          "1": {
+            "valid": 847
+          },
+          "2": {
+            "valid": 624
+          },
+          "3": {
+            "cooldown": 1,
+            "out-of-range": 2
+          },
+          "4": {
+            "valid": 107
+          },
+          "5": {},
+          "6": {
+            "valid": 107
+          }
+        },
+        "allReasons": {
+          "0": {
+            "blocked-line": 37,
+            "valid": 41,
+            "out-of-range": 8
+          },
+          "1": {
+            "valid": 847
+          },
+          "2": {
+            "valid": 624
+          },
+          "3": {
+            "cooldown": 2,
+            "out-of-range": 2
+          },
+          "4": {
+            "valid": 107
+          },
+          "5": {},
+          "6": {
+            "valid": 107
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1726,
+          "0->0": 48
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 11,
+        "firstValidAttackMedianMs": 1600.0,
+        "motorStops": {
+          "target-changed": 4,
+          "in-range": 6,
+          "path-failure": 1
+        },
+        "meanMaxPolicy": 0.826853968048019,
+        "meanEntropy": 0.40862193188955775
+      },
+      "evaluation": {
+        "wins": 215,
+        "petDamageDealt": 635.75,
+        "ownerDamageDealt": 17643.5,
+        "ownerDamage": 9315,
+        "petDamage": 3667,
+        "wasted": 295,
+        "decisions": 5250,
+        "invalidAttack": 292,
+        "invalidSpecial": 3,
+        "approaches": 444,
+        "attackAfterApproach": 4,
+        "movingMs": 9800,
+        "shapedReward": 0,
+        "reward": -111.5486324786325,
+        "pathFailures": 0,
+        "episodes": 432,
+        "actions": [
+          388,
+          2188,
+          1900,
+          3,
+          444,
+          0,
+          327
+        ],
+        "petDamageShare": 0.034779873353666044,
+        "validRate": 0.9438095238095238,
+        "validAttackRate": 0.24742268041237114,
+        "validSpecialRate": 0.0,
+        "confusion": {
+          "0": {
+            "valid": 96,
+            "out-of-range": 119,
+            "blocked-line": 173
+          },
+          "1": {
+            "valid": 2188
+          },
+          "2": {
+            "valid": 1900
+          },
+          "3": {
+            "cooldown": 1,
+            "out-of-range": 2
+          },
+          "4": {
+            "valid": 444
+          },
+          "5": {},
+          "6": {
+            "valid": 327
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 96,
+            "out-of-range": 119,
+            "blocked-line": 255
+          },
+          "1": {
+            "valid": 2188
+          },
+          "2": {
+            "valid": 1900
+          },
+          "3": {
+            "cooldown": 3,
+            "out-of-range": 2
+          },
+          "4": {
+            "valid": 444
+          },
+          "5": {},
+          "6": {
+            "valid": 327
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 4955,
+          "0->0": 295
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 24,
+        "firstValidAttackMedianMs": 2100.0,
+        "motorStops": {
+          "target-changed": 25,
+          "in-range": 26,
+          "path-failure": 9
+        },
+        "meanMaxPolicy": 0.8367984092123619,
+        "meanEntropy": 0.38923199826928734,
+        "winGain": 0.009259259259259264,
+        "pairedReplicaBootstrap95": [
+          -0.030092592592592577,
+          0.04398148148148148
+        ],
+        "familywise95": [
+          -0.039351851851851846,
+          0.05092592592592594
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 69,
+            "randomWins": 67,
+            "winGain": 0.014285714285714285,
+            "petDamageShare": 0.02825189137823909
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 102,
+            "randomWins": 107,
+            "winGain": -0.033783783783783786,
+            "petDamageShare": 0.022288755821689946
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 44,
+            "randomWins": 37,
+            "winGain": 0.04861111111111111,
+            "petDamageShare": 0.04935064935064935
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 44,
+            "randomWins": 43,
+            "winGain": 0.0072992700729927005,
+            "petDamageShare": 0.02989913544668588
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 57,
+            "randomWins": 62,
+            "winGain": -0.032679738562091505,
+            "petDamageShare": 0.05954356846473029
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 114,
+            "randomWins": 106,
+            "winGain": 0.056338028169014086,
+            "petDamageShare": 0.024526365843281522
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 86,
+            "randomWins": 80,
+            "winGain": 0.027906976744186046,
+            "petDamageShare": 0.031138956424163082
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 129,
+            "randomWins": 131,
+            "winGain": -0.009216589861751152,
+            "petDamageShare": 0.037626416473741923
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 102,
+            "randomWins": 105,
+            "winGain": -0.014018691588785047,
+            "petDamageShare": 0.017852098751482966
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 113,
+            "randomWins": 106,
+            "winGain": 0.03211009174311927,
+            "petDamageShare": 0.05066949489592999
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 110,
+            "randomWins": 109,
+            "winGain": 0.004464285714285714,
+            "petDamageShare": 0.028718200945432686
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 105,
+            "randomWins": 102,
+            "winGain": 0.014423076923076924,
+            "petDamageShare": 0.04085432639649506
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 99,
+            "randomWins": 92,
+            "winGain": 0.034482758620689655,
+            "petDamageShare": 0.040872407509184
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 116,
+            "randomWins": 119,
+            "winGain": -0.013100436681222707,
+            "petDamageShare": 0.029315622892128884
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 58,
+            "randomWins": 57,
+            "winGain": 0.004545454545454545,
+            "petDamageShare": 0.03130934660986501
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 157,
+            "randomWins": 154,
+            "winGain": 0.014150943396226415,
+            "petDamageShare": 0.036040571279412306
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 111,
+            "randomWins": 102,
+            "winGain": 0.046153846153846156,
+            "petDamageShare": 0.03313398146311045
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 104,
+            "randomWins": 109,
+            "winGain": -0.02109704641350211,
+            "petDamageShare": 0.03631462099587694
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 69,
+            "randomWins": 68,
+            "winGain": 0.0070921985815602835,
+            "petDamageShare": 0.022020239880059966
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 72,
+            "randomWins": 73,
+            "winGain": -0.006802721088435374,
+            "petDamageShare": 0.03456870837249213
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 74,
+            "randomWins": 70,
+            "winGain": 0.027777777777777776,
+            "petDamageShare": 0.04494505494505494
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 123,
+            "randomWins": 120,
+            "winGain": 0.0136986301369863,
+            "petDamageShare": 0.030133928571428572
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 92,
+            "randomWins": 91,
+            "winGain": 0.004694835680751174,
+            "petDamageShare": 0.039032824247504774
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "win-gain-under-5pp",
+          "confidence-includes-no-gain",
+          "pet-share-not-above-controls",
+          "moon-forest-not-qualified-by-transfer",
+          "forest-moon-not-qualified-by-transfer"
+        ]
+      }
+    },
+    "mother": {
+      "training": {
+        "wins": 549,
+        "petDamageDealt": 24033,
+        "ownerDamageDealt": 23389,
+        "ownerDamage": 16310,
+        "petDamage": 9808,
+        "wasted": 1015,
+        "decisions": 4737,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 1376,
+        "attackAfterApproach": 356,
+        "movingMs": 144200,
+        "shapedReward": 0,
+        "reward": 166.84923076923076,
+        "pathFailures": 1588,
+        "episodes": 720,
+        "actions": [
+          2492,
+          91,
+          104,
+          674,
+          1376,
+          0,
+          0
+        ],
+        "petDamageShare": 0.506790097423137,
+        "validRate": 0.7857293645767364,
+        "validAttackRate": 1.0,
+        "validSpecialRate": 1.0,
+        "confusion": {
+          "0": {
+            "valid": 2492
+          },
+          "1": {
+            "valid": 91
+          },
+          "2": {
+            "valid": 104
+          },
+          "3": {
+            "valid": 674
+          },
+          "4": {
+            "valid": 361,
+            "blocked": 1015
+          },
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 2492
+          },
+          "1": {
+            "valid": 91
+          },
+          "2": {
+            "valid": 104
+          },
+          "3": {
+            "valid": 674
+          },
+          "4": {
+            "valid": 361,
+            "blocked": 1015
+          },
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 3722,
+          "0->0": 1015
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 663,
+        "firstValidAttackMedianMs": 1800.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      },
+      "validation": {
+        "wins": 116,
+        "petDamageDealt": 4879,
+        "ownerDamageDealt": 5396,
+        "ownerDamage": 2119,
+        "petDamage": 2152,
+        "wasted": 171,
+        "decisions": 931,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 238,
+        "attackAfterApproach": 67,
+        "movingMs": 26800,
+        "shapedReward": 0,
+        "reward": 51.808547008547,
+        "pathFailures": 171,
+        "episodes": 144,
+        "actions": [
+          507,
+          21,
+          27,
+          138,
+          238,
+          0,
+          0
+        ],
+        "petDamageShare": 0.4748418491484185,
+        "validRate": 0.8163265306122449,
+        "validAttackRate": 1.0,
+        "validSpecialRate": 1.0,
+        "confusion": {
+          "0": {
+            "valid": 507
+          },
+          "1": {
+            "valid": 21
+          },
+          "2": {
+            "valid": 27
+          },
+          "3": {
+            "valid": 138
+          },
+          "4": {
+            "blocked": 171,
+            "valid": 67
+          },
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 507
+          },
+          "1": {
+            "valid": 21
+          },
+          "2": {
+            "valid": 27
+          },
+          "3": {
+            "valid": 138
+          },
+          "4": {
+            "blocked": 171,
+            "valid": 67
+          },
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 760,
+          "0->0": 171
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 136,
+        "firstValidAttackMedianMs": 1800.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      },
+      "evaluation": {
+        "wins": 286,
+        "petDamageDealt": 12036.25,
+        "ownerDamageDealt": 13091.5,
+        "ownerDamage": 8539,
+        "petDamage": 4532,
+        "wasted": 1333,
+        "decisions": 3340,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 1567,
+        "attackAfterApproach": 208,
+        "movingMs": 93500,
+        "shapedReward": 0,
+        "reward": 3.722264957264911,
+        "pathFailures": 1927,
+        "episodes": 432,
+        "actions": [
+          1209,
+          124,
+          75,
+          365,
+          1567,
+          0,
+          0
+        ],
+        "petDamageShare": 0.4790022982559123,
+        "validRate": 0.6008982035928143,
+        "validAttackRate": 1.0,
+        "validSpecialRate": 1.0,
+        "confusion": {
+          "0": {
+            "valid": 1209
+          },
+          "1": {
+            "valid": 124
+          },
+          "2": {
+            "valid": 75
+          },
+          "3": {
+            "valid": 365
+          },
+          "4": {
+            "valid": 234,
+            "blocked": 1333
+          },
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 1209
+          },
+          "1": {
+            "valid": 124
+          },
+          "2": {
+            "valid": 75
+          },
+          "3": {
+            "valid": 365
+          },
+          "4": {
+            "valid": 234,
+            "blocked": 1333
+          },
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 2007,
+          "0->0": 1333
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 378,
+        "firstValidAttackMedianMs": 2400.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null,
+        "winGain": 0.17361111111111108,
+        "pairedReplicaBootstrap95": [
+          0.1412037037037037,
+          0.2106481481481481
+        ],
+        "familywise95": [
+          0.13194444444444442,
+          0.2199074074074074
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 102,
+            "randomWins": 67,
+            "winGain": 0.25,
+            "petDamageShare": 0.4748706004140787
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 129,
+            "randomWins": 107,
+            "winGain": 0.14864864864864866,
+            "petDamageShare": 0.529948977404279
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 55,
+            "randomWins": 37,
+            "winGain": 0.125,
+            "petDamageShare": 0.4523191864688181
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 51,
+            "randomWins": 43,
+            "winGain": 0.058394160583941604,
+            "petDamageShare": 0.5331213817974756
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 103,
+            "randomWins": 62,
+            "winGain": 0.2679738562091503,
+            "petDamageShare": 0.6436987489854747
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 132,
+            "randomWins": 106,
+            "winGain": 0.18309859154929578,
+            "petDamageShare": 0.3182629387269482
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 126,
+            "randomWins": 80,
+            "winGain": 0.21395348837209302,
+            "petDamageShare": 0.4544634210757989
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 160,
+            "randomWins": 131,
+            "winGain": 0.1336405529953917,
+            "petDamageShare": 0.4992464820699047
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 138,
+            "randomWins": 105,
+            "winGain": 0.1542056074766355,
+            "petDamageShare": 0.44869744539371237
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 148,
+            "randomWins": 106,
+            "winGain": 0.1926605504587156,
+            "petDamageShare": 0.5061805280341203
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 145,
+            "randomWins": 109,
+            "winGain": 0.16071428571428573,
+            "petDamageShare": 0.4969760817823559
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 141,
+            "randomWins": 102,
+            "winGain": 0.1875,
+            "petDamageShare": 0.46029683471057603
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 135,
+            "randomWins": 92,
+            "winGain": 0.21182266009852216,
+            "petDamageShare": 0.47776792892333697
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 151,
+            "randomWins": 119,
+            "winGain": 0.13973799126637554,
+            "petDamageShare": 0.48015384615384615
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 110,
+            "randomWins": 57,
+            "winGain": 0.2409090909090909,
+            "petDamageShare": 0.6558948343983221
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 176,
+            "randomWins": 154,
+            "winGain": 0.10377358490566038,
+            "petDamageShare": 0.357122452066074
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 137,
+            "randomWins": 102,
+            "winGain": 0.1794871794871795,
+            "petDamageShare": 0.4533246977547496
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 149,
+            "randomWins": 109,
+            "winGain": 0.16877637130801687,
+            "petDamageShare": 0.5009503423077633
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 93,
+            "randomWins": 68,
+            "winGain": 0.1773049645390071,
+            "petDamageShare": 0.4864453933747412
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 95,
+            "randomWins": 73,
+            "winGain": 0.14965986394557823,
+            "petDamageShare": 0.47128120795335626
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 98,
+            "randomWins": 70,
+            "winGain": 0.19444444444444445,
+            "petDamageShare": 0.47978093710239533
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 159,
+            "randomWins": 120,
+            "winGain": 0.1780821917808219,
+            "petDamageShare": 0.4951942458254652
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 127,
+            "randomWins": 91,
+            "winGain": 0.16901408450704225,
+            "petDamageShare": 0.4647058823529412
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "control",
+          "validity-not-above-controls"
+        ]
+      }
+    },
+    "curriculum": {
+      "training": {
+        "wins": 516,
+        "petDamageDealt": 4723,
+        "ownerDamageDealt": 38725,
+        "ownerDamage": 16711,
+        "petDamage": 9326,
+        "wasted": 747,
+        "decisions": 6572,
+        "invalidAttack": 283,
+        "invalidSpecial": 389,
+        "approaches": 424,
+        "attackAfterApproach": 35,
+        "movingMs": 280400,
+        "shapedReward": -145.38897435897437,
+        "reward": -145.38897435897437,
+        "pathFailures": 75,
+        "episodes": 720,
+        "actions": [
+          690,
+          2912,
+          1467,
+          573,
+          424,
+          374,
+          132
+        ],
+        "petDamageShare": 0.10870465844227582,
+        "validRate": 0.8863359707851491,
+        "validAttackRate": 0.5898550724637681,
+        "validSpecialRate": 0.3211169284467714,
+        "confusion": {
+          "0": {
+            "valid": 407,
+            "out-of-range": 143,
+            "blocked-line": 140
+          },
+          "1": {
+            "valid": 2912
+          },
+          "2": {
+            "valid": 1467
+          },
+          "3": {
+            "valid": 184,
+            "cooldown": 155,
+            "out-of-range": 74,
+            "blocked-line": 160
+          },
+          "4": {
+            "valid": 395,
+            "blocked": 29
+          },
+          "5": {
+            "valid": 328,
+            "blocked": 37,
+            "owner-tether": 9
+          },
+          "6": {
+            "valid": 132
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 407,
+            "out-of-range": 143,
+            "blocked-line": 165
+          },
+          "1": {
+            "valid": 2912
+          },
+          "2": {
+            "valid": 1467
+          },
+          "3": {
+            "valid": 184,
+            "cooldown": 194,
+            "out-of-range": 74,
+            "blocked-line": 160
+          },
+          "4": {
+            "valid": 395,
+            "blocked": 29
+          },
+          "5": {
+            "valid": 328,
+            "blocked": 37,
+            "owner-tether": 15
+          },
+          "6": {
+            "valid": 132
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 5811,
+          "0->0": 747,
+          "0->1": 14
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 178,
+        "firstValidAttackMedianMs": 2400.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7916757412646804,
+        "meanEntropy": 0.540690409883583
+      },
+      "validation": {
+        "wins": 93,
+        "petDamageDealt": 279,
+        "ownerDamageDealt": 7814,
+        "ownerDamage": 2356,
+        "petDamage": 2494,
+        "wasted": 320,
+        "decisions": 1732,
+        "invalidAttack": 157,
+        "invalidSpecial": 150,
+        "approaches": 138,
+        "attackAfterApproach": 0,
+        "movingMs": 49200,
+        "shapedReward": 0,
+        "reward": -44.3380341880342,
+        "pathFailures": 13,
+        "episodes": 144,
+        "actions": [
+          182,
+          870,
+          381,
+          160,
+          138,
+          1,
+          0
+        ],
+        "petDamageShare": 0.03447423699493389,
+        "validRate": 0.815242494226328,
+        "validAttackRate": 0.13736263736263732,
+        "validSpecialRate": 0.0625,
+        "confusion": {
+          "0": {
+            "valid": 25,
+            "out-of-range": 14,
+            "blocked-line": 143
+          },
+          "1": {
+            "valid": 870
+          },
+          "2": {
+            "valid": 381
+          },
+          "3": {
+            "valid": 10,
+            "out-of-range": 4,
+            "cooldown": 37,
+            "blocked-line": 109
+          },
+          "4": {
+            "valid": 125,
+            "blocked": 13
+          },
+          "5": {
+            "valid": 1
+          },
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 25,
+            "out-of-range": 14,
+            "blocked-line": 143
+          },
+          "1": {
+            "valid": 870
+          },
+          "2": {
+            "valid": 381
+          },
+          "3": {
+            "valid": 10,
+            "out-of-range": 4,
+            "cooldown": 46,
+            "blocked-line": 109
+          },
+          "4": {
+            "valid": 125,
+            "blocked": 13
+          },
+          "5": {
+            "valid": 1
+          },
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1409,
+          "0->0": 320,
+          "0->1": 3
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 8,
+        "firstValidAttackMedianMs": 1700.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8819717221243081,
+        "meanEntropy": 0.31134749768749065
+      },
+      "evaluation": {
+        "wins": 219,
+        "petDamageDealt": 781.25,
+        "ownerDamageDealt": 17893.25,
+        "ownerDamage": 9250,
+        "petDamage": 3891,
+        "wasted": 544,
+        "decisions": 5267,
+        "invalidAttack": 224,
+        "invalidSpecial": 261,
+        "approaches": 307,
+        "attackAfterApproach": 0,
+        "movingMs": 93600,
+        "shapedReward": 0,
+        "reward": -117.30918803418805,
+        "pathFailures": 59,
+        "episodes": 432,
+        "actions": [
+          301,
+          3225,
+          1147,
+          286,
+          307,
+          0,
+          1
+        ],
+        "petDamageShare": 0.04183512276098423,
+        "validRate": 0.8967153977596355,
+        "validAttackRate": 0.2558139534883721,
+        "validSpecialRate": 0.0874125874125874,
+        "confusion": {
+          "0": {
+            "out-of-range": 91,
+            "blocked-line": 133,
+            "valid": 77
+          },
+          "1": {
+            "valid": 3225
+          },
+          "2": {
+            "valid": 1147
+          },
+          "3": {
+            "out-of-range": 20,
+            "valid": 25,
+            "blocked-line": 175,
+            "cooldown": 66
+          },
+          "4": {
+            "valid": 248,
+            "blocked": 59
+          },
+          "5": {},
+          "6": {
+            "valid": 1
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 91,
+            "blocked-line": 196,
+            "valid": 77
+          },
+          "1": {
+            "valid": 3225
+          },
+          "2": {
+            "valid": 1147
+          },
+          "3": {
+            "out-of-range": 20,
+            "valid": 25,
+            "blocked-line": 175,
+            "cooldown": 92
+          },
+          "4": {
+            "valid": 248,
+            "blocked": 59
+          },
+          "5": {},
+          "6": {
+            "valid": 1
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 4717,
+          "0->0": 544,
+          "0->1": 6
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 22,
+        "firstValidAttackMedianMs": 800.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8578125801206049,
+        "meanEntropy": 0.3414937906413504,
+        "winGain": 0.018518518518518514,
+        "pairedReplicaBootstrap95": [
+          -0.0138888888888889,
+          0.05092592592592593
+        ],
+        "familywise95": [
+          -0.023148148148148164,
+          0.060185185185185196
+        ],
+        "classes": {
+          "type=boar": {
+            "episodes": 140,
+            "wins": 72,
+            "randomWins": 67,
+            "winGain": 0.03571428571428571,
+            "petDamageShare": 0.0366279484073256
+          },
+          "type=slime": {
+            "episodes": 148,
+            "wins": 102,
+            "randomWins": 107,
+            "winGain": -0.033783783783783786,
+            "petDamageShare": 0.05025431225121627
+          },
+          "type=thornling": {
+            "episodes": 144,
+            "wins": 45,
+            "randomWins": 37,
+            "winGain": 0.05555555555555555,
+            "petDamageShare": 0.041619955156950675
+          },
+          "distance=140": {
+            "episodes": 137,
+            "wins": 44,
+            "randomWins": 43,
+            "winGain": 0.0072992700729927005,
+            "petDamageShare": 0.05676733780760626
+          },
+          "distance=260": {
+            "episodes": 153,
+            "wins": 61,
+            "randomWins": 62,
+            "winGain": -0.006535947712418301,
+            "petDamageShare": 0.03921176352905872
+          },
+          "distance=40": {
+            "episodes": 142,
+            "wins": 114,
+            "randomWins": 106,
+            "winGain": 0.056338028169014086,
+            "petDamageShare": 0.037846534653465345
+          },
+          "ownerHp=0.23": {
+            "episodes": 215,
+            "wins": 90,
+            "randomWins": 80,
+            "winGain": 0.046511627906976744,
+            "petDamageShare": 0.04294716721918586
+          },
+          "ownerHp=0.85": {
+            "episodes": 217,
+            "wins": 129,
+            "randomWins": 131,
+            "winGain": -0.009216589861751152,
+            "petDamageShare": 0.04093169962392333
+          },
+          "petHp=0.23": {
+            "episodes": 214,
+            "wins": 103,
+            "randomWins": 105,
+            "winGain": -0.009345794392523364,
+            "petDamageShare": 0.043189277144984696
+          },
+          "petHp=0.85": {
+            "episodes": 218,
+            "wins": 116,
+            "randomWins": 106,
+            "winGain": 0.045871559633027525,
+            "petDamageShare": 0.0405577668513749
+          },
+          "cooldown=0": {
+            "episodes": 224,
+            "wins": 114,
+            "randomWins": 109,
+            "winGain": 0.022321428571428572,
+            "petDamageShare": 0.04322907296512375
+          },
+          "cooldown=5000": {
+            "episodes": 208,
+            "wins": 105,
+            "randomWins": 102,
+            "winGain": 0.014423076923076924,
+            "petDamageShare": 0.04031965128950236
+          },
+          "pressure=owner": {
+            "episodes": 203,
+            "wins": 103,
+            "randomWins": 92,
+            "winGain": 0.054187192118226604,
+            "petDamageShare": 0.046582570698326324
+          },
+          "pressure=pet": {
+            "episodes": 229,
+            "wins": 116,
+            "randomWins": 119,
+            "winGain": -0.013100436681222707,
+            "petDamageShare": 0.037326094333220226
+          },
+          "geometry=obstacle": {
+            "episodes": 220,
+            "wins": 56,
+            "randomWins": 57,
+            "winGain": -0.004545454545454545,
+            "petDamageShare": 0.03817452662571704
+          },
+          "geometry=open": {
+            "episodes": 212,
+            "wins": 163,
+            "randomWins": 154,
+            "winGain": 0.04245283018867924,
+            "petDamageShare": 0.043146239022527684
+          },
+          "species=forest": {
+            "episodes": 195,
+            "wins": 106,
+            "randomWins": 102,
+            "winGain": 0.020512820512820513,
+            "petDamageShare": 0.050378055213645155
+          },
+          "species=moon": {
+            "episodes": 237,
+            "wins": 113,
+            "randomWins": 109,
+            "winGain": 0.016877637130801686,
+            "petDamageShare": 0.03465102523659306
+          },
+          "latency=0": {
+            "episodes": 141,
+            "wins": 70,
+            "randomWins": 68,
+            "winGain": 0.014184397163120567,
+            "petDamageShare": 0.028760660497187444
+          },
+          "latency=200": {
+            "episodes": 147,
+            "wins": 76,
+            "randomWins": 73,
+            "winGain": 0.02040816326530612,
+            "petDamageShare": 0.039140566373079506
+          },
+          "latency=800": {
+            "episodes": 144,
+            "wins": 73,
+            "randomWins": 70,
+            "winGain": 0.020833333333333332,
+            "petDamageShare": 0.0548747027620267
+          },
+          "statScale=0.85": {
+            "episodes": 219,
+            "wins": 125,
+            "randomWins": 120,
+            "winGain": 0.0228310502283105,
+            "petDamageShare": 0.044734282935758825
+          },
+          "statScale=1.15": {
+            "episodes": 213,
+            "wins": 94,
+            "randomWins": 91,
+            "winGain": 0.014084507042253521,
+            "petDamageShare": 0.039284276223072276
+          }
+        }
+      },
+      "promotion": {
+        "qualified": false,
+        "failureReasons": [
+          "win-gain-under-5pp",
+          "confidence-includes-no-gain",
+          "pet-share-not-above-controls"
+        ]
+      }
+    },
+    "pressure": {
+      "training": {
+        "wins": 335,
+        "petDamageDealt": 4825.0,
+        "ownerDamageDealt": 27051.5,
+        "ownerDamage": 25512,
+        "petDamage": 11963,
+        "wasted": 1757,
+        "decisions": 9400,
+        "invalidAttack": 915,
+        "invalidSpecial": 622,
+        "approaches": 1173,
+        "attackAfterApproach": 43,
+        "movingMs": 403800,
+        "shapedReward": -471.76564102564106,
+        "reward": -471.76564102564106,
+        "pathFailures": 220,
+        "episodes": 720,
+        "actions": [
+          1451,
+          1993,
+          3571,
+          734,
+          1173,
+          86,
+          392
+        ],
+        "petDamageShare": 0.15136542594074004,
+        "validRate": 0.8130851063829787,
+        "validAttackRate": 0.3694004135079255,
+        "validSpecialRate": 0.15258855585831066,
+        "confusion": {
+          "0": {
+            "out-of-range": 186,
+            "valid": 536,
+            "blocked-line": 729
+          },
+          "1": {
+            "valid": 1993
+          },
+          "2": {
+            "valid": 3571
+          },
+          "3": {
+            "cooldown": 217,
+            "valid": 112,
+            "out-of-range": 24,
+            "blocked-line": 381
+          },
+          "4": {
+            "valid": 976,
+            "blocked": 197
+          },
+          "5": {
+            "valid": 63,
+            "blocked": 23
+          },
+          "6": {
+            "valid": 392
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 186,
+            "valid": 536,
+            "blocked-line": 761
+          },
+          "1": {
+            "valid": 1993
+          },
+          "2": {
+            "valid": 3571
+          },
+          "3": {
+            "cooldown": 273,
+            "valid": 112,
+            "out-of-range": 24,
+            "blocked-line": 381
+          },
+          "4": {
+            "valid": 976,
+            "blocked": 197
+          },
+          "5": {
+            "valid": 63,
+            "blocked": 23
+          },
+          "6": {
+            "valid": 392
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 7624,
+          "0->0": 1757,
+          "0->1": 19
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 157,
+        "firstValidAttackMedianMs": 2400.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7957478281506337,
+        "meanEntropy": 0.4668991682644278
+      },
+      "validation": {
+        "wins": 93,
+        "petDamageDealt": 510,
+        "ownerDamageDealt": 7475,
+        "ownerDamage": 2268,
+        "petDamage": 2410,
+        "wasted": 204,
+        "decisions": 1777,
+        "invalidAttack": 204,
+        "invalidSpecial": 0,
+        "approaches": 90,
+        "attackAfterApproach": 0,
+        "movingMs": 33400,
+        "shapedReward": 0,
+        "reward": -24.170854700854704,
+        "pathFailures": 0,
+        "episodes": 144,
+        "actions": [
+          276,
+          810,
+          600,
+          1,
+          90,
+          0,
+          0
+        ],
+        "petDamageShare": 0.06386975579211021,
+        "validRate": 0.8851997749015195,
+        "validAttackRate": 0.26086956521739135,
+        "validSpecialRate": 1.0,
+        "confusion": {
+          "0": {
+            "valid": 72,
+            "out-of-range": 23,
+            "blocked-line": 181
+          },
+          "1": {
+            "valid": 810
+          },
+          "2": {
+            "valid": 600
+          },
+          "3": {
+            "valid": 1
+          },
+          "4": {
+            "valid": 90
+          },
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 72,
+            "out-of-range": 23,
+            "blocked-line": 181
+          },
+          "1": {
+            "valid": 810
+          },
+          "2": {
+            "valid": 600
+          },
+          "3": {
+            "valid": 1
+          },
+          "4": {
+            "valid": 90
+          },
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1573,
+          "0->0": 204
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 22,
+        "firstValidAttackMedianMs": 1600.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7900191575513712,
+        "meanEntropy": 0.4194481638221537
+      },
+      "evaluation": {
+        "wins": 0,
+        "petDamageDealt": 0,
+        "ownerDamageDealt": 0,
+        "ownerDamage": 0,
+        "petDamage": 0,
+        "wasted": 0,
+        "decisions": 0,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 0,
+        "shapedReward": 0,
+        "reward": 0,
+        "pathFailures": 0,
+        "episodes": 0,
+        "actions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "petDamageShare": 0.0,
+        "validRate": 0.0,
+        "validAttackRate": null,
+        "validSpecialRate": null,
+        "confusion": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {},
+        "maxInvalidStreak": 0,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null
+      }
+    }
+  },
+  "transfer": {
+    "moon-forest": {
+      "random": {
+        "wins": 107,
+        "petDamageDealt": 1358.0,
+        "ownerDamageDealt": 8818.75,
+        "ownerDamage": 5632,
+        "petDamage": 2266,
+        "wasted": 724,
+        "decisions": 2459,
+        "invalidAttack": 261,
+        "invalidSpecial": 259,
+        "approaches": 341,
+        "attackAfterApproach": 41,
+        "movingMs": 194800,
+        "shapedReward": 0,
+        "reward": -148.73405982905985,
+        "pathFailures": 204,
+        "episodes": 216,
+        "actions": [
+          354,
+          337,
+          350,
+          342,
+          341,
+          365,
+          370
+        ],
+        "petDamageShare": 0.1334414228511067,
+        "validRate": 0.7055713704758032,
+        "validAttackRate": 0.2627118644067796,
+        "validSpecialRate": 0.24269005847953218,
+        "confusion": {
+          "0": {
+            "valid": 93,
+            "out-of-range": 194,
+            "blocked-line": 67
+          },
+          "1": {
+            "valid": 337
+          },
+          "2": {
+            "valid": 350
+          },
+          "3": {
+            "valid": 83,
+            "cooldown": 59,
+            "blocked-line": 184,
+            "out-of-range": 16
+          },
+          "4": {
+            "valid": 243,
+            "blocked": 98
+          },
+          "5": {
+            "valid": 259,
+            "blocked": 106
+          },
+          "6": {
+            "valid": 370
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 93,
+            "out-of-range": 194,
+            "blocked-line": 200
+          },
+          "1": {
+            "valid": 337
+          },
+          "2": {
+            "valid": 350
+          },
+          "3": {
+            "valid": 83,
+            "cooldown": 74,
+            "blocked-line": 185,
+            "out-of-range": 16
+          },
+          "4": {
+            "valid": 243,
+            "blocked": 98
+          },
+          "5": {
+            "valid": 259,
+            "blocked": 106
+          },
+          "6": {
+            "valid": 370
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1729,
+          "0->0": 724,
+          "0->1": 6
+        },
+        "maxInvalidStreak": 8,
+        "episodesWithValidAttack": 64,
+        "firstValidAttackMedianMs": 3700.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null,
+        "winGain": 0.0,
+        "pairedReplicaBootstrap95": [
+          0.0,
+          0.0
+        ]
+      },
+      "published": {
+        "wins": 112,
+        "petDamageDealt": 1313.25,
+        "ownerDamageDealt": 8880.0,
+        "ownerDamage": 4773,
+        "petDamage": 2467,
+        "wasted": 678,
+        "decisions": 2719,
+        "invalidAttack": 678,
+        "invalidSpecial": 0,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 0,
+        "shapedReward": 0,
+        "reward": -93.54123931623934,
+        "pathFailures": 0,
+        "episodes": 216,
+        "actions": [
+          873,
+          1406,
+          8,
+          0,
+          0,
+          0,
+          432
+        ],
+        "petDamageShare": 0.1288352586270326,
+        "validRate": 0.7506436189775653,
+        "validAttackRate": 0.2233676975945017,
+        "validSpecialRate": null,
+        "confusion": {
+          "0": {
+            "out-of-range": 287,
+            "blocked-line": 391,
+            "valid": 195
+          },
+          "1": {
+            "valid": 1406
+          },
+          "2": {
+            "valid": 8
+          },
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {
+            "valid": 432
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 287,
+            "blocked-line": 604,
+            "valid": 195
+          },
+          "1": {
+            "valid": 1406
+          },
+          "2": {
+            "valid": 8
+          },
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {
+            "valid": 432
+          }
+        },
+        "observationExecutionConfusion": {
+          "0->0": 678,
+          "1->1": 2041
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 62,
+        "firstValidAttackMedianMs": 1600.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8098561993112956,
+        "meanEntropy": 0.39683133165767526,
+        "winGain": 0.023148148148148157,
+        "pairedReplicaBootstrap95": [
+          -0.018518518518518528,
+          0.06481481481481484
+        ]
+      },
+      "affordance": {
+        "wins": 108,
+        "petDamageDealt": 0,
+        "ownerDamageDealt": 9970.25,
+        "ownerDamage": 4728,
+        "petDamage": 2192,
+        "wasted": 8,
+        "decisions": 2833,
+        "invalidAttack": 0,
+        "invalidSpecial": 2,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 4400,
+        "shapedReward": 0,
+        "reward": -51.63068376068377,
+        "pathFailures": 6,
+        "episodes": 216,
+        "actions": [
+          0,
+          1560,
+          481,
+          2,
+          0,
+          17,
+          773
+        ],
+        "petDamageShare": 0.0,
+        "validRate": 0.9971761383692199,
+        "validAttackRate": null,
+        "validSpecialRate": 0.0,
+        "confusion": {
+          "0": {},
+          "1": {
+            "valid": 1560
+          },
+          "2": {
+            "valid": 481
+          },
+          "3": {
+            "out-of-range": 2
+          },
+          "4": {},
+          "5": {
+            "valid": 11,
+            "blocked": 6
+          },
+          "6": {
+            "valid": 773
+          }
+        },
+        "allReasons": {
+          "0": {},
+          "1": {
+            "valid": 1560
+          },
+          "2": {
+            "valid": 481
+          },
+          "3": {
+            "out-of-range": 2,
+            "cooldown": 1
+          },
+          "4": {},
+          "5": {
+            "valid": 11,
+            "blocked": 6
+          },
+          "6": {
+            "valid": 773
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 2825,
+          "0->0": 8
+        },
+        "maxInvalidStreak": 2,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8599171785427917,
+        "meanEntropy": 0.47123278261065066,
+        "winGain": 0.0046296296296296224,
+        "pairedReplicaBootstrap95": [
+          -0.041666666666666685,
+          0.05555555555555555
+        ]
+      },
+      "curriculum": {
+        "wins": 109,
+        "petDamageDealt": 1365.5,
+        "ownerDamageDealt": 8811.5,
+        "ownerDamage": 5052,
+        "petDamage": 2280,
+        "wasted": 965,
+        "decisions": 2595,
+        "invalidAttack": 542,
+        "invalidSpecial": 398,
+        "approaches": 39,
+        "attackAfterApproach": 3,
+        "movingMs": 5600,
+        "shapedReward": 0,
+        "reward": -136.4197008547009,
+        "pathFailures": 25,
+        "episodes": 216,
+        "actions": [
+          709,
+          1038,
+          377,
+          426,
+          39,
+          0,
+          6
+        ],
+        "petDamageShare": 0.13417510071730374,
+        "validRate": 0.628131021194605,
+        "validAttackRate": 0.23554301833568403,
+        "validSpecialRate": 0.06572769953051638,
+        "confusion": {
+          "0": {
+            "valid": 167,
+            "out-of-range": 172,
+            "blocked-line": 370
+          },
+          "1": {
+            "valid": 1038
+          },
+          "2": {
+            "valid": 377
+          },
+          "3": {
+            "valid": 28,
+            "cooldown": 99,
+            "blocked-line": 283,
+            "out-of-range": 16
+          },
+          "4": {
+            "valid": 14,
+            "blocked": 25
+          },
+          "5": {},
+          "6": {
+            "valid": 6
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 167,
+            "out-of-range": 172,
+            "blocked-line": 478
+          },
+          "1": {
+            "valid": 1038
+          },
+          "2": {
+            "valid": 377
+          },
+          "3": {
+            "valid": 28,
+            "cooldown": 134,
+            "blocked-line": 283,
+            "out-of-range": 16
+          },
+          "4": {
+            "valid": 14,
+            "blocked": 25
+          },
+          "5": {},
+          "6": {
+            "valid": 6
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1614,
+          "0->0": 965,
+          "0->1": 16
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 46,
+        "firstValidAttackMedianMs": 1600.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7100842546685036,
+        "meanEntropy": 0.5316194178426598,
+        "winGain": 0.009259259259259264,
+        "pairedReplicaBootstrap95": [
+          -0.023148148148148157,
+          0.041666666666666685
+        ]
+      },
+      "mother": {
+        "wins": 150,
+        "petDamageDealt": 6358.0,
+        "ownerDamageDealt": 7138.25,
+        "ownerDamage": 4367,
+        "petDamage": 2743,
+        "wasted": 577,
+        "decisions": 1661,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 697,
+        "attackAfterApproach": 107,
+        "movingMs": 48000,
+        "shapedReward": 0,
+        "reward": 9.173632478632458,
+        "pathFailures": 577,
+        "episodes": 216,
+        "actions": [
+          708,
+          33,
+          33,
+          190,
+          697,
+          0,
+          0
+        ],
+        "petDamageShare": 0.4710938223580624,
+        "validRate": 0.6526189042745334,
+        "validAttackRate": 1.0,
+        "validSpecialRate": 1.0,
+        "confusion": {
+          "0": {
+            "valid": 708
+          },
+          "1": {
+            "valid": 33
+          },
+          "2": {
+            "valid": 33
+          },
+          "3": {
+            "valid": 190
+          },
+          "4": {
+            "valid": 120,
+            "blocked": 577
+          },
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 708
+          },
+          "1": {
+            "valid": 33
+          },
+          "2": {
+            "valid": 33
+          },
+          "3": {
+            "valid": 190
+          },
+          "4": {
+            "valid": 120,
+            "blocked": 577
+          },
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1084,
+          "0->0": 577
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 190,
+        "firstValidAttackMedianMs": 1800.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null,
+        "winGain": 0.19907407407407404,
+        "pairedReplicaBootstrap95": [
+          0.1481481481481481,
+          0.25
+        ]
+      }
+    },
+    "forest-moon": {
+      "random": {
+        "wins": 104,
+        "petDamageDealt": 1318.25,
+        "ownerDamageDealt": 7949.75,
+        "ownerDamage": 4736,
+        "petDamage": 1666,
+        "wasted": 852,
+        "decisions": 2512,
+        "invalidAttack": 283,
+        "invalidSpecial": 321,
+        "approaches": 365,
+        "attackAfterApproach": 21,
+        "movingMs": 184200,
+        "shapedReward": 0,
+        "reward": -142.03111111111113,
+        "pathFailures": 248,
+        "episodes": 216,
+        "actions": [
+          351,
+          350,
+          338,
+          389,
+          365,
+          360,
+          359
+        ],
+        "petDamageShare": 0.14223672852826932,
+        "validRate": 0.660828025477707,
+        "validAttackRate": 0.19373219373219375,
+        "validSpecialRate": 0.17480719794344468,
+        "confusion": {
+          "0": {
+            "out-of-range": 192,
+            "blocked-line": 91,
+            "valid": 68
+          },
+          "1": {
+            "valid": 350
+          },
+          "2": {
+            "valid": 338
+          },
+          "3": {
+            "blocked-line": 240,
+            "out-of-range": 20,
+            "valid": 68,
+            "cooldown": 61
+          },
+          "4": {
+            "valid": 231,
+            "blocked": 134
+          },
+          "5": {
+            "valid": 246,
+            "blocked": 114
+          },
+          "6": {
+            "valid": 359
+          }
+        },
+        "allReasons": {
+          "0": {
+            "out-of-range": 192,
+            "blocked-line": 240,
+            "valid": 68
+          },
+          "1": {
+            "valid": 350
+          },
+          "2": {
+            "valid": 338
+          },
+          "3": {
+            "blocked-line": 240,
+            "out-of-range": 20,
+            "valid": 68,
+            "cooldown": 81
+          },
+          "4": {
+            "valid": 231,
+            "blocked": 134
+          },
+          "5": {
+            "valid": 246,
+            "blocked": 114
+          },
+          "6": {
+            "valid": 359
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1651,
+          "0->0": 852,
+          "0->1": 9
+        },
+        "maxInvalidStreak": 7,
+        "episodesWithValidAttack": 48,
+        "firstValidAttackMedianMs": 3200.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null,
+        "winGain": 0.0,
+        "pairedReplicaBootstrap95": [
+          0.0,
+          0.0
+        ]
+      },
+      "published": {
+        "wins": 100,
+        "petDamageDealt": 476.75,
+        "ownerDamageDealt": 8576.25,
+        "ownerDamage": 4313,
+        "petDamage": 1764,
+        "wasted": 745,
+        "decisions": 2727,
+        "invalidAttack": 87,
+        "invalidSpecial": 333,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 32000,
+        "shapedReward": 0,
+        "reward": -113.76944444444446,
+        "pathFailures": 325,
+        "episodes": 216,
+        "actions": [
+          115,
+          1386,
+          461,
+          355,
+          0,
+          410,
+          0
+        ],
+        "petDamageShare": 0.0526621009610074,
+        "validRate": 0.7268060139347268,
+        "validAttackRate": 0.24347826086956526,
+        "validSpecialRate": 0.06197183098591552,
+        "confusion": {
+          "0": {
+            "blocked-line": 33,
+            "out-of-range": 54,
+            "valid": 28
+          },
+          "1": {
+            "valid": 1386
+          },
+          "2": {
+            "valid": 461
+          },
+          "3": {
+            "valid": 22,
+            "cooldown": 71,
+            "blocked-line": 248,
+            "out-of-range": 14
+          },
+          "4": {},
+          "5": {
+            "valid": 85,
+            "blocked": 317,
+            "owner-tether": 8
+          },
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "blocked-line": 71,
+            "out-of-range": 54,
+            "valid": 28
+          },
+          "1": {
+            "valid": 1386
+          },
+          "2": {
+            "valid": 461
+          },
+          "3": {
+            "valid": 22,
+            "cooldown": 108,
+            "blocked-line": 248,
+            "out-of-range": 14
+          },
+          "4": {},
+          "5": {
+            "valid": 85,
+            "blocked": 317,
+            "owner-tether": 8
+          },
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 1976,
+          "0->0": 745,
+          "0->1": 6
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 14,
+        "firstValidAttackMedianMs": 3200.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.7993936334645475,
+        "meanEntropy": 0.39115427378243184,
+        "winGain": -0.018518518518518517,
+        "pairedReplicaBootstrap95": [
+          -0.0925925925925926,
+          0.05092592592592592
+        ]
+      },
+      "affordance": {
+        "wins": 108,
+        "petDamageDealt": 0,
+        "ownerDamageDealt": 9078.0,
+        "ownerDamage": 4355,
+        "petDamage": 1446,
+        "wasted": 507,
+        "decisions": 2786,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 441,
+        "attackAfterApproach": 0,
+        "movingMs": 145600,
+        "shapedReward": 0,
+        "reward": -94.87153846153848,
+        "pathFailures": 507,
+        "episodes": 216,
+        "actions": [
+          0,
+          1020,
+          879,
+          0,
+          441,
+          441,
+          5
+        ],
+        "petDamageShare": 0.0,
+        "validRate": 0.8180186647523331,
+        "validAttackRate": null,
+        "validSpecialRate": null,
+        "confusion": {
+          "0": {},
+          "1": {
+            "valid": 1020
+          },
+          "2": {
+            "valid": 879
+          },
+          "3": {},
+          "4": {
+            "valid": 276,
+            "blocked": 165
+          },
+          "5": {
+            "valid": 99,
+            "blocked": 309,
+            "owner-tether": 33
+          },
+          "6": {
+            "valid": 5
+          }
+        },
+        "allReasons": {
+          "0": {},
+          "1": {
+            "valid": 1020
+          },
+          "2": {
+            "valid": 879
+          },
+          "3": {},
+          "4": {
+            "valid": 276,
+            "blocked": 165
+          },
+          "5": {
+            "valid": 99,
+            "blocked": 309,
+            "owner-tether": 33
+          },
+          "6": {
+            "valid": 5
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 2279,
+          "0->0": 507
+        },
+        "maxInvalidStreak": 37,
+        "episodesWithValidAttack": 0,
+        "firstValidAttackMedianMs": null,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8134687203081562,
+        "meanEntropy": 0.3907595013677898,
+        "winGain": 0.018518518518518517,
+        "pairedReplicaBootstrap95": [
+          -0.02777777777777779,
+          0.08333333333333333
+        ]
+      },
+      "curriculum": {
+        "wins": 112,
+        "petDamageDealt": 598.75,
+        "ownerDamageDealt": 9023.5,
+        "ownerDamage": 3953,
+        "petDamage": 1598,
+        "wasted": 316,
+        "decisions": 2770,
+        "invalidAttack": 313,
+        "invalidSpecial": 3,
+        "approaches": 0,
+        "attackAfterApproach": 0,
+        "movingMs": 0,
+        "shapedReward": 0,
+        "reward": -50.67418803418805,
+        "pathFailures": 0,
+        "episodes": 216,
+        "actions": [
+          397,
+          1053,
+          1138,
+          4,
+          0,
+          0,
+          178
+        ],
+        "petDamageShare": 0.062225570942347166,
+        "validRate": 0.8859205776173286,
+        "validAttackRate": 0.21158690176322414,
+        "validSpecialRate": 0.25,
+        "confusion": {
+          "0": {
+            "valid": 84,
+            "out-of-range": 109,
+            "blocked-line": 204
+          },
+          "1": {
+            "valid": 1053
+          },
+          "2": {
+            "valid": 1138
+          },
+          "3": {
+            "valid": 1,
+            "out-of-range": 2,
+            "cooldown": 1
+          },
+          "4": {},
+          "5": {},
+          "6": {
+            "valid": 178
+          }
+        },
+        "allReasons": {
+          "0": {
+            "valid": 84,
+            "out-of-range": 109,
+            "blocked-line": 287
+          },
+          "1": {
+            "valid": 1053
+          },
+          "2": {
+            "valid": 1138
+          },
+          "3": {
+            "valid": 1,
+            "out-of-range": 2,
+            "cooldown": 2
+          },
+          "4": {},
+          "5": {},
+          "6": {
+            "valid": 178
+          }
+        },
+        "observationExecutionConfusion": {
+          "1->1": 2454,
+          "0->0": 316
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 24,
+        "firstValidAttackMedianMs": 1700.0,
+        "motorStops": {},
+        "meanMaxPolicy": 0.8902660647537666,
+        "meanEntropy": 0.297570091975004,
+        "winGain": 0.037037037037037035,
+        "pairedReplicaBootstrap95": [
+          0.0046296296296296224,
+          0.0925925925925926
+        ]
+      },
+      "mother": {
+        "wins": 144,
+        "petDamageDealt": 6484.5,
+        "ownerDamageDealt": 6443.5,
+        "ownerDamage": 3732,
+        "petDamage": 2119,
+        "wasted": 666,
+        "decisions": 1657,
+        "invalidAttack": 0,
+        "invalidSpecial": 0,
+        "approaches": 771,
+        "attackAfterApproach": 99,
+        "movingMs": 42000,
+        "shapedReward": 0,
+        "reward": 13.323675213675187,
+        "pathFailures": 666,
+        "episodes": 216,
+        "actions": [
+          646,
+          32,
+          33,
+          175,
+          771,
+          0,
+          0
+        ],
+        "petDamageShare": 0.5015857054455446,
+        "validRate": 0.5980687990343995,
+        "validAttackRate": 1.0,
+        "validSpecialRate": 1.0,
+        "confusion": {
+          "0": {
+            "valid": 646
+          },
+          "1": {
+            "valid": 32
+          },
+          "2": {
+            "valid": 33
+          },
+          "3": {
+            "valid": 175
+          },
+          "4": {
+            "valid": 105,
+            "blocked": 666
+          },
+          "5": {},
+          "6": {}
+        },
+        "allReasons": {
+          "0": {
+            "valid": 646
+          },
+          "1": {
+            "valid": 32
+          },
+          "2": {
+            "valid": 33
+          },
+          "3": {
+            "valid": 175
+          },
+          "4": {
+            "valid": 105,
+            "blocked": 666
+          },
+          "5": {},
+          "6": {}
+        },
+        "observationExecutionConfusion": {
+          "1->1": 991,
+          "0->0": 666
+        },
+        "maxInvalidStreak": 38,
+        "episodesWithValidAttack": 185,
+        "firstValidAttackMedianMs": 1800.0,
+        "motorStops": {},
+        "meanMaxPolicy": null,
+        "meanEntropy": null,
+        "winGain": 0.1851851851851852,
+        "pairedReplicaBootstrap95": [
+          0.162037037037037,
+          0.20833333333333334
+        ]
+      }
+    }
+  }
+}

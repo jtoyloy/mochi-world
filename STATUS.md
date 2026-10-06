@@ -380,3 +380,38 @@ checkpoint rejection, freeze, full continuation, single terminal closure and une
 cancellation. See [full protocol and remaining limitations](docs/CADENCE_SERVER_BATTLE_EVAL.md),
 [raw/summary results](docs/assays/server-battle-summary.json) and
 [learning curves](docs/assays/server-battle-learning.png).
+
+## Cadence action affordance acquisition — 2026-10-06
+
+Base `925cdbec4399b249bbf1872a26edfaad217d2547`; 12 independent replicas, training60 /
+validation12 / frozen held-out36, fresh 7000/8000/9000 seed families. Three new physical
+possibility senses; same one-region Cadence architecture and seven unmasked actions.
+Stronger waste penalty and a versioned persistent approach motor are isolated experiments.
+Validation selects minimal affordance for curriculum; wider-sense and training-only owner
+pressure controls are validation-only. Final owner combat and all published packs unchanged.
+
+Held-out wins /432: random211, published203, affordance208, penalty211, persistent215,
+curriculum219, reference286. Curriculum gain +1.85pp, paired replica-bootstrap 95% −1.39 to
++5.09pp. No candidate meets the win/confidence/contribution gate. Pet damage share: random
+14.96%, published4.15%, affordance4.69%, penalty1.84%, persistent3.48%, curriculum4.18%.
+Executable rates can conceal passive behavior: penalty selects no ATTACK; curriculum is
+mostly defense. Affordance selects980 approaches but only26 valid subsequent attacks;
+persistent selects444 with four subsequent attacks. Published still selects no approach.
+
+Obstacle wins /220: random57, published52, affordance56, penalty54, persistent58,
+curriculum56, reference110. Whole-species transfer /216, affordance/random: Moonfox→Deer
+108/107; Deer→Moonfox108/104. Curriculum109/107 and112/104. Affordance intervals include zero in both directions;
+curriculum excludes zero only in Deer→Moonfox, without robust primary held-out gain.
+Supplementary disclosed WAIT-only wins191/432 with no pet damage.
+
+Private physical-context probes reveal durable context-insensitive action preferences;
+clearing trace leaves two diagnostic published brains' ATTACK preferences intact. Stronger
+negative feedback shifts collapse toward defense/retreat rather than teaching executable
+attack selection. Ten positively rewarded invalid choices in a three-seed published training
+audit coincide with owner victories, but most invalid feedback is already negative. The
+mechanism remains insufficiently context-sensitive; no sole-parameter cause is established.
+
+42 Python and227 JS tests pass, no skips; full continuation and frozen weights/memory checked.
+**No promotion or production balance change.** [Protocol, findings and limits](docs/CADENCE_ACTION_LEARNING.md),
+[summary](docs/assays/action-learning-summary.json) and
+[full decision receipts](docs/assays/action-learning.json.gz) retain all failures.

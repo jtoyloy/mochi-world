@@ -1,0 +1,19 @@
+{
+ "format":"cadence-action-learning/1",
+ "predeclared":"2026-10-06 before new held-out evaluation",
+ "base":"925cdbec4399b249bbf1872a26edfaad217d2547",
+ "arms":["random","published","affordance","penalty","persistent","curriculum","mother"],
+ "validationOnly":["expanded","expanded_affordance","pressure"],
+ "replicas":12,"trainingEpisodes":60,"validationEpisodes":12,"evaluationEpisodes":36,
+ "seeds":{"training":7000,"validation":8000,"evaluation":9000},
+ "affordances":["attackExecutable","specialExecutable","canApproach"],
+ "architecture":"Brain.compose(inputs,7,modules=(64,)); published genes and trace; no action masking",
+ "penalty":"original waste reward plus -0.24 once per executed invalid choice; clip [-1,1]",
+ "persistent":"approach-target-v2: existing NavigationService path, 165 px/s, stop at attack range plus LOS, path failure, changed target >40px, 2800ms, or next decision; no fallback",
+ "selection":"after all training/validation and before any held-out: among affordance/penalty/persistent maximize pooled validation pet damage share, excluding >10pp win loss versus published; ties favor simpler arm; if none eligible choose affordance",
+ "curriculum":"selected arm; six ten-episode stages: close ready open, medium ready open, far ready open, far cooldown open, obstacles, full randomized. No stage inputs.",
+ "pressure":"validation-only selected-arm diagnostic; unchanged full training scenarios, owner hit amount multiplied by 0.5; frozen validation and held-out owner combat unchanged",
+ "transfer":"selected arm and its curriculum: six seed pairs, each direction moon->forest and forest->moon; train60/eval36, training seeds11000/12000, evaluation13000/14000; random/published/reference controls",
+ "evaluation":"unchanged scenario generator and production-blocked physics; no held-out tuning; private physical probes only after checkpoint frozen",
+ "gate":"gain >=5pp versus random, paired replica bootstrap 95% lower bound >0, executable rate and pet damage share both above random and published, no factor class >10pp loss versus random, both species and cross-species directions nonnegative win gain, continuation/freeze/immutable-pack tests pass. No owner-carried promotion."
+}
