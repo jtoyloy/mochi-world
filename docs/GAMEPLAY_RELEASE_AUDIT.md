@@ -20,6 +20,6 @@ Scope: inspected actual AdventureUI, shared adventure catalog, adventure server 
 
 ## Validation
 
-`node --test tests/adventure/ui.test.mjs`: 5/5 pass. Tests exercise real UI handlers using a minimal DOM fixture and virtual timers: slot filtering/save rejection, item use, cancel-before-ready, manual/automatic completion race, saved-harvest readiness with repeated pack opening.
+`node --test tests/adventure/ui.test.mjs`: 6/6 pass. Tests exercise real UI handlers using a minimal DOM fixture and virtual timers: slot filtering/save rejection, item use, cancel-before-ready, manual/automatic completion race, saved-harvest readiness with repeated pack opening, and stale pack controls during a newer harvest. Stale Finish/Cancel controls refuse before dispatching any action, preserving the current activity timer.
 
 `npm run build`: passed, including existing asset validation. Asset validation continues to report source-edge-continuation diagnostics; passing the command does not certify visual polish. Browser visual/playtest evidence is pending integration.

@@ -108,3 +108,20 @@ test("recovered harvest waits for server-relative readiness then completes once"
   assert.deepEqual(f.requests.filter((r) => r.data?.action === "finishGather").map((r) => r.data), [{ action: "finishGather", harvestId: "recovered" }]);
   assert.deepEqual(f.cues, ["woodcutting"]);
 });
+
+
+test("stale pack finish and cancel controls cannot affect a newer harvest", async (t) => {
+  const f = fixture(t, { harvest: { id: "old", ready_at: 11000 } });
+  await f.ui.pack();
+  const stale = f.dialogs[0];
+  f.setRespond(async (data) => data.action === "gather"
+    ? { id: "new", durationMs: 1000 }
+    : { itemId: "softwood", xp: 12, kind: "woodcutting" });
+  await f.ui.gatherNode({ id: "forest-soft", x: 0, y: 0, kind: "woodcutting", name: "Grove" });
+  await assert.rejects(button(stale, "Finish gathering").onclick(), /activity has changed/);
+  await assert.rejects(button(stale, "Cancel gathering").onclick(), /activity has changed/);
+  assert.equal(f.requests.filter((r) => ["finishGather", "cancelGather"].includes(r.data?.action)).length, 0);
+  t.mock.timers.tick(1250);
+  await flush();
+  assert.deepEqual(f.requests.filter((r) => r.data?.action === "finishGather").map((r) => r.data.harvestId), ["new"]);
+});

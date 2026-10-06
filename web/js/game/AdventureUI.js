@@ -101,6 +101,8 @@ export function adventureUI({
           d.close();
         }),
         btn("Cancel gathering", async () => {
+          if (gather?.id !== s.harvest.id || gatherCompletion?.id === s.harvest.id)
+            throw new Error("This activity has changed. Reopen Adventure to see your current gathering.");
           await send({ action: "cancelGather" });
           clearGather(s.harvest.id);
           d.close();
@@ -311,6 +313,8 @@ export function adventureUI({
   }
   function finishGather(id) {
     if (gatherCompletion?.id === id) return gatherCompletion.promise;
+    if (gather?.id !== id)
+      return Promise.reject(new Error("This activity has changed. Reopen Adventure to see your current gathering."));
     clearTimeout(gatherTimer);
     const promise = (async () => {
       try {
