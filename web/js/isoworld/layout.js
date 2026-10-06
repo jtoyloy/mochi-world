@@ -1,0 +1,93 @@
+// Authored logical map; rendering, collision, minimap and authority share this data.
+export const ISO_TOWN_BOUNDS = {
+  minX: -650,
+  maxX: 2200,
+  minY: -650,
+  maxY: 1750,
+};
+export const TOWN_BUILDINGS = [
+  {
+    id: "cafe",
+    label: "The Hearth Café",
+    x: -100,
+    y: 60,
+    asset: 0,
+    width: 370,
+    w: 240,
+    h: 180,
+  },
+  {
+    id: "exchange",
+    label: "Trading Hall",
+    x: 1250,
+    y: -120,
+    asset: 1,
+    width: 410,
+    w: 270,
+    h: 190,
+  },
+  {
+    id: "arcade",
+    label: "Starlight Arcade",
+    x: 1770,
+    y: 650,
+    asset: 2,
+    width: 360,
+    w: 230,
+    h: 180,
+  },
+  {
+    id: "lab",
+    label: "Lantern Observatory",
+    x: 570,
+    y: -380,
+    asset: 3,
+    width: 450,
+    w: 280,
+    h: 190,
+  },
+  {
+    id: "market",
+    label: "Market Street",
+    x: 2020,
+    y: 1200,
+    asset: 7,
+    width: 260,
+    w: 190,
+    h: 130,
+  },
+];
+export const TOWN_PORTALS = [
+  ...TOWN_BUILDINGS,
+  { id: "forest", label: "Whispering Forest", x: -400, y: 1300, asset: null },
+  { id: "lake", label: "Moonwater Lake", x: 940, y: 1630, asset: null },
+  { id: "ruins", label: "Old Lantern Ruins", x: 2100, y: 900, asset: null },
+  { id: "yard", label: "Training Yard", x: 20, y: -260, asset: null },
+  { id: "park", label: "Willow Park", x: -300, y: 980, asset: null },
+  { id: "arena", label: "Companion Arena", x: 1100, y: 1630, asset: null },
+];
+export const TOWN_LAWNS = [
+  [-300, 600, 360, 350],
+  [950, -360, 380, 210],
+  [1660, 100, 420, 300],
+  [-200, 1260, 450, 300],
+  [1750, 1510, 470, 250],
+];
+export const TOWN_TREES = [
+  [-500, -320, 0, 210],
+  [-340, 320, 1, 205],
+  [-380, 640, 0, 240],
+  [-530, 1050, 0, 230],
+  [-180, 1370, 1, 225],
+  [180, 1440, 0, 240],
+  [760, -580, 0, 215],
+  [1070, -430, 1, 205],
+  [1650, -390, 0, 250],
+  [1840, -140, 0, 230],
+  [1980, 180, 1, 230],
+  [2120, 600, 0, 245],
+  [1950, 1620, 0, 255],
+  [1280, 1690, 1, 215],
+  [600, 1630, 0, 230],
+];
+export const TOWN_SPAWN = { x: 550, y: 840 };

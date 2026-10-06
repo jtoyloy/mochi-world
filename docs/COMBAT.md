@@ -1,0 +1,5 @@
+# Combat
+
+## Adventure milestone — 2026-10-05
+
+The server owns mob spawning, HP, mana, cooldowns, range, line of sight, damage, loot and XP. A 400 ms simulation tick runs separately from the 1.4 s Mochi decision cadence. Players target and automatically attack in range; four hotkeys expose weapon skill, Fire Bolt, Heal and a small potion. Sword, staff, bow and dagger have distinct range, speed and special attacks. Fire Bolt, Ice Shard, Heal, Shield and Lightning consume server-checked mana. Iron Ring, Ember Charm, Bond Necklace and Healer Pendant modify defense, fire, pet damage and healing. Small/large healing, mana, antidote and combat food are owned consumables. Head/body armor and two accessory slots persist. Defeat returns the owner to Town without item loss; exhausted Mochi recover in safe areas. Dewdrop Slime, Bramble Boar, Thornling, Rippleback, Mossmask Scavenger, Lantern Guardian and a training dummy use authored spawn cells, aggression, leash and respawn rules. Thornling poison can be cleansed. Movement checks collisions but does not provide full obstacle-routing AI.

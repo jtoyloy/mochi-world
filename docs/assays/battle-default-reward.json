@@ -1,0 +1,182 @@
+[
+  {
+    "kind": "random",
+    "seed": 42,
+    "ticks": 600,
+    "wins": 8,
+    "owner_defeats": 15,
+    "damage": 734.0,
+    "protection": 252,
+    "actions": [
+      89,
+      84,
+      75,
+      98,
+      74,
+      100,
+      80
+    ],
+    "refused": 0,
+    "reward_updates": 0
+  },
+  {
+    "kind": "mother",
+    "seed": 42,
+    "ticks": 600,
+    "wins": 100,
+    "owner_defeats": 0,
+    "damage": 4540.0,
+    "protection": 0,
+    "actions": [
+      500,
+      0,
+      0,
+      100,
+      0,
+      0,
+      0
+    ],
+    "refused": 0,
+    "reward_updates": 0
+  },
+  {
+    "kind": "cadence",
+    "seed": 42,
+    "ticks": 600,
+    "wins": 0,
+    "owner_defeats": 6,
+    "damage": 64,
+    "protection": 1725,
+    "actions": [
+      8,
+      575,
+      4,
+      4,
+      2,
+      4,
+      3
+    ],
+    "refused": 0,
+    "reward_updates": 599
+  },
+  {
+    "kind": "random",
+    "seed": 7,
+    "ticks": 600,
+    "wins": 7,
+    "owner_defeats": 16,
+    "damage": 817,
+    "protection": 240,
+    "actions": [
+      83,
+      80,
+      77,
+      80,
+      91,
+      98,
+      91
+    ],
+    "refused": 0,
+    "reward_updates": 0
+  },
+  {
+    "kind": "mother",
+    "seed": 7,
+    "ticks": 600,
+    "wins": 100,
+    "owner_defeats": 0,
+    "damage": 4540.0,
+    "protection": 0,
+    "actions": [
+      500,
+      0,
+      0,
+      100,
+      0,
+      0,
+      0
+    ],
+    "refused": 0,
+    "reward_updates": 0
+  },
+  {
+    "kind": "cadence",
+    "seed": 7,
+    "ticks": 600,
+    "wins": 0,
+    "owner_defeats": 7,
+    "damage": 70,
+    "protection": 1662,
+    "actions": [
+      1,
+      554,
+      2,
+      6,
+      5,
+      3,
+      29
+    ],
+    "refused": 0,
+    "reward_updates": 599
+  },
+  {
+    "kind": "random",
+    "seed": 18,
+    "ticks": 600,
+    "wins": 9,
+    "owner_defeats": 14,
+    "damage": 831,
+    "protection": 249,
+    "actions": [
+      79,
+      83,
+      74,
+      79,
+      96,
+      94,
+      95
+    ],
+    "refused": 0,
+    "reward_updates": 0
+  },
+  {
+    "kind": "mother",
+    "seed": 18,
+    "ticks": 600,
+    "wins": 100,
+    "owner_defeats": 0,
+    "damage": 4540.0,
+    "protection": 0,
+    "actions": [
+      500,
+      0,
+      0,
+      100,
+      0,
+      0,
+      0
+    ],
+    "refused": 0,
+    "reward_updates": 0
+  },
+  {
+    "kind": "cadence",
+    "seed": 18,
+    "ticks": 600,
+    "wins": 1,
+    "owner_defeats": 23,
+    "damage": 171.0,
+    "protection": 12,
+    "actions": [
+      4,
+      4,
+      1,
+      87,
+      10,
+      491,
+      3
+    ],
+    "refused": 0,
+    "reward_updates": 599
+  }
+]

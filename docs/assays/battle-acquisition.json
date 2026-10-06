@@ -1,0 +1,56 @@
+[
+  {
+    "reinforced_action": 0,
+    "cadence_hits": 578,
+    "random_hits": 89,
+    "mother_hits": 600,
+    "ticks": 600,
+    "actions": [
+      578,
+      4,
+      7,
+      2,
+      3,
+      4,
+      2
+    ],
+    "free_action_after_feedback": 0,
+    "updates": 600
+  },
+  {
+    "reinforced_action": 1,
+    "cadence_hits": 578,
+    "random_hits": 84,
+    "mother_hits": 600,
+    "ticks": 600,
+    "actions": [
+      6,
+      578,
+      5,
+      2,
+      3,
+      4,
+      2
+    ],
+    "free_action_after_feedback": 1,
+    "updates": 600
+  },
+  {
+    "reinforced_action": 4,
+    "cadence_hits": 570,
+    "random_hits": 74,
+    "mother_hits": 600,
+    "ticks": 600,
+    "actions": [
+      12,
+      4,
+      5,
+      3,
+      570,
+      4,
+      2
+    ],
+    "free_action_after_feedback": 4,
+    "updates": 600
+  }
+]

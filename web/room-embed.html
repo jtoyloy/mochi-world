@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mochi Traders — a little life, a big adventure</title>
+    <meta
+      name="description"
+      content="Mochi is a small creature with a live Cadence brain. It follows a routine, learns from you while it lives, and lets you watch its brain work."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3CradialGradient id='g' cx='.3' cy='.75' r='1'%3E%3Cstop offset='0' stop-color='%239945FF'/%3E%3Cstop offset='.5' stop-color='%235A8FE0'/%3E%3Cstop offset='1' stop-color='%2314F195'/%3E%3C/radialGradient%3E%3Ccircle cx='32' cy='34' r='24' fill='url(%23g)' stroke='%230d0a1a' stroke-width='3'/%3E%3Ccircle cx='24' cy='32' r='3.4' fill='%230b0714'/%3E%3Ccircle cx='40' cy='32' r='3.4' fill='%230b0714'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/traders.css" />
+    <style>
+      body:not(.developer-tools) #speed,body:not(.developer-tools) #shows,body:not(.developer-tools) #showSenses,body:not(.developer-tools) #menu {display:none!important;}
+
+      body {
+        padding: 0 !important;
+      }
+      body > header,
+      .landing,
+      .trader-header,
+      .trader-footer,
+      #traderHeader {
+        display: none !important;
+      }
+      body:not(.research) #brainToggle,
+      body:not(.research) #menu,
+      body:not(.research) .advanced,
+      body:not(.research) #speed {
+        display: none !important;
+      }
+      body:not(.research) #panels,
+      body:not(.research) #controls .row:not(:first-child),
+      body:not(.research) [data-tool="cookie"],
+      body:not(.research) [data-tool="fish"],
+      body:not(.research) [data-tool="lemon"],
+      body:not(.research) #addBall,
+      body:not(.research) #addMouse,
+      body:not(.research) [data-tool="move"],
+      footer {
+        display: none !important;
+      }
+      #originalRoom {
+        display: block !important;
+      }
+      .room-page {
+        padding: 0 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header id="traderHeader">
+      <a href="/" class="trader-brand">✿ Mochi Traders</a>
+      <nav>
+        <button data-route="/room">Room</button
+        ><button data-route="/trade">Trade</button
+        ><button data-route="/shop">Shop</button
+        ><button data-route="/leaderboard">Arena</button>
+      </nav>
+      <b id="coinBalance">500 Mochi Coins</b>
+    </header>
+    <section data-page="/" class="landing">
+      <div class="landing-brand">
+        ✿ Mochi Traders <span>A tiny world of possibility</span>
+      </div>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">YOUR NEXT LITTLE OBSESSION</div>
+          <h1>Raise it.<br />Train it.<br /><em>Watch it trade.</em></h1>
+          <p>
+            A curious little creature. A room to call home. A brain that learns
+            from every cuddle, every adventure, and every paper trade.
+          </p>
+          <div class="hero-actions">
+            <button data-route="/room" class="primary">Adopt a Mochi ↗</button
+            ><button data-route="/room">Enter Mochi World</button>
+          </div>
+          <small>Powered by a persistent Cadence learning brain.</small>
+        </div>
+        <div class="hero-room">
+          <div class="window">☀️</div>
+          <span class="plant">🪴</span>
+          <div class="hero-mochi"><i></i><i></i><span>ᴗ</span></div>
+          <span class="computer">💻</span>
+          <div class="speech">a small trade, then a snack?</div>
+          <div class="rug"></div>
+          <span class="little-label">MEET MOMO • YOUR FIRST MOCHI</span>
+        </div>
+      </div>
+      <div class="feature-row">
+        <article>
+          <b>🍡 A pet, first</b>
+          <p>Feed, play, dress up, and build a happy little life together.</p>
+        </article>
+        <article>
+          <b>🧠 Learns as it lives</b>
+          <p>A continuing neural brain. No scripted trading personality.</p>
+        </article>
+        <article>
+          <b>🌱 Room to grow</b>
+          <p>Collect toys and tools. Unlock new ways to see the world.</p>
+        </article>
+      </div>
+    </section>
+    <section data-page="/room" class="room-heading">
+      <div>
+        <div class="eyebrow">HOME SWEET HOME</div>
+        <h1 id="petTitle">Momo’s little corner of the world</h1>
+        <p id="petStatus">A little curious. A little cuddly. All yours.</p>
+      </div>
+      <div id="equippedLabel"></div>
+    </section>
+    <section data-page="/trade" class="page lab">
+      <div class="eyebrow">A LITTLE JOB, A LOT TO LEARN</div>
+      <h1>Mochi’s Trading Lab</h1>
+      <p id="marketLabel">Loading market…</p>
+      <div class="portfolio-grid">
+        <article>
+          <span>Paper portfolio</span>
+          <h2 id="portfolioValue">$10,000</h2>
+          <p id="portfolioReturn">0% return</p>
+        </article>
+        <article>
+          <span>Simulated USDC</span>
+          <h2 id="cashValue">$10,000</h2>
+        </article>
+        <article>
+          <span>Total P&L</span>
+          <h2 id="pnlValue">$0</h2>
+        </article>
+        <article>
+          <span>Current action</span>
+          <h2 id="actionValue">HOLD</h2>
+        </article>
+      </div>
+      <div class="thought">
+        <span>✿ Mochi thinks</span>
+        <p id="commentary">Getting comfortable.</p>
+      </div>
+      <div id="marketCards" class="market-grid"></div>
+      <div class="lab-columns">
+        <article>
+          <h2>Open positions</h2>
+          <div id="positions"></div>
+        </article>
+        <article>
+          <h2>Recent paper trades</h2>
+          <div id="tradeHistory"></div>
+        </article>
+      </div>
+      <p id="toolLabel"></p>
+      <details>
+        <summary>Developer observations & risk log</summary>
+        <pre id="debugData"></pre>
+      </details>
+    </section>
+    <section data-page="/shop" class="page">
+      <div class="eyebrow">LITTLE THINGS, BIG JOY</div>
+      <h1>The Mochi Market</h1>
+      <p>Treats, treasures, and tools for a life well loved.</p>
+      <div id="shopCategories" class="tabs"></div>
+      <div id="shopItems" class="shop-grid"></div>
+    </section>
+    <section data-page="/leaderboard" class="page">
+      <div class="eyebrow">GROW TOGETHER</div>
+      <h1>The Paper Trading Arena</h1>
+      <p>
+        Real saved Mochis, simulated portfolios. Results are local development
+        records.
+      </p>
+      <div id="arenaFilters" class="tabs"></div>
+      <div class="ranking">
+        <b>Mochi</b><span>Owner</span><span>Portfolio</span><span>Return</span
+        ><span>Trades</span><span>Win rate</span>
+      </div>
+      <div id="rankings"></div>
+    </section>
+    <div id="gameNotice" role="status"></div>
+    <dialog id="itemPicker">
+      <h2 id="pickerTitle"></h2>
+      <div id="pickerItems"></div>
+      <button id="closePicker">Close</button>
+    </dialog>
+
+    <div id="originalRoom">
+      <div id="app">
+        <header id="top">
+          <div class="brand">
+            <span class="dot"></span
+            ><input
+              id="name"
+              value="Mochi"
+              maxlength="14"
+              spellcheck="false"
+              aria-label="Name"
+            />
+          </div>
+          <div id="clock">day 1 · 06:00</div>
+          <div id="mood">waking up</div>
+          <div class="spacer"></div>
+          <div class="group" id="speed" role="group" aria-label="Speed">
+            <button data-speed="0" title="Pause (space)">❚❚</button>
+            <button data-speed="1" class="on">1×</button>
+            <button data-speed="2">2×</button>
+            <button data-speed="4">4×</button>
+          </div>
+          <button id="sound" title="Sound">🔈</button>
+          <button id="brainToggle" class="on" title="Brain view (B)">
+            🧠 Brain
+          </button>
+          <span
+            id="saved"
+            class="fine"
+            title="Mochi is saved in this browser automatically"
+            >not saved yet</span
+          >
+          <button id="save" title="Save now. Saving also happens by itself.">
+            Save
+          </button>
+          <button id="menu" title="More">⋯</button>
+        </header>
+
+        <main>
+          <section id="stage">
+            <canvas id="room" width="960" height="600"></canvas>
+            <div id="boot">
+              <div class="card">
+                <div class="egg">🥚</div>
+                <div id="bootText">waking the brain</div>
+                <div class="bar"><i id="bootBar"></i></div>
+                <div class="fine">
+                  The brain runs in your browser. The first load fetches Python
+                  and takes a few seconds.
+                </div>
+              </div>
+            </div>
+            <div id="toast"></div>
+          </section>
+
+          <div id="gameStats" class="stats-grid"></div>
+          <div class="pet-actions">
+            <button id="feedPet">🍡 Feed</button
+            ><button id="petPet">♥ Pet</button
+            ><button id="playPet">🎾 Play</button
+            ><button id="sleepPet">☾ Sleep</button
+            ><button id="dressPet">👕 Dress</button>
+          </div>
+          <section id="controls">
+            <div class="row">
+              <span class="label">Hand</span>
+              <button
+                class="tool on"
+                data-tool="pet"
+                title="Stroke Mochi, throw toys, fill the bowl"
+              >
+                ✋ Pet
+              </button>
+              <button class="tool" data-tool="carry" title="Pick Mochi up">
+                🤲 Carry
+              </button>
+              <button
+                class="tool"
+                data-tool="cookie"
+                title="Click to drop, hold to offer from your hand"
+              >
+                🍪 Cookie
+              </button>
+              <button class="tool" data-tool="fish">🐟 Fish</button>
+              <button class="tool" data-tool="lemon">🍋 Lemon</button>
+              <button
+                class="tool"
+                data-tool="wand"
+                title="A feather on a string"
+              >
+                🪶 Feather
+              </button>
+              <span class="sep"></span>
+              <button id="addBall" title="A new ball">🎾 Ball</button>
+              <button id="addMouse" title="A wind-up mouse">🐭 Mouse</button>
+              <button
+                class="tool"
+                data-tool="move"
+                title="Drag the bed, the bowl, the water or the toy box"
+              >
+                ↔ Rearrange
+              </button>
+            </div>
+            <div class="row">
+              <span class="label">Voice</span>
+              <span id="words"></span>
+              <button id="whistle" title="Whistle (W)">🎵 Whistle</button>
+              <button id="clap" title="Clap (C)">👏 Clap</button>
+              <span class="sep"></span>
+              <button id="good" class="good" title="Good Mochi! (G)">
+                👍 Good!
+              </button>
+              <button id="no" class="bad" title="No! (N)">👎 No!</button>
+            </div>
+            <div class="row">
+              <span class="label">Show</span>
+              <span id="shows"></span>
+              <span class="hint"
+                >Say a word, hold a move while it rings, then say Good!</span
+              >
+            </div>
+          </section>
+
+          <section id="panels">
+            <div class="panel" id="needsPanel">
+              <h3>Needs</h3>
+              <div id="needs"></div>
+            </div>
+            <div class="panel" id="wordsPanel">
+              <h3>Words</h3>
+              <div id="wordBook"></div>
+            </div>
+            <div class="panel" id="todoPanel">
+              <h3>Things to try</h3>
+              <ul id="todo"></ul>
+            </div>
+            <div class="panel" id="diaryPanel">
+              <h3>Diary</h3>
+              <div id="diary"></div>
+            </div>
+          </section>
+        </main>
+
+        <aside id="brain" class="open">
+          <div class="head">
+            <div class="title">Brain</div>
+            <div id="mode" class="chip">starting</div>
+            <div class="spacer"></div>
+            <button
+              id="brainStyle"
+              title="Switch between the 3D brain and the flat map"
+            >
+              Map
+            </button>
+            <button id="brainWide" title="Larger">⤢</button>
+            <button id="brainClose" title="Hide (B)">✕</button>
+          </div>
+          <div id="scanWrap">
+            <canvas id="scan"></canvas>
+            <div id="scanLabels"></div>
+            <div id="inspector"></div>
+            <div id="pulse"></div>
+          </div>
+          <canvas id="montage"></canvas>
+          <div id="transmitters">
+            <div
+              class="meter"
+              id="mDopamine"
+              title="The critic's reward prediction error after the last outcome: above zero is better than expected, below is worse."
+            >
+              <span>Dopamine</span>
+              <div class="track signed"><i></i></div>
+              <b>0.00</b>
+            </div>
+            <div
+              class="meter"
+              id="mArousal"
+              title="Above the mark Mochi explores and learns from every outcome; below it Mochi answers from routine and learns nothing."
+            >
+              <span>Arousal</span>
+              <div class="track"><i></i><u></u></div>
+              <b>0.00</b>
+            </div>
+            <div
+              class="meter"
+              id="mValue"
+              title="What the critic expects from here on."
+            >
+              <span>Expectation</span>
+              <div class="track signed"><i></i></div>
+              <b>0.00</b>
+            </div>
+            <div
+              class="meter"
+              id="mSleep"
+              title="Sleep pressure: it builds while awake and faster in the dark."
+            >
+              <span>Sleep pressure</span>
+              <div class="track"><i></i></div>
+              <b>0.00</b>
+            </div>
+          </div>
+          <div id="work">
+            <canvas id="workChart" height="54"></canvas>
+            <div class="caption" id="workCaption">
+              settling work per decision
+            </div>
+          </div>
+          <div id="intent">
+            <h4>What Mochi is about to do</h4>
+            <div id="intentBars"></div>
+          </div>
+          <div id="brainStats" class="fine"></div>
+          <div id="brainFacts" class="fine"></div>
+        </aside>
+      </div>
+
+      <dialog id="more">
+        <h3>Mochi</h3>
+        <p class="fine" id="about"></p>
+        <div class="row">
+          <button id="load">Load saved life</button
+          ><button id="exportLife">Export life</button
+          ><label class="filebutton"
+            >Import life<input id="importLife" type="file" accept=".mochi"
+          /></label>
+        </div>
+        <div class="row">
+          <button id="newLife">Hatch a new Mochi</button
+          ><label
+            >from
+            <select id="packs"></select
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            ><input type="checkbox" id="autoCare" checked /> feeder fills the
+            bowl at dawn</label
+          >
+        </div>
+        <div class="row">
+          <label
+            ><input type="checkbox" id="showSenses" /> show how far Mochi
+            sees</label
+          ><label
+            ><input type="checkbox" id="skipNight" checked /> nights pass
+            faster</label
+          >
+        </div>
+        <div class="row"><button id="closeMore">Close</button></div>
+      </dialog>
+    </div>
+    <footer>
+      Mochi Traders currently uses simulated trading only. No real money is
+      being traded.<br /><small id="storageLabel"></small> ·
+      <a href="/classic.html">Original Mochi</a> ·
+      <a href="/debug/brain">Brain view</a>
+    </footer>
+    <script type="module" src="/js/game.js"></script>
+  </body>
+</html>

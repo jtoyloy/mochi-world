@@ -1,0 +1,14 @@
+import {pgTable,text,jsonb,timestamp,doublePrecision,integer,primaryKey} from 'drizzle-orm/pg-core';
+export const users=pgTable('users',{id:text('id').primaryKey(),displayName:text('display_name').notNull()});
+export const mochis=pgTable('mochis',{id:text('id').primaryKey(),userId:text('user_id').notNull().references(()=>users.id),name:text('name').notNull(),state:jsonb('state').notNull(),updatedAt:timestamp('updated_at',{withTimezone:true}).defaultNow()});
+export const petState=pgTable('mochi_pet_state',{mochiId:text('mochi_id').primaryKey().references(()=>mochis.id),state:jsonb('state').notNull()});
+export const brains=pgTable('mochi_brains',{mochiId:text('mochi_id').primaryKey().references(()=>mochis.id),pack:text('pack').notNull(),life:jsonb('life').notNull()});
+export const items=pgTable('items',{id:text('id').primaryKey(),data:jsonb('data').notNull()});
+export const inventories=pgTable('inventories',{mochiId:text('mochi_id').references(()=>mochis.id),itemId:text('item_id').references(()=>items.id),quantity:integer('quantity').notNull()},t=>[primaryKey({columns:[t.mochiId,t.itemId]})]);
+export const equipment=pgTable('equipped_items',{mochiId:text('mochi_id').primaryKey().references(()=>mochis.id),slots:jsonb('slots').notNull()});
+export const portfolios=pgTable('portfolios',{mochiId:text('mochi_id').primaryKey().references(()=>mochis.id),data:jsonb('data').notNull()});
+export const positions=pgTable('positions',{mochiId:text('mochi_id').references(()=>mochis.id),symbol:text('symbol'),data:jsonb('data').notNull()},t=>[primaryKey({columns:[t.mochiId,t.symbol]})]);
+export const trades=pgTable('trades',{mochiId:text('mochi_id').references(()=>mochis.id),id:text('id'),data:jsonb('data').notNull()},t=>[primaryKey({columns:[t.mochiId,t.id]})]);
+export const snapshots=pgTable('market_snapshots',{symbol:text('symbol').primaryKey(),data:jsonb('data').notNull(),observedAt:timestamp('observed_at',{withTimezone:true}).defaultNow()});
+export const leaderboard=pgTable('leaderboard_entries',{mochiId:text('mochi_id').references(()=>mochis.id),period:text('period'),value:doublePrecision('value').notNull(),data:jsonb('data').notNull()},t=>[primaryKey({columns:[t.mochiId,t.period]})]);
+export const achievements=pgTable('achievements',{mochiId:text('mochi_id').references(()=>mochis.id),id:text('id'),data:jsonb('data').notNull()},t=>[primaryKey({columns:[t.mochiId,t.id]})]);

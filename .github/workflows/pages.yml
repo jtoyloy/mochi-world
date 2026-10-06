@@ -1,0 +1,35 @@
+# Publish the page to GitHub Pages. Run it by hand: in the repository settings choose
+# Pages -> Source: GitHub Actions, then start this workflow from the Actions tab.
+# Only upstream Classic is static. The full Mochi City requires its API, database and brain service.
+name: Publish original Classic to GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage original Classic only
+        run: |
+          cp -R web .classic-static
+          cp web/classic.html .classic-static/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .classic-static
+      - id: deployment
+        uses: actions/deploy-pages@v4

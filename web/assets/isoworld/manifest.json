@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "provenance": "Original images generated for this repository using built-in imagegen, 2026-10-05. No third-party game art or reference screenshots supplied.",
+  "style": "Warm painterly gouache, orthographic isometric",
+  "atlases": {
+    "buildings-v1.png": {
+      "columns": 4,
+      "rows": 2,
+      "items": [
+        "hearth-cafe",
+        "paper-exchange",
+        "starlight-arcade",
+        "lantern-observatory",
+        "food-pavilion",
+        "textile-pavilion",
+        "garden-pavilion",
+        "curio-pavilion"
+      ]
+    },
+    "props-v1.png": {
+      "columns": 4,
+      "rows": 2,
+      "items": [
+        "oak",
+        "blossom-tree",
+        "flower-shrub",
+        "wishing-lantern-fountain",
+        "bench",
+        "cafe-table",
+        "garden-wall",
+        "lamp-mailbox"
+      ]
+    },
+    "characters-v1.png": {
+      "columns": 4,
+      "rows": 4,
+      "directions": [
+        "southeast",
+        "southwest",
+        "northwest",
+        "northeast"
+      ],
+      "rowsByArchetype": [
+        "classic-human",
+        "curly-human",
+        "moonfox",
+        "woodland-deer"
+      ]
+    },
+    "terrain-v1.png": {
+      "columns": 2,
+      "rows": 2,
+      "items": [
+        "sandstone",
+        "meadow",
+        "cobblestones",
+        "water"
+      ],
+      "usage": "Projected CanvasPattern into the authored ground, water retained for future effects"
+    },
+    "adventure-v1.png": {
+      "columns": 4,
+      "rows": 2,
+      "items": [
+        "dewdrop-slime",
+        "bramble-boar",
+        "thornling",
+        "rippleback",
+        "mossmask-scavenger",
+        "lantern-guardian",
+        "practice-dummy",
+        "resource-cart"
+      ],
+      "provenance": "Original built-in imagegen asset, character atlas as in-repository style reference only, 2026-10-05"
+    }
+  },
+  "runtime": {
+    "anchor": "trimmed main silhouette bottom center",
+    "depth": "projected feet",
+    "crop": "largest connected alpha silhouette in each cell, originals immutable",
+    "collision": "authored logical footprint, not visible image bounds"
+  }
+}

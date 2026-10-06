@@ -1,0 +1,85 @@
+# 3D measurement notes
+
+Browser: local Codex in-app browser,1280×720,1 authenticated player +1 Mochi,
+Town Square, auto→medium, realtime shadows. Observed about60FPS,301 draw calls,
+205,432 triangles,10 textures,107 geometries. These are renderer counters, not an
+independent hardware benchmark. New garden styling changes counters slightly.
+Low disables realtime shadows/DPR>1; high increases shadow map/DPR budget.
+
+Vite bundle about1.59MB raw /383kB gzip. The server negotiates Brotli/gzip for the
+bundle. Two character GLBs total under100kB; no other room model download.
+Flowers use instancing; cached GLBs use isolated skeleton/mixers. The browser panel
+reports actual FPS/draws/triangles/textures/geometries/player count/quality. Texture
+memory bytes are explicitly not estimated from a texture count.
+
+Before a capacity40 performance claim: profile5/20/40 visible avatars and pets on
+integrated laptop graphics and touch devices; collect p50/p95 frame time, JS heap,
+network bytes, A* latency and DB throughput; batch static rooms and cosmetic materials,
+add character/cosmetic LOD and adaptive quality. No such stress result is claimed here.
+
+## Town polish comparison
+
+Same local IAB desktop test size (1280×720), medium, one player and one active
+Mochi. Final Town has twelve resident definitions (eleven/twelve visible by the
+traveling vendor schedule), six stalls, extra district/scenery geometry and a
+larger floor. A stationary browser sample after walking to the east fountain
+bench showed **60 FPS, 840 draw calls, 386,998 triangles, 49 textures, 352 geometries**.
+Counts vary with camera/frustum, animation and traveling-vendor presence. This
+is roughly 2.8× draws /1.9× triangles versus the recorded 301/205,432 baseline,
+with approximately the same observed frame rate on this host. It is an increase
+in visual cost, not a draw-call optimization claim.
+
+A preliminary smaller viewport/low sample (before the final district prop additions)
+showed 57–60 FPS, about 297 draws/128k triangles. Do not treat that intermediate
+sample as the final mobile result; final responsive review is recorded separately
+in TOWN_POLISH.md. Low omits the sun shadow pass; all qualities keep contact gradients.
+
+The developer panel additionally times resident pose + ground update CPU work
+(the average per resident update, not total GPU animation time), reports the
+actual shadow-map preset, and exposes grounding contacts, free camera, material
+swatches, terrain walkability and routes. Nearby NPCs update at 5Hz, distant at
+2Hz; secondary distant gestures are omitted. All NPC sphere geometry is shared,
+with no skeleton or Cadence instance per NPC. Vegetation flowers use one instanced
+draw. Four material map sets share their 128² textures across color variants.
+
+A native 50-query blocked fountain route probe measured p50 3.66ms, p95 7.49ms,
+worst 21.31ms including initial grid setup. Town grid data is cached and A*
+neighbor lookup uses a local cell index rather than scanning every node.
+This microbenchmark does not simulate concurrent input or 40 pets routing.
+
+The current bundle is about1.67MB raw/400kB gzip (Vite output varies slightly with
+final UI instrumentation). No new downloaded model/texture/audio dependencies
+were introduced by Town. Shared original procedural maps and sign textures still
+need an artist atlas/trim/batching pass before a crowd release. See the unchanged
+capacity40 measurement requirements above.
+
+
+Final 390×844 responsive viewport (automatic low, one player/pet): **60 FPS,
+271 draws, 122,362 triangles, 49 textures, 369 geometries**, NPC update average
+0.059ms; sun shadow disabled. This measures the same desktop host at a mobile
+layout size, not phone GPU performance. Saved counters: town-mobile-performance.png.
+
+## Current Pixi isometric pivot
+
+Final main renderer is PixiJS/WebGL. Desktop1280×720 with one human/player, one
+beast and12 resident definitions:59–60FPS, p95 frame delta18.6ms,3 measured GL
+draws/~1,909 triangles, sampled CPU update~0.5ms. Developer-only context wrappers
+count actual drawElements/drawArrays/instanced calls and triangle primitives per
+render; original functions are restored on teardown. Nav/depth/routes overlay
+cost is separate (~5draws/51k triangles). Prior Three sample840draws/386,998tris
+used different geometry/shadows, so this is a presentation comparison, not a
+controlled engine speed test.
+
+Responsive390×844 on the same desktop host:56FPS, p9518.6ms,3draws/~1,719triangles,
+CPU sample~1.4ms. It is not a physical phone result. No40-player measurement.
+Current clean Vite output totals1.03MB JS raw /267kB gzip /227kB Brotli including
+split chunks; server serves compressed entry and chunks. Original PNGs total
+8.94MB, so the asset download is substantially larger than procedural art. Shared
+atlas sources and baked ground reduce draws, but artist offline packing/compression,
+versioned caching and real target-device/crowd profiling are still required.
+See ISOMETRIC_DELIVERY.md and isometric-*-performance.png for proof.
+
+
+## Adventure milestone — 2026-10-05
+
+Adventure mobs use viewport culling/interpolation; effects use a 16-entry pool and a bounded event ring. Combat ticks avoid overlapping queues. No new 40-player benchmark was performed; capacity and sustained latency remain unverified.

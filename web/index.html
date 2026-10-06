@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#7864ad" />
+    <title>Mochi World · Bring a little friend</title>
+    <link rel="stylesheet" href="/world.css" />
+    <link rel="stylesheet" href="/social.css" />
+  </head>
+  <body>
+    <header class="shell">
+      <a class="brand" href="/home"
+        ><span class="brand-pet">✦</span
+        ><span>mochi<span class="city">WORLD</span></span></a
+      >
+      <nav aria-label="Main navigation" id="navigation"></nav>
+      <div class="account">
+        <a href="/explore/bank" id="coins">— $MOCHI</a
+        ><a
+          href="/community/events"
+          id="notifications"
+          aria-label="Notifications"
+          >♧</a
+        ><a href="/user/devuser" id="profileLink">Explorer</a>
+      </div>
+    </header>
+    <main id="app" tabindex="-1">
+      <p class="loading">Opening the city gates…</p>
+    </main>
+    <footer>
+      <b>mochi world</b><span>A small world. A growing friendship.</span
+      ><a href="/trading/lab">Paper trading only</a
+      ><a href="/classic.html">Original Mochi</a
+      ><button id="devLogin" hidden>Development account</button>
+    </footer>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/js/world/app.js"></script>
+  </body>
+</html>

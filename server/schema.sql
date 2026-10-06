@@ -1,0 +1,15 @@
+BEGIN;
+CREATE TABLE IF NOT EXISTS users(id text PRIMARY KEY, display_name text NOT NULL);
+CREATE TABLE IF NOT EXISTS mochis(id text PRIMARY KEY,user_id text NOT NULL REFERENCES users(id),name text NOT NULL,state jsonb NOT NULL,updated_at timestamptz DEFAULT now());
+CREATE TABLE IF NOT EXISTS mochi_pet_state(mochi_id text PRIMARY KEY REFERENCES mochis(id),state jsonb NOT NULL);
+CREATE TABLE IF NOT EXISTS mochi_brains(mochi_id text PRIMARY KEY REFERENCES mochis(id),pack text NOT NULL,life jsonb NOT NULL);
+CREATE TABLE IF NOT EXISTS items(id text PRIMARY KEY,data jsonb NOT NULL);
+CREATE TABLE IF NOT EXISTS inventories(mochi_id text REFERENCES mochis(id),item_id text REFERENCES items(id),quantity integer NOT NULL CHECK(quantity>=0),PRIMARY KEY(mochi_id,item_id));
+CREATE TABLE IF NOT EXISTS equipped_items(mochi_id text PRIMARY KEY REFERENCES mochis(id),slots jsonb NOT NULL);
+CREATE TABLE IF NOT EXISTS portfolios(mochi_id text PRIMARY KEY REFERENCES mochis(id),data jsonb NOT NULL);
+CREATE TABLE IF NOT EXISTS positions(mochi_id text REFERENCES mochis(id),symbol text,data jsonb NOT NULL,PRIMARY KEY(mochi_id,symbol));
+CREATE TABLE IF NOT EXISTS trades(mochi_id text REFERENCES mochis(id),id text,data jsonb NOT NULL,PRIMARY KEY(mochi_id,id));
+CREATE TABLE IF NOT EXISTS market_snapshots(symbol text PRIMARY KEY,data jsonb NOT NULL,observed_at timestamptz DEFAULT now());
+CREATE TABLE IF NOT EXISTS leaderboard_entries(mochi_id text REFERENCES mochis(id),period text,value double precision NOT NULL,data jsonb NOT NULL,PRIMARY KEY(mochi_id,period));
+CREATE TABLE IF NOT EXISTS achievements(mochi_id text REFERENCES mochis(id),id text,data jsonb NOT NULL,PRIMARY KEY(mochi_id,id));
+COMMIT;

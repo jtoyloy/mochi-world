@@ -1,0 +1,3 @@
+export class TemplateNarrator {
+ async narrate({action,snapshot,risk,sleeping}){if(sleeping)return 'Dreaming of strawberry mochi. My positions can wait.';if(!risk.allowed)return `I wanted to ${action.toLowerCase().replaceAll('_',' ')}, but my safety terminal says: ${risk.reason}.`;if(snapshot.return5m===null&&action==='HOLD')return `I’m collecting recent ${snapshot.symbol} history before I have a story to tell.`;const trend=snapshot.return5m>0?'rising':'falling';if(action==='HOLD')return `I see ${snapshot.symbol} ${trend}. I’m watching and learning for now.`;return `I chose to ${action.toLowerCase().replaceAll('_',' ')} on ${snapshot.symbol}. Let’s see what this little experiment teaches me.`;}
+}

@@ -1,0 +1,43 @@
+{
+  "name": "mochi-traders",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Raise it. Train it. Watch it paper trade.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --env-file-if-exists=.env --test tests/test_world.mjs tests/traders/*.test.mjs tests/world/*.test.mjs tests/social/*.test.mjs tests/adventure/*.test.mjs",
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "simulate": "node sim/traders.mjs",
+    "db:migrate": "node --env-file-if-exists=.env server/world/migrate.mjs",
+    "test:brain": ".venv/bin/python -m pytest -q tests",
+    "db:import": "node --env-file-if-exists=.env server/world/import-legacy.mjs",
+    "test:world": "node --env-file-if-exists=.env --test tests/world/*.test.mjs",
+    "db:local": "node --env-file-if-exists=.env tools/local-db.mjs",
+    "test:social": "node --env-file-if-exists=.env --test tests/social/*.test.mjs",
+    "treasury:record": "node --env-file-if-exists=.env tools/record-burn.mjs",
+    "build": "vite build",
+    "dev": "npm run build && npm start",
+    "build:watch": "vite build --watch",
+    "assets:models": "node tools/build-models.mjs",
+    "test:adventure": "node --env-file-if-exists=.env --test tests/adventure/*.test.mjs",
+    "rewards:record": "node --env-file-if-exists=.env tools/record-resource-reward.mjs"
+  },
+  "devDependencies": {
+    "pyodide": "^314.0.7",
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "bs58": "^6.0.0",
+    "drizzle-orm": "^0.45.3",
+    "pg": "^8.16.3",
+    "pixi.js": "^8.14.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "^0.186.1",
+    "tweetnacl": "^1.0.3",
+    "ws": "^8.22.0"
+  }
+}

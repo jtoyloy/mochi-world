@@ -1,0 +1,122 @@
+{
+  "format": "mochi-battle-pack/1",
+  "id": "battle-0.74.0-v1",
+  "domain": "battle-v1",
+  "cadenceVersion": "0.74.0",
+  "wheel": "cadence_net-0.74.0-py3-none-any.whl",
+  "host": "py/battle.py",
+  "life": "basic.life",
+  "spec": {
+    "inputs": 16,
+    "actions": [
+      "ATTACK",
+      "DEFEND_OWNER",
+      "DEFEND_SELF",
+      "USE_SPECIAL",
+      "MOVE_CLOSER",
+      "MOVE_AWAY",
+      "WAIT"
+    ],
+    "senses": [
+      {
+        "name": "battle",
+        "size": 16,
+        "area": "battle"
+      }
+    ]
+  },
+  "modules": [
+    64
+  ],
+  "bootstrap": "Fresh library System 1 control; no promoted teacher or battle competence claim. Each pet has a seeded birth and retains its complete subsequent life.",
+  "hashes": {
+    "basic.life": "5e45e05513afb14b48119560384c3856e5f7eb5bc90dc2381bc58e4aa34fecd8",
+    "cadence_net-0.74.0-py3-none-any.whl": "146333a017048450580bdb8557e647b943092bc917ee6308770bc9586b74f766",
+    "py/anatomy.py": "aedd3036ecfbf1b2fd0bf3e5084738ef682862c90998200791a601c412cb52cf",
+    "py/__init__.py": "78388304fd98147f6282fc6012e41a38e5394b5de1b09a92241a3202e5c99768",
+    "py/stores.py": "84a42f690b132dadbb57da3659624d3ce04d60e8d46313f66514999daa1c634a",
+    "py/life.py": "e9d4f21295a1329e948770d421b0ca8511e54c7d2a1ab2db8c017404dff318fa",
+    "py/battle.py": "a83e94974d919ab10f3f2a08aebb8bb177790e0eadae54d8178322f19c00f70f"
+  },
+  "report": {
+    "neurons": 151,
+    "synapses": 6058,
+    "regions": {
+      "sensory": 16,
+      "association": 64,
+      "prefrontal": 64,
+      "motor": 7
+    },
+    "genes": {
+      "layout": "compose",
+      "association": 64,
+      "first": 0,
+      "areas": {
+        "sight": 192,
+        "smell": 48,
+        "hearing": 64,
+        "touch": 48,
+        "insula": 64,
+        "place": 96
+      },
+      "reflex": [],
+      "observer": 0,
+      "dentate": 0,
+      "dentate_fan": 8,
+      "dentate_active": 0.03,
+      "dentate_return": true,
+      "dentate_hub": false,
+      "lateral": null,
+      "resting_bias": 0.0,
+      "trace_amplitude": 3,
+      "trace_decay": 0.2,
+      "trace_scale": 12.0,
+      "teach_eta": 0.1,
+      "teach_momentum": 0.0,
+      "teach_margin": 0.5,
+      "teach_nudge": "cross_entropy",
+      "teach_beta": 0.1,
+      "temperature": 0.2,
+      "reward_eta": 0.1,
+      "reward_eta_bias": 0.01,
+      "reward_eta_critic": 0.3,
+      "gamma": 0.9,
+      "lam": 0.8,
+      "eligibility_steps": 12,
+      "free_steps": 1024,
+      "memory_expansion": 0,
+      "memory_winners": 24,
+      "memory_decay": 0.9,
+      "memory_consolidation": 0.05,
+      "memory_amplitude": 1.0,
+      "shown_amplitude": 0.0,
+      "shown_decay": 0.9,
+      "sleep_transfer": 0.5
+    },
+    "counters": {
+      "ticks": 0,
+      "routine": 0,
+      "aroused": 0,
+      "guided": 0,
+      "refused": 0,
+      "dropped": 0,
+      "lessons": 0,
+      "sweeps_routine": 0,
+      "sweeps_aroused": 0,
+      "sweeps_guided": 0,
+      "agree": 0,
+      "scored": 0
+    },
+    "routine_share": 0.0,
+    "sweeps": {
+      "routine": 0.0,
+      "aroused": 0.0,
+      "guided": 0.0
+    },
+    "agreement": 0.0,
+    "updates": 0,
+    "lessons_total": 0,
+    "memory_writes": 0
+  },
+  "license": "Cadence wheel GPL-3.0; project host sources retain repository license."
+}
