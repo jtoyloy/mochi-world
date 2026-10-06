@@ -86,8 +86,17 @@ export class IsometricWorld {
     this.frameTimes = [];
     this.elapsed = 0;
     this.dead = false;
+    this.reducedMotion = false;
   }
   async init() {
+    this.motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    this.reducedMotion = this.motionPreference.matches;
+    this.onMotionPreference = (event) => {
+      if (this.motionOverride) return;
+      this.reducedMotion = event.matches;
+      this.updateMotionControl();
+    };
+    this.motionPreference.addEventListener("change", this.onMotionPreference);
     this.loading = el("div", "iso-loading", "Opening the gates…");
     this.host.append(this.loading);
     this.app = new Application();
@@ -364,6 +373,7 @@ export class IsometricWorld {
     const spec = roomSpec(this.room),
       town = this.room.split(":")[0] === "town";
     this.roomTitle.textContent = spec.name;
+    this.minimap.setAttribute("aria-label", `${spec.name} overview. Click to travel to a path.`);
     this.subtitle.textContent = town
       ? "Wander slowly. Stay a little."
       : spec.subtitle;
@@ -1351,7 +1361,7 @@ export class IsometricWorld {
       f.g.position.set(q.x, q.y - 30);
       f.g
         .clear()
-        .circle(0, 0, (1 - left) * 50 + 8)
+        .circle(0, 0, this.reducedMotion ? 12 : (1 - left) * 50 + 8)
         .stroke({
           color: f.kind.includes("spell") ? 0xa09dd0 : 0xe9c57c,
           width: 3,
@@ -1369,6 +1379,12 @@ export class IsometricWorld {
     a.bubble.remove();
     this.actors.delete(key);
   }
+  updateMotionControl() {
+    if (!this.motionControl) return;
+    this.motionControl.setAttribute("aria-pressed", String(this.reducedMotion));
+    this.motionControl.textContent = this.reducedMotion ? "◎" : "◌";
+    this.motionControl.title = `Reduced decorative motion: ${this.reducedMotion ? "on" : "off"}`;
+  }
   makeControls() {
     this.title = el("div", "iso-room-title");
     this.roomTitle = el("strong", "", "Town Square");
@@ -1383,6 +1399,8 @@ export class IsometricWorld {
     const zoom = (text, delta) => {
       const b = el("button", "", text);
       b.type = "button";
+      b.setAttribute("aria-label", delta < 0 ? "Zoom out" : "Zoom in");
+      b.title = delta < 0 ? "Zoom out" : "Zoom in";
       b.onclick = () =>
         (this.zoom = Math.max(0.35, Math.min(1.3, this.zoom + delta)));
       this.controls.append(b);
@@ -1390,6 +1408,7 @@ export class IsometricWorld {
     zoom("−", -0.1);
     zoom("+", 0.1);
     const center = el("button", "", "⌂");
+    center.type = "button";
     center.setAttribute("aria-label", "Recenter on your character");
     center.onclick = () => {
       const a = this.actors.get("player:" + this.bridge.selfId);
@@ -1405,6 +1424,16 @@ export class IsometricWorld {
     sound.setAttribute("aria-label", "Sound volume");
     sound.oninput = () => this.scene.audio.setVolume(Number(sound.value));
     this.controls.append(sound);
+    this.motionControl = el("button", "", "◌");
+    this.motionControl.type = "button";
+    this.motionControl.setAttribute("aria-label", "Reduce decorative motion");
+    this.motionControl.onclick = () => {
+      this.motionOverride = true;
+      this.reducedMotion = !this.reducedMotion;
+      this.updateMotionControl();
+    };
+    this.updateMotionControl();
+    this.controls.append(this.motionControl);
     this.host.append(this.controls);
     this.minimap = document.createElement("canvas");
     this.minimap.width = 180;
@@ -1741,6 +1770,9 @@ export class IsometricWorld {
       )
         a.playback.clearAction();
       a.playback.update(a.gait, speed, dt, requested);
+      // Keep locomotion and accepted action timing intact; quiet decorative idles.
+      if (this.reducedMotion && !a.playback.action && a.playback.state === "idle")
+        a.playback.frame = 0;
       if (
         a.row < 2 &&
         ["talk", "gesture"].includes(a.playback.state) &&
@@ -1810,12 +1842,12 @@ export class IsometricWorld {
         a.s.alpha = blend;
       }
       // Overlay cosmetics share the body phase/direction; world/UI anchors stay stable.
-      const secondary = moving
+      const secondary = this.reducedMotion ? 0 : moving
         ? Math.sin(a.playback.phase * Math.PI * 2)
         : Math.sin(a.playback.idleTime * 1.3) * 0.2;
       a.cosmetics.rotation = secondary * 0.018;
       a.cosmetics.x = secondary * 1.2;
-      a.cape.rotation =
+      a.cape.rotation = this.reducedMotion ? 0 :
         Math.sin(a.playback.phase * Math.PI * 2 - 0.5) *
         (moving ? 0.025 : 0.004);
       if (
@@ -1845,9 +1877,9 @@ export class IsometricWorld {
       } else if (a.type === "player") this.motionMetrics.remoteSpeed = speed;
       const emote = this.scene.emotes.get(a.data.userId),
         reaction = this.scene.reactions.get(a.data.id);
-      if (emote && now - emote.at < 3500 && emote.kind === "dance")
+      if (!this.reducedMotion && emote && now - emote.at < 3500 && emote.kind === "dance")
         a.s.rotation = Math.sin(this.elapsed * 7) * 0.09;
-      if (reaction && now - reaction.at < 1800)
+      if (!this.reducedMotion && reaction && now - reaction.at < 1800)
         a.s.y -= Math.abs(Math.sin(this.elapsed * 6)) * 5;
       a.transitionSprite.y = a.s.y;
       a.cosmetics.y = a.s.y;
@@ -1980,7 +2012,7 @@ export class IsometricWorld {
         q.x < 0 ||
         q.x > viewportWidth ||
         q.y < 95 ||
-        (q.y < 185 && Math.abs(q.x - viewportWidth * 0.5) < 180) ||
+        (q.y - label.height * this.zoom < 220 && Math.abs(q.x - viewportWidth * 0.5) < 180) ||
         q.y > viewportHeight - (viewportWidth < 650 ? 255 : 145);
     }
     for (const p of this.props) {
@@ -2017,7 +2049,7 @@ export class IsometricWorld {
       }
     }
     if (this.ripple) {
-      const t = this.elapsed % 2.5;
+      const t = this.reducedMotion ? 0 : this.elapsed % 2.5;
       this.ripple
         .clear()
         .ellipse(0, 0, 24 + t * 11, 9 + t * 4)
@@ -2126,6 +2158,7 @@ export class IsometricWorld {
   }
   destroy() {
     this.dead = true;
+    this.motionPreference?.removeEventListener("change", this.onMotionPreference);
     this.appearanceCache?.destroy();
     if (this.renderProbe) {
       this.app.renderer.runners.prerender.remove(this.renderProbe);
