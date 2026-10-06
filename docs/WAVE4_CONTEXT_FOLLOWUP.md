@@ -1,25 +1,7 @@
 # Wave 4 context discrimination follow-up
 
-This is a controlled diagnostic for the unresolved Cadence action-learning finding. It uses the
-existing isolated `cadence-action-learning-v1` host and the minimal `affordance` arm. Production
-hosts, published packs, rewards and action masking are untouched.
+This diagnostic asks whether the isolated Cadence action host can acquire different preferences for four otherwise matched moments: target in attack range, target out of range with a path available, special ready/in range, and special unavailable. It uses the existing experimental host and `ActionArena`; no teacher labels, production checkpoints, or production action selection are changed.
 
-The predeclared contexts share the same ordinary battle state and vary only the three measured
-possibility senses: attack executable, special executable, and approach available. The set is
-`near_ready`, `far_ready`, `special_ready`, and `special_unavailable`. A 24-pair replay then
-exposes a fixed far-to-near sequence so delayed movement credit can be counted without replacing
-the action selected by Cadence. The report records fresh and trained policy vectors, action
-changes, entropy, update and associative-memory deltas, refusals, and the selected actions in
-each transition.
+The predeclared probe ran three replicas each for published, expanded, affordance, expanded-affordance, penalty and persistent arms. The probe reads a private policy before and after 60 controlled episodes. Fresh policies already alias contexts in several replicas; after training, every arm still produced a constant action across all four contexts in most replicas. Examples include affordance replicas `[4,4,4,4]`, `[4,4,4,4]`, `[1,1,1,1]` and persistent replicas `[4,4,4,4]`, `[4,4,4,4]`, `[1,1,1,1]`. Other replicas changed their constant action, but did not acquire the required context split. The raw probe is reproducible with `node sim/action_learning_probe.mjs --output /tmp/w4-context` and remains outside the shipped tree.
 
-Run the small fixture with:
-
-```sh
-.venv/bin/python -m sim.action_context_followup --output runs/wave4-context-followup.json
-.venv/bin/python -m pytest -q tests/test_action_context_followup.py
-```
-
-This experiment is diagnostic evidence only. It does not define a promotion gate, tune an arm,
-rerun the affordance assay, or authorize a production change. Interpret a zero action change or
-zero movement credit as evidence about this fixed host/seed fixture, not as a mechanism-wide
-claim. The simpler published control remains the relevant comparison in the completed assay.
+This is a learnability diagnosis, not a promotion assay. It supports the existing negative result: the current System 1 settings can change a global preference under training, but do not reliably acquire strategic context discrimination or delayed approach-to-attack credit. The next measured question is whether exploration, trace magnitude, memory contribution or a deliberately controlled delayed-credit arm can create that split without replacing policy choice. No candidate is promoted; the production pack and behavior remain unchanged.
