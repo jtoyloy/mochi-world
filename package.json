@@ -26,7 +26,7 @@
     "bench:movement": "node tools/movement-benchmark.mjs",
     "test:animation": "node --test tests/animation/*.test.mjs",
     "assets:validate": "node tools/validate-animation.mjs",
-    "assets:register": "node tools/register-animation.mjs"
+    "assets:register": "node tools/register-animation.mjs && node tools/register-actions.mjs --coral"
   },
   "devDependencies": {
     "pngjs": "^7.0.0",

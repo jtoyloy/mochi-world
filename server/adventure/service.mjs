@@ -274,6 +274,7 @@ export class AdventureService {
         "UPDATE resource_harvests SET status='cancelled' WHERE user_id=$1 AND status='pending'",
         [p.userId],
       );
+      this.effect(p, "gather_cancel");
       return { cancelled: true };
     }
     if (action === "gather") return this.startHarvest(p, nodeId);
@@ -365,6 +366,7 @@ export class AdventureService {
         );
       });
       Object.assign(s, next);
+      this.effect(p, "item_use", { itemId });
       return { used: itemId };
     }
     if (action === "spell") {
@@ -416,7 +418,10 @@ export class AdventureService {
         m,
         damage((weapon.attackPower + s.stats.attack) * 1.6, 1),
       );
-      this.effect(p, "hit", { targetId: m.id });
+      this.effect(p, "hit", {
+        targetId: m.id,
+        weaponType: WEAPONS[s.equipment.weapon]?.type ?? "sword",
+      });
       await this.save(p.userId, s);
       return { ability: weapon.abilities[0] };
     }
@@ -538,6 +543,10 @@ export class AdventureService {
     p.target = null;
     p.path = [];
     this.nodeAvailability.set(node.id, now + node.durationMs + node.cooldownMs);
+    this.effect(p, node.kind === "fishing" ? "fish_start" : "woodcut_start", {
+      nodeId,
+      durationMs: node.durationMs,
+    });
     return result;
   }
   async finishHarvest(p, id) {
@@ -679,9 +688,11 @@ export class AdventureService {
     if (action === "DEFEND_OWNER") {
       s.ownerGuardUntil = now + 1800;
       pet.state = "DEFENDING";
+      this.effect(p, "defend", { pet: true, owner: action === "DEFEND_OWNER" });
     } else if (action === "DEFEND_SELF") {
       s.petGuardUntil = now + 1800;
       pet.state = "DEFENDING";
+      this.effect(p, "defend", { pet: true, owner: action === "DEFEND_OWNER" });
     } else if (action === "MOVE_CLOSER" || action === "MOVE_AWAY") {
       const direction = action === "MOVE_CLOSER" ? 1 : -1,
         d = dist(pet, m) || 1,
@@ -886,7 +897,10 @@ export class AdventureService {
               1,
             ),
           );
-          this.effect(p, "hit", { targetId: m.id });
+          this.effect(p, "hit", {
+            targetId: m.id,
+            weaponType: WEAPONS[s.equipment.weapon]?.type ?? "sword",
+          });
         }
         if (
           m.hp > 0 &&
@@ -1053,6 +1067,8 @@ export class AdventureService {
             targetId: m.id,
             pet: !!petTarget,
             amount: hit,
+            defended,
+            defeated: petTarget ? s.petHp <= 0 : s.hp <= 0,
           });
           if (s.hp <= 0) {
             m.target = null;

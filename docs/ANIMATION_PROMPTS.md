@@ -50,3 +50,34 @@ no labels, no shadows. Exactly eight rows fit all.
 
 The gesture result supplied three views per human, not the requested four;
 metadata explicitly mirrors the rear view rather than claiming missing art exists.
+
+## Gameplay action sheets — 2026-10-06
+
+Built-in imagegen, transparent RGBA. Only `characters-v1.png` and
+`adventure-v1.png` supplied as identity/style references. Saved final outputs:
+`actions-sage-v1.png`, `reactions-sage-v1.png`, `mob-actions-v1.png`,
+`actions-coral-v1.png`, `reactions-coral-v1.png`. Generated layout and directional
+limitations/repeated poses are recorded in ACTION_ANIMATION_DELIVERY.md.
+
+### Actions
+
+Use case stylized-concept. Original game full-body action atlas matching reference identities/style. Transparent RGBA, exactly 8 columns by 8 rows evenly spaced grid, 1792x1792 if possible. No labels, shadows or grid lines. Each cell feet/ground contact centered at x50% y88%, head about12%, consistent size. Every row is 8 sequential coherent full-body action drawings: anticipation frames0-1, active2-3, followthrough4-5, recovery6-7. ALL face SE/front-right. Row1 chestnut sage human sword strike. Row2 same human staff cast. Row3 same human bow draw release recover. Row4 same human quick dagger strike. Row5 same human fishing rod cast reel catch recover. Row6 same human axe windup chop recover. Row7 Moonfox agile crouch pounce swipe land recover, paws stable baseline except airborne action. Row8 Woodland Deer heavy brace antler thrust stomp recover. Reference image identity/style only; create new poses. Keep entire bodies/tools within cells, no overlaps. Soft warm painterly chibi shading, articulated arms/legs/full torso changes, no procedural limbs. Exactly64 sprites.
+
+### Reactions
+
+Use case stylized-concept. Game full-body action animation atlas matching exact painterly identities reference. Transparent RGBA, exactly8 columns and8 rows evenly spaced, no grid/text/shadows. All face SE/front-right. Character feet fixed cell x50% y88%, human heads at12%, entire body within cell, identical scale. Each row8 sequential frames. Row1 sage human hurt recoil and recovery; row2 sage human defend raised arms braced; row3 sage human defeated lower to kneel sit tired final pose; row4 sage human drink small potion bottle recover; row5 Moonfox hurt recoil recovery; row6 Moonfox defend alert braced with raised fluffy tail; row7 Woodland Deer heavy defend antlers lowered chest braced; row8 Woodland Deer exhausted sink to ground rest. Preserve fullbody warm painted chibi identity. 64 sprites. No motion trails/particles.
+
+### Early mobs
+
+Use case stylized-concept. Painterly game animation sprite atlas. EXACT8 columns8 rows equally spaced 64 sprites, transparent RGBA no text/grid/shadow. Reference only exact identity/style. Every sprite same cell ground contact x50% y88%, entire silhouette fits with gutters, same size per species. All SE/front-right facing. Rows1-4 Meadow Slime (reference upperleft) respectively 8 sequential idle breathing, 8 move squash hop land, 8 attack squash lunge recover, 8 hurt then flatten defeated final. Rows5-8 Bramble Boar (reference second upper) respectively 8 idle, 8 move heavy steps, 8 attack crouch tusk thrust recover, 8 hurt then sit slump defeated final. Coherent fullbody poses all legs articulate, leaves jiggle. No root translation along ground. 64 separated sprites; consistent soft painted texture chibi original identity.
+
+### Coral action identity edit
+
+Identity-preserve edit. Image1 action atlas target. Preserve exactly8x8 layout and all poses/weapons/registration. Change humans in first6 rows to reference image2 second row identity: brown skin dark curly double hairbuns coral tunic cream cuffs tan trousers satchel. Bottom2 beast rows unchanged. Transparent background. Fix fishing row5 so all8 cells contain full human body with rod fully contained in each cell, no overlaps; sequence cast, cast, forward rod, forward rod, reeling, reeling, fish catch, recover. Preserve all other action poses. No text/grid.
+
+The attempted fishing repair still produced a blank/overlapping cell; registration
+excludes it. This is not claimed as successful art repair.
+
+### Coral reaction identity edit
+
+Identity-preserve edit image1 reaction atlas target. Preserve EXACT8x8 layout poses scale feet placement body stance every frame and transparency. Change only humans first4 rows from sage to reference image2 second row: brown skin dark curly hairbuns coral tunic cream cuffs trousers boots satchel. Bottom4 Moonfox/deer rows unchanged. No new effects text or grid. Keep64 fullbody sprites.

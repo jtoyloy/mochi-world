@@ -1,5 +1,5 @@
 import { Texture, Rectangle } from "pixi.js";
-import { validateSet } from "./registry.js";
+import { validateSet, ACTION_FALLBACKS } from "./registry.js";
 export function validateAtlas(metadata, set) {
   validateSet(set);
   if (
@@ -71,13 +71,115 @@ export function loadAnimationAtlas(texture, set, metadata) {
   });
   return { set, texture, metadata, rows };
 }
+// Action art is optional: follow explicit aliases then a compatible idle pose.
+export function stateFrames(art, state, direction) {
+  const row = art.rows[direction] ?? art.rows[0];
+  if (["walk", "trot", "settle", "move"].includes(state))
+    return row.walk ?? row.idle;
+  const seen = new Set();
+  while (state && !seen.has(state)) {
+    if (row[state]?.length) return row[state];
+    seen.add(state);
+    state = ACTION_FALLBACKS[state];
+  }
+  return row.idle;
+}
 export function selectTexture(art, playback, direction) {
-  const row = art.rows[direction];
+  const frames = stateFrames(art, playback.state, direction);
   return (
-    playback.state === "walk" ||
-    playback.state === "trot" ||
-    playback.state === "settle"
-      ? row.walk
-      : row.idle
-  )[playback.frame];
+    frames[Math.min(frames.length - 1, Math.max(0, playback.frame))] ??
+    frames[0]
+  );
+}
+export function validateActionAtlas(m, set) {
+  validateSet(set);
+  if (
+    !m.states ||
+    !Object.keys(m.states).length ||
+    !m.frames?.length ||
+    !m.size?.every((v) => Number.isInteger(v) && v > 0)
+  )
+    throw Error("Missing action frames");
+  if (m.requiredStates?.some((state) => !m.states[state]))
+    throw Error("Missing required action state");
+  if (!Number.isFinite(m.height) || m.height <= 0)
+    throw Error("Invalid action scale");
+  // Reuse the locomotion trim/pivot contract for every frame.
+  for (const f of m.frames)
+    validateAtlas(
+      {
+        size: m.size,
+        frames: Array(set.directions.length * 16).fill(f),
+        rowMap: {
+          walk: set.directions.map(() => 0),
+          idle: set.directions.map(() => 0),
+        },
+      },
+      set,
+    );
+  for (const rows of Object.values(m.states)) {
+    if (
+      rows.length !== set.directions.length ||
+      rows.some(
+        (row) =>
+          row.length !== 8 ||
+          row.some((i) => !Number.isInteger(i) || !m.frames[i]),
+      )
+    )
+      throw Error("Missing directional action frame");
+  }
+  return m;
+}
+export function loadActionAtlas(texture, set, m, baseArt) {
+  validateActionAtlas(m, set);
+  if (texture.width !== m.size[0] || texture.height !== m.size[1])
+    throw Error("Action PNG dimensions mismatch");
+  const frames = m.frames.map(
+    (f) =>
+      new Texture({
+        source: texture.source,
+        frame: new Rectangle(f.frame.x, f.frame.y, f.frame.w, f.frame.h),
+        orig: new Rectangle(0, 0, f.sourceSize.w, f.sourceSize.h),
+        trim: new Rectangle(
+          f.spriteSourceSize.x,
+          f.spriteSourceSize.y,
+          f.spriteSourceSize.w,
+          f.spriteSourceSize.h,
+        ),
+      }),
+  );
+  return {
+    ...baseArt,
+    texture,
+    set,
+    metadata: {
+      ...baseArt.metadata,
+      ...m,
+      heights: baseArt.metadata.heights,
+      stateHeights: {
+        ...baseArt.metadata.stateHeights,
+        ...Object.fromEntries(Object.keys(m.states).map((s) => [s, m.height])),
+      },
+    },
+    rows: set.directions.map((_, d) => ({
+      ...baseArt.rows[d],
+      ...Object.fromEntries(
+        Object.entries(m.states).map(([state, rows]) => [
+          state,
+          rows[d].map((i) => frames[i]),
+        ]),
+      ),
+    })),
+  };
+}
+
+export function stateHeight(art, state) {
+  const seen = new Set();
+  while (state && !seen.has(state)) {
+    if (art.metadata.stateHeights?.[state])
+      return art.metadata.stateHeights[state];
+    seen.add(state);
+    state = ACTION_FALLBACKS[state];
+  }
+  return art.metadata.heights.idle;
 }

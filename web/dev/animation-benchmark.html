@@ -1,0 +1,187 @@
+<!doctype html><meta charset="utf-8" /><title>
+  Action animation renderer benchmark
+</title>
+<style>
+  body {
+    margin: 0;
+    background: #e7ddc7;
+  }
+  #world {
+    width: 1280px;
+    height: 900px;
+    position: relative;
+    overflow: hidden;
+  }
+  #result {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background: white;
+    max-width: 80vw;
+    max-height: 35vh;
+    overflow: auto;
+    font: 12px monospace;
+  }
+  .iso-label-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .iso-label-layer > * {
+    position: absolute;
+  }
+  .iso-controls,
+  .iso-room-title {
+    display: none;
+  }
+</style>
+<div id="world"></div>
+<pre id="result">Loading actual World renderer, offline scene fixture…</pre>
+<script type="module">
+  import { IsometricWorld } from "../js/isoworld/World.js";
+  const result = document.querySelector("#result");
+  const player = {
+    userId: "bench",
+    x: 550,
+    y: 550,
+    rotation: 0,
+    avatar: {
+      display_name: "Animation benchmark",
+      appearance: { style: "classic" },
+    },
+    companion: {
+      id: "bench-pet",
+      x: 595,
+      y: 565,
+      name: "Moonfox",
+      profile: { beast: { archetype: "moonfox" } },
+    },
+  };
+  let room = "town";
+  const noop = () => {};
+  const scene = {
+    data: new Map([["bench", player]]),
+    motion: new Map(),
+    petMotion: new Map(),
+    emotes: new Map(),
+    reactions: new Map(),
+    combatEffects: [],
+    ping: 0,
+    movementHz: 20,
+    network: {},
+    audio: { volume: 0, cue: noop, setVolume: noop, setRoom: noop },
+    moveTo: noop,
+    snapshot: () => ({
+      roomId: room,
+      players: [player],
+      bubbles: new Map(),
+      loading: false,
+    }),
+    subscribe: () => noop,
+  };
+  const bridge = new Proxy(
+    { selfId: "bench" },
+    { get: (o, k) => o[k] ?? noop },
+  );
+  try {
+    const world = new IsometricWorld(
+      document.querySelector("#world"),
+      bridge,
+      { development: true },
+      scene,
+    );
+    await world.init();
+    const samples = [];
+    async function measure(name, combat) {
+        // Let initial texture uploads/shader compilation settle before sampling.
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      const intervals = [],
+        cpu = [];
+      let last = performance.now(),
+        seq = 0;
+      const original = world.frame.bind(world);
+      world.frame = (dt) => {
+        const t = performance.now();
+        original(dt);
+        cpu.push(performance.now() - t);
+      };
+      const timer = combat
+        ? setInterval(() => {
+            scene.combatEffects.push({
+              seq: ++seq,
+              userId: "bench",
+              kind: seq % 3 === 0 ? "mob-hit" : seq % 2 ? "hit" : "pet-hit",
+              weaponType: "sword",
+              targetId: "slime-bench",
+            });
+            if (scene.combatEffects.length > 24) scene.combatEffects.shift();
+          }, 550)
+        : null;
+      await new Promise((resolve) => {
+        const end = performance.now() + 10000;
+        function tick(t) {
+          intervals.push(t - last);
+          last = t;
+          if (t < end) requestAnimationFrame(tick);
+          else resolve();
+        }
+        requestAnimationFrame(tick);
+      });
+      if (timer) clearInterval(timer);
+      world.frame = original;
+      const quant = (a, q) =>
+        a.sort((a, b) => a - b)[Math.floor((a.length - 1) * q)];
+      samples.push({
+        name,
+        fixture: "offline authoritative event replay; actual World renderer",
+        width: 1280,
+        height: 900,
+        dpr: world.app.renderer.resolution,
+        frames: intervals.length,
+        fps: 1000 / (intervals.reduce((a, b) => a + b, 0) / intervals.length),
+        p95ms: quant(intervals, 0.95),
+        cpuP95ms: quant(cpu, 0.95),
+        actors: world.actors.size,
+        mobs: world.mobEntities.size,
+        glDraws: world.gpuCounts?.draws,
+        actionSheets: world.actionAtlases.filter(Boolean).length,
+      });
+      result.textContent = JSON.stringify(samples, null, 2);
+    }
+    await measure("Town", false);
+    room = "forest";
+    player.x = 550;
+    player.y = 550;
+    scene.adventure = {
+      roomId: room,
+      mobs: [
+        {
+          id: "slime-bench",
+          name: "Meadow Slime",
+          type: "slime",
+          level: 1,
+          x: 610,
+          y: 550,
+          hp: 40,
+          maxHp: 40,
+        },
+        {
+          id: "boar-bench",
+          name: "Bramble Boar",
+          type: "boar",
+          level: 3,
+          x: 660,
+          y: 590,
+          hp: 85,
+          maxHp: 85,
+        },
+      ],
+    };
+    world.sync();
+    await measure("Forest combat", true);
+    result.textContent = "COMPLETE\n" + JSON.stringify(samples, null, 2);
+  } catch (error) {
+    result.textContent = error.stack;
+  }
+</script>

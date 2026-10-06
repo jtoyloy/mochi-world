@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-06",
+  "method": "10 seconds per scene; actual IsometricWorld in Codex in-app browser, offline scene/event fixture at web/dev/animation-benchmark.html. No server/network/database capacity claim.",
+  "samples": [
+    {
+      "scene": "Town",
+      "viewport": [
+        1280,
+        900
+      ],
+      "dpr": 1,
+      "frames": 600,
+      "fps": 59.93586862057654,
+      "p95Ms": 17.299999999999272,
+      "cpuP95Ms": 1.1999999997206032,
+      "actors": 20,
+      "mobs": 0,
+      "glDraws": 1
+    },
+    {
+      "scene": "Forest combat",
+      "viewport": [
+        1280,
+        900
+      ],
+      "dpr": 1,
+      "frames": 601,
+      "fps": 60.076570137646314,
+      "p95Ms": 17.399999999997817,
+      "cpuP95Ms": 0.599999999627471,
+      "actors": 2,
+      "mobs": 2,
+      "glDraws": 1
+    }
+  ],
+  "limitations": "Short desktop DPR1 run; not mobile, crowded combat, matched before/after or live multiplayer soak. Five shared action PNGs add approximately 30 MiB decoded RGBA, not measured total VRAM. CPU update excludes render cost. Cold/background-loaded runs varied (Town 20\u201360 FPS). Warmed 60 FPS does not establish sustained/mobile/crowd performance. Repeat samples use identical viewport/DPR and one GL draw.",
+  "repeatSamples": [
+    {
+      "run": "during builds/checks",
+      "scene": "Town",
+      "frames": 202,
+      "fps": 20.153244472823797,
+      "p95Ms": 66.30000000000018,
+      "cpuP95Ms": 1.099999999627471
+    },
+    {
+      "run": "during builds/checks",
+      "scene": "Forest combat",
+      "frames": 209,
+      "fps": 20.84122773778101,
+      "p95Ms": 51,
+      "cpuP95Ms": 0.6000000005587935
+    },
+    {
+      "run": "quiet cold",
+      "scene": "Town",
+      "frames": 432,
+      "fps": 43.16331118549153,
+      "p95Ms": 50,
+      "cpuP95Ms": 1.099999999627471
+    },
+    {
+      "run": "quiet cold",
+      "scene": "Forest combat",
+      "frames": 602,
+      "fps": 60.14827248566458,
+      "p95Ms": 17.600000000002183,
+      "cpuP95Ms": 0.599999999627471
+    },
+    {
+      "run": "quiet 2-second warm-up",
+      "scene": "Town",
+      "frames": 601,
+      "fps": 60.050758378133295,
+      "p95Ms": 17.399999999999636,
+      "cpuP95Ms": 0.7000000001862645
+    },
+    {
+      "run": "quiet 2-second warm-up",
+      "scene": "Forest combat",
+      "frames": 601,
+      "fps": 60.07657013764856,
+      "p95Ms": 17.399999999999636,
+      "cpuP95Ms": 0.30000000074505806
+    }
+  ]
+}

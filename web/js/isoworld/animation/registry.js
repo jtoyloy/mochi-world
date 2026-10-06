@@ -17,6 +17,19 @@ export const STATES = [
   "fish",
   "chop",
   "interact",
+  "sword",
+  "staff",
+  "bow",
+  "dagger",
+  "special",
+  "defend-owner",
+  "defend-self",
+  "exhausted",
+  "item",
+  "fish-cast",
+  "fish-wait",
+  "fish-catch",
+  "chop-recover",
 ];
 const base = {
   directions: ["SE", "SW", "NW", "NE"],
@@ -136,14 +149,25 @@ export class AnimationPlayback {
     this.phase = 0;
     this.frame = 0;
   }
+  // Events replace presentation immediately. No gameplay callback or damage timer.
+  play(state, options = {}) {
+    if (!ACTION_STATES[state]) return false;
+    this.action = { state, time: 0, ...ACTION_STATES[state], ...options };
+    return true;
+  }
+  clearAction() {
+    this.action = null;
+  }
   update(gait, speed, dt, requested = "") {
     const s = this.set;
-    const wasMoving = this.state === "walk" || this.state === "trot";
+    if (this.locomotionFrame !== undefined) this.frame = this.locomotionFrame;
+    const wasMoving =
+      this.locomotionState === "walk" || this.locomotionState === "trot";
     const moving = speed > (wasMoving ? s.walkExit : s.walkEnter);
     if (moving) {
       const trot =
         !!s.trotEnter &&
-        speed > (this.state === "trot" ? s.trotExit : s.trotEnter);
+        speed > (this.locomotionState === "trot" ? s.trotExit : s.trotEnter);
       this.state = trot ? "trot" : "walk";
       // Preserve phase at stride changes, then consume actual distance at new stride.
       const stride = trot ? s.trotStrideDistance : s.strideDistance;
@@ -181,6 +205,66 @@ export class AnimationPlayback {
       }
     }
     this.lastDistance = gait.distance;
+    this.locomotionState = this.state;
+    this.locomotionFrame = this.frame;
+    if (
+      moving &&
+      ["fish-cast", "fish-wait", "chop"].includes(this.action?.state)
+    )
+      this.clearAction();
+    if (this.action) {
+      const a = this.action;
+      a.time += Math.max(0, dt);
+      if (a.time >= a.duration && !a.hold && !a.loop) {
+        this.action = a.next
+          ? { state: a.next, time: 0, ...ACTION_STATES[a.next] }
+          : null;
+      }
+      if (this.action) {
+        const a = this.action;
+        this.state = a.state;
+        this.frame = a.loop
+          ? frameFromPhase(a.time / a.duration, 8)
+          : Math.min(7, Math.floor((a.time / a.duration) * 8));
+      }
+    }
     return this;
   }
 }
+
+// Durations express weight/readiness only; server cooldowns remain authoritative.
+export const ACTION_STATES = {
+  attack: { duration: 0.6 },
+  sword: { duration: 0.64 },
+  staff: { duration: 0.8 },
+  bow: { duration: 0.8 },
+  dagger: { duration: 0.36 },
+  cast: { duration: 0.8 },
+  special: { duration: 0.85 },
+  hurt: { duration: 0.3 },
+  defend: { duration: 0.6 },
+  "defend-owner": { duration: 0.7 },
+  "defend-self": { duration: 0.7 },
+  defeat: { duration: 0.8, hold: true },
+  exhausted: { duration: 0.8, hold: true },
+  item: { duration: 0.7 },
+  interact: { duration: 0.6 },
+  fish: { duration: 0.8, next: "fish-wait" },
+  "fish-cast": { duration: 0.8, next: "fish-wait" },
+  "fish-wait": { duration: 2, loop: true },
+  "fish-catch": { duration: 0.7 },
+  chop: { duration: 0.9, loop: true },
+  "chop-recover": { duration: 0.45 },
+};
+export const ACTION_FALLBACKS = {
+  attack: "sword",
+  cast: "staff",
+  fish: "fish-cast",
+  "fish-wait": "idle",
+  "fish-catch": "fish-cast",
+  "chop-recover": "chop",
+  special: "attack",
+  "defend-owner": "defend",
+  "defend-self": "defend",
+  exhausted: "defeat",
+};

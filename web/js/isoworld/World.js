@@ -10,7 +10,13 @@ import {
   AnimationPlayback,
   directionIndex,
 } from "./animation/registry.js";
-import { loadAnimationAtlas, selectTexture } from "./animation/atlas.js";
+import {
+  loadAnimationAtlas,
+  loadActionAtlas,
+  selectTexture,
+  stateHeight,
+} from "./animation/atlas.js";
+import { animationCommands } from "./animation/events.js";
 import { AppearanceCache } from "./animation/appearance.js";
 import { openAnimationViewer } from "./animation/viewer.js";
 import { VENDORS, COMBAT_VENDORS, RESOURCE_NODES } from "../game/adventure.js";
@@ -126,6 +132,55 @@ export class IsometricWorld {
         return loadAnimationAtlas(texture, set, metadata);
       }),
     );
+    this.actionAtlases = [];
+    // Optional action sheets never prevent a compatible locomotion fallback.
+    await Promise.all(
+      ANIMATION_SETS.map(async (set, i) => {
+        let art = this.animationAtlases[i];
+        for (const suffix of ["actions", "reactions"]) {
+          try {
+            const response = await fetch(
+              `/assets/isoworld/${set.id}-${suffix}-v1.json`,
+            );
+            if (!response.ok) continue;
+            const m = await response.json();
+            const texture = await Assets.load("/assets/isoworld/" + m.image);
+            if (!this.textures.includes(texture)) this.textures.push(texture);
+            art = loadActionAtlas(texture, set, m, art);
+            this.actionAtlases[i] = art;
+          } catch (error) {
+            console.warn(`Action art fallback: ${set.id}`, error.message);
+          }
+        }
+      }),
+    );
+    this.mobAnimationAtlases = {};
+    await Promise.all(
+      ["slime", "boar"].map(async (id) => {
+        try {
+          const m = await (
+            await fetch(`/assets/isoworld/${id}-actions-v1.json`)
+          ).json();
+          const texture = await Assets.load("/assets/isoworld/" + m.image);
+          if (!this.textures.includes(texture)) this.textures.push(texture);
+          const set = { ...ANIMATION_SETS[2], id, strideDistance: 90 };
+          const base = {
+            rows: set.directions.map(() => ({})),
+            metadata: { heights: { idle: m.height, walk: m.height } },
+          };
+          this.mobAnimationAtlases[id] = loadActionAtlas(texture, set, m, base);
+        } catch (error) {
+          console.warn(`Mob art fallback: ${id}`, error.message);
+        }
+      }),
+    );
+    this.actionTextureBytes = [
+      ...new Set(
+        this.textures.filter(
+          (t) => !this.animationAtlases.some((a) => a.texture === t),
+        ),
+      ),
+    ].reduce((n, t) => n + t.width * t.height * 4, 0);
     this.appearanceCache = new AppearanceCache(this.app.renderer);
     this.cameraVelocity = { x: 0, y: 0 };
     this.motionMetrics = {
@@ -280,7 +335,7 @@ export class IsometricWorld {
     for (const e of this.mobEntities.values()) e.label.node.remove();
     this.mobEntities.clear();
     this.effectPool = [];
-    this.lastEffectSeq = 0;
+    this.lastEffectSeq ??= 0;
     for (const a of this.actors.values()) {
       a.node.remove();
       a.bubble.remove();
@@ -1036,7 +1091,12 @@ export class IsometricWorld {
     if (!data || data.roomId !== this.room) return;
     const alive = new Set();
     for (const m of data.mobs) {
-      if (m.hp <= 0) continue;
+      if (m.hp <= 0 && !this.mobEntities.has(m.id)) continue;
+      if (
+        m.hp <= 0 &&
+        this.mobEntities.get(m.id)?.defeatUntil < performance.now()
+      )
+        continue;
       alive.add(m.id);
       let e = this.mobEntities.get(m.id);
       if (!e) {
@@ -1065,11 +1125,49 @@ export class IsometricWorld {
           "iso-place-label",
           () => this.bridge.targetMob(m),
         );
-        e = { g, bar, shadow, height, p, label, m };
+        const set = {
+          ...ANIMATION_SETS[2],
+          id: m.type,
+          height,
+          strideDistance: 90,
+        };
+        const fallback = {
+          set,
+          metadata: {
+            heights: { walk: g.texture.height, idle: g.texture.height },
+            mirrors: [false, false, false, false],
+          },
+          rows: Array.from({ length: 4 }, () => ({
+            idle: Array(8).fill(g.texture),
+            walk: Array(8).fill(g.texture),
+          })),
+        };
+        e = {
+          g,
+          bar,
+          shadow,
+          height,
+          p,
+          label,
+          m,
+          gait: new Gait(90),
+          playback: new AnimationPlayback(set),
+          art: this.mobAnimationAtlases?.[m.type] ?? fallback,
+        };
+        e.sourceHeight = e.art.metadata.heights.idle;
         this.mobEntities.set(m.id, e);
         this.click(g, () => this.bridge.targetMob(e.m));
       }
+      if (m.hp <= 0 && !e.defeatUntil) {
+        e.defeatUntil = performance.now() + 1100;
+        e.playback.play("defeat");
+      }
+      if (m.hp > 0 && e.m.hp <= 0 && e.defeatUntil) {
+        e.defeatUntil = 0;
+        e.playback.clearAction();
+      }
       e.m = m;
+      e.g.eventMode = m.hp <= 0 || e.defeatUntil ? "none" : "static";
       e.bar
         .clear()
         .roundRect(-28, -e.height - 12, 56, 6, 3)
@@ -1094,11 +1192,61 @@ export class IsometricWorld {
       }
   }
   frameAdventure(dt) {
+    if (
+      this.scene.gatherCancelled &&
+      this.gatherCancelled !== this.scene.gatherCancelled
+    ) {
+      this.gatherCancelled = this.scene.gatherCancelled;
+      const actor = this.actors.get("player:" + this.bridge.selfId);
+      if (
+        ["fish-cast", "fish-wait", "chop"].includes(
+          actor?.playback.action?.state,
+        )
+      )
+        actor.playback.clearAction();
+    }
+    if (
+      this.scene.lastInteraction &&
+      this.lastInteraction !== this.scene.lastInteraction
+    ) {
+      this.lastInteraction = this.scene.lastInteraction;
+      const actor = this.actors.get("player:" + this.lastInteraction.userId);
+      if (actor && !actor.playback.action) actor.playback.play("interact");
+    }
     for (const e of this.mobEntities.values()) {
+      const old = e.p;
       e.p = visualStep(e.p, e.m, dt, 150);
+      const speed = e.gait.update(e.p.x - old.x, e.p.y - old.y, dt);
+      e.playback.update(e.gait, speed, dt);
+      e.g.texture = selectTexture(
+        e.art,
+        e.playback,
+        directionIndex(
+          e.art.set,
+          e.playback.action ? (e.actionFacing ?? e.gait.facing) : e.gait.facing,
+        ),
+      );
+      e.g.scale.set(
+        e.height /
+          (e.playback.action
+            ? stateHeight(e.art, e.playback.state)
+            : e.sourceHeight),
+      );
+      const di = directionIndex(
+        e.art.set,
+        e.playback.action ? (e.actionFacing ?? e.gait.facing) : e.gait.facing,
+      );
+      if (e.art.metadata.mirrors[di]) e.g.scale.x *= -1;
+      e.g.anchor.set(
+        e.art.set.footAnchor.x,
+        e.art === this.mobAnimationAtlases?.[e.m.type]
+          ? e.art.set.footAnchor.y
+          : 1,
+      );
+
       e.label.p = e.p;
       const q = project(e.p);
-      e.g.position.set(q.x, q.y + Math.sin(this.elapsed * 3) * 2);
+      e.g.position.set(q.x, q.y);
       e.g.zIndex = depth(e.p);
       e.bar.position.set(q.x, q.y);
       e.bar.zIndex = e.g.zIndex + 1;
@@ -1112,13 +1260,75 @@ export class IsometricWorld {
           screen.y > -150 &&
           screen.x < this.host.clientWidth + 150 &&
           screen.y < this.host.clientHeight + 150;
+      if (e.defeatUntil) e.bar.visible = false;
     }
     for (const event of this.scene.combatEffects ?? []) {
       if (event.seq <= (this.lastEffectSeq ?? 0)) continue;
       this.lastEffectSeq = event.seq;
+      for (const command of animationCommands(event)) {
+        const actor =
+          command.actor === "pet"
+            ? this.actors.get(
+                "pet:" + this.scene.data.get(event.userId)?.companion?.id,
+              )
+            : (this.actors.get(command.actor) ??
+              this.mobEntities.get(command.actor));
+        if (!actor?.playback) continue;
+        if (actor.defeatUntil && command.state !== "defeat") continue;
+        if (command.state) {
+          if (actor.m && command.state === "defeat") {
+            actor.defeatUntil = performance.now() + 1100;
+            actor.g.eventMode = "none";
+          }
+          const options = {};
+          if (actor.type === "player" && command.state === "defeat")
+            options.hold = false;
+          if (actor.row === 2 && ["attack", "special"].includes(command.state))
+            options.duration = 0.42;
+          if (actor.row === 3 && ["attack", "special"].includes(command.state))
+            options.duration = 0.85;
+          const opponent =
+            command.actor === event.targetId
+              ? event.pet
+                ? this.actors.get(
+                    "pet:" + this.scene.data.get(event.userId)?.companion?.id,
+                  )?.p
+                : this.actors.get("player:" + event.userId)?.p
+              : this.mobEntities.get(event.targetId)?.p;
+          if (opponent)
+            actor.actionFacing = facing8(
+              opponent.x - actor.p.x,
+              opponent.y - actor.p.y,
+              actor.gait.facing,
+            );
+          else actor.actionFacing = actor.gait.facing;
+          actor.playback.play(command.state, options);
+        } else actor.playback.clearAction();
+      }
+      if (
+        ![
+          "hit",
+          "spell",
+          "pet-hit",
+          "pet-special",
+          "mob-hit",
+          "player_attack",
+          "spell_cast",
+          "mochi_attack",
+          "mochi_special",
+          "damage_taken",
+        ].includes(event.kind)
+      )
+        continue;
       const target =
-        this.mobEntities.get(event.targetId)?.p ??
-        this.actors.get("player:" + event.userId)?.p;
+        event.kind === "mob-hit" || event.kind === "damage_taken"
+          ? event.pet
+            ? this.actors.get(
+                "pet:" + this.scene.data.get(event.userId)?.companion?.id,
+              )?.p
+            : this.actors.get("player:" + event.userId)?.p
+          : (this.mobEntities.get(event.targetId)?.p ??
+            this.actors.get("player:" + event.userId)?.p);
       if (!target) continue;
       let fx = this.effectPool.find((f) => f.until < performance.now());
       if (!fx && this.effectPool.length < 16) {
@@ -1127,12 +1337,7 @@ export class IsometricWorld {
         this.effectPool.push(fx);
       }
       if (!fx) continue;
-      const attacker = event.kind.startsWith("pet-")
-        ? this.actors.get(
-            "pet:" + this.scene.data.get(event.userId)?.companion?.id,
-          )
-        : this.actors.get("player:" + event.userId);
-      if (attacker) attacker.hitUntil = performance.now() + 300;
+
       fx.p = { ...target };
       fx.until = performance.now() + 450;
       fx.kind = event.kind;
@@ -1276,7 +1481,12 @@ export class IsometricWorld {
       const preview = el("button", "", "Animation viewer");
       preview.onclick = async () => {
         await this.loadGestures();
-        openAnimationViewer(this.animationAtlases, this.gestureAtlases);
+        openAnimationViewer(
+          this.animationAtlases,
+          this.gestureAtlases,
+          this.actionAtlases,
+          this.mobAnimationAtlases,
+        );
       };
       this.dev.append(preview);
       const crowdLabel = el("label", "", "Animation crowd (client-only)"),
@@ -1508,7 +1718,7 @@ export class IsometricWorld {
       }
       const seated = !!a.data.seated || a.definition?.state === "sit";
       const profile = a.animationSet;
-      const directionIndexForArt = directionIndex(profile, a.gait.facing);
+      let directionIndexForArt = directionIndex(profile, a.gait.facing);
       const art = a.appearanceArt ?? this.animationAtlases[a.row];
       const requested =
         a.definition?.state === "vendor"
@@ -1517,6 +1727,18 @@ export class IsometricWorld {
               (a.type === "npc" && !a.bubble.hidden && a.bubble.textContent)
             ? "talk"
             : (a.definition?.state ?? "");
+      if (
+        a.type === "pet" &&
+        a.data.state === "EXHAUSTED" &&
+        a.playback.action?.state !== "exhausted"
+      )
+        a.playback.play("exhausted");
+      if (
+        a.type === "pet" &&
+        a.playback.action?.state === "exhausted" &&
+        a.data.state !== "EXHAUSTED"
+      )
+        a.playback.clearAction();
       a.playback.update(a.gait, speed, dt, requested);
       if (
         a.row < 2 &&
@@ -1527,7 +1749,13 @@ export class IsometricWorld {
       const gesture = this.gestureAtlases?.[a.row];
       const gestureActive =
         !!gesture && ["talk", "gesture"].includes(a.playback.state);
-      let activeArt = gestureActive ? gesture : art;
+      if (a.playback.action)
+        directionIndexForArt = directionIndex(
+          profile,
+          a.actionFacing ?? a.gait.facing,
+        );
+      const actionArt = a.playback.action && this.actionAtlases[a.row];
+      let activeArt = actionArt || (gestureActive ? gesture : art);
       if (gestureActive && !a.gestureAppearance)
         a.gestureAppearance = this.appearanceCache.compose(
           gesture,
@@ -1539,7 +1767,8 @@ export class IsometricWorld {
           a.slots,
           a.key === "player:" + this.bridge.selfId ? 192 : 128,
         );
-      if (gestureActive && a.gestureAppearance) activeArt = a.gestureAppearance;
+      if (!actionArt && gestureActive && a.gestureAppearance)
+        activeArt = a.gestureAppearance;
       a.cosmetics.visible = a.cape.visible = !activeArt.composited;
       a.s.texture =
         seated && a.type !== "pet"
@@ -1550,11 +1779,13 @@ export class IsometricWorld {
         height /
           (seated && a.type !== "pet"
             ? this.atlases.characters[frameIndex(a.row, a.facing)].height
-            : activeArt.metadata.heights[
-                ["walk", "trot", "settle"].includes(a.playback.state)
-                  ? "walk"
-                  : "idle"
-              ]),
+            : a.playback.action
+              ? stateHeight(activeArt, a.playback.state)
+              : activeArt.metadata.heights[
+                  ["walk", "trot", "settle"].includes(a.playback.state)
+                    ? "walk"
+                    : "idle"
+                ]),
       );
       if (!seated && activeArt.metadata.mirrors[directionIndexForArt])
         a.s.scale.x *= -1;
@@ -1617,11 +1848,6 @@ export class IsometricWorld {
         a.s.rotation = Math.sin(this.elapsed * 7) * 0.09;
       if (reaction && now - reaction.at < 1800)
         a.s.y -= Math.abs(Math.sin(this.elapsed * 6)) * 5;
-      if (a.hitUntil > performance.now()) {
-        a.s.rotation +=
-          Math.sin(((a.hitUntil - performance.now()) / 300) * Math.PI) * 0.16;
-        a.s.y -= 4;
-      }
       a.transitionSprite.y = a.s.y;
       a.cosmetics.y = a.s.y;
       a.cape.y = a.s.y;
@@ -1806,7 +2032,7 @@ export class IsometricWorld {
             ? 0
             : (n instanceof Sprite ? 1 : 0) +
               (n.children ?? []).reduce((sum, c) => sum + countSprites(c), 0);
-        this.metrics.textContent = `${Math.round(this.app.ticker.FPS)} FPS · p95 ${p95.toFixed(1)} ms · ${this.actors.size} entities · ${this.objects.children.length} depth objects · CPU update ${(performance.now() - start).toFixed(2)} ms · PixiJS/WebGL · DPR ${this.app.renderer.resolution}. ${this.gpuCounts?.draws ?? "…"} GL draws · ${Math.round(this.gpuCounts?.triangles ?? 0)} triangles · character RGBA ${((this.animationAtlases.reduce((n, a) => n + a.texture.width * a.texture.height * 4, 0) + (this.gestureAtlases ? this.gestureAtlases[0].texture.width * this.gestureAtlases[0].texture.height * 4 : 0)) / 1048576).toFixed(1)} MiB · ${[...this.actors.values()].filter((a) => a.group.renderable).length} visible actors · ${countSprites(this.root)} visible sprites · appearance cache ${(this.appearanceCache.bytes / 1048576).toFixed(1)} MiB · ${this.legacyComparison ? "legacy prototype" : "full body"}.`;
+        this.metrics.textContent = `${Math.round(this.app.ticker.FPS)} FPS · p95 ${p95.toFixed(1)} ms · ${this.actors.size} entities · ${this.objects.children.length} depth objects · CPU update ${(performance.now() - start).toFixed(2)} ms · PixiJS/WebGL · DPR ${this.app.renderer.resolution}. ${this.gpuCounts?.draws ?? "…"} GL draws · ${Math.round(this.gpuCounts?.triangles ?? 0)} triangles · character RGBA ${((this.animationAtlases.reduce((n, a) => n + a.texture.width * a.texture.height * 4, 0) + (this.gestureAtlases ? this.gestureAtlases[0].texture.width * this.gestureAtlases[0].texture.height * 4 : 0)) / 1048576).toFixed(1)} MiB + action ${((this.actionTextureBytes ?? 0) / 1048576).toFixed(1)} MiB · ${[...this.actors.values()].filter((a) => a.group.renderable).length} visible actors · ${countSprites(this.root)} visible sprites · appearance cache ${(this.appearanceCache.bytes / 1048576).toFixed(1)} MiB · ${this.legacyComparison ? "legacy prototype" : "full body"}.`;
       }
     }
   }

@@ -362,6 +362,11 @@ export async function mountWorld(
             );
         }
         if (type === "interaction") {
+          if (bridge.scene)
+            bridge.scene.lastInteraction = {
+              userId: bridge.selfId,
+              propId: data.propId,
+            };
           if (data.text) showNotice(data.text);
           openInteraction(data.propId);
         }

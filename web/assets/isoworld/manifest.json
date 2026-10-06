@@ -34,7 +34,12 @@
     "characters-v1.png": {
       "columns": 4,
       "rows": 4,
-      "directions": ["southeast", "southwest", "northwest", "northeast"],
+      "directions": [
+        "southeast",
+        "southwest",
+        "northwest",
+        "northeast"
+      ],
       "rowsByArchetype": [
         "classic-human",
         "curly-human",
@@ -45,7 +50,12 @@
     "terrain-v1.png": {
       "columns": 2,
       "rows": 2,
-      "items": ["sandstone", "meadow", "cobblestones", "water"],
+      "items": [
+        "sandstone",
+        "meadow",
+        "cobblestones",
+        "water"
+      ],
       "usage": "Projected CanvasPattern into the authored ground, water retained for future effects"
     },
     "adventure-v1.png": {
@@ -97,8 +107,36 @@
     "vendor-gesture-v2.png": {
       "columns": 8,
       "rows": 6,
-      "metadata": ["human-sage-gesture-v2.json", "human-coral-gesture-v2.json"],
+      "metadata": [
+        "human-sage-gesture-v2.json",
+        "human-coral-gesture-v2.json"
+      ],
       "provenance": "Original built-in imagegen quiet full-body gestures,2026-10-06; opposite rear fallback mirrored."
+    },
+    "actions-sage-v1.png": {
+      "columns": 8,
+      "rows": 8,
+      "provenance": "Original built-in imagegen, 2026-10-06; repository reference art only. Provisional single SE view; registration and reuse in companion action JSON. See docs/ACTION_ANIMATION_DELIVERY.md."
+    },
+    "actions-coral-v1.png": {
+      "columns": 8,
+      "rows": 8,
+      "provenance": "Original built-in imagegen, 2026-10-06; repository reference art only. Provisional single SE view; registration and reuse in companion action JSON. See docs/ACTION_ANIMATION_DELIVERY.md."
+    },
+    "reactions-sage-v1.png": {
+      "columns": 8,
+      "rows": 8,
+      "provenance": "Original built-in imagegen, 2026-10-06; repository reference art only. Provisional single SE view; registration and reuse in companion action JSON. See docs/ACTION_ANIMATION_DELIVERY.md."
+    },
+    "reactions-coral-v1.png": {
+      "columns": 8,
+      "rows": 8,
+      "provenance": "Original built-in imagegen, 2026-10-06; repository reference art only. Provisional single SE view; registration and reuse in companion action JSON. See docs/ACTION_ANIMATION_DELIVERY.md."
+    },
+    "mob-actions-v1.png": {
+      "columns": 8,
+      "rows": 8,
+      "provenance": "Original built-in imagegen, 2026-10-06; repository reference art only. Provisional single SE view; registration and reuse in companion action JSON. See docs/ACTION_ANIMATION_DELIVERY.md."
     }
   },
   "runtime": {
