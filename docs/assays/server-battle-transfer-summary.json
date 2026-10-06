@@ -1,0 +1,1540 @@
+{
+  "protocol": {
+    "description": "supplemental species transfer; fixed original arms; six independent brain/world seed pairs each direction; training 60 one-species encounters, frozen evaluation 36 other-species encounters",
+    "directions": [
+      [
+        "moon",
+        "forest"
+      ],
+      [
+        "forest",
+        "moon"
+      ]
+    ],
+    "replicas": 6,
+    "trainingEpisodes": 60,
+    "evaluationEpisodes": 36,
+    "trainingSeeds": "5000 + direction*100 + replica",
+    "evaluationSeeds": "6000 + direction*100 + replica",
+    "arms": [
+      "random",
+      "published",
+      "no_protection",
+      "expanded",
+      "causal",
+      "expanded_causal",
+      "terminal",
+      "mother"
+    ]
+  },
+  "directions": {
+    "moon to forest": {
+      "random": {
+        "training": {
+          "wins": 219,
+          "defeats": 105,
+          "timeouts": 36,
+          "ownerSurvival": 255,
+          "petSurvival": 308,
+          "ownerHp": 14051,
+          "petHp": 15373,
+          "petDamageDealt": 2806,
+          "ownerDamageDealt": 16873,
+          "ownerDamage": 10709,
+          "petDamage": 4932,
+          "protection": 2812,
+          "causalProtection": 2050,
+          "delayedProtection": 380,
+          "wasted": 1034,
+          "invalidAttack": 326,
+          "invalidSpecial": 373,
+          "specials": 134,
+          "specialDamage": 1635,
+          "pathFailures": 335,
+          "decisions": 3596,
+          "episodes": 360,
+          "actions": [
+            502,
+            511,
+            533,
+            507,
+            490,
+            542,
+            511
+          ],
+          "winsBySeed": [
+            32,
+            30,
+            36,
+            40,
+            43,
+            38
+          ],
+          "pairedWinRateDifference": 0.0,
+          "pairedSeedBootstrap95": [
+            0.0,
+            0.0
+          ]
+        },
+        "evaluation": {
+          "wins": 103,
+          "defeats": 76,
+          "timeouts": 37,
+          "ownerSurvival": 140,
+          "petSurvival": 197,
+          "ownerHp": 6936,
+          "petHp": 7929.6,
+          "petDamageDealt": 1234.75,
+          "ownerDamageDealt": 8161.75,
+          "ownerDamage": 5268,
+          "petDamage": 1059,
+          "protection": 1584.8999999999999,
+          "causalProtection": 1167,
+          "delayedProtection": 264,
+          "wasted": 786,
+          "invalidAttack": 277,
+          "invalidSpecial": 253,
+          "specials": 78,
+          "specialDamage": 682.5,
+          "pathFailures": 256,
+          "decisions": 2505,
+          "episodes": 216,
+          "actions": [
+            359,
+            341,
+            344,
+            331,
+            394,
+            353,
+            383
+          ],
+          "winsBySeed": [
+            17,
+            17,
+            17,
+            22,
+            15,
+            15
+          ],
+          "pairedWinRateDifference": 0.0,
+          "pairedSeedBootstrap95": [
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "published": {
+        "training": {
+          "wins": 218,
+          "defeats": 108,
+          "timeouts": 34,
+          "ownerSurvival": 252,
+          "petSurvival": 312,
+          "ownerHp": 14259,
+          "petHp": 15583,
+          "petDamageDealt": 2398,
+          "ownerDamageDealt": 16980,
+          "ownerDamage": 10429,
+          "petDamage": 4706,
+          "protection": 4967,
+          "causalProtection": 3719,
+          "delayedProtection": 189,
+          "wasted": 1206,
+          "invalidAttack": 457,
+          "invalidSpecial": 134,
+          "specials": 52,
+          "specialDamage": 674,
+          "pathFailures": 615,
+          "decisions": 3605,
+          "episodes": 360,
+          "actions": [
+            714,
+            484,
+            1137,
+            186,
+            159,
+            783,
+            142
+          ],
+          "winsBySeed": [
+            28,
+            34,
+            36,
+            41,
+            46,
+            33
+          ],
+          "pairedWinRateDifference": -0.0027777777777777493,
+          "pairedSeedBootstrap95": [
+            -0.049999999999999954,
+            0.041666666666666664
+          ]
+        },
+        "evaluation": {
+          "wins": 99,
+          "defeats": 73,
+          "timeouts": 44,
+          "ownerSurvival": 143,
+          "petSurvival": 198,
+          "ownerHp": 7084,
+          "petHp": 7932.2,
+          "petDamageDealt": 724.0,
+          "ownerDamageDealt": 8452.75,
+          "ownerDamage": 5093,
+          "petDamage": 1031,
+          "protection": 2697.9500000000003,
+          "causalProtection": 1974,
+          "delayedProtection": 30,
+          "wasted": 629,
+          "invalidAttack": 203,
+          "invalidSpecial": 84,
+          "specials": 20,
+          "specialDamage": 178.75,
+          "pathFailures": 342,
+          "decisions": 2601,
+          "episodes": 216,
+          "actions": [
+            282,
+            544,
+            920,
+            104,
+            36,
+            406,
+            309
+          ],
+          "winsBySeed": [
+            15,
+            16,
+            16,
+            18,
+            19,
+            15
+          ],
+          "pairedWinRateDifference": -0.018518518518518528,
+          "pairedSeedBootstrap95": [
+            -0.06944444444444445,
+            0.04166666666666666
+          ]
+        }
+      },
+      "no_protection": {
+        "training": {
+          "wins": 210,
+          "defeats": 111,
+          "timeouts": 39,
+          "ownerSurvival": 249,
+          "petSurvival": 294,
+          "ownerHp": 14538,
+          "petHp": 15042,
+          "petDamageDealt": 2575,
+          "ownerDamageDealt": 16553,
+          "ownerDamage": 10138,
+          "petDamage": 5299,
+          "protection": 3442,
+          "causalProtection": 2568,
+          "delayedProtection": 133,
+          "wasted": 1086,
+          "invalidAttack": 910,
+          "invalidSpecial": 43,
+          "specials": 22,
+          "specialDamage": 286,
+          "pathFailures": 133,
+          "decisions": 3539,
+          "episodes": 360,
+          "actions": [
+            1251,
+            84,
+            1125,
+            65,
+            505,
+            145,
+            364
+          ],
+          "winsBySeed": [
+            32,
+            32,
+            34,
+            42,
+            39,
+            31
+          ],
+          "pairedWinRateDifference": -0.024999999999999984,
+          "pairedSeedBootstrap95": [
+            -0.0694444444444444,
+            0.016666666666666663
+          ]
+        },
+        "evaluation": {
+          "wins": 99,
+          "defeats": 75,
+          "timeouts": 42,
+          "ownerSurvival": 141,
+          "petSurvival": 190,
+          "ownerHp": 6933,
+          "petHp": 7706.0,
+          "petDamageDealt": 1084.5,
+          "ownerDamageDealt": 7804.25,
+          "ownerDamage": 5246,
+          "petDamage": 1302,
+          "protection": 941.1999999999998,
+          "causalProtection": 690,
+          "delayedProtection": 0,
+          "wasted": 711,
+          "invalidAttack": 481,
+          "invalidSpecial": 0,
+          "specials": 0,
+          "specialDamage": 0,
+          "pathFailures": 230,
+          "decisions": 2457,
+          "episodes": 216,
+          "actions": [
+            639,
+            0,
+            991,
+            0,
+            436,
+            0,
+            391
+          ],
+          "winsBySeed": [
+            17,
+            16,
+            16,
+            22,
+            13,
+            15
+          ],
+          "pairedWinRateDifference": -0.018518518518518528,
+          "pairedSeedBootstrap95": [
+            -0.037037037037037056,
+            -0.004629629629629632
+          ]
+        }
+      },
+      "expanded": {
+        "training": {
+          "wins": 220,
+          "defeats": 100,
+          "timeouts": 40,
+          "ownerSurvival": 260,
+          "petSurvival": 295,
+          "ownerHp": 15006,
+          "petHp": 14675,
+          "petDamageDealt": 2150,
+          "ownerDamageDealt": 17221,
+          "ownerDamage": 9681,
+          "petDamage": 5630,
+          "protection": 6945,
+          "causalProtection": 5189,
+          "delayedProtection": 86,
+          "wasted": 759,
+          "invalidAttack": 453,
+          "invalidSpecial": 63,
+          "specials": 26,
+          "specialDamage": 302,
+          "pathFailures": 243,
+          "decisions": 3812,
+          "episodes": 360,
+          "actions": [
+            728,
+            509,
+            1693,
+            89,
+            709,
+            44,
+            40
+          ],
+          "winsBySeed": [
+            31,
+            32,
+            35,
+            41,
+            44,
+            37
+          ],
+          "pairedWinRateDifference": 0.0027777777777778048,
+          "pairedSeedBootstrap95": [
+            -0.011111111111111072,
+            0.019444444444444448
+          ]
+        },
+        "evaluation": {
+          "wins": 104,
+          "defeats": 66,
+          "timeouts": 46,
+          "ownerSurvival": 150,
+          "petSurvival": 194,
+          "ownerHp": 7544,
+          "petHp": 7770.2,
+          "petDamageDealt": 559.25,
+          "ownerDamageDealt": 8656.75,
+          "ownerDamage": 4589,
+          "petDamage": 1201,
+          "protection": 4493.799999999999,
+          "causalProtection": 3344,
+          "delayedProtection": 0,
+          "wasted": 205,
+          "invalidAttack": 205,
+          "invalidSpecial": 0,
+          "specials": 0,
+          "specialDamage": 0,
+          "pathFailures": 0,
+          "decisions": 2721,
+          "episodes": 216,
+          "actions": [
+            286,
+            1080,
+            1355,
+            0,
+            0,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            17,
+            16,
+            16,
+            24,
+            14,
+            17
+          ],
+          "pairedWinRateDifference": 0.004629629629629604,
+          "pairedSeedBootstrap95": [
+            -0.023148148148148157,
+            0.032407407407407385
+          ]
+        }
+      },
+      "causal": {
+        "training": {
+          "wins": 223,
+          "defeats": 100,
+          "timeouts": 37,
+          "ownerSurvival": 260,
+          "petSurvival": 294,
+          "ownerHp": 15213,
+          "petHp": 14532,
+          "petDamageDealt": 3625,
+          "ownerDamageDealt": 16213,
+          "ownerDamage": 9437,
+          "petDamage": 5862,
+          "protection": 3753,
+          "causalProtection": 2777,
+          "delayedProtection": 127,
+          "wasted": 1383,
+          "invalidAttack": 1071,
+          "invalidSpecial": 253,
+          "specials": 56,
+          "specialDamage": 711,
+          "pathFailures": 59,
+          "decisions": 3443,
+          "episodes": 360,
+          "actions": [
+            1501,
+            743,
+            621,
+            309,
+            108,
+            87,
+            74
+          ],
+          "winsBySeed": [
+            33,
+            31,
+            38,
+            44,
+            47,
+            30
+          ],
+          "pairedWinRateDifference": 0.011111111111111127,
+          "pairedSeedBootstrap95": [
+            -0.04999999999999997,
+            0.05277777777777778
+          ]
+        },
+        "evaluation": {
+          "wins": 111,
+          "defeats": 60,
+          "timeouts": 45,
+          "ownerSurvival": 156,
+          "petSurvival": 194,
+          "ownerHp": 7679,
+          "petHp": 7662.6,
+          "petDamageDealt": 1493.25,
+          "ownerDamageDealt": 8086.75,
+          "ownerDamage": 4443,
+          "petDamage": 1339,
+          "protection": 3497.0000000000005,
+          "causalProtection": 2580,
+          "delayedProtection": 8,
+          "wasted": 804,
+          "invalidAttack": 800,
+          "invalidSpecial": 4,
+          "specials": 2,
+          "specialDamage": 18,
+          "pathFailures": 0,
+          "decisions": 2606,
+          "episodes": 216,
+          "actions": [
+            1015,
+            1074,
+            506,
+            6,
+            0,
+            5,
+            0
+          ],
+          "winsBySeed": [
+            17,
+            16,
+            21,
+            22,
+            20,
+            15
+          ],
+          "pairedWinRateDifference": 0.03703703703703704,
+          "pairedSeedBootstrap95": [
+            -0.009259259259259264,
+            0.08796296296296298
+          ]
+        }
+      },
+      "expanded_causal": {
+        "training": {
+          "wins": 215,
+          "defeats": 102,
+          "timeouts": 43,
+          "ownerSurvival": 258,
+          "petSurvival": 305,
+          "ownerHp": 15220,
+          "petHp": 14726,
+          "petDamageDealt": 1527,
+          "ownerDamageDealt": 17745,
+          "ownerDamage": 9453,
+          "petDamage": 5524,
+          "protection": 7590,
+          "causalProtection": 5680,
+          "delayedProtection": 158,
+          "wasted": 566,
+          "invalidAttack": 185,
+          "invalidSpecial": 77,
+          "specials": 29,
+          "specialDamage": 355,
+          "pathFailures": 869,
+          "decisions": 3924,
+          "episodes": 360,
+          "actions": [
+            357,
+            498,
+            2098,
+            106,
+            655,
+            147,
+            63
+          ],
+          "winsBySeed": [
+            32,
+            27,
+            34,
+            40,
+            44,
+            38
+          ],
+          "pairedWinRateDifference": -0.011111111111111118,
+          "pairedSeedBootstrap95": [
+            -0.030555555555555548,
+            0.005555555555555536
+          ]
+        },
+        "evaluation": {
+          "wins": 99,
+          "defeats": 75,
+          "timeouts": 42,
+          "ownerSurvival": 141,
+          "petSurvival": 193,
+          "ownerHp": 7212,
+          "petHp": 7767.200000000001,
+          "petDamageDealt": 564.5,
+          "ownerDamageDealt": 8277.25,
+          "ownerDamage": 4958,
+          "petDamage": 1200,
+          "protection": 2819.5,
+          "causalProtection": 2094,
+          "delayedProtection": 8,
+          "wasted": 495,
+          "invalidAttack": 335,
+          "invalidSpecial": 3,
+          "specials": 1,
+          "specialDamage": 9,
+          "pathFailures": 157,
+          "decisions": 2613,
+          "episodes": 216,
+          "actions": [
+            416,
+            565,
+            1207,
+            4,
+            421,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            17,
+            15,
+            16,
+            18,
+            16,
+            17
+          ],
+          "pairedWinRateDifference": -0.018518518518518535,
+          "pairedSeedBootstrap95": [
+            -0.06481481481481483,
+            0.02314814814814813
+          ]
+        }
+      },
+      "terminal": {
+        "training": {
+          "wins": 220,
+          "defeats": 100,
+          "timeouts": 40,
+          "ownerSurvival": 260,
+          "petSurvival": 290,
+          "ownerHp": 14974,
+          "petHp": 14746,
+          "petDamageDealt": 1821,
+          "ownerDamageDealt": 17537,
+          "ownerDamage": 9685,
+          "petDamage": 5577,
+          "protection": 5262,
+          "causalProtection": 3844,
+          "delayedProtection": 137,
+          "wasted": 746,
+          "invalidAttack": 550,
+          "invalidSpecial": 127,
+          "specials": 29,
+          "specialDamage": 350,
+          "pathFailures": 69,
+          "decisions": 3650,
+          "episodes": 360,
+          "actions": [
+            768,
+            608,
+            1514,
+            156,
+            262,
+            48,
+            294
+          ],
+          "winsBySeed": [
+            31,
+            33,
+            38,
+            39,
+            42,
+            37
+          ],
+          "pairedWinRateDifference": 0.0027777777777778048,
+          "pairedSeedBootstrap95": [
+            -0.016666666666666646,
+            0.02500000000000004
+          ]
+        },
+        "evaluation": {
+          "wins": 99,
+          "defeats": 74,
+          "timeouts": 43,
+          "ownerSurvival": 142,
+          "petSurvival": 194,
+          "ownerHp": 7343,
+          "petHp": 7913.2,
+          "petDamageDealt": 879.75,
+          "ownerDamageDealt": 8198.5,
+          "ownerDamage": 4827,
+          "petDamage": 1054,
+          "protection": 2983.2999999999997,
+          "causalProtection": 2203,
+          "delayedProtection": 0,
+          "wasted": 509,
+          "invalidAttack": 509,
+          "invalidSpecial": 0,
+          "specials": 0,
+          "specialDamage": 0,
+          "pathFailures": 0,
+          "decisions": 2581,
+          "episodes": 216,
+          "actions": [
+            637,
+            529,
+            1294,
+            0,
+            0,
+            2,
+            119
+          ],
+          "winsBySeed": [
+            17,
+            16,
+            21,
+            18,
+            13,
+            14
+          ],
+          "pairedWinRateDifference": -0.018518518518518528,
+          "pairedSeedBootstrap95": [
+            -0.06944444444444448,
+            0.041666666666666685
+          ]
+        }
+      },
+      "mother": {
+        "training": {
+          "wins": 278,
+          "defeats": 75,
+          "timeouts": 7,
+          "ownerSurvival": 285,
+          "petSurvival": 305,
+          "ownerHp": 16775,
+          "petHp": 14550,
+          "petDamageDealt": 12622,
+          "ownerDamageDealt": 12621,
+          "ownerDamage": 7797,
+          "petDamage": 5719,
+          "protection": 1269,
+          "causalProtection": 951,
+          "delayedProtection": 327,
+          "wasted": 365,
+          "invalidAttack": 0,
+          "invalidSpecial": 0,
+          "specials": 346,
+          "specialDamage": 4284,
+          "pathFailures": 365,
+          "decisions": 2233,
+          "episodes": 360,
+          "actions": [
+            1241,
+            54,
+            54,
+            346,
+            538,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            46,
+            45,
+            44,
+            50,
+            48,
+            45
+          ],
+          "pairedWinRateDifference": 0.16388888888888892,
+          "pairedSeedBootstrap95": [
+            0.1166666666666667,
+            0.2138888888888889
+          ]
+        },
+        "evaluation": {
+          "wins": 143,
+          "defeats": 57,
+          "timeouts": 16,
+          "ownerSurvival": 159,
+          "petSurvival": 189,
+          "ownerHp": 7707,
+          "petHp": 7592.2,
+          "petDamageDealt": 5883.0,
+          "ownerDamageDealt": 6906.5,
+          "ownerDamage": 4438,
+          "petDamage": 1411,
+          "protection": 1705.6999999999998,
+          "causalProtection": 1277,
+          "delayedProtection": 383,
+          "wasted": 710,
+          "invalidAttack": 0,
+          "invalidSpecial": 0,
+          "specials": 180,
+          "specialDamage": 1524.75,
+          "pathFailures": 1306,
+          "decisions": 1733,
+          "episodes": 216,
+          "actions": [
+            648,
+            49,
+            24,
+            180,
+            832,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            23,
+            19,
+            26,
+            26,
+            26,
+            23
+          ],
+          "pairedWinRateDifference": 0.18518518518518515,
+          "pairedSeedBootstrap95": [
+            0.11574074074074074,
+            0.25
+          ]
+        }
+      }
+    },
+    "forest to moon": {
+      "random": {
+        "training": {
+          "wins": 217,
+          "defeats": 96,
+          "timeouts": 47,
+          "ownerSurvival": 264,
+          "petSurvival": 315,
+          "ownerHp": 16144,
+          "petHp": 16400,
+          "petDamageDealt": 2653,
+          "ownerDamageDealt": 16141,
+          "ownerDamage": 9573,
+          "petDamage": 3987,
+          "protection": 3023,
+          "causalProtection": 2197,
+          "delayedProtection": 469,
+          "wasted": 1158,
+          "invalidAttack": 362,
+          "invalidSpecial": 418,
+          "specials": 162,
+          "specialDamage": 1403,
+          "pathFailures": 378,
+          "decisions": 4010,
+          "episodes": 360,
+          "actions": [
+            546,
+            555,
+            610,
+            580,
+            548,
+            601,
+            570
+          ],
+          "winsBySeed": [
+            37,
+            32,
+            34,
+            40,
+            39,
+            35
+          ],
+          "pairedWinRateDifference": 0.0,
+          "pairedSeedBootstrap95": [
+            0.0,
+            0.0
+          ]
+        },
+        "evaluation": {
+          "wins": 102,
+          "defeats": 85,
+          "timeouts": 29,
+          "ownerSurvival": 131,
+          "petSurvival": 194,
+          "ownerHp": 6059,
+          "petHp": 7927.8,
+          "petDamageDealt": 1361.75,
+          "ownerDamageDealt": 8263.5,
+          "ownerDamage": 5548,
+          "petDamage": 1371,
+          "protection": 1326.5,
+          "causalProtection": 953,
+          "delayedProtection": 254,
+          "wasted": 682,
+          "invalidAttack": 222,
+          "invalidSpecial": 263,
+          "specials": 65,
+          "specialDamage": 764.25,
+          "pathFailures": 197,
+          "decisions": 2224,
+          "episodes": 216,
+          "actions": [
+            310,
+            323,
+            292,
+            328,
+            330,
+            338,
+            303
+          ],
+          "winsBySeed": [
+            16,
+            18,
+            15,
+            14,
+            15,
+            24
+          ],
+          "pairedWinRateDifference": 0.0,
+          "pairedSeedBootstrap95": [
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "published": {
+        "training": {
+          "wins": 220,
+          "defeats": 84,
+          "timeouts": 56,
+          "ownerSurvival": 276,
+          "petSurvival": 298,
+          "ownerHp": 17293,
+          "petHp": 15818,
+          "petDamageDealt": 1211,
+          "ownerDamageDealt": 17414,
+          "ownerDamage": 8349,
+          "petDamage": 4578,
+          "protection": 6761,
+          "causalProtection": 4969,
+          "delayedProtection": 193,
+          "wasted": 631,
+          "invalidAttack": 49,
+          "invalidSpecial": 366,
+          "specials": 115,
+          "specialDamage": 1002,
+          "pathFailures": 216,
+          "decisions": 4227,
+          "episodes": 360,
+          "actions": [
+            80,
+            1409,
+            1087,
+            481,
+            580,
+            47,
+            543
+          ],
+          "winsBySeed": [
+            34,
+            31,
+            37,
+            42,
+            36,
+            40
+          ],
+          "pairedWinRateDifference": 0.008333333333333323,
+          "pairedSeedBootstrap95": [
+            -0.030555555555555575,
+            0.04999999999999997
+          ]
+        },
+        "evaluation": {
+          "wins": 104,
+          "defeats": 75,
+          "timeouts": 37,
+          "ownerSurvival": 141,
+          "petSurvival": 189,
+          "ownerHp": 6751,
+          "petHp": 7607.2,
+          "petDamageDealt": 309.5,
+          "ownerDamageDealt": 9089.25,
+          "ownerDamage": 4810,
+          "petDamage": 1700,
+          "protection": 3801.5,
+          "causalProtection": 2766,
+          "delayedProtection": 16,
+          "wasted": 418,
+          "invalidAttack": 0,
+          "invalidSpecial": 397,
+          "specials": 25,
+          "specialDamage": 309.5,
+          "pathFailures": 21,
+          "decisions": 2445,
+          "episodes": 216,
+          "actions": [
+            0,
+            912,
+            742,
+            422,
+            30,
+            0,
+            339
+          ],
+          "winsBySeed": [
+            15,
+            16,
+            16,
+            18,
+            15,
+            24
+          ],
+          "pairedWinRateDifference": 0.009259259259259254,
+          "pairedSeedBootstrap95": [
+            -0.02777777777777779,
+            0.05555555555555555
+          ]
+        }
+      },
+      "no_protection": {
+        "training": {
+          "wins": 215,
+          "defeats": 83,
+          "timeouts": 62,
+          "ownerSurvival": 277,
+          "petSurvival": 310,
+          "ownerHp": 17274,
+          "petHp": 15962,
+          "petDamageDealt": 1889,
+          "ownerDamageDealt": 16234,
+          "ownerDamage": 8334,
+          "petDamage": 4383,
+          "protection": 5849,
+          "causalProtection": 4263,
+          "delayedProtection": 160,
+          "wasted": 950,
+          "invalidAttack": 570,
+          "invalidSpecial": 341,
+          "specials": 52,
+          "specialDamage": 467,
+          "pathFailures": 39,
+          "decisions": 4201,
+          "episodes": 360,
+          "actions": [
+            781,
+            853,
+            1652,
+            393,
+            103,
+            53,
+            366
+          ],
+          "winsBySeed": [
+            35,
+            34,
+            31,
+            42,
+            37,
+            36
+          ],
+          "pairedWinRateDifference": -0.005555555555555554,
+          "pairedSeedBootstrap95": [
+            -0.03333333333333329,
+            0.019444444444444448
+          ]
+        },
+        "evaluation": {
+          "wins": 104,
+          "defeats": 77,
+          "timeouts": 35,
+          "ownerSurvival": 139,
+          "petSurvival": 192,
+          "ownerHp": 6673,
+          "petHp": 7836.0,
+          "petDamageDealt": 806.2499999999999,
+          "ownerDamageDealt": 8613.25,
+          "ownerDamage": 4896,
+          "petDamage": 1448,
+          "protection": 3069.6,
+          "causalProtection": 2254,
+          "delayedProtection": 0,
+          "wasted": 455,
+          "invalidAttack": 140,
+          "invalidSpecial": 315,
+          "specials": 24,
+          "specialDamage": 299.0,
+          "pathFailures": 0,
+          "decisions": 2350,
+          "episodes": 216,
+          "actions": [
+            215,
+            585,
+            1202,
+            339,
+            4,
+            5,
+            0
+          ],
+          "winsBySeed": [
+            15,
+            16,
+            16,
+            18,
+            15,
+            24
+          ],
+          "pairedWinRateDifference": 0.009259259259259254,
+          "pairedSeedBootstrap95": [
+            -0.02777777777777779,
+            0.055555555555555546
+          ]
+        }
+      },
+      "expanded": {
+        "training": {
+          "wins": 209,
+          "defeats": 92,
+          "timeouts": 59,
+          "ownerSurvival": 268,
+          "petSurvival": 305,
+          "ownerHp": 16380,
+          "petHp": 16127,
+          "petDamageDealt": 1474,
+          "ownerDamageDealt": 16451,
+          "ownerDamage": 9227,
+          "petDamage": 4270,
+          "protection": 4254,
+          "causalProtection": 3104,
+          "delayedProtection": 169,
+          "wasted": 900,
+          "invalidAttack": 474,
+          "invalidSpecial": 33,
+          "specials": 16,
+          "specialDamage": 144,
+          "pathFailures": 393,
+          "decisions": 4152,
+          "episodes": 360,
+          "actions": [
+            673,
+            1141,
+            775,
+            49,
+            518,
+            424,
+            572
+          ],
+          "winsBySeed": [
+            42,
+            31,
+            32,
+            31,
+            38,
+            35
+          ],
+          "pairedWinRateDifference": -0.022222222222222216,
+          "pairedSeedBootstrap95": [
+            -0.08333333333333327,
+            0.03333333333333329
+          ]
+        },
+        "evaluation": {
+          "wins": 109,
+          "defeats": 71,
+          "timeouts": 36,
+          "ownerSurvival": 145,
+          "petSurvival": 185,
+          "ownerHp": 6591,
+          "petHp": 7534.8,
+          "petDamageDealt": 507.24999999999994,
+          "ownerDamageDealt": 9143.25,
+          "ownerDamage": 4956,
+          "petDamage": 1786,
+          "protection": 4056.85,
+          "causalProtection": 3058,
+          "delayedProtection": 31,
+          "wasted": 388,
+          "invalidAttack": 148,
+          "invalidSpecial": 0,
+          "specials": 0,
+          "specialDamage": 0,
+          "pathFailures": 240,
+          "decisions": 2455,
+          "episodes": 216,
+          "actions": [
+            223,
+            893,
+            806,
+            0,
+            427,
+            68,
+            38
+          ],
+          "winsBySeed": [
+            20,
+            22,
+            16,
+            12,
+            15,
+            24
+          ],
+          "pairedWinRateDifference": 0.03240740740740741,
+          "pairedSeedBootstrap95": [
+            -0.013888888888888904,
+            0.08333333333333336
+          ]
+        }
+      },
+      "causal": {
+        "training": {
+          "wins": 223,
+          "defeats": 86,
+          "timeouts": 51,
+          "ownerSurvival": 274,
+          "petSurvival": 305,
+          "ownerHp": 17059,
+          "petHp": 15912,
+          "petDamageDealt": 2665,
+          "ownerDamageDealt": 16056,
+          "ownerDamage": 8557,
+          "petDamage": 4507,
+          "protection": 4838,
+          "causalProtection": 3534,
+          "delayedProtection": 214,
+          "wasted": 841,
+          "invalidAttack": 464,
+          "invalidSpecial": 287,
+          "specials": 127,
+          "specialDamage": 1141,
+          "pathFailures": 90,
+          "decisions": 4034,
+          "episodes": 360,
+          "actions": [
+            689,
+            949,
+            903,
+            414,
+            371,
+            68,
+            640
+          ],
+          "winsBySeed": [
+            34,
+            32,
+            39,
+            41,
+            39,
+            38
+          ],
+          "pairedWinRateDifference": 0.016666666666666663,
+          "pairedSeedBootstrap95": [
+            -0.01666666666666668,
+            0.05000000000000001
+          ]
+        },
+        "evaluation": {
+          "wins": 107,
+          "defeats": 72,
+          "timeouts": 37,
+          "ownerSurvival": 144,
+          "petSurvival": 187,
+          "ownerHp": 6782,
+          "petHp": 7420.2,
+          "petDamageDealt": 977.75,
+          "ownerDamageDealt": 8623.0,
+          "ownerDamage": 4769,
+          "petDamage": 1907,
+          "protection": 2964.6000000000004,
+          "causalProtection": 2156,
+          "delayedProtection": 5,
+          "wasted": 700,
+          "invalidAttack": 306,
+          "invalidSpecial": 393,
+          "specials": 26,
+          "specialDamage": 322.25,
+          "pathFailures": 1,
+          "decisions": 2390,
+          "episodes": 216,
+          "actions": [
+            401,
+            850,
+            368,
+            419,
+            4,
+            0,
+            348
+          ],
+          "winsBySeed": [
+            15,
+            17,
+            17,
+            18,
+            16,
+            24
+          ],
+          "pairedWinRateDifference": 0.02314814814814814,
+          "pairedSeedBootstrap95": [
+            -0.013888888888888886,
+            0.0648148148148148
+          ]
+        }
+      },
+      "expanded_causal": {
+        "training": {
+          "wins": 211,
+          "defeats": 89,
+          "timeouts": 60,
+          "ownerSurvival": 271,
+          "petSurvival": 302,
+          "ownerHp": 16747,
+          "petHp": 15661,
+          "petDamageDealt": 2140,
+          "ownerDamageDealt": 15778,
+          "ownerDamage": 8885,
+          "petDamage": 4765,
+          "protection": 2989,
+          "causalProtection": 2157,
+          "delayedProtection": 110,
+          "wasted": 1196,
+          "invalidAttack": 877,
+          "invalidSpecial": 32,
+          "specials": 10,
+          "specialDamage": 90,
+          "pathFailures": 287,
+          "decisions": 4051,
+          "episodes": 360,
+          "actions": [
+            1182,
+            938,
+            528,
+            42,
+            1165,
+            135,
+            61
+          ],
+          "winsBySeed": [
+            36,
+            35,
+            32,
+            34,
+            39,
+            35
+          ],
+          "pairedWinRateDifference": -0.016666666666666663,
+          "pairedSeedBootstrap95": [
+            -0.055555555555555546,
+            0.01666666666666668
+          ]
+        },
+        "evaluation": {
+          "wins": 108,
+          "defeats": 68,
+          "timeouts": 40,
+          "ownerSurvival": 148,
+          "petSurvival": 178,
+          "ownerHp": 6811,
+          "petHp": 7115.200000000001,
+          "petDamageDealt": 993.7499999999999,
+          "ownerDamageDealt": 8557.75,
+          "ownerDamage": 4726,
+          "petDamage": 2256,
+          "protection": 3373.4500000000003,
+          "causalProtection": 2456,
+          "delayedProtection": 0,
+          "wasted": 789,
+          "invalidAttack": 418,
+          "invalidSpecial": 0,
+          "specials": 0,
+          "specialDamage": 0,
+          "pathFailures": 371,
+          "decisions": 2422,
+          "episodes": 216,
+          "actions": [
+            564,
+            1049,
+            4,
+            0,
+            805,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            15,
+            18,
+            19,
+            14,
+            18,
+            24
+          ],
+          "pairedWinRateDifference": 0.02777777777777778,
+          "pairedSeedBootstrap95": [
+            -0.009259259259259245,
+            0.06944444444444443
+          ]
+        }
+      },
+      "terminal": {
+        "training": {
+          "wins": 215,
+          "defeats": 83,
+          "timeouts": 62,
+          "ownerSurvival": 277,
+          "petSurvival": 297,
+          "ownerHp": 17156,
+          "petHp": 15700,
+          "petDamageDealt": 953,
+          "ownerDamageDealt": 17250,
+          "ownerDamage": 8452,
+          "petDamage": 4687,
+          "protection": 6420,
+          "causalProtection": 4708,
+          "delayedProtection": 180,
+          "wasted": 454,
+          "invalidAttack": 275,
+          "invalidSpecial": 73,
+          "specials": 29,
+          "specialDamage": 260,
+          "pathFailures": 106,
+          "decisions": 4283,
+          "episodes": 360,
+          "actions": [
+            378,
+            1393,
+            1307,
+            102,
+            434,
+            55,
+            614
+          ],
+          "winsBySeed": [
+            35,
+            30,
+            30,
+            42,
+            38,
+            40
+          ],
+          "pairedWinRateDifference": -0.005555555555555573,
+          "pairedSeedBootstrap95": [
+            -0.041666666666666664,
+            0.03888888888888884
+          ]
+        },
+        "evaluation": {
+          "wins": 105,
+          "defeats": 74,
+          "timeouts": 37,
+          "ownerSurvival": 142,
+          "petSurvival": 183,
+          "ownerHp": 6724,
+          "petHp": 7277.400000000001,
+          "petDamageDealt": 616.75,
+          "ownerDamageDealt": 8876.0,
+          "ownerDamage": 4826,
+          "petDamage": 2061,
+          "protection": 3260.25,
+          "causalProtection": 2361,
+          "delayedProtection": 0,
+          "wasted": 487,
+          "invalidAttack": 286,
+          "invalidSpecial": 5,
+          "specials": 4,
+          "specialDamage": 52,
+          "pathFailures": 196,
+          "decisions": 2421,
+          "episodes": 216,
+          "actions": [
+            368,
+            912,
+            368,
+            9,
+            425,
+            0,
+            339
+          ],
+          "winsBySeed": [
+            15,
+            16,
+            16,
+            18,
+            16,
+            24
+          ],
+          "pairedWinRateDifference": 0.013888888888888876,
+          "pairedSeedBootstrap95": [
+            -0.023148148148148168,
+            0.060185185185185175
+          ]
+        }
+      },
+      "mother": {
+        "training": {
+          "wins": 284,
+          "defeats": 67,
+          "timeouts": 9,
+          "ownerSurvival": 293,
+          "petSurvival": 307,
+          "ownerHp": 18498,
+          "petHp": 15909,
+          "petDamageDealt": 12211,
+          "ownerDamageDealt": 12302,
+          "ownerDamage": 7166,
+          "petDamage": 4407,
+          "protection": 2268,
+          "causalProtection": 1684,
+          "delayedProtection": 453,
+          "wasted": 442,
+          "invalidAttack": 0,
+          "invalidSpecial": 0,
+          "specials": 354,
+          "specialDamage": 3057,
+          "pathFailures": 442,
+          "decisions": 2403,
+          "episodes": 360,
+          "actions": [
+            1339,
+            31,
+            56,
+            354,
+            623,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            48,
+            44,
+            46,
+            53,
+            47,
+            46
+          ],
+          "pairedWinRateDifference": 0.18611111111111112,
+          "pairedSeedBootstrap95": [
+            0.16388888888888886,
+            0.2027777777777778
+          ]
+        },
+        "evaluation": {
+          "wins": 146,
+          "defeats": 58,
+          "timeouts": 12,
+          "ownerSurvival": 158,
+          "petSurvival": 188,
+          "ownerHp": 7222,
+          "petHp": 7381.200000000001,
+          "petDamageDealt": 5856.25,
+          "ownerDamageDealt": 6769.0,
+          "ownerDamage": 4315,
+          "petDamage": 1922,
+          "protection": 1096.65,
+          "causalProtection": 823,
+          "delayedProtection": 286,
+          "wasted": 598,
+          "invalidAttack": 0,
+          "invalidSpecial": 0,
+          "specials": 167,
+          "specialDamage": 2053.25,
+          "pathFailures": 598,
+          "decisions": 1526,
+          "episodes": 216,
+          "actions": [
+            567,
+            59,
+            32,
+            167,
+            701,
+            0,
+            0
+          ],
+          "winsBySeed": [
+            23,
+            26,
+            27,
+            23,
+            21,
+            26
+          ],
+          "pairedWinRateDifference": 0.20370370370370372,
+          "pairedSeedBootstrap95": [
+            0.13425925925925927,
+            0.2685185185185185
+          ]
+        }
+      }
+    }
+  }
+}

@@ -121,7 +121,16 @@ export class SnapshotBuffer {
   sample(now) {
     const list = this.samples;
     if (!list.length) return null;
-    const t = now - this.delay;
+    let t = now - this.delay;
+    if (this.smoothDelay && this.presentationTime !== undefined) {
+      const dt = Math.max(0, now - this.sampledAt);
+      const correction = t - (this.presentationTime + dt);
+      // Slew the presentation clock when interest changes its delay. It must
+      // remain monotonic rather than stepping backwards or jumping forward.
+      t = this.presentationTime + dt * Math.max(.5, Math.min(1.5, 1 + correction / 1000));
+    }
+    this.presentationTime = t;
+    this.sampledAt = now;
     while (list.length > 2 && list[1].t < t) list.shift();
     let a = list[0],
       b = list[1];

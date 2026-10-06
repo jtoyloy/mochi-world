@@ -57,7 +57,7 @@ test("Momo captured spawn is blocked; join and refresh place companion on a reac
   }
 });
 
-test("broadcast serializes once and exposes payload bytes and backpressure drops", () => {
+test("broadcast serializes once, measures bytes and queues blocked critical events", () => {
   const counts = {},
     metrics = { count: (k, n = 1) => (counts[k] = (counts[k] ?? 0) + n) };
   const m = new Multiplayer({ metrics });
@@ -94,11 +94,11 @@ test("broadcast serializes once and exposes payload bytes and backpressure drops
     });
     assert.equal(serializations, 1);
     assert.equal(counts.outboundBytes, Buffer.byteLength(output[0]));
-    assert.equal(counts.droppedUpdates, 1);
-    assert.equal(counts.backpressureDrops, 1);
+    assert.equal(counts.criticalEventsQueued, 1);
+    assert.equal(counts.backpressureDrops ?? 0, 0);
     m.sendEncoded({ ws: { readyState: 3 } }, "closed");
     assert.equal(counts.closedSocketSkips, 1);
-    assert.equal(counts.backpressureDrops, 1);
+    assert.equal(counts.backpressureDrops ?? 0, 0);
   } finally {
     m.close();
   }

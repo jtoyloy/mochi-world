@@ -1,11 +1,12 @@
 # Battle, animation and multiplayer integration — 2026-10-06
 
-Base: `ad7d95980d7cb8d91bf0bde76f0ee4a1c1d0acad`.
+Base: `697cd10de7d6a68a6b078ebec8578b1bea12270d`.
 
-Integrated the full Cadence investigation (`9eebca539d1d501228784bc35342df1b9415cd92`)
-and action animation (`1033daa74ad0365f036ed468223b740f29b4606b`) diffs.
-Selected reusable code, tests, instrumentation, tooling and documentation from
-`7e7066256352557684a062119ad99a83c1f01fae`; that commit is not a history ancestor.
+Integrated network scaling (`02bb7761cf8fba65154aea21b45d2e05130c7ff5`), selectively
+ported checkpoint retention (`ac84141de596abd17d5cb86f20bda364c1082275`, original
+parent `7e7066256352557684a062119ad99a83c1f01fae`), and selectively ported the
+server physics evaluation (`7f8b079c18f2eec81a3c48b4d473f5816280cfaf`, original
+parent `9eebca539d1d501228784bc35342df1b9415cd92`).
 No published battle/trading pack or production reward function changed. The
 no-protection-bonus experiment remains confined to the harness and is not promoted.
 
@@ -33,6 +34,34 @@ README and the multiplayer guide identify PixiJS painterly isometric rendering
 as current, with Three.js/React Three Fiber tooling documented as historical.
 
 ## Evidence and exclusions
+
+### Wave 3 integration — 2026-10-06
+
+Checkpoint retention now owns a catalog namespace and schema marker, writes through
+fsync-safe rename, protects current/lease/recent/pinned/age-window/foreign and
+unverifiable files, and runs outside gameplay ticks. Production requires all four
+retention settings explicitly; development defaults are keepRecent 3, age 0, 60s
+interval and 600s grace. A real PostgreSQL lifecycle run retained two 6.49 MB
+checkpoints after seven writes and deleted 32,439,480 bytes; the bounded-storage
+benchmark remains a model, not a disk guarantee. Battle checkpoint storage is isolated.
+
+The final 10- and 40-user authenticated PostgreSQL soaks both passed. Outbound rate
+was 77,255 and 747,582 bytes/s, recipient rate 145 and 676 messages/s, tick p95
+upper bounds were 4 and 8 ms, event-loop p95 maxima were 11.45 and 14.29 ms,
+snapshot latency p95 was 3 and 8 ms, with zero rejections, unexpected disconnects,
+missing companions or GC errors. These are short validations, not 150-user
+certification. The retained historical 150-user comparison remains 28.860→5.909
+MB/s and 42,016.9→2,829 messages/s (4.88× and 14.85× reductions); its strict
+acceptance failed on recorded client/navigation/interaction errors and deadlines.
+
+The battle harness remains experimental and isolated. Held-out scores were random
+199/432, published 205/432, no-protection 199/432, 26-sense 208/432, causal 199/432,
+combined 209/432, terminal 200/432 and reference 294/432. The combined +2.31 points
+misses the five-point promotion gate. It selected 1,491 ATTACK actions, 1,292 invalid,
+zero MOVE_CLOSER in frozen evaluation, and did not establish obstacle performance or
+species transfer. Historical serialized BattleBrains p95 was about 334/851/1,635/2,807
+ms at 10/25/50/100 concurrent, above the 1,400 ms decision interval at 50 and 100.
+No candidate brain or published pack changed.
 
 [Compact original multiplayer evidence](assays/multiplayer-summary.json) retains
 seven representative completed runs, their original outcomes, client error counts,

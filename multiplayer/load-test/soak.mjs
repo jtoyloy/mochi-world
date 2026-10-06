@@ -1,3 +1,4 @@
+import { SnapshotDecoder } from "../../web/js/game/network/snapshots.js";
 import { resolve } from "node:path";
 import { maximum, percentile } from "./stats.mjs";
 import { processTree } from "./process-tree.mjs";
@@ -26,8 +27,12 @@ const sourceHashes = Object.fromEntries(
       "server/social/multiplayer.mjs",
       "server/world/runtime-metrics.mjs",
       "server/world/checkpoints.mjs",
+      "server/world/checkpoint-retention.mjs",
+      "server/world/checkpoint-format.mjs",
       "server/adventure/service.mjs",
       "web/js/game/NavigationService.js",
+      "server/social/snapshots.mjs",
+      "web/js/game/network/snapshots.js",
       "web/js/game/CompanionFollowController.js",
     ].map(async (path) => [
       path,
@@ -117,9 +122,21 @@ export class Actor {
       this.errors[e.message] = (this.errors[e.message] ?? 0) + 1;
     });
     this.ws.on("close", () => this.disconnects++);
+    const decoder = new SnapshotDecoder();
     this.ws.on("message", (raw) => {
-      const e = JSON.parse(raw),
-        now = Date.now();
+      for (const e of decoder.consume(JSON.parse(raw))) this.receive(e);
+    });
+    const ready = await this.wait("ready");
+    this.selfId = ready.userId;
+    await this.join(this.room);
+    this.keepalive = setInterval(
+      () => this.send("ping", { clientTime: Date.now() }),
+      10000,
+    );
+    this.keepalive.unref();
+  }
+  receive(e) {
+      const now = Date.now();
       this.lastMessage = { type: e.type, moveSeq: e.data?.moveSeq };
       if (e.type === "roomSnapshot") {
         this.snapshot = e.data;
@@ -165,15 +182,6 @@ export class Actor {
           this.waiters.splice(this.waiters.indexOf(w), 1);
           w.resolve(e.data);
         }
-    });
-    const ready = await this.wait("ready");
-    this.selfId = ready.userId;
-    await this.join(this.room);
-    this.keepalive = setInterval(
-      () => this.send("ping", { clientTime: Date.now() }),
-      10000,
-    );
-    this.keepalive.unref();
   }
   wait(type, predicate = () => true, timeout = 15000) {
     return new Promise((resolve, reject) => {
@@ -587,6 +595,25 @@ async function run(users) {
         }
       }
     }
+    const protocol = {};
+    for (const sample of steady) for (const [type, row] of Object.entries(sample.protocol ?? {})) {
+      const p = (protocol[type] ??= { encoded: 0, recipients: 0, bytes: 0, sizes: {}, overflow: 0 });
+      for (const k of ['encoded','recipients','bytes','overflow']) p[k] += row[k];
+      for (const [size,count] of Object.entries(row.sizes)) p.sizes[size] = (p.sizes[size] ?? 0) + count;
+    }
+    for (const row of Object.values(protocol)) {
+      row.messagesPerSecond = row.recipients / seconds;
+      row.bytesPerSecond = row.bytes / seconds;
+      row.meanBytes = row.bytes / row.recipients;
+      row.fanout = row.encoded ? row.recipients / row.encoded : null;
+      let n = 0;
+      row.p95Bytes = null;
+      if (!row.overflow) for (const size of Object.keys(row.sizes).map(Number).sort((a,b) => a-b)) {
+        n += row.sizes[size];
+        if (n >= row.recipients * .95) { row.p95Bytes = size; break; }
+      }
+      delete row.sizes;
+    }
     const clients = {
       rejections: actors.flatMap((a) => a.rejections ?? []),
       wrongCompanions: actors.reduce((n, a) => n + a.wrongCompanions, 0),
@@ -669,9 +696,17 @@ async function run(users) {
         heapMaxBytes: Math.max(...steady.map((s) => s.heapUsed)),
         heapStartBytes: steady[0]?.heapUsed,
         heapEndBytes: steady.at(-1)?.heapUsed,
+        eventLoopP95MaxMs: Math.max(...steady.map((s) => s.eventLoopP95Ms ?? 0)),
+        protocol,
         eventLoopP99MaxMs: Math.max(...steady.map((s) => s.eventLoopP99Ms)),
         rates,
         timing,
+        checkpoints: {
+          first: steady[0]?.checkpoints,
+          last: steady.at(-1)?.checkpoints,
+          peakBytes: Math.max(...steady.map(s => s.checkpoints?.totalBytes ?? 0)),
+          samples: steady.map(s => ({ at: s.at, ...s.checkpoints })),
+        },
       },
       clients,
       follow: followResults,
@@ -689,9 +724,13 @@ async function run(users) {
       !clients.missingCompanions &&
       !clients.wrongCompanions &&
       !clients.lateUpdates &&
+      clients.errors.every((row) => !Object.keys(row).length) &&
       !cleanup.players &&
       !cleanup.rooms &&
       !cleanup.connections &&
+      !cleanup.snapshotClients &&
+      !cleanup.criticalQueueBytes &&
+      !cleanup.slowClients &&
       !cleanup.companions &&
       followResults.every((r) => r.passed) &&
       !cleanup.adventureStates &&
@@ -700,10 +739,12 @@ async function run(users) {
       steady.every(
         (s) => s.players === users && s.companions === users && !s.staleActors,
       ) &&
-      !(totals.backpressureDrops ?? 0);
+      !(totals.backpressureDrops ?? 0) &&
+      !(totals.slowClientDisconnects ?? 0) &&
+      !(totals.criticalEventsAwaitingResync ?? 0);
     if (!result.passed) process.exitCode = 1;
     await mkdir("assays", { recursive: true });
-    const file = `assays/multiplayer-${users}-${duration}s.json`;
+    const file = `assays/multiplayer-${args.label ? args.label + "-" : ""}${users}-${duration}s.json`;
     await writeFile(file, JSON.stringify(result, null, 2) + "\n");
     console.log(
       JSON.stringify({
@@ -722,7 +763,7 @@ async function run(users) {
   } catch (error) {
     process.exitCode = 1;
     await mkdir("assays", { recursive: true });
-    const file = `assays/multiplayer-${users}-${duration}s-failure-${Date.now()}.json`;
+    const file = `assays/multiplayer-${args.label ? args.label + "-" : ""}${users}-${duration}s-failure-${Date.now()}.json`;
     await writeFile(
       file,
       JSON.stringify(

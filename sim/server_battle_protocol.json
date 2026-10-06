@@ -1,0 +1,41 @@
+{
+  "format": "cadence-server-battle-protocol/1",
+  "predeclared": "2026-10-06, before server-physics evaluation",
+  "baseMain": "ad7d959",
+  "arms": ["random", "published", "no_protection", "expanded", "causal", "expanded_causal", "terminal", "mother"],
+  "replicas": 12,
+  "trainingEpisodes": 60,
+  "validationEpisodes": 12,
+  "evaluationEpisodes": 36,
+  "trainingSeeds": "1000 + replica",
+  "validationSeeds": "2000 + replica",
+  "evaluationSeeds": "3000 + replica",
+  "scenarioMatrix": {
+    "enemy": ["slime", "boar", "thornling"],
+    "distance": ["close", "medium", "far"],
+    "ownerHp": ["healthy", "damaged"],
+    "petHp": ["healthy", "damaged"],
+    "special": ["ready", "cooldown"],
+    "pressure": ["owner", "pet"],
+    "geometry": ["open", "obstacle"],
+    "species": ["moon", "forest"]
+  },
+  "evaluationShift": "seeded initial-position jitter +/-20; health fractions distinct from training; enemy HP/damage multipliers 0.85/1.15; obstacles use a different existing tree approach",
+  "maxEpisodeMs": 60000,
+  "movementTickMs": 100,
+  "adventureTickMs": 400,
+  "decisionIntervalMs": 1400,
+  "latencyMs": [0, 200, 800],
+  "timingMode": "production-blocked",
+  "stressMode": "continuing enemies during response, explicitly counterfactual",
+  "rewardArms": {
+    "published": "original battleReward",
+    "no_protection": "original reward without protection bonus",
+    "expanded": "original reward; 26 senses",
+    "causal": "original reward without protection bonus in window; protection-only receipts write executed defense cue in built-in associative memory",
+    "expanded_causal": "26 senses plus causal protection receipts",
+    "terminal": "original reward with victory/owner defeat/pet exhaustion terms doubled, clipped [-1,1]"
+  },
+  "promotion": "held-out improvement >=5 percentage points; paired seed-bootstrap 95% lower bound >0; no scenario class worse than random by >10 points; checkpoint and isolation tests pass",
+  "selection": "no tuning or arm selection from validation/evaluation; all predeclared arms reported"
+}

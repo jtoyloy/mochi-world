@@ -1,0 +1,13 @@
+{
+  "base": "697cd10de7d6a68a6b078ebec8578b1bea12270d",
+  "network": {"users": [10, 40], "seconds": 65, "passed": true,
+    "outboundBytesPerSecond": [77255.3343, 747581.8302],
+    "recipientMessagesPerSecond": [144.7453, 676.0245],
+    "snapshotLatencyP95Ms": [3, 8], "eventLoopP95MaxMs": [11.4524, 14.2868],
+    "rejections": 0, "unexpectedDisconnects": 0, "missingCompanions": 0},
+  "checkpoint": {"policy": {"keepRecent": 2, "retentionHours": 0, "intervalMs": 1000, "graceMs": 1000},
+    "writes": 7, "retained": 2, "retainedBytes": 12975792, "deletedBytes": 32439480},
+  "battle": {"heldOut": 432, "random": 199, "published": 205, "combined": 209,
+    "promotionGatePoints": 5, "combinedGainPoints": 2.31, "promoted": false},
+  "rawSoaksExcluded": ["assays/multiplayer-10-65s.json", "assays/checkpoint-runtime-query-warning.json"]
+}

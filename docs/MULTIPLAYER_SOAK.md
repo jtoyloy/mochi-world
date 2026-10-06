@@ -299,3 +299,175 @@ small recheck does not certify revised tooling at 150 CCU.
 Validation: 164 JavaScript tests passed with PostgreSQL integration enabled;
 21 Python tests passed; asset validation and production build passed;
 `git diff --check` passed. No multi-hour run was completed.
+
+## Network scaling remeasurement — 2026-10-06
+
+This work starts from canonical integration base `697cd10`; the historical worker
+comparison below was collected against an older remote-main reference. The before
+copy keeps that socket protocol and
+adds only opt-in instrumentation. After changes are replication, bounded socket
+delivery, client snapshot ingestion/interpolation and measurement tooling.
+Cadence decisions, rewards, published packs, assets and economy are unchanged.
+
+Reproduction uses PostgreSQL, the existing Python/Cadence environment, real
+independent adopted pets and authenticated WebSockets. The generator retains
+seed 42, 10 Hz, capacity 40 and the Town/Café/Forest/Lake/Exchange distribution.
+Five-minute runs are sequential by population. Before/after 150-user runs are
+sequential; early 10-user windows shared this laptop with tests and browser
+validation, and the separate before component profile shared the host with a
+small after run. These are local macOS/ARM loopback measurements, not WAN/TLS
+or a controlled production-host benchmark.
+
+```sh
+TEST_DATABASE_URL=postgresql://... npm run bench:multiplayer -- \
+  --users=10,25,40,75,150 --seconds=15 --seed=42 --label=smoke
+TEST_DATABASE_URL=postgresql://... npm run bench:multiplayer -- \
+  --users=10,25,40,75,150 --seconds=300 --seed=42 --label=after
+```
+
+Raw windows, source hashes and failed outcomes remain in ignored local assays.
+[network-scaling-summary.json](assays/network-scaling-summary.json) contains the
+reviewed compact comparison, exact message-size p95s and per-type rates.
+Short smoke results include intermediate replication revisions; the five-minute
+suite uses stable protocol hashes. A label separates runs without overwriting
+evidence. A failed aggregate acceptance remains a failure even when its bandwidth
+improves. All navigation/interaction rejections and missed deadlines are retained.
+
+The primary culprit was `playerMoved`: approximately 41,000 recipient messages
+per second at roughly 700 JSON bytes, with about 27 recipients per encoded update.
+Full companion profile/name/equipment descriptions alone accounted for about
+10.64 MB/s in the separate short component profile. Player and companion motion
+are now embedded in client batches; their embedded component byte totals are
+reported separately from packet totals. NPC routes have no socket state stream.
+The safe capacity workload does not engage combat. A separate real two-account
+native-pet probe observed **12 identical combat effect sequences per recipient**,
+including hit, spell and victory, without errors: 169 mean/180 p95 bytes,
+1.46 recipient effects/s, 246 bytes/s and fan-out 2 over 16.49 seconds including
+setup/idle. See [network-combat-profile.json](assays/network-combat-profile.json).
+This is delivery evidence, not a combat capacity test.
+
+### Browser and queue acceptance
+
+Two real browser clients used separate localhost host cookies and independent
+accounts against the real server. Town walking, remote motion and the active
+pet remained visible; changing interest frequency never removes room identities.
+Observed 60 FPS, frame p95 about 17.4 ms, 120 ms near interpolation, zero
+corrections/hard snaps. Emote and public `Hello!` appeared in both clients.
+Training Yard target/auto-hit reduced dummy HP, fire reduced mana and HP, the
+observer rendered effects, and the owner received `Victory · +0 combat XP`.
+[Browser evidence](network-scaling-browser.png) and
+[combat evidence](network-scaling-combat.png) capture these local checks.
+These samples do not establish crowd FPS, WAN smoothness or a sustained 150-client
+browser result. Existing synthetic crowd rendering is not used as load evidence.
+
+Tests verify nested pet/static identity merge, stale sequence/room rejection,
+projected hysteresis, idle suppression, immediate stops, owner-only paths,
+recovery after intentional delta loss, FIFO critical delivery before movement,
+queue/time limits, continuous 5 Hz interpolation with a 220 ms delay, and
+monotonic motion through near↔mid delay changes. The first transition test exposed
+a backward step; presentation-clock slewing repairs that measured failure.
+Deliberate blocked-socket tests coalesce movement, drain hit/result events in
+order, and close explicitly at bounded capacity or five seconds. A disconnected
+client resynchronizes durable authoritative state; transient effects are not
+promised replay after disconnect. Critical events awaiting resync are counted.
+
+A 30-minute 150-pet extension is not practical on this nearly full laptop:
+available disk fell to about 7 GiB during validation, while append-only native
+checkpoints in the five-minute baseline consumed roughly 1.4 GiB before cleanup.
+A sixfold extension risks exhausting the shared filesystem. This work leaves
+checkpoint implementation untouched. Repeat 30-minute and multi-hour acceptance
+with adequate isolated disk and retention before capacity certification.
+
+### Five-minute results
+
+| Users | Outbound MB/s | Recipient msg/s | Node mean cores | App/native max MiB | Tick mean/max ms | Workload acceptance |
+|---:|---:|---:|---:|---:|---:|---|
+| 10 | 0.077 | 149 | 0.022 | 473 | 0.96/81.52 | pass; 0 client errors |
+| 25 | 0.357 | 411 | 0.071 | 784 | 3.86/50.09 | fail; 1 client errors |
+| 40 | 0.751 | 682 | 0.085 | 681 | 4.83/56.93 | fail; 1 client errors |
+| 75 | 2.168 | 1355 | 0.181 | 811 | 12.53/76.75 | fail; 2 client errors |
+| 150 | 5.909 | 2829 | 0.306 | 856 | 20.61/131.01 | fail; 5 client errors |
+
+| 150-user metric | Before | After |
+|---|---:|---:|
+| Outbound MB/s | 28.860 | 5.909 |
+| Recipient messages/s | 42016.933 | 2828.983 |
+| Node mean CPU cores | 0.297 | 0.306 |
+| App + native mean CPU cores | 0.522 | 0.513 |
+| Node max RSS MiB | 340.359 | 317.344 |
+| App + native max RSS MiB | 645.219 | 856.469 |
+| Node max heap MiB | 117.490 | 119.012 |
+| Maximum window event-loop p95 ms | 35.455 | 35.029 |
+| Maximum window event-loop p99 ms | 71.500 | 39.715 |
+| Mean tick ms | 22.636 | 20.612 |
+| Maximum tick ms | 146.538 | 131.006 |
+| Stringify mean ms | 0.003 | 0.011 |
+| Serialized JSON MB/s (allocation proxy) | 1.340 | 5.583 |
+| GC events/s | 3.264 | 18.130 |
+| Client snapshotLatencyP95Ms | 30 | 21 |
+| Client arrivalGapP95Ms | 110 | 705 |
+| Client arrivalGapMaxMs | 306 | 1102 |
+| Client reconnects | 82 | 85 |
+| Client unexpectedDisconnects | 0 | 0 |
+| Client lateUpdates | 0 | 0 |
+| Client wrongCompanions | 0 | 0 |
+| Client missingCompanions | 0 | 0 |
+| Client moveRejections | 4 | 4 |
+
+Payload fell **4.88×** and recipient message rate **14.85×**. Node CPU includes diagnostics; app/native RSS and CPU exclude PostgreSQL and the load generator. The before five-minute copy lacked component-stringify instrumentation; its separate short profile includes it. Idle one-second heartbeats make aggregate arrival gaps longer by design. Wire latency is not presentation delay. The near client remains at 120 ms; far motion trails at about one second. Serialization byte volume increases because recipient-specific batches replace shared actor strings, despite much lower delivered payload. Heap/GC numbers and string volume do not measure exact V8 allocation bytes.
+
+### 150-user packet breakdown
+
+Each frequency is recipient messages/s; sizes are JSON payload bytes, and fan-out is recipients per encoded payload. Component rows are separate below.
+
+| Type | Before msg/s | Before mean/p95 bytes | Before MB/s | Before fan-out | After msg/s | After mean/p95 bytes | After MB/s | After fan-out |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| playerMoved | 40651.34 | 694/766 | 28.214096 | 27.35 | 0 | — | 0 | — |
+| movementSnapshot | 0 | — | 0 | — | 1474.47 | 3575/7326 | 5.271067 | 1.00 |
+| moveAccepted | 69.30 | 1068/1135 | 0.074035 | 1.00 | 69.26 | 1065/1108 | 0.073747 | 1.00 |
+| adventureRoom | 372.16 | 564/1933 | 0.209713 | 24.99 | 372.22 | 554/1933 | 0.206158 | 24.99 |
+| adventureState | 372.20 | 304/304 | 0.113148 | 1.00 | 372.26 | 304/304 | 0.113166 | 1.00 |
+| playerEmoted | 128.39 | 79/80 | 0.010176 | 27.14 | 125.66 | 79/80 | 0.009957 | 27.55 |
+| mochiSpoke | 34.00 | 159/161 | 0.005412 | 25.11 | 28.31 | 159/161 | 0.004510 | 24.88 |
+| playerJoined | 130.44 | 885/999 | 0.115482 | 27.28 | 129.04 | 884/997 | 0.114113 | 27.40 |
+| playerLeft | 99.14 | 63/64 | 0.006271 | 26.26 | 97.71 | 63/64 | 0.006180 | 26.38 |
+| roomSnapshot | 3.78 | 26433/39818 | 0.099790 | 1.00 | 3.71 | 26458/39939 | 0.098196 | 1.00 |
+| pong | 154.98 | 78/78 | 0.012089 | 1.00 | 155.07 | 78/78 | 0.012095 | 1.00 |
+| interaction | 0.92 | 52/56 | 0.000048 | 1.00 | 0.99 | 52/56 | 0.000051 | 1.00 |
+| combatEffect | 0 | — | 0 | — | 0 | — | 0 | — |
+| battleDecision | 0 | — | 0 | — | 0 | — | 0 | — |
+| error | 0.01 | 61/61 | 0.000001 | 1.00 | 0.00 | 61/61 | 0.000000 | 1.00 |
+| moveRejected | 0.01 | 1060/1104 | 0.000014 | 1.00 | 0.01 | 1074/1112 | 0.000015 | 1.00 |
+| ready | 0.27 | 58/59 | 0.000016 | 1.00 | 0.27 | 58/59 | 0.000016 | 1.00 |
+
+NPC state: zero socket bytes; routes are authored locally. Combat zeroes in this safe workload are unexercised, not a reliability claim; the separate combat probe above measures effects. Public phrases share `playerEmoted` and were verified between browsers; autonomous `mochiSpoke` rates are measured in the soak. Discrete seating retains the legacy `playerMoved` event.
+
+### Embedded component profile
+
+Before uses the separate 150-user short profile; after uses the five-minute run. These are JSON fragments per carrying packet, including batched actors, not individual entity sizes and not additional messages.
+
+| Component | Before carrying msg/s | Before mean/p95 bytes | Before MB/s | Fan-out | After carrying msg/s | After mean/p95 bytes | After MB/s | Fan-out |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| playerState | 37910.21 | 224/287 | 8.489166 | 26.36 | 1607.23 | 1559/3730 | 2.505054 | 1.08 |
+| companionState | 37910.21 | 148/164 | 5.610076 | 26.36 | 1607.02 | 1425/3031 | 2.289969 | 1.08 |
+| companionDescription | 37910.21 | 281/287 | 10.638688 | 26.36 | 132.75 | 487/287 | 0.064693 | 15.76 |
+| mobState | 350.76 | 382/1476 | 0.133875 | 24.99 | 372.22 | 346/1475 | 0.128769 | 24.99 |
+| resourceNodes | 350.76 | 133/514 | 0.046574 | 24.99 | 372.22 | 124/514 | 0.046004 | 24.99 |
+
+### Delivery accounting and remaining limits
+
+| 150-user counter | Before | After |
+|---|---:|---:|
+| backpressureDrops | 0 | 0 |
+| closedSocketSkips | 701 | 96 |
+| coalescedMovementSnapshots | 0 | 22 |
+| criticalEventsQueued | 0 | 0 |
+| criticalEventsFlushed | 0 | 0 |
+| criticalEventsAwaitingResync | 0 | 0 |
+| slowClientDisconnects | 0 | 0 |
+
+Before request errors: `{'That path is blocked': 1, 'Walk closer to interact': 3, 'That destination is unreachable': 3}`. After request errors: `{'That path is blocked': 1, 'That destination is unreachable': 3, 'Walk closer to interact': 1}`. Aggregate acceptance before: **False**; after: **False**. Planned reconnects can produce closed-socket skips/coalescing; they are separate from slow-client drops. No congestion was intentionally induced in the real workload. The unit stress test accounts for all 257 events at queue overflow (256 queued plus the overflowing event) and counts 43 later closed-socket attempts; the FIFO recovery test delivers hit/result before the fresh movement keyframe. The previous harness pass flag omitted non-movement client errors: the 75-user raw flag was true despite two interaction-range rejections. The table applies strict client-error acceptance, and the final harness now enforces it alongside cache/queue teardown and slow-client counters. Final diagnostic/acceptance changes received a post-suite smoke; wire behavior did not change. Both species passed follow in every completed short/five-minute run, and all five-minute teardowns left zero players, rooms, sockets, pets, adventure instances/states, snapshot caches and queued bytes.
+
+**150 CCU remains un-certified.** Checkpoint storage/retention, authoritative navigation rejections and any recorded tick deadline misses still need resolution. Repeat isolated long runs on candidate production hardware, with WAN/TLS and real-browser crowds; measure PostgreSQL separately and budget native work by registered pets, not only CCU. Distributed room/session/rate state remains unimplemented. Transient combat effects after an explicit slow-client disconnect do not have durable replay.
+
+Validation: 185 JavaScript tests passed with PostgreSQL, zero skips; movement/queue tests and production asset validation/build passed; whitespace checks passed. No Cadence/reward/checkpoint mechanism or published pack was changed.

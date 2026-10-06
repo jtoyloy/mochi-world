@@ -25,3 +25,17 @@ The main world now uses React Three Fiber/Three.js. The previous Phaser section 
 historical. See [3D_DELIVERY.md](3D_DELIVERY.md) for implemented scope and limits and
 [ASSET_PIPELINE.md](ASSET_PIPELINE.md) for models/rigs. Domain services and Cadence
 contracts remain preserved. Build with `npm run build` before serving/deploying.
+
+## Checkpoint retention release configuration
+
+Run the updated world migration before deploying. Production startup now requires
+explicit `CHECKPOINT_KEEP_RECENT`, `CHECKPOINT_RETENTION_HOURS`,
+`CHECKPOINT_GC_INTERVAL_MS`, and `CHECKPOINT_GC_GRACE_MS`. Use a persistent
+`CHECKPOINT_DIRECTORY`, back up it and PostgreSQL consistently, and retire old
+writers before enabling collection. New managed namespaces bind to the database
+endpoint/schema; restored or cloned databases need a separate directory/volume.
+Do not share production storage with a test clone. Review
+[CHECKPOINT_RETENTION.md](CHECKPOINT_RETENTION.md) for the algorithm, operational
+commands, disk formula, legacy-file safety and alerts. The development three-file
+policy is an example, not an approved production recovery objective. This change
+does not certify 150 CCU or resolve the other deployment/identity-provider limits.

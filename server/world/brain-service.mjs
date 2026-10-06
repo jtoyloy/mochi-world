@@ -116,12 +116,12 @@ export class BrainService {
       const decisionState = entry
         ? { ...state, portfolio: entry.portfolio }
         : state;
-      decisionState.economy = await this.service.economy(userId, id);
+      decisionState.economy = await this.service.economy(userId, id, tx);
       const obs = new Float32Array(TRADER_SPEC.inputs);
       sense(world, obs);
       obs.set(tradingObservations(world, decisionState, snapshots, true), 223);
       this.host ??= new BrainProcess();
-      const record = await this.repository.load(id, userId);
+      const record = await this.repository.load(id, userId, tx);
       await this.host.call({
         op: "boot",
         spec: TRADER_SPEC,
@@ -229,10 +229,13 @@ export class BrainService {
         );
       else state.pending = newPending;
       const saved = await this.host.call({ op: "save" }),
-        key = await this.repository.storage.write(
+        key = await this.repository.writeCheckpoint(
+          tx,
           id,
           brain.version + 1,
           Buffer.from(saved.npz, "base64"),
+          brain.checkpoint_key,
+          { nativeVerified: true },
         );
       await tx.query(
         "UPDATE mochi_brains SET checkpoint_key=$2,version=version+1,updated_at=now() WHERE mochi_id=$1",

@@ -175,3 +175,35 @@ is justified.
 Validation: **27 Python tests and 162 JavaScript tests pass, with no skips**. The full JS
 suite used the existing local database test environment. Published pack hashes are pinned
 and checkpoint continuation covers both the control and experimental trace setting.
+
+## Server-physics validation — 2026-10-06
+
+The legacy score was not treated as production combat evidence. The new deterministic
+harness invokes real AdventureService attack/movement/guard/cooldown/chase/poison/death
+stages and shared locomotion/collision code. Twelve independently trained brains per arm
+use disjoint training, validation and held-out world seeds. Owner auto-attacks, pet damage,
+exhaustion, real obstacle approaches, both species and response-delay simulation are present.
+A separate real PostgreSQL BattleBrains benchmark includes the complete per-turn checkpoint
+load/tick/save and queue. [Full protocol and findings](CADENCE_SERVER_BATTLE_EVAL.md).
+
+Held-out wins /432: random **199**, published **205**, no protection **199**, 26 senses
+**208**, causal credit **199**, 26 senses + causal **209**, terminal emphasis **200**,
+reference **294**. The combined arm gains 2.31 percentage points over random; its unadjusted
+paired-seed 95% interval is +0.23 to +4.40 points, but the conservative six-arm interval
+spans zero (−0.46 to +4.86). It fails the predeclared 5-point meaningful-margin gate.
+Whole-species transfer also fails to establish superiority: combined vs random is
+99 vs103 /216 for Moonfox→Woodland Deer and 108 vs102 /216 in reverse; both intervals span zero.
+
+**No promotion or new pack.** All candidate changes remain experimental; no trading brain
+or published pack changed. Both new sensors and action-owned causal receipts have measured
+controls, but neither fixes the frequent invalid choices or near-absence of learned approach
+movement. Owner auto-attacks account for most control damage. A disclosed WAIT-only diagnostic
+wins 183/432 with no pet damage. Obstacle encounters remain markedly worse than open ones.
+
+Production timing pauses enemy/owner combat during awaited brain decisions; the default
+latency probe found zero stale attacks/specials. Continuing enemies are a separate stress
+mode with measured stale choices and dropped windows. Shared physical stages are extracted
+without changing their formulas or installing an action chooser. The real persistence path
+shows 50/100-request bursts exceed 1400 ms; this is not a multiplayer capacity guarantee.
+Raw episodes, curves, seed uncertainty, transfer and CPU/RAM/latency measurements are linked
+in the full report. **33 Python and 171 JavaScript tests pass with no skips.**

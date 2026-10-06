@@ -26,6 +26,7 @@ let pool,
   game,
   schema,
   p,
+  presentation = [],
   now = Date.parse("2026-10-05T12:00:00Z");
 const enabled = !!process.env.TEST_DATABASE_URL,
   check = (name, fn) => test(name, { skip: !enabled }, fn);
@@ -67,6 +68,7 @@ before(async () => {
     y: 280,
     companion: null,
   };
+  game.effect = (_p, kind, data = {}) => presentation.push({kind, ...data});
   await game.state(a.id);
 });
 after(async () => {
@@ -260,6 +262,8 @@ check(
       xp: 10000,
     });
     assert.equal(result.quantity, 1);
+    assert.ok(presentation.some(e => e.kind === "woodcut_start" && e.nodeId === n.id));
+    assert.equal(presentation.at(-1).kind, "woodcutting");
     assert.equal((await game.state(a.id)).xp.woodcutting, 12);
     await assert.rejects(
       game.action(p, { action: "finishGather", harvestId: start.id }),
@@ -297,6 +301,8 @@ check(
       harvestId: start.id,
     });
     assert.equal(r.itemId, "common-minnow");
+    assert.ok(presentation.some(e => e.kind === "fish_start" && e.nodeId === n.id));
+    assert.equal(presentation.at(-1).kind, "fishing");
     assert.equal((await game.state(a.id)).xp.fishing, 12);
     await assert.rejects(
       game.action(p, { action: "finishGather", harvestId: start.id }),

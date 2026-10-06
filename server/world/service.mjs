@@ -263,21 +263,33 @@ export class WorldService {
       throw new GameError("This is not your Mochi", 403);
     return row;
   }
-  async economy(userId, mochiId) {
-    const [user, items, equipment, awards] = await Promise.all([
-      this.account(userId),
-      this.pool.query(
+  async economy(userId, mochiId, database = this.pool) {
+    const queries = [
+      () => database === this.pool
+        ? this.account(userId)
+        : database.query("SELECT * FROM users WHERE id=$1", [userId]).then(result => {
+            if (!result.rows[0]) throw new GameError("Sign in to a development account", 401);
+            return safeUser(result.rows[0]);
+          }),
+      () => database.query(
         "SELECT item_id,quantity FROM player_inventory WHERE user_id=$1 AND location='bag'",
         [userId],
       ),
-      this.pool.query("SELECT slots FROM equipped_items WHERE mochi_id=$1", [
+      () => database.query("SELECT slots FROM equipped_items WHERE mochi_id=$1", [
         mochiId,
       ]),
-      this.pool.query(
+      () => database.query(
         "SELECT achievement_id FROM user_achievements WHERE user_id=$1",
         [userId],
       ),
-    ]);
+    ];
+    let results;
+    if (database === this.pool) results = await Promise.all(queries.map(query => query()));
+    else {
+      results = [];
+      for (const query of queries) results.push(await query());
+    }
+    const [user, items, equipment, awards] = results;
     return {
       coins: user.coins,
       inventory: Object.fromEntries(

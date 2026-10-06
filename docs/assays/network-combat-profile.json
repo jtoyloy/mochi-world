@@ -1,0 +1,183 @@
+{
+  "seconds": 16.487,
+  "protocol": {
+    "ready": {
+      "recipients": 2,
+      "bytes": 118,
+      "messagesPerSecond": 0.12130769697337297,
+      "bytesPerSecond": 7.157154121429006,
+      "meanBytes": 59,
+      "p95Bytes": 59
+    },
+    "roomSnapshot": {
+      "recipients": 2,
+      "bytes": 2804,
+      "messagesPerSecond": 0.12130769697337297,
+      "bytesPerSecond": 170.07339115666892,
+      "meanBytes": 1402,
+      "p95Bytes": 1839
+    },
+    "playerJoined": {
+      "recipients": 3,
+      "bytes": 2478,
+      "messagesPerSecond": 0.18196154546005947,
+      "bytesPerSecond": 150.30023655000912,
+      "meanBytes": 826,
+      "p95Bytes": 826
+    },
+    "movementSnapshot": {
+      "recipients": 76,
+      "bytes": 36738,
+      "messagesPerSecond": 4.609692484988173,
+      "bytesPerSecond": 2228.301085703888,
+      "meanBytes": 483.39473684210526,
+      "p95Bytes": 693
+    },
+    "adventureState": {
+      "recipients": 81,
+      "bytes": 26851,
+      "messagesPerSecond": 4.912961727421606,
+      "bytesPerSecond": 1628.6164857160188,
+      "meanBytes": 331.4938271604938,
+      "p95Bytes": 386
+    },
+    "adventureRoom": {
+      "recipients": 81,
+      "bytes": 33813,
+      "messagesPerSecond": 4.912961727421606,
+      "bytesPerSecond": 2050.88857888033,
+      "meanBytes": 417.44444444444446,
+      "p95Bytes": 429
+    },
+    "moveAccepted": {
+      "recipients": 1,
+      "bytes": 1002,
+      "messagesPerSecond": 0.060653848486686486,
+      "bytesPerSecond": 60.77515618365986,
+      "meanBytes": 1002,
+      "p95Bytes": 1002
+    },
+    "combatEffect": {
+      "recipients": 24,
+      "bytes": 4062,
+      "messagesPerSecond": 1.4556923636804757,
+      "bytesPerSecond": 246.37593255292052,
+      "meanBytes": 169.25,
+      "p95Bytes": 180,
+      "fanout": 2
+    },
+    "battleDecision": {
+      "recipients": 5,
+      "bytes": 778,
+      "messagesPerSecond": 0.30326924243343245,
+      "bytesPerSecond": 47.18869412264208,
+      "meanBytes": 155.6,
+      "p95Bytes": 157
+    }
+  },
+  "effects": [
+    [
+      {
+        "kind": "hit",
+        "seq": 1
+      },
+      {
+        "kind": "defend",
+        "seq": 2
+      },
+      {
+        "kind": "spell",
+        "seq": 3
+      },
+      {
+        "kind": "hit",
+        "seq": 4
+      },
+      {
+        "kind": "pet-special",
+        "seq": 5
+      },
+      {
+        "kind": "hit",
+        "seq": 6
+      },
+      {
+        "kind": "defend",
+        "seq": 7
+      },
+      {
+        "kind": "hit",
+        "seq": 8
+      },
+      {
+        "kind": "hit",
+        "seq": 9
+      },
+      {
+        "kind": "hit",
+        "seq": 10
+      },
+      {
+        "kind": "victory",
+        "seq": 11
+      },
+      {
+        "kind": "hit",
+        "seq": 12
+      }
+    ],
+    [
+      {
+        "kind": "hit",
+        "seq": 1
+      },
+      {
+        "kind": "defend",
+        "seq": 2
+      },
+      {
+        "kind": "spell",
+        "seq": 3
+      },
+      {
+        "kind": "hit",
+        "seq": 4
+      },
+      {
+        "kind": "pet-special",
+        "seq": 5
+      },
+      {
+        "kind": "hit",
+        "seq": 6
+      },
+      {
+        "kind": "defend",
+        "seq": 7
+      },
+      {
+        "kind": "hit",
+        "seq": 8
+      },
+      {
+        "kind": "hit",
+        "seq": 9
+      },
+      {
+        "kind": "hit",
+        "seq": 10
+      },
+      {
+        "kind": "victory",
+        "seq": 11
+      },
+      {
+        "kind": "hit",
+        "seq": 12
+      }
+    ]
+  ],
+  "sameEffects": true,
+  "errors": [],
+  "note": "Two independent persisted accounts and native pets on the real /socket protocol; 12 matching effect sequences per client, including hit, spell and victory. Includes setup and idle time; not a combat capacity workload."
+}

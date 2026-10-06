@@ -77,12 +77,18 @@ export async function mountIsometric(container, bridge, config) {
       timers.add(timer);
     },
     put(p, notify = true) {
+      const previousPet = data.get(p.userId)?.companion?.id;
+      if (previousPet && previousPet !== p.companion?.id) petMotion.delete(previousPet);
       data.set(p.userId, p);
       const t = p.serverTime ?? Date.now();
       let m = motion.get(p.userId);
       if (!m) {
         m = { buffer: new SnapshotBuffer(), prediction: new Prediction(p) };
         motion.set(p.userId, m);
+      }
+      if (p.userId !== bridge.selfId) {
+        m.buffer.baseDelay = Math.max(120, (p.snapshotIntervalMs ?? 100) + 20);
+        m.buffer.smoothDelay = true;
       }
       m.buffer.push(
         { t, x: p.x, y: p.y, moving: p.moving },
@@ -96,6 +102,8 @@ export async function mountIsometric(container, bridge, config) {
           pm = new SnapshotBuffer();
           petMotion.set(p.companion.id, pm);
         }
+        pm.baseDelay = Math.max(120, (p.snapshotIntervalMs ?? 100) + 20);
+        pm.smoothDelay = true;
         pm.push(
           {
             t,

@@ -1,3 +1,4 @@
+import { ActorSnapshots } from "./snapshots.mjs";
 import { performance } from "node:perf_hooks";
 import { advance, traverse } from "../../web/js/game/locomotion/core.js";
 import { nearbyResident, TOWN_INTERACTIONS } from "../../web/js/game/town.js";
@@ -81,6 +82,7 @@ export class Multiplayer {
     )
       throw new Error("Autonomous speech gap must be 30000–90000ms");
     this.followController = new CompanionFollowController();
+    this.snapshots = new ActorSnapshots();
     this.encounters = new Map();
     this.tickAt = this.now();
     this.movementHz = Number(process.env.MOVEMENT_HZ ?? 10);
@@ -97,25 +99,114 @@ export class Multiplayer {
     );
     this.speechTimer.unref();
   }
-  sendEncoded(p, encoded) {
-    if (p.ws.readyState === 1 && p.ws.bufferedAmount < 200000) {
-      p.ws.send(encoded);
-      this.metrics?.count("outboundMessages");
-      this.metrics?.count("outboundBytes", Buffer.byteLength(encoded));
-    } else {
-      this.metrics?.count("droppedUpdates");
-      this.metrics?.count(
-        p.ws.readyState === 1 ? "backpressureDrops" : "closedSocketSkips",
-      );
+  flush(p) {
+    if (p.ws.readyState !== 1) return false;
+    this.metrics?.observe?.('socketBufferedBytes', p.ws.bufferedAmount ?? 0);
+    if (p.ws.bufferedAmount >= 200000) {
+      p.slowSince ??= this.now();
+      if (this.now() - p.slowSince >= 5000) this.slowClose(p);
+      return false;
     }
+    p.slowSince = null;
+    while (p.outbox?.length && p.ws.bufferedAmount < 200000) {
+      const item = p.outbox.shift();
+      p.outboxBytes -= Buffer.byteLength(item.encoded);
+      this.deliver(p, item.encoded, item.type, item.parts);
+      this.metrics?.count('criticalEventsFlushed');
+    }
+    return !p.outbox?.length && p.ws.bufferedAmount < 200000;
+  }
+  slowClose(p) {
+    if (p.deliveryClosed) return;
+    p.deliveryClosed = true;
+    this.metrics?.count('criticalEventsAwaitingResync', p.outbox?.length ?? 0);
+    p.outbox = [];
+    p.outboxBytes = 0;
+    this.metrics?.count('slowClientDisconnects');
+    p.ws.close(1013, 'Client is too slow; reconnect for authoritative state');
+  }
+  deliver(p, encoded, type, parts = {}) {
+    p.ws.send(encoded);
+    const bytes = Buffer.byteLength(encoded);
+    this.metrics?.count('outboundMessages');
+    this.metrics?.count('outboundBytes', bytes);
+    this.metrics?.protocolSent?.(type, bytes);
+    for (const [part, size] of Object.entries(parts)) this.metrics?.protocolSent?.("component:" + part, size);
+  }
+  sendEncoded(p, encoded, type = 'unknown', parts = {}) {
+    if (p.deliveryClosed) {
+      this.metrics?.count('closedSocketSkips');
+      return false;
+    }
+    if (p.ws.readyState !== 1) {
+      this.metrics?.count('closedSocketSkips');
+      return false;
+    }
+    if (this.flush(p)) {
+      this.deliver(p, encoded, type, parts);
+      return true;
+    }
+    if (p.deliveryClosed) return false;
+    p.outbox ??= [];
+    p.outboxBytes ??= 0;
+    if (p.outbox.length >= 256 || p.outboxBytes + Buffer.byteLength(encoded) > 1048576) {
+      // Count the overflowing event as well as the queued events requiring resync.
+      this.metrics?.count('criticalEventsAwaitingResync');
+      this.slowClose(p);
+      return false;
+    }
+    p.outbox.push({ encoded, type, parts });
+    p.outboxBytes += Buffer.byteLength(encoded);
+    this.metrics?.count('criticalEventsQueued');
+    return false;
+  }
+  parts(type, data) {
+    if (!this.metrics) return {};
+    const at = performance.now(), parts = {};
+    const bytes = value => Buffer.byteLength(JSON.stringify(value));
+    const actors = type === 'playerMoved' || type === 'playerJoined' ? [data]
+      : type === 'movementSnapshot' || type === 'roomSnapshot' ? data.players : [];
+    for (const player of actors ?? []) {
+      const { companion, avatar, username, presence, ...dynamic } = player;
+      parts.playerState = (parts.playerState ?? 0) + bytes(dynamic);
+      if (companion) {
+        const { profile, equipment, name, ...pet } = companion;
+        parts.companionState = (parts.companionState ?? 0) + bytes(pet);
+        if (profile || equipment || name) parts.companionDescription = (parts.companionDescription ?? 0) + bytes({ profile, equipment, name });
+      }
+    }
+    if (type === 'adventureRoom') {
+      parts.mobState = bytes(data.mobs);
+      parts.resourceNodes = bytes(data.nodes);
+    }
+    for (const [part,size] of Object.entries(parts)) this.metrics.protocolEncoded?.('component:' + part,size);
+    this.metrics.time?.('componentMeasurementMs',performance.now()-at);
+    return parts;
+  }
+  encode(type, data) {
+    const at = performance.now();
+    const encoded = JSON.stringify({ type, data });
+    this.metrics?.time?.('serializationMs', performance.now() - at);
+    const bytes = Buffer.byteLength(encoded);
+    this.metrics?.count('serializedBytes', bytes);
+    this.metrics?.protocolEncoded?.(type, bytes);
+    return encoded;
+  }
+  sendMovement(p, data) {
+    if (!this.flush(p) || p.deliveryClosed) {
+      this.metrics?.count('coalescedMovementSnapshots');
+      return false;
+    }
+    this.deliver(p, this.encode('movementSnapshot', data), 'movementSnapshot', this.parts('movementSnapshot', data));
+    return true;
   }
   send(p, type, data) {
-    this.sendEncoded(p, JSON.stringify({ type, data }));
+    this.sendEncoded(p, this.encode(type, data), type, this.parts(type, data));
   }
   broadcast(room, type, data) {
-    const encoded = JSON.stringify({ type, data });
+    const encoded = this.encode(type, data), parts = this.parts(type, data);
     for (const p of this.store.rooms.get(room)?.players.values() ?? [])
-      this.sendEncoded(p, encoded);
+      this.sendEncoded(p, encoded, type, parts);
   }
   public(p) {
     return {
@@ -378,6 +469,7 @@ export class Multiplayer {
   leave(p) {
     if (!p.room) return;
     const old = p.room;
+    this.snapshots.forget(p.userId);
     this.store.rooms.get(old)?.players.delete(p.userId);
     this.broadcast(old, "playerLeft", { userId: p.userId });
     if (!this.store.rooms.get(old)?.players.size) this.store.rooms.delete(old);
@@ -397,6 +489,8 @@ export class Multiplayer {
     this.persist(p).catch(() => {});
     this.leave(p);
     this.store.players.delete(p.userId);
+    p.outbox = [];
+    p.outboxBytes = 0;
   }
   async persist(p) {
     if (!p.roomId) return;
@@ -466,6 +560,13 @@ export class Multiplayer {
       return;
     }
     switch (type) {
+      case 'view':
+        if (![data.halfWidth, data.halfHeight].every(Number.isFinite))
+          throw new GameError('Invalid view bounds');
+        if (now - (p.viewAt ?? 0) < 1000) break;
+        p.viewAt = now;
+        p.view = { halfWidth: Math.max(400, Math.min(2400, data.halfWidth)), halfHeight: Math.max(250, Math.min(1600, data.halfHeight)) };
+        break;
       case "ping":
         this.send(p, "pong", { clientTime: data.clientTime, serverTime: now });
         break;
@@ -693,26 +794,6 @@ export class Multiplayer {
       }
       this.metrics?.count("actorUpdates");
       if (p.companion) this.metrics?.count("companionUpdates");
-      this.broadcast(p.room, "playerMoved", {
-        userId: p.userId,
-        x: p.x,
-        y: p.y,
-        rotation: p.rotation ?? 0,
-        serverTime: now,
-        moveSeq: p.moveSeq ?? 0,
-        speed: p.speed ?? 0,
-        path: p.target ? [p.target, ...(p.path ?? [])] : [],
-        moving: !!p.target,
-        seated: p.seated ?? null,
-        companion: p.companion
-          ? {
-              ...p.companion,
-              route: undefined,
-              routeAt: undefined,
-              motorPath: undefined,
-            }
-          : null,
-      });
       if (
         Math.floor(now / 1000) !== Math.floor((now - dt * 1000) / 1000) &&
         Math.floor(now / 1000) % 15 === 0
@@ -723,6 +804,7 @@ export class Multiplayer {
         (roomDurations.get(p.room) ?? 0) + performance.now() - actorTickAt,
       );
     }
+    this.snapshots.tick(this, now);
     for (const duration of roomDurations.values())
       this.metrics?.time("roomTickDurationMs", duration);
     this.metrics?.time("tickDurationMs", performance.now() - startedAt);

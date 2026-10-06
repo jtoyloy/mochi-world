@@ -346,3 +346,37 @@ is justified.
 Validation: **27 Python tests and 162 JavaScript tests pass, with no skips**. The full JS
 suite used the existing local database test environment. Published pack hashes are pinned
 and checkpoint continuation covers both the control and experimental trace setting.
+
+## Cadence server-physics battle evaluation — 2026-10-06
+
+No battle candidate promoted; immutable packs and trading logic are unchanged. Shared real
+AdventureService physical stages drive the deterministic harness, including owner attacks,
+pet damage/exhaustion, collision/path movement, cooldowns, guards, poison and termination.
+Predeclared 12 seed pairs per arm; 60 training, 12 validation and 36 held-out encounters.
+
+Held-out wins /432: random 199; published 205; no-protection 199; expanded 26 senses 208;
+causal memory credit 199; expanded + causal 209; terminal emphasis 200; reference 294.
+Combined gain +2.31 points fails the predeclared ≥5-point margin. Its unadjusted seed-bootstrap
+95% interval is +0.23 to +4.40 points; conservative six-arm bounds −0.46 to +4.86 include zero.
+All six native configurations remain failed-to-qualify arms. Control only contributes 406
+pet damage against 17,379.75 owner damage; combined 1,808.5 versus random 2,824.5 pet damage.
+Combined makes 1,292 invalid attacks of 1,491 selections and selects no approach movement
+in frozen evaluation. Obstacle wins 53/225 versus random 56/225; open wins 156/207 versus 143/207.
+
+Independent leave-one-species-out transfer (six seed pairs per direction, all original arms)
+also does not establish robust gain: combined/random Moonfox→Woodland Deer 99/103 of 216;
+reverse 108/102 of 216. Both paired confidence intervals span zero. A supplementary disclosed
+WAIT-only control wins 183/432 with zero pet damage; it is not a learned or selection arm.
+
+Actual PostgreSQL-backed serialized BattleBrains load/tick/save bursts: 10/25/50/100 requests
+have end-to-end p95 334/851/1635/2807 ms. Fifty and 100 miss 1400 ms. Child RSS ~40–44 MB with
+one resident brain; checkpoint payload ~212.7 KB per pet. These are local persistence/queue
+measurements, not multiplayer capacity. Default timing pauses enemies during host await;
+continuing-enemy stress can produce stale choices and dropped outcomes. No action mask,
+scripted policy fallback, neural-region expansion or checkpoint-retention change ships.
+
+33 Python and 171 JS checks pass with no skips, including owned delayed credit, real trading
+checkpoint rejection, freeze, full continuation, single terminal closure and unexecuted-choice
+cancellation. See [full protocol and remaining limitations](docs/CADENCE_SERVER_BATTLE_EVAL.md),
+[raw/summary results](docs/assays/server-battle-summary.json) and
+[learning curves](docs/assays/server-battle-learning.png).
