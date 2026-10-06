@@ -769,6 +769,14 @@ export class AdventureService {
     this.tickAt = now;
     for (const [key, room] of this.instances)
       if (!this.multiplayer.store.rooms.has(key)) this.instances.delete(key);
+    // Persist idle cached state before eviction. Combat settlement retains its owner
+    // until its existing finish path has run; never discard pending brain feedback.
+    for (const [userId, state] of this.states) {
+      if (!this.multiplayer.store.players.has(userId) && !state.inBattle) {
+        await this.save(userId, state);
+        if (!this.multiplayer.store.players.has(userId)) this.states.delete(userId);
+      }
+    }
     for (const p of this.multiplayer.store.players.values()) {
       if (!p.room) continue;
       const s = await this.state(p.userId);

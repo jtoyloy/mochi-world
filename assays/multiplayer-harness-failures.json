@@ -1,0 +1,40 @@
+{
+  "scope": "Preliminary attempts; never use as capacity support evidence",
+  "failures": [
+    {
+      "stage": "native environment",
+      "issue": "Python runtime absent/3.9 incompatible",
+      "resolution": "Used existing Python 3.12 with cadence-net 0.74.0; subsequent native ticks enabled"
+    },
+    {
+      "stage": "movement harness",
+      "issue": "Movement sequence reset across rooms caused moveAccepted timeout",
+      "resolution": "Preserve monotonic sequence and reject pending move waiters on moveRejected"
+    },
+    {
+      "stage": "10-user preliminary smoke",
+      "issue": "One 118.25 ms authoritative movement pass; browser probe produced missing-build/favicon errors; emote scheduler violated cooldown",
+      "evidence": "multiplayer-10-300s-preliminary.json",
+      "resolution": "Retained failed result; built presentation; separated observer; added cooldown and follow timing"
+    },
+    {
+      "stage": "25-user preliminary aggregation",
+      "issue": "Math.max(...250000 samples) exceeded call stack; completed windows were not saved by the initial harness",
+      "resolution": "Reduction without argument spreading; fatal failures now save raw windows to an assay; rerun required"
+    },
+    {
+      "stage": "first 150-user long attempt",
+      "issue": "Stopped shortly after startup to avoid losing the run to the same aggregation bug",
+      "resolution": "Stopped only harness-owned processes and removed only its generated schema; restarted corrected harness"
+    },
+    {
+      "stage": "post-suite follow rechecks",
+      "issue": "Short scripted follow retries timed out; one captured host-clock gap exceeded 16 minutes while the last owner snapshot was still moving. No completed load windows.",
+      "evidence": [
+        "multiplayer-2-15s-failure-1791288522811.json",
+        "multiplayer-2-15s-failure-1791292646232.json"
+      ],
+      "resolution": "Preserve raw timeout diagnostics; add 10-second application pings during account setup/follow as well as load. Host suspension is not a reliable soak environment."
+    }
+  ]
+}

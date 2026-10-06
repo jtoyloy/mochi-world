@@ -1,0 +1,1700 @@
+{
+  "users": 10,
+  "durationSeconds": 20.362,
+  "capacity": 40,
+  "rooms": [
+    "town",
+    "town",
+    "town",
+    "forest",
+    "lake",
+    "market",
+    "exchange"
+  ],
+  "distribution": {
+    "town": 3,
+    "forest": 1,
+    "lake": 1,
+    "market": 1,
+    "exchange": 1
+  },
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M2",
+    "logicalCpus": 8,
+    "node": "v23.9.0"
+  },
+  "configuration": {
+    "transitionProbability": 0.025,
+    "reconnectProbability": 0.002,
+    "movementHz": 10
+  },
+  "summary": {
+    "cpuMeanCores": 0.04121815156450776,
+    "cpuP95Cores": 0.06916329293082543,
+    "rssMaxBytes": 120078336,
+    "heapMaxBytes": 16627952,
+    "heapStartBytes": 14417352,
+    "heapEndBytes": 16627952,
+    "eventLoopP99MaxMs": 15.917055,
+    "rates": {
+      "inboundMessages": 15.161326486861318,
+      "inboundBytes": 987.6710416200749,
+      "outboundMessages": 371.35318892928007,
+      "outboundBytes": 234535.39251186707,
+      "actorUpdates": 99.30999882223571,
+      "companionUpdates": 99.30999882223571,
+      "databaseQueries": 66.80252587442389
+    },
+    "timing": {
+      "dispatchMs": {
+        "count": 229,
+        "sum": 37.3650769999731,
+        "max": 9.814874999996391,
+        "buckets": [
+          210,
+          9,
+          0,
+          5,
+          1,
+          1,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.16316627510905282,
+        "p95UpperMs": 0.25
+      },
+      "movementValidationMs": {
+        "count": 76,
+        "sum": 31.632078999980877,
+        "max": 9.805959000004805,
+        "buckets": [
+          63,
+          5,
+          0,
+          4,
+          0,
+          1,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.4162115657892221,
+        "p95UpperMs": 4
+      },
+      "tickIntervalMs": {
+        "count": 150,
+        "sum": 15119,
+        "max": 126,
+        "buckets": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          150,
+          0
+        ],
+        "mean": 100.79333333333334,
+        "p95UpperMs": 128
+      },
+      "tickDurationMs": {
+        "count": 150,
+        "sum": 104.47041799999715,
+        "max": 13.398542000002635,
+        "buckets": [
+          0,
+          0,
+          89,
+          50,
+          8,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.6964694533333143,
+        "p95UpperMs": 2
+      }
+    }
+  },
+  "clients": {
+    "errors": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "unexpectedDisconnects": 0,
+    "reconnects": 0,
+    "lateUpdates": 0,
+    "snapshotLatencyP95Ms": 2,
+    "arrivalGapP95Ms": 102,
+    "arrivalGapMaxMs": 128,
+    "companionMessages": 6414,
+    "missingCompanions": 0
+  },
+  "follow": [
+    {
+      "species": "Moonfox",
+      "passed": true,
+      "samples": [
+        {
+          "label": "spawn",
+          "room": "town",
+          "owner": {
+            "x": 550,
+            "y": 840,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 467.6991428153636,
+            "y": 867.3008571846365,
+            "state": "RESTING",
+            "followSpeed": 29.299999999999997,
+            "following": false
+          }
+        },
+        {
+          "label": "walk",
+          "room": "town",
+          "owner": {
+            "x": 649.6902999999999,
+            "y": 840,
+            "moving": true
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 536.888025207041,
+            "y": 802.0618400067787,
+            "state": "FOLLOWING",
+            "followSpeed": 180,
+            "following": true
+          }
+        },
+        {
+          "label": "walk-settled",
+          "room": "town",
+          "owner": {
+            "x": 750,
+            "y": 840,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 642.1778272234823,
+            "y": 800.0288081274607,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        },
+        {
+          "label": "turn",
+          "room": "town",
+          "owner": {
+            "x": 750,
+            "y": 740.2212000000001,
+            "moving": true
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 709.6173234867891,
+            "y": 836.2609721113065,
+            "state": "FOLLOWING",
+            "followSpeed": 180,
+            "following": true
+          }
+        },
+        {
+          "label": "turn-settled",
+          "room": "town",
+          "owner": {
+            "x": 750,
+            "y": 640,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 710,
+            "y": 735,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        },
+        {
+          "label": "resume",
+          "room": "town",
+          "owner": {
+            "x": 849.8411999999998,
+            "y": 640,
+            "moving": true
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 728.1129544214313,
+            "y": 628.9684377967036,
+            "state": "FOLLOWING",
+            "followSpeed": 180,
+            "following": true
+          }
+        },
+        {
+          "label": "resume-settled",
+          "room": "town",
+          "owner": {
+            "x": 950,
+            "y": 640,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 840.9181574168683,
+            "y": 601.1060611614964,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        },
+        {
+          "label": "transition-settled",
+          "room": "yard",
+          "owner": {
+            "x": 750,
+            "y": 590,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-98d4606f-5f79-480d-ac00-05f2e35103d5",
+            "name": "Momo",
+            "profile": {
+              "beast": {
+                "archetype": "moonfox"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Moonfox",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.688Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 640.7073182629227,
+            "y": 550.41548290298,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        }
+      ]
+    },
+    {
+      "species": "Woodland Deer",
+      "passed": true,
+      "samples": [
+        {
+          "label": "spawn",
+          "room": "town",
+          "owner": {
+            "x": 550,
+            "y": 840,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 467.84127127838207,
+            "y": 867.1587287216179,
+            "state": "RESTING",
+            "followSpeed": 29.799999999999997,
+            "following": false
+          }
+        },
+        {
+          "label": "walk",
+          "room": "town",
+          "owner": {
+            "x": 649.3599999999999,
+            "y": 840,
+            "moving": true
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 536.7139568967865,
+            "y": 802.0313902121592,
+            "state": "FOLLOWING",
+            "followSpeed": 180,
+            "following": true
+          }
+        },
+        {
+          "label": "walk-settled",
+          "room": "town",
+          "owner": {
+            "x": 750,
+            "y": 840,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 641.824599469692,
+            "y": 800.0283053534408,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        },
+        {
+          "label": "turn",
+          "room": "town",
+          "owner": {
+            "x": 750,
+            "y": 740.2800000000001,
+            "moving": true
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 709.5617265682804,
+            "y": 836.3293080402636,
+            "state": "FOLLOWING",
+            "followSpeed": 180,
+            "following": true
+          }
+        },
+        {
+          "label": "turn-settled",
+          "room": "town",
+          "owner": {
+            "x": 750,
+            "y": 640,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 710,
+            "y": 735,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        },
+        {
+          "label": "resume",
+          "room": "town",
+          "owner": {
+            "x": 849.5399999999998,
+            "y": 640,
+            "moving": true
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 727.8655317838408,
+            "y": 629.2351320793279,
+            "state": "FOLLOWING",
+            "followSpeed": 180,
+            "following": true
+          }
+        },
+        {
+          "label": "resume-settled",
+          "room": "town",
+          "owner": {
+            "x": 950,
+            "y": 640,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 840.6145684064735,
+            "y": 601.1323161380457,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        },
+        {
+          "label": "transition-settled",
+          "room": "yard",
+          "owner": {
+            "x": 750,
+            "y": 590,
+            "moving": false
+          },
+          "companion": {
+            "id": "mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd",
+            "name": "Soak 1",
+            "profile": {
+              "beast": {
+                "archetype": "woodland-deer"
+              },
+              "color": "Aurora",
+              "level": 1,
+              "traits": [
+                "Curious"
+              ],
+              "species": "Mochi",
+              "variant": "Woodland Deer",
+              "behavior": {
+                "care": 0,
+                "play": 0,
+                "social": 0
+              },
+              "adoptedAt": "2026-10-06T09:11:17.734Z",
+              "homeSlots": {},
+              "experience": 0
+            },
+            "equipment": {},
+            "x": 640.309936936607,
+            "y": 550.4248557788032,
+            "state": "RESTING",
+            "followSpeed": 0,
+            "following": false
+          }
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "at": 1791277943929,
+    "elapsed": 5.2065486250000035,
+    "cpuCores": 0.003642336097456497,
+    "rss": 85671936,
+    "heapTotal": 32964608,
+    "heapUsed": 19970856,
+    "external": 3695024,
+    "arrayBuffers": 120810,
+    "eventLoopP99Ms": 12.754943,
+    "eventLoopMaxMs": 15.745023,
+    "counts": {
+      "actorUpdates": 20,
+      "companionUpdates": 20,
+      "outboundMessages": 56,
+      "outboundBytes": 37965,
+      "databaseQueries": 21,
+      "disconnects": 10,
+      "droppedUpdates": 9
+    },
+    "timings": {
+      "tickIntervalMs": {
+        "count": 52,
+        "sum": 5232,
+        "max": 104,
+        "buckets": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          52,
+          0
+        ]
+      },
+      "tickDurationMs": {
+        "count": 52,
+        "sum": 2.2823779999671387,
+        "max": 0.9112079999977141,
+        "buckets": [
+          50,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "players": 0,
+    "rooms": 0,
+    "connections": 0,
+    "encounters": 8,
+    "companions": 0,
+    "staleActors": 0,
+    "adventureInstances": 0,
+    "adventureStates": 0,
+    "activeResources": [
+      "PipeWrap",
+      "PipeWrap",
+      "TCPSocketWrap",
+      "TCPServerWrap",
+      "PipeWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout",
+      "Timeout"
+    ]
+  },
+  "errors": [],
+  "serverErrors": [
+    "Traceback (most recent call last):\n  File \"/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py\", line 188, in _run_module_as_main\n",
+    "    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)\n  File \"/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py\", line 111, in _get_module_details\n",
+    "    __import__(pkg_name)\n  File \"/Users/j.t./.codex/worktrees/27d0/Neopets/mochi/__init__.py\", line 3, in <module>\n",
+    "    from .anatomy import Genes, build, describe\n  File \"/Users/j.t./.codex/worktrees/27d0/Neopets/mochi/anatomy.py\", line 27, in <module>\n",
+    "    import numpy as np\n",
+    "ModuleNotFoundError: No module named 'numpy'\n",
+    "Scheduled Cadence tick failed for mochi-28bd939f-e38e-4064-a453-536e16e0cdaf write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-2caf4a1f-8e0e-4407-b227-319d6f278b38 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-45cb4dad-1d70-4254-a287-caa2c1d1d72b write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-81e75ba3-375f-4788-9856-763b434b3767 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-8de47345-3d73-4e43-ba4e-21b0485647a8 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-98d4606f-5f79-480d-ac00-05f2e35103d5 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-9abe5d76-b43f-4c38-b938-a82c56e85ad2 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-b37fbf01-b34b-4508-b692-bf3e1ed4097d write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-d213c9fb-8acf-43b3-8ff2-6198c43a22b0 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-28bd939f-e38e-4064-a453-536e16e0cdaf write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-2caf4a1f-8e0e-4407-b227-319d6f278b38 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-45cb4dad-1d70-4254-a287-caa2c1d1d72b write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-81e75ba3-375f-4788-9856-763b434b3767 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-8de47345-3d73-4e43-ba4e-21b0485647a8 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-98d4606f-5f79-480d-ac00-05f2e35103d5 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-9abe5d76-b43f-4c38-b938-a82c56e85ad2 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-b37fbf01-b34b-4508-b692-bf3e1ed4097d write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-d213c9fb-8acf-43b3-8ff2-6198c43a22b0 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-28bd939f-e38e-4064-a453-536e16e0cdaf write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-2caf4a1f-8e0e-4407-b227-319d6f278b38 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-45cb4dad-1d70-4254-a287-caa2c1d1d72b write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-81e75ba3-375f-4788-9856-763b434b3767 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-8de47345-3d73-4e43-ba4e-21b0485647a8 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-98d4606f-5f79-480d-ac00-05f2e35103d5 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-9abe5d76-b43f-4c38-b938-a82c56e85ad2 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-b37fbf01-b34b-4508-b692-bf3e1ed4097d write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-d213c9fb-8acf-43b3-8ff2-6198c43a22b0 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-28bd939f-e38e-4064-a453-536e16e0cdaf write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-2caf4a1f-8e0e-4407-b227-319d6f278b38 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-45cb4dad-1d70-4254-a287-caa2c1d1d72b write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-81e75ba3-375f-4788-9856-763b434b3767 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-8de47345-3d73-4e43-ba4e-21b0485647a8 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-98d4606f-5f79-480d-ac00-05f2e35103d5 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-9abe5d76-b43f-4c38-b938-a82c56e85ad2 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-b37fbf01-b34b-4508-b692-bf3e1ed4097d write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-d213c9fb-8acf-43b3-8ff2-6198c43a22b0 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-28bd939f-e38e-4064-a453-536e16e0cdaf write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-2caf4a1f-8e0e-4407-b227-319d6f278b38 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-45cb4dad-1d70-4254-a287-caa2c1d1d72b write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-81e75ba3-375f-4788-9856-763b434b3767 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-8de47345-3d73-4e43-ba4e-21b0485647a8 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-98d4606f-5f79-480d-ac00-05f2e35103d5 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-9abe5d76-b43f-4c38-b938-a82c56e85ad2 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-b37fbf01-b34b-4508-b692-bf3e1ed4097d write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-d213c9fb-8acf-43b3-8ff2-6198c43a22b0 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-28bd939f-e38e-4064-a453-536e16e0cdaf write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-2caf4a1f-8e0e-4407-b227-319d6f278b38 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-45cb4dad-1d70-4254-a287-caa2c1d1d72b write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-81e75ba3-375f-4788-9856-763b434b3767 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-8de47345-3d73-4e43-ba4e-21b0485647a8 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-98d4606f-5f79-480d-ac00-05f2e35103d5 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-9abe5d76-b43f-4c38-b938-a82c56e85ad2 write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-b37fbf01-b34b-4508-b692-bf3e1ed4097d write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-cf472e6d-c485-4a11-ab89-005e6f66b8bd write EPIPE\n",
+    "Scheduled Cadence tick failed for mochi-d213c9fb-8acf-43b3-8ff2-6198c43a22b0 write EPIPE\n"
+  ],
+  "samples": [
+    {
+      "at": 1791277923618,
+      "elapsed": 5.251116749999993,
+      "cpuCores": 0.02865333359803897,
+      "rss": 83689472,
+      "heapTotal": 33226752,
+      "heapUsed": 16752272,
+      "external": 3669844,
+      "arrayBuffers": 95630,
+      "eventLoopP99Ms": 11.812863,
+      "eventLoopMaxMs": 12.705791,
+      "counts": {
+        "actorUpdates": 520,
+        "companionUpdates": 520,
+        "outboundMessages": 2106,
+        "outboundBytes": 1295254,
+        "databaseQueries": 201,
+        "inboundMessages": 74,
+        "inboundBytes": 4683
+      },
+      "timings": {
+        "tickIntervalMs": {
+          "count": 52,
+          "sum": 5228,
+          "max": 102,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            52,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 52,
+          "sum": 51.37721499999316,
+          "max": 3.7663750000065193,
+          "buckets": [
+            0,
+            0,
+            9,
+            23,
+            16,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "movementValidationMs": {
+          "count": 22,
+          "sum": 11.298330999990867,
+          "max": 4.273542000002635,
+          "buckets": [
+            13,
+            3,
+            2,
+            0,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "dispatchMs": {
+          "count": 74,
+          "sum": 15.756834000021627,
+          "max": 4.2882079999981215,
+          "buckets": [
+            59,
+            6,
+            4,
+            0,
+            3,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 10,
+      "rooms": 5,
+      "connections": 10,
+      "encounters": 7,
+      "companions": 10,
+      "staleActors": 0,
+      "adventureInstances": 5,
+      "adventureStates": 10,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout"
+      ]
+    },
+    {
+      "at": 1791277928621,
+      "elapsed": 5.001765291000003,
+      "cpuCores": 0.044135217699482386,
+      "rss": 119914496,
+      "heapTotal": 32964608,
+      "heapUsed": 14417352,
+      "external": 3669191,
+      "arrayBuffers": 94977,
+      "eventLoopP99Ms": 13.713407,
+      "eventLoopMaxMs": 40.042495,
+      "counts": {
+        "inboundMessages": 74,
+        "inboundBytes": 4790,
+        "outboundMessages": 1934,
+        "outboundBytes": 1204524,
+        "actorUpdates": 500,
+        "companionUpdates": 500,
+        "databaseQueries": 398
+      },
+      "timings": {
+        "dispatchMs": {
+          "count": 74,
+          "sum": 3.075662999995984,
+          "max": 0.22312499999679858,
+          "buckets": [
+            68,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "movementValidationMs": {
+          "count": 24,
+          "sum": 1.5490810000046622,
+          "max": 0.17845800000213785,
+          "buckets": [
+            21,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "tickIntervalMs": {
+          "count": 50,
+          "sum": 5033,
+          "max": 102,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            50,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 50,
+          "sum": 38.02816500001791,
+          "max": 13.398542000002635,
+          "buckets": [
+            0,
+            0,
+            36,
+            10,
+            3,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 10,
+      "rooms": 5,
+      "connections": 10,
+      "encounters": 7,
+      "companions": 10,
+      "staleActors": 0,
+      "adventureInstances": 5,
+      "adventureStates": 10,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout"
+      ]
+    },
+    {
+      "at": 1791277933620,
+      "elapsed": 5.000068041999999,
+      "cpuCores": 0.01080545295507401,
+      "rss": 83951616,
+      "heapTotal": 32964608,
+      "heapUsed": 15929784,
+      "external": 3679980,
+      "arrayBuffers": 105766,
+      "eventLoopP99Ms": 11.649023,
+      "eventLoopMaxMs": 17.678335,
+      "counts": {
+        "inboundMessages": 79,
+        "inboundBytes": 5281,
+        "outboundMessages": 1887,
+        "outboundBytes": 1196391,
+        "actorUpdates": 490,
+        "companionUpdates": 490,
+        "databaseQueries": 19
+      },
+      "timings": {
+        "dispatchMs": {
+          "count": 79,
+          "sum": 4.14775099997496,
+          "max": 0.8727499999949941,
+          "buckets": [
+            76,
+            1,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "movementValidationMs": {
+          "count": 29,
+          "sum": 2.9279979999919306,
+          "max": 0.8659999999945285,
+          "buckets": [
+            26,
+            1,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "tickIntervalMs": {
+          "count": 49,
+          "sum": 4924,
+          "max": 102,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            49,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 49,
+          "sum": 25.827960999966308,
+          "max": 1.7618749999965075,
+          "buckets": [
+            0,
+            0,
+            30,
+            17,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 10,
+      "rooms": 5,
+      "connections": 10,
+      "encounters": 7,
+      "companions": 10,
+      "staleActors": 0,
+      "adventureInstances": 5,
+      "adventureStates": 10,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout"
+      ]
+    },
+    {
+      "at": 1791277938621,
+      "elapsed": 5.000672833000004,
+      "cpuCores": 0.06916329293082543,
+      "rss": 120078336,
+      "heapTotal": 32964608,
+      "heapUsed": 15598928,
+      "external": 3669191,
+      "arrayBuffers": 94977,
+      "eventLoopP99Ms": 15.917055,
+      "eventLoopMaxMs": 39.944191,
+      "counts": {
+        "actorUpdates": 500,
+        "companionUpdates": 500,
+        "outboundMessages": 1760,
+        "outboundBytes": 1122165,
+        "inboundMessages": 76,
+        "inboundBytes": 4847,
+        "databaseQueries": 592
+      },
+      "timings": {
+        "tickIntervalMs": {
+          "count": 50,
+          "sum": 5061,
+          "max": 126,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            50,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 50,
+          "sum": 39.80491700001585,
+          "max": 6.179042000003392,
+          "buckets": [
+            0,
+            0,
+            23,
+            22,
+            3,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "dispatchMs": {
+          "count": 76,
+          "sum": 30.141663000002154,
+          "max": 9.814874999996391,
+          "buckets": [
+            66,
+            2,
+            0,
+            3,
+            1,
+            1,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "movementValidationMs": {
+          "count": 23,
+          "sum": 27.154999999984284,
+          "max": 9.805959000004805,
+          "buckets": [
+            16,
+            1,
+            0,
+            2,
+            0,
+            1,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 10,
+      "rooms": 5,
+      "connections": 10,
+      "encounters": 8,
+      "companions": 10,
+      "staleActors": 0,
+      "adventureInstances": 5,
+      "adventureStates": 10,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout"
+      ]
+    },
+    {
+      "at": 1791277938722,
+      "elapsed": 0.10171312499999476,
+      "cpuCores": 0.018906114623851143,
+      "rss": 120078336,
+      "heapTotal": 32964608,
+      "heapUsed": 16627952,
+      "external": 3669208,
+      "arrayBuffers": 94994,
+      "eventLoopP99Ms": 11.034623,
+      "eventLoopMaxMs": 11.034623,
+      "counts": {
+        "actorUpdates": 10,
+        "companionUpdates": 10,
+        "outboundMessages": 28,
+        "outboundBytes": 19394
+      },
+      "timings": {
+        "tickIntervalMs": {
+          "count": 1,
+          "sum": 101,
+          "max": 101,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 1,
+          "sum": 0.8093749999970896,
+          "max": 0.8093749999970896,
+          "buckets": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 10,
+      "rooms": 5,
+      "connections": 10,
+      "encounters": 8,
+      "companions": 10,
+      "staleActors": 0,
+      "adventureInstances": 5,
+      "adventureStates": 10,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout"
+      ]
+    },
+    {
+      "at": 1791277943929,
+      "elapsed": 5.2065486250000035,
+      "cpuCores": 0.003642336097456497,
+      "rss": 85671936,
+      "heapTotal": 32964608,
+      "heapUsed": 19970856,
+      "external": 3695024,
+      "arrayBuffers": 120810,
+      "eventLoopP99Ms": 12.754943,
+      "eventLoopMaxMs": 15.745023,
+      "counts": {
+        "actorUpdates": 20,
+        "companionUpdates": 20,
+        "outboundMessages": 56,
+        "outboundBytes": 37965,
+        "databaseQueries": 21,
+        "disconnects": 10,
+        "droppedUpdates": 9
+      },
+      "timings": {
+        "tickIntervalMs": {
+          "count": 52,
+          "sum": 5232,
+          "max": 104,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            52,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 52,
+          "sum": 2.2823779999671387,
+          "max": 0.9112079999977141,
+          "buckets": [
+            50,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 0,
+      "rooms": 0,
+      "connections": 0,
+      "encounters": 8,
+      "companions": 0,
+      "staleActors": 0,
+      "adventureInstances": 0,
+      "adventureStates": 0,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout",
+        "Timeout"
+      ]
+    }
+  ],
+  "passed": false
+}

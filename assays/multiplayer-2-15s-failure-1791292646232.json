@@ -1,0 +1,19 @@
+{
+  "users": 2,
+  "durationRequestedSeconds": 15,
+  "passed": false,
+  "error": "Error: Timeout playerMoved {\"room\":\"town\",\"seq\":2,\"selfId\":\"user-soak_91bdd381_0\",\"errors\":{},\"self\":{\"userId\":\"user-soak_91bdd381_0\",\"x\":750,\"y\":703.6764000000002,\"rotation\":3.141592653589793,\"serverTime\":1791291679552,\"moveSeq\":2,\"speed\":180,\"path\":[{\"x\":750,\"y\":640,\"seq\":2,\"roomId\":\"town\",\"clientTime\":1791291678731}],\"moving\":true,\"seated\":null,\"companion\":{\"id\":\"mochi-bde6d147-200e-45fb-9364-0202321330db\",\"name\":\"Momo\",\"profile\":{\"beast\":{\"archetype\":\"moonfox\"},\"color\":\"Aurora\",\"level\":1,\"traits\":[\"Curious\"],\"species\":\"Mochi\",\"variant\":\"Moonfox\",\"behavior\":{\"care\":0,\"play\":0,\"social\":0},\"adoptedAt\":\"2026-10-06T13:01:13.114Z\",\"homeSlots\":{},\"experience\":0},\"equipment\":{},\"x\":724.5770614380083,\"y\":835.1526951942664,\"state\":\"FOLLOWING\",\"followSpeed\":180,\"following\":true}},\"lastMessage\":{\"type\":\"playerMoved\",\"moveSeq\":0}}\n    at Timeout._onTimeout (file:///Users/j.t./.codex/worktrees/27d0/Neopets/multiplayer/load-test/soak.mjs:178:16)\n    at listOnTimeout (node:internal/timers:614:17)\n    at process.processTimers (node:internal/timers:549:7)",
+  "sourceHashes": {
+    "multiplayer/load-test/soak.mjs": "2d9f46bac7572a45479c57539b96a0e024feed80e006a59d8a5faed0c9fc9104",
+    "server/index.mjs": "7bfa36dac9202b51cb7aa3e90aae2d00f718c320697fb3e0f3d1633a3378b434",
+    "server/social/multiplayer.mjs": "8090050fb483cab1e626734a3af07c1bdcff9df5c7d8432eabd2a23b67413f61",
+    "server/world/runtime-metrics.mjs": "cd3f14a9bcd9fcde25d638ebb2a504a20b08282e71fd1c999edbd89a4ff909fd",
+    "server/world/checkpoints.mjs": "1649eb0725b80df9d06615fbb5e73c08caf6f70903af665d139a56bb304009d3",
+    "server/adventure/service.mjs": "09d8de29b963aed49c76f62d008983ae4f3530fed5b1125ea7cd794a76197a27",
+    "web/js/game/NavigationService.js": "ed7aff888f7438f71f8c73c2b3aa3f8e9f97332bf830a70efe235210825ff59f",
+    "web/js/game/CompanionFollowController.js": "8be883f4a070399bbc788ad2c2826aa1bd08c4584e772865b3101ee3718b8d9f"
+  },
+  "samples": [],
+  "serverErrors": [],
+  "errors": []
+}

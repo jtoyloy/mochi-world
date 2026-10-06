@@ -1,0 +1,19 @@
+{
+  "users": 2,
+  "durationRequestedSeconds": 6,
+  "passed": false,
+  "error": "error: could not create file \"base/16985/275081\": No space left on device\n    at /Users/j.t./.codex/worktrees/27d0/Neopets/node_modules/pg-pool/index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async run (file:///Users/j.t./.codex/worktrees/27d0/Neopets/multiplayer/load-test/soak.mjs:317:7)\n    at async file:///Users/j.t./.codex/worktrees/27d0/Neopets/multiplayer/load-test/soak.mjs:736:3",
+  "sourceHashes": {
+    "multiplayer/load-test/soak.mjs": "062275e910bfb6586cf6439e164a5dc5b5831f03d2edfa5faddcd4810c9c1f97",
+    "server/index.mjs": "7bfa36dac9202b51cb7aa3e90aae2d00f718c320697fb3e0f3d1633a3378b434",
+    "server/social/multiplayer.mjs": "8090050fb483cab1e626734a3af07c1bdcff9df5c7d8432eabd2a23b67413f61",
+    "server/world/runtime-metrics.mjs": "cd3f14a9bcd9fcde25d638ebb2a504a20b08282e71fd1c999edbd89a4ff909fd",
+    "server/world/checkpoints.mjs": "1649eb0725b80df9d06615fbb5e73c08caf6f70903af665d139a56bb304009d3",
+    "server/adventure/service.mjs": "09d8de29b963aed49c76f62d008983ae4f3530fed5b1125ea7cd794a76197a27",
+    "web/js/game/NavigationService.js": "ed7aff888f7438f71f8c73c2b3aa3f8e9f97332bf830a70efe235210825ff59f",
+    "web/js/game/CompanionFollowController.js": "8be883f4a070399bbc788ad2c2826aa1bd08c4584e772865b3101ee3718b8d9f"
+  },
+  "samples": [],
+  "serverErrors": [],
+  "errors": []
+}

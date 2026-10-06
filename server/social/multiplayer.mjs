@@ -1,3 +1,4 @@
+import { performance } from "node:perf_hooks";
 import { advance, traverse } from "../../web/js/game/locomotion/core.js";
 import { nearbyResident, TOWN_INTERACTIONS } from "../../web/js/game/town.js";
 import { CompanionFollowController } from "../../web/js/game/CompanionFollowController.js";
@@ -23,6 +24,7 @@ export class MemoryRoomStore {
 export class Multiplayer {
   constructor({
     server,
+    metrics = null,
     authenticate,
     avatars,
     dialogue,
@@ -31,7 +33,15 @@ export class Multiplayer {
     capacity = Number(process.env.MAX_PLAYERS_PER_ROOM ?? 40),
     now = () => Date.now(),
   }) {
-    Object.assign(this, { avatars, dialogue, world, store, capacity, now });
+    Object.assign(this, {
+      avatars,
+      dialogue,
+      world,
+      store,
+      capacity,
+      now,
+      metrics,
+    });
     if ((process.env.MULTIPLAYER_STORAGE ?? "memory") !== "memory")
       throw new Error(
         "This release implements MULTIPLAYER_STORAGE=memory; Redis needs a distributed RoomStore adapter",
@@ -87,13 +97,25 @@ export class Multiplayer {
     );
     this.speechTimer.unref();
   }
+  sendEncoded(p, encoded) {
+    if (p.ws.readyState === 1 && p.ws.bufferedAmount < 200000) {
+      p.ws.send(encoded);
+      this.metrics?.count("outboundMessages");
+      this.metrics?.count("outboundBytes", Buffer.byteLength(encoded));
+    } else {
+      this.metrics?.count("droppedUpdates");
+      this.metrics?.count(
+        p.ws.readyState === 1 ? "backpressureDrops" : "closedSocketSkips",
+      );
+    }
+  }
   send(p, type, data) {
-    if (p.ws.readyState === 1 && p.ws.bufferedAmount < 200000)
-      p.ws.send(JSON.stringify({ type, data }));
+    this.sendEncoded(p, JSON.stringify({ type, data }));
   }
   broadcast(room, type, data) {
+    const encoded = JSON.stringify({ type, data });
     for (const p of this.store.rooms.get(room)?.players.values() ?? [])
-      this.send(p, type, data);
+      this.sendEncoded(p, encoded);
   }
   public(p) {
     return {
@@ -123,6 +145,7 @@ export class Multiplayer {
   async connect(ws, userId) {
     const user = await this.world.account(userId),
       avatar = await this.avatars.get(userId);
+    if (ws.readyState !== 1) return;
     const existing = this.store.players.get(userId);
     if (existing) {
       existing.ws.close(4001, "Opened in another tab");
@@ -146,14 +169,28 @@ export class Multiplayer {
       presence: "online",
       joined: false,
     };
+    this.metrics?.count("connects");
     this.store.players.set(userId, p);
     let serial = Promise.resolve();
     ws.on("message", (raw) => {
+      this.metrics?.count("inboundMessages");
+      this.metrics?.count("inboundBytes", raw.length);
+      const receivedAt = performance.now();
       serial = serial
         .then(async () => {
           if (this.store.players.get(userId) !== p) return;
           const msg = JSON.parse(raw.toString());
-          await this.handle(p, msg);
+          const startedAt = performance.now();
+          try {
+            await this.handle(p, msg);
+          } finally {
+            if (msg.type === "move")
+              this.metrics?.time(
+                "movementValidationMs",
+                performance.now() - startedAt,
+              );
+            this.metrics?.time("dispatchMs", performance.now() - receivedAt);
+          }
         })
         .catch((e) => {
           if (!e.responseSent) this.send(p, "error", { message: e.message });
@@ -186,6 +223,7 @@ export class Multiplayer {
     else if (roomId.includes(":")) throw new GameError("Unknown room instance");
     this.leave(p);
     const friends = await this.world.friends(p.userId);
+    if (this.store.players.get(p.userId) !== p) return;
     const candidates = [...this.store.rooms.values()].sort(
       (a, b) =>
         Number(
@@ -242,11 +280,20 @@ export class Multiplayer {
     if (p.companion)
       p.companion = {
         ...p.companion,
-        x: p.x - 95,
-        y: p.y + 40,
+        ...new NavigationService(p.roomId ?? "town").nearestWalkable({
+          x: p.x - 95,
+          y: p.y + 40,
+        }),
         state: "FOLLOWING",
       };
-    if (this.store.players.get(p.userId) !== p) return;
+    if (this.store.players.get(p.userId) !== p) {
+      if (
+        !instance.players.size &&
+        this.store.rooms.get(instance.id) === instance
+      )
+        this.store.rooms.delete(instance.id);
+      return;
+    }
     instance.players.set(p.userId, p);
     p.joined = true;
     const home = roomId.startsWith("home:")
@@ -346,6 +393,7 @@ export class Multiplayer {
   }
   disconnect(p) {
     if (this.store.players.get(p.userId) !== p) return;
+    this.metrics?.count("disconnects");
     this.persist(p).catch(() => {});
     this.leave(p);
     this.store.players.delete(p.userId);
@@ -370,8 +418,10 @@ export class Multiplayer {
     if (p.companion)
       p.companion = {
         ...p.companion,
-        x: p.x - 95,
-        y: p.y + 40,
+        ...new NavigationService(p.roomId ?? "town").nearestWalkable({
+          x: p.x - 95,
+          y: p.y + 40,
+        }),
         state: "FOLLOWING",
       };
     if (p.room && p.roomId.startsWith("home:")) {
@@ -565,8 +615,11 @@ export class Multiplayer {
     else this.send(p, "mochiSpoke", data);
   }
   tick() {
+    const startedAt = performance.now();
+    const roomDurations = new Map();
     const now = this.now(),
       dt = Math.min(0.25, Math.max(0, (now - this.tickAt) / 1000));
+    this.metrics?.time("tickIntervalMs", now - this.tickAt);
     this.tickAt = now;
     for (const p of this.store.players.values()) {
       if (now - p.lastSeen > 45000) {
@@ -575,6 +628,7 @@ export class Multiplayer {
         continue;
       }
       if (!p.room) continue;
+      const actorTickAt = performance.now();
       if (p.target) {
         const path = [p.target, ...(p.path ?? [])];
         const result = advance(p, path, dt, 0.25);
@@ -602,6 +656,7 @@ export class Multiplayer {
           this.adventure.states.get(p.userId)?.petHp > 0
         )
       ) {
+        const followAt = performance.now();
         const next = this.followController.step(
           p.companion,
           {
@@ -615,6 +670,7 @@ export class Multiplayer {
           dt,
           now,
         );
+        this.metrics?.time("companionFollowMs", performance.now() - followAt);
         if (walkable(p.roomId, next.x, next.y)) {
           p.companion = next;
           if (this.adventure?.states.get(p.userId)?.petHp <= 0)
@@ -635,6 +691,8 @@ export class Multiplayer {
           }
         }
       }
+      this.metrics?.count("actorUpdates");
+      if (p.companion) this.metrics?.count("companionUpdates");
       this.broadcast(p.room, "playerMoved", {
         userId: p.userId,
         x: p.x,
@@ -660,7 +718,16 @@ export class Multiplayer {
         Math.floor(now / 1000) % 15 === 0
       )
         p.ws.ping?.();
+      roomDurations.set(
+        p.room,
+        (roomDurations.get(p.room) ?? 0) + performance.now() - actorTickAt,
+      );
     }
+    for (const duration of roomDurations.values())
+      this.metrics?.time("roomTickDurationMs", duration);
+    this.metrics?.time("tickDurationMs", performance.now() - startedAt);
+    for (const [key, at] of this.encounters)
+      if (now - at > 120000) this.encounters.delete(key);
   }
   async environmentSpeech() {
     const count = new Map();

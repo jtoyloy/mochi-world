@@ -1,0 +1,17 @@
+{
+  "type": "checkpoint-storage-exhaustion",
+  "measuredRuns": [
+    "multiplayer-150-300s.json",
+    "multiplayer-150-1800s.json"
+  ],
+  "availableBytesApproxAtFailure": 134217728,
+  "error": "OSError: [Errno 28] No space left on device",
+  "obsoleteTestVersionsRemoved": 1468,
+  "bytesFreedApprox": 10948466490.474497,
+  "referencedCheckpointKeysPreserved": 156,
+  "medianLifeMiB": 6.23,
+  "estimated150PetWritesGiBPerHour": 10.9,
+  "productionRetentionResolved": false,
+  "harnessStorageIsolatedAfterIncident": true,
+  "scope": "Only unreferenced test versions older than five minutes in this worktree data/checkpoints; all PostgreSQL-referenced keys preserved."
+}

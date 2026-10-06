@@ -28,3 +28,11 @@ The main world now uses React Three Fiber/Three.js. The previous Phaser section 
 historical. See [3D_DELIVERY.md](3D_DELIVERY.md) for implemented scope and limits and
 [ASSET_PIPELINE.md](ASSET_PIPELINE.md) for models/rigs. Domain services and Cadence
 contracts remain preserved. Build with `npm run build` before serving/deploying.
+
+## Real load and soak
+
+`npm run bench:multiplayer` runs persisted independent accounts through `/socket`
+against the actual server and PostgreSQL. See [MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md)
+for five-minute/30-minute/multi-hour profiles, measured results, failures, resource
+sizing limits and companion acceptance. IPC metrics are opt-in and have no public
+endpoint. Server authority and the default 10 Hz movement cadence remain unchanged.

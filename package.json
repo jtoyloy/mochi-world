@@ -26,7 +26,8 @@
     "bench:movement": "node tools/movement-benchmark.mjs",
     "test:animation": "node --test tests/animation/*.test.mjs",
     "assets:validate": "node tools/validate-animation.mjs",
-    "assets:register": "node tools/register-animation.mjs"
+    "assets:register": "node tools/register-animation.mjs",
+    "bench:multiplayer": "node --env-file-if-exists=.env multiplayer/load-test/soak.mjs"
   },
   "devDependencies": {
     "pngjs": "^7.0.0",

@@ -1,0 +1,12 @@
+{
+  "host": "Local Codex in-app browser on same development host as concurrent server runs",
+  "protocol": "39 independent authenticated Node actors plus devuser browser observer and its adopted Mochi, real WebSocket Town instance; synthetic Animation crowd remained zero",
+  "serverHz":10,
+  "dpr":2,
+  "samples":[
+    {"at":"2026-10-06T09:24:23.549Z","players":40,"companions":40,"entities":98,"fps":20,"frameP95Ms":66.3,"cpuUpdateMs":1.2,"draws":2,"triangles":6098,"interpolationMs":132,"arrivalMaxMs":115,"remoteSpeed":176.3,"hardSnaps":0},
+    {"at":"2026-10-06T09:26:11.434Z","phase":"After load actors had left; population HUD still said 40","entities":20,"fps":60,"frameP95Ms":17.6,"cpuUpdateMs":0.3,"draws":1,"triangles":1574,"hardSnaps":0}
+  ],
+  "sustained60FpsAt40":false,
+  "limits":["One loaded diagnostic sample, not a sustained renderer trace", "DPR2 differs from earlier DPR1 synthetic controls", "Browser visibility/focus and concurrent development-host load were not controlled", "No browser heap/GPU memory measurement", "The population HUD was stale after actors left; do not use it alone to certify crowd size"]
+}

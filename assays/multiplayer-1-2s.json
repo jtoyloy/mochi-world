@@ -1,0 +1,624 @@
+{
+  "sourceHashes": {
+    "multiplayer/load-test/soak.mjs": "c237c35012eab89239457a1fc4efacfa23b39255732f1c9da2380b2a0ac6ce50",
+    "server/index.mjs": "7bfa36dac9202b51cb7aa3e90aae2d00f718c320697fb3e0f3d1633a3378b434",
+    "server/social/multiplayer.mjs": "8090050fb483cab1e626734a3af07c1bdcff9df5c7d8432eabd2a23b67413f61",
+    "server/world/runtime-metrics.mjs": "cd3f14a9bcd9fcde25d638ebb2a504a20b08282e71fd1c999edbd89a4ff909fd",
+    "server/world/checkpoints.mjs": "1649eb0725b80df9d06615fbb5e73c08caf6f70903af665d139a56bb304009d3",
+    "server/adventure/service.mjs": "09d8de29b963aed49c76f62d008983ae4f3530fed5b1125ea7cd794a76197a27",
+    "web/js/game/NavigationService.js": "ed7aff888f7438f71f8c73c2b3aa3f8e9f97332bf830a70efe235210825ff59f",
+    "web/js/game/CompanionFollowController.js": "8be883f4a070399bbc788ad2c2826aa1bd08c4584e772865b3101ee3718b8d9f"
+  },
+  "processSamples": [
+    {
+      "at": 1791280251976,
+      "cpuSeconds": 0.23,
+      "rssBytes": 87293952,
+      "processes": 1
+    }
+  ],
+  "users": 1,
+  "durationSeconds": 2.053,
+  "capacity": 40,
+  "rooms": [
+    "town",
+    "town",
+    "town",
+    "forest",
+    "lake",
+    "market",
+    "exchange"
+  ],
+  "distribution": {
+    "town": 3,
+    "forest": 1,
+    "lake": 1,
+    "market": 1,
+    "exchange": 1
+  },
+  "host": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M2",
+    "logicalCpus": 8,
+    "node": "v23.9.0"
+  },
+  "configuration": {
+    "transitionProbability": 0.025,
+    "reconnectProbability": 0.002,
+    "movementProbability": 0.45,
+    "stopProbability": 0.15,
+    "emoteProbability": 0.035,
+    "interactionProbability": 0.025,
+    "movementHz": 10,
+    "seed": 42
+  },
+  "summary": {
+    "observedPlayersMin": 1,
+    "observedPlayersMax": 1,
+    "processTreeCpuMeanCores": null,
+    "processTreeCpuP95Cores": null,
+    "processTreeRssMaxBytes": 87293952,
+    "cpuMeanCores": 0.007042009964227047,
+    "cpuP95Cores": 0.007042009964227047,
+    "rssMaxBytes": 87506944,
+    "heapMaxBytes": 14298440,
+    "heapStartBytes": 14298440,
+    "heapEndBytes": 14298440,
+    "eventLoopP99MaxMs": 12.156927,
+    "rates": {
+      "actorUpdates": 9.765157214812167,
+      "companionUpdates": 9.765157214812167,
+      "outboundMessages": 15.535477387201174,
+      "outboundBytes": 8382.943598133754,
+      "inboundMessages": 1.3316123474743864,
+      "inboundBytes": 85.66706102085219,
+      "databaseQueries": 6.658061737371932
+    },
+    "timing": {
+      "tickIntervalMs": {
+        "count": 22,
+        "sum": 2223,
+        "max": 102,
+        "buckets": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          22,
+          0
+        ],
+        "mean": 101.04545454545455,
+        "p95UpperMs": 128
+      },
+      "companionFollowMs": {
+        "count": 22,
+        "sum": 0.6418320000004769,
+        "max": 0.12912500000004457,
+        "buckets": [
+          21,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.029174181818203495,
+        "p95UpperMs": 0.125
+      },
+      "roomTickDurationMs": {
+        "count": 22,
+        "sum": 2.8487099999993575,
+        "max": 0.25120899999996027,
+        "buckets": [
+          12,
+          9,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.12948681818178898,
+        "p95UpperMs": 0.25
+      },
+      "tickDurationMs": {
+        "count": 22,
+        "sum": 3.124002000000246,
+        "max": 0.2592920000000163,
+        "buckets": [
+          10,
+          11,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.1420000909091021,
+        "p95UpperMs": 0.25
+      },
+      "movementValidationMs": {
+        "count": 1,
+        "sum": 1.0212920000000167,
+        "max": 1.0212920000000167,
+        "buckets": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 1.0212920000000167,
+        "p95UpperMs": 2
+      },
+      "dispatchMs": {
+        "count": 3,
+        "sum": 1.2827930000001402,
+        "max": 1.1102089999999976,
+        "buckets": [
+          2,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mean": 0.4275976666667134,
+        "p95UpperMs": 2
+      }
+    }
+  },
+  "clients": {
+    "rejections": [],
+    "wrongCompanions": 0,
+    "errors": [
+      {}
+    ],
+    "unexpectedDisconnects": 0,
+    "reconnects": 0,
+    "lateUpdates": 0,
+    "snapshotLatencyP95Ms": 1,
+    "arrivalGapP95Ms": 103,
+    "arrivalGapMaxMs": 103,
+    "companionMessages": 24,
+    "missingCompanions": 0
+  },
+  "follow": [],
+  "cleanup": {
+    "at": 1791280259186,
+    "elapsed": 5.2048882910000005,
+    "cpuCores": 0.002097451355272516,
+    "rss": 87506944,
+    "heapTotal": 31653888,
+    "heapUsed": 14588464,
+    "external": 3667502,
+    "arrayBuffers": 88036,
+    "eventLoopP99Ms": 12.083199,
+    "eventLoopMaxMs": 25.608191,
+    "counts": {
+      "outboundMessages": 4,
+      "outboundBytes": 1846,
+      "actorUpdates": 2,
+      "companionUpdates": 2,
+      "disconnects": 1,
+      "databaseQueries": 2
+    },
+    "timings": {
+      "tickIntervalMs": {
+        "count": 51,
+        "sum": 5158,
+        "max": 103,
+        "buckets": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          51,
+          0
+        ]
+      },
+      "companionFollowMs": {
+        "count": 2,
+        "sum": 0.051749999999628926,
+        "max": 0.03449999999975262,
+        "buckets": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "roomTickDurationMs": {
+        "count": 2,
+        "sum": 0.23720800000000963,
+        "max": 0.15341699999999037,
+        "buckets": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "tickDurationMs": {
+        "count": 51,
+        "sum": 0.692629999998644,
+        "max": 0.16666699999996126,
+        "buckets": [
+          50,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "players": 0,
+    "rooms": 0,
+    "roomOccupancy": {},
+    "connections": 0,
+    "encounters": 0,
+    "companions": 0,
+    "staleActors": 0,
+    "adventureInstances": 0,
+    "adventureStates": 0,
+    "activeResources": [
+      "PipeWrap",
+      "PipeWrap",
+      "TCPSocketWrap",
+      "TCPServerWrap",
+      "PipeWrap",
+      "TCPSocketWrap",
+      "Timeout",
+      "Timeout"
+    ]
+  },
+  "errors": [],
+  "serverErrors": [],
+  "samples": [
+    {
+      "at": 1791280253981,
+      "elapsed": 2.252907917,
+      "cpuCores": 0.007042009964227047,
+      "rss": 87506944,
+      "heapTotal": 31653888,
+      "heapUsed": 14298440,
+      "external": 3667409,
+      "arrayBuffers": 87943,
+      "eventLoopP99Ms": 12.156927,
+      "eventLoopMaxMs": 12.337151,
+      "counts": {
+        "actorUpdates": 22,
+        "companionUpdates": 22,
+        "outboundMessages": 35,
+        "outboundBytes": 18886,
+        "inboundMessages": 3,
+        "inboundBytes": 193,
+        "databaseQueries": 15
+      },
+      "timings": {
+        "tickIntervalMs": {
+          "count": 22,
+          "sum": 2223,
+          "max": 102,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            22,
+            0
+          ]
+        },
+        "companionFollowMs": {
+          "count": 22,
+          "sum": 0.6418320000004769,
+          "max": 0.12912500000004457,
+          "buckets": [
+            21,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "roomTickDurationMs": {
+          "count": 22,
+          "sum": 2.8487099999993575,
+          "max": 0.25120899999996027,
+          "buckets": [
+            12,
+            9,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 22,
+          "sum": 3.124002000000246,
+          "max": 0.2592920000000163,
+          "buckets": [
+            10,
+            11,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "movementValidationMs": {
+          "count": 1,
+          "sum": 1.0212920000000167,
+          "max": 1.0212920000000167,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "dispatchMs": {
+          "count": 3,
+          "sum": 1.2827930000001402,
+          "max": 1.1102089999999976,
+          "buckets": [
+            2,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 1,
+      "rooms": 1,
+      "roomOccupancy": {
+        "town-1": 1
+      },
+      "connections": 1,
+      "encounters": 0,
+      "companions": 1,
+      "staleActors": 0,
+      "adventureInstances": 1,
+      "adventureStates": 1,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout"
+      ]
+    },
+    {
+      "at": 1791280259186,
+      "elapsed": 5.2048882910000005,
+      "cpuCores": 0.002097451355272516,
+      "rss": 87506944,
+      "heapTotal": 31653888,
+      "heapUsed": 14588464,
+      "external": 3667502,
+      "arrayBuffers": 88036,
+      "eventLoopP99Ms": 12.083199,
+      "eventLoopMaxMs": 25.608191,
+      "counts": {
+        "outboundMessages": 4,
+        "outboundBytes": 1846,
+        "actorUpdates": 2,
+        "companionUpdates": 2,
+        "disconnects": 1,
+        "databaseQueries": 2
+      },
+      "timings": {
+        "tickIntervalMs": {
+          "count": 51,
+          "sum": 5158,
+          "max": 103,
+          "buckets": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            51,
+            0
+          ]
+        },
+        "companionFollowMs": {
+          "count": 2,
+          "sum": 0.051749999999628926,
+          "max": 0.03449999999975262,
+          "buckets": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "roomTickDurationMs": {
+          "count": 2,
+          "sum": 0.23720800000000963,
+          "max": 0.15341699999999037,
+          "buckets": [
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "tickDurationMs": {
+          "count": 51,
+          "sum": 0.692629999998644,
+          "max": 0.16666699999996126,
+          "buckets": [
+            50,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "players": 0,
+      "rooms": 0,
+      "roomOccupancy": {},
+      "connections": 0,
+      "encounters": 0,
+      "companions": 0,
+      "staleActors": 0,
+      "adventureInstances": 0,
+      "adventureStates": 0,
+      "activeResources": [
+        "PipeWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "TCPServerWrap",
+        "PipeWrap",
+        "TCPSocketWrap",
+        "Timeout",
+        "Timeout"
+      ]
+    }
+  ],
+  "interrupted": false,
+  "passed": true
+}
