@@ -132,3 +132,35 @@ generator/proxy process resources and WAN framing/retransmission bytes. Tick and
 query percentiles are histogram upper bounds. One-room crowd results are separate
 from normal instanced CCU. **150 CCU is NOT CERTIFIED**, and active-combat departure
 cleanup has independently reproduced blockers.
+## Action art cleanup renderer fixture — 2026-10-06
+
+Actual `IsometricWorld`, 1280×900, two-second warm-up and ten-second samples per
+scene. Reproduce via Vite rooted at `web`,
+`/dev/animation-benchmark.html?dpr=1` or `?dpr=2`.
+Evidence: [action-art-performance.json](assays/action-art-performance.json).
+
+| Scene | DPR | Mean FPS | Frame p95 | CPU update p95 | GL draws |
+|---|---:|---:|---:|---:|---:|
+| Town, 20 actors | 1 | 60.05 | 17.6 ms | 1.2 ms | 1 |
+| Forest combat, player/pet + two mobs | 1 | 60.09 | 17.5 ms | 0.4 ms | 1 |
+| Town, 20 actors | 2 | 60.05 | 17.6 ms | 0.7 ms | 1 |
+| Forest combat, player/pet + two mobs | 2 | 60.09 | 17.6 ms | 0.4 ms | 1 |
+
+Unique loaded action sources total **45.62 MiB RGBA**, up from 29.99 MiB by five
+fixed shared 1280×640 exports (15.625 MiB). Total tracked loaded texture sources
+are **93.62 MiB RGBA**; this excludes appearance cache (20 MiB observed), text and
+render targets and is not actual total GPU VRAM. Original optional v1 sheets are
+still needed by unchanged states. Full-resolution cleanup source PNGs are not
+requested by the renderer. No per-actor action allocation/cache expansion occurs.
+
+The fixture uses offline authoritative-result replay and includes new sword art;
+it loads fishing/Deer art but does not measure a full fishing/Deer encounter.
+These are local desktop samples, not sustained/live/mobile/crowd certification.
+Filling export-only spare cells with recovery art after sampling changed neither
+used frame pixels, dimensions nor memory estimates.
+
+Final cleanup validation: asset validation and Vite build pass; **19 animation
+checks and 221 JavaScript tests pass, zero skipped** with local PostgreSQL and
+the existing native Python environment. Historical failed setup runs (missing
+Python environment/unmigrated test database) were resolved before this acceptance.
+Original v1 clipping warnings remain documented in the per-state audit.

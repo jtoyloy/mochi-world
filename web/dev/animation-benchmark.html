@@ -92,6 +92,11 @@
       scene,
     );
     await world.init();
+    const requestedDpr = Number(new URLSearchParams(location.search).get("dpr"));
+    if ([1, 2].includes(requestedDpr)) {
+      world.app.renderer.resolution = requestedDpr;
+      world.app.renderer.resize(1280, 900);
+    }
     const samples = [];
     async function measure(name, combat) {
         // Let initial texture uploads/shader compilation settle before sampling.
@@ -146,6 +151,8 @@
         mobs: world.mobEntities.size,
         glDraws: world.gpuCounts?.draws,
         actionSheets: world.actionAtlases.filter(Boolean).length,
+        actionTextureMiB: world.actionTextureBytes / 1048576,
+        textureSourceMiB: world.textures.reduce((sum, t, i, all) => all.findIndex(other => other.source === t.source) === i ? sum + t.source.width * t.source.height * 4 : sum, 0) / 1048576,
       });
       result.textContent = JSON.stringify(samples, null, 2);
     }

@@ -5,7 +5,7 @@ import {
   STATES,
   ACTION_STATES,
 } from "./registry.js";
-import { selectTexture, stateFrames } from "./atlas.js";
+import { selectTexture, stateFrames, stateMirrored, stateHeight } from "./atlas.js";
 import { Gait } from "../../game/locomotion/core.js";
 // Development-only atlas playback. Identical profile/state selection as world actors.
 export function openAnimationViewer(
@@ -47,6 +47,8 @@ export function openAnimationViewer(
     direction = select("Animation direction", DIRECTIONS8),
     state = select("Animation state", STATES),
     speed = select("Animation speed", ["50%", "100%", "150%"]),
+    layout = select("Animation layout", ["playback", "all directions"]),
+    repeat = select("Action recovery", ["repeat", "once"]),
     guides = select("Show animation anchors", ["yes", "no"]);
   const close = document.createElement("button");
   close.textContent = "Close animation viewer";
@@ -77,6 +79,7 @@ export function openAnimationViewer(
     ctx.lineTo(x, y + 8);
     ctx.stroke();
   };
+  const contacts = { sword: 4, staff: 4, cast: 4, bow: 4, dagger: 4, chop: 4, attack: 3, special: 3, "fish-cast": 3, "fish-catch": 2 };
   const tick = (now) => {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
@@ -87,9 +90,9 @@ export function openAnimationViewer(
     const angle = (logical * Math.PI) / 4;
     gait.update(Math.cos(angle) * v * dt, Math.sin(angle) * v * dt, dt);
     gait.facing = logical;
-    if (ACTION_STATES[state.value] && !playback.action)
+    if (ACTION_STATES[state.value] && !playback.action && repeat.value === "repeat")
       playback.play(state.value);
-    playback.update(gait, v, (dt * parseInt(speed.value)) / 100, state.value);
+    playback.update(gait, v, (dt * parseInt(speed.value)) / 100, ACTION_STATES[state.value] ? "idle" : state.value);
     const di = directionIndex(set, logical),
       active = playback.action
         ? (actions[atlases.indexOf(art)] ?? art)
@@ -99,14 +102,14 @@ export function openAnimationViewer(
       t = selectTexture(active, playback, di),
       f = t.frame,
       ctx = canvas.getContext("2d"),
-      scale = 1.8,
+      scale = 1.8 * set.height / stateHeight(active, playback.state),
       x = 320 - set.cell[0] * scale * 0.5,
       y = 350 - set.cell[1] * scale * set.footAnchor.y;
     ctx.clearRect(0, 0, 640, 420);
     ctx.fillStyle = "#e7ddc7";
     ctx.fillRect(0, 0, 640, 420);
     ctx.save();
-    if (active.metadata.mirrors?.[di]) {
+    if (stateMirrored(active, playback.state, di)) {
       ctx.translate(640, 0);
       ctx.scale(-1, 1);
     }
@@ -140,11 +143,41 @@ export function openAnimationViewer(
         "#3568b2",
       );
     }
+    if (layout.value === "all directions") {
+      ctx.fillStyle = "#e7ddc7";
+      ctx.fillRect(0, 0, 640, 420);
+      for (let logicalDirection = 0; logicalDirection < 8; logicalDirection++) {
+        const index = directionIndex(set, logicalDirection);
+        const texture = selectTexture(active, playback, index), frame = texture.frame;
+        const zoom = .9 * set.height / stateHeight(active, playback.state);
+        const gx = 80 + logicalDirection % 4 * 160, gy = logicalDirection < 4 ? 180 : 370;
+        ctx.save();
+        ctx.translate(gx, gy);
+        if (stateMirrored(active, playback.state, index)) ctx.scale(-1, 1);
+        ctx.drawImage(texture.source.resource, frame.x, frame.y, frame.width, frame.height,
+          (texture.trim.x - set.cell[0] * set.footAnchor.x) * zoom,
+          (texture.trim.y - set.cell[1] * set.footAnchor.y) * zoom,
+          frame.width * zoom, frame.height * zoom);
+        ctx.restore();
+        if (guides.value === "yes") cross(ctx, gx, gy, "#29814b");
+        ctx.fillStyle = "#554333";
+        ctx.fillText(`${DIRECTIONS8[logicalDirection]} → ${set.directions[index]}${stateMirrored(active, playback.state, index) ? " mirror" : ""}`, gx - 55, gy + 18);
+      }
+    }
+    const contact = contacts[playback.state];
+    if (guides.value === "yes" && contact !== undefined) {
+      for (let i = 0; i < 8; i++) {
+        ctx.fillStyle = i === playback.frame ? "#29814b" : i === contact ? "#bb4935" : "#ab9980";
+        ctx.fillRect(240 + i * 20, 390, 14, 8);
+      }
+      ctx.fillStyle = "#554333";
+      ctx.fillText("Red: painted release/contact slot; green: current (no damage timer)", 140, 414);
+    }
     const displayed =
       Object.entries(active.rows[di]).find(
         ([, frames]) => frames === stateFrames(active, playback.state, di),
       )?.[0] ?? "idle";
-    info.textContent = `${set.id} · ${direction.value} → ${set.directions[di]} art · ${playback.state} · painted ${displayed} · frame ${playback.frame} · phase ${playback.phase.toFixed(3)} · stride ${playback.state === "trot" ? set.trotStrideDistance : set.strideDistance} · speed ${v} · ground ${set.footAnchor.x},${set.footAnchor.y} · cell ${set.cell.join("×")}`;
+    info.textContent = `${set.id} · ${direction.value} → ${set.directions[di]} art · ${playback.state} · ${stateMirrored(active, playback.state, di) ? "MIRRORED" : "unmirrored"} · painted ${displayed} · frame ${playback.frame} · phase ${playback.phase.toFixed(3)} · stride ${playback.state === "trot" ? set.trotStrideDistance : set.strideDistance} · speed ${v} · ground ${set.footAnchor.x},${set.footAnchor.y} · source ${f.x},${f.y},${f.width}×${f.height} · trim ${t.trim.x},${t.trim.y} · recovery ${playback.action?.next ?? "locomotion"} · cell ${set.cell.join("×")}`;
     raf = requestAnimationFrame(tick);
   };
   raf = requestAnimationFrame(tick);

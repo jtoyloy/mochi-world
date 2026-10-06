@@ -112,3 +112,16 @@ after transition. Momo's historical captured spawn was inside a collider; join
 and refresh now place the companion on walkable floor. This resolves a reproducible
 placement defect without changing the animation registry or assets. The new real
 40-player/40-companion browser sample still does not certify sustained 60 FPS.
+
+## Action art cleanup follow-up — 2026-10-06
+
+Locomotion architecture and painted gait sheets are unchanged. Both humans now
+have independent four-diagonal sword and fishing art; Deer actions use complete
+antler/hoof silhouettes with dedicated recoil and lying exhaustion. Fixed body
+feet and sheet-wide scale preserve the existing logical canvas/anchor contract.
+The viewer uses runtime scale and can show all eight logical directions together.
+See [ACTION_ART_AUDIT.md](ACTION_ART_AUDIT.md) for per-state findings and limitations.
+Eight authored views, separate trot, final planted-foot registration and painted
+cosmetic sockets remain outstanding; the original Deer gait cropping is not
+claimed repaired by its action cleanup. Five additional shared runtime textures
+are bounded at 15.625 MiB RGBA; provenance source sheets are not runtime textures.

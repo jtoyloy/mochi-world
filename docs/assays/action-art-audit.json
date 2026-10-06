@@ -1,0 +1,2695 @@
+[
+  {
+    "atlas": "boar-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "idle",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "boar-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "walk",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 40,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      },
+      {
+        "frame": 41,
+        "kind": "source-edge-continuation",
+        "pixels": 19
+      },
+      {
+        "frame": 43,
+        "kind": "source-edge-continuation",
+        "pixels": 20
+      },
+      {
+        "frame": 44,
+        "kind": "source-edge-continuation",
+        "pixels": 20
+      },
+      {
+        "frame": 45,
+        "kind": "source-edge-continuation",
+        "pixels": 17
+      },
+      {
+        "frame": 46,
+        "kind": "source-edge-continuation",
+        "pixels": 7
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "boar-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "attack",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 51,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      },
+      {
+        "frame": 52,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      },
+      {
+        "frame": 53,
+        "kind": "source-edge-continuation",
+        "pixels": 13
+      },
+      {
+        "frame": 54,
+        "kind": "source-edge-continuation",
+        "pixels": 17
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "boar-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "hurt",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 3,
+    "edgeWarnings": [
+      {
+        "frame": 56,
+        "kind": "source-edge-continuation",
+        "pixels": 65
+      },
+      {
+        "frame": 57,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      },
+      {
+        "frame": 58,
+        "kind": "source-edge-continuation",
+        "pixels": 4
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "boar-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "defeat",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 6,
+    "edgeWarnings": [
+      {
+        "frame": 58,
+        "kind": "source-edge-continuation",
+        "pixels": 4
+      },
+      {
+        "frame": 59,
+        "kind": "source-edge-continuation",
+        "pixels": 38
+      },
+      {
+        "frame": 60,
+        "kind": "source-edge-continuation",
+        "pixels": 32
+      },
+      {
+        "frame": 61,
+        "kind": "source-edge-continuation",
+        "pixels": 21
+      },
+      {
+        "frame": 62,
+        "kind": "source-edge-continuation",
+        "pixels": 43
+      },
+      {
+        "frame": 63,
+        "kind": "source-edge-continuation",
+        "pixels": 44
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "sword",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 3,
+        "kind": "source-edge-continuation",
+        "pixels": 12
+      },
+      {
+        "frame": 4,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      },
+      {
+        "frame": 5,
+        "kind": "source-edge-continuation",
+        "pixels": 9
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "staff",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 8,
+        "kind": "source-edge-continuation",
+        "pixels": 29
+      },
+      {
+        "frame": 9,
+        "kind": "source-edge-continuation",
+        "pixels": 31
+      },
+      {
+        "frame": 10,
+        "kind": "source-edge-continuation",
+        "pixels": 23
+      },
+      {
+        "frame": 11,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      },
+      {
+        "frame": 12,
+        "kind": "source-edge-continuation",
+        "pixels": 21
+      },
+      {
+        "frame": 13,
+        "kind": "source-edge-continuation",
+        "pixels": 34
+      },
+      {
+        "frame": 14,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "bow",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 18,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      },
+      {
+        "frame": 19,
+        "kind": "source-edge-continuation",
+        "pixels": 7
+      },
+      {
+        "frame": 20,
+        "kind": "source-edge-continuation",
+        "pixels": 11
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "dagger",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 26,
+        "kind": "source-edge-continuation",
+        "pixels": 33
+      },
+      {
+        "frame": 27,
+        "kind": "source-edge-continuation",
+        "pixels": 9
+      },
+      {
+        "frame": 28,
+        "kind": "source-edge-continuation",
+        "pixels": 12
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "fish-cast",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 6,
+    "edgeWarnings": [
+      {
+        "frame": 32,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      },
+      {
+        "frame": 33,
+        "kind": "source-edge-continuation",
+        "pixels": 35
+      },
+      {
+        "frame": 34,
+        "kind": "source-edge-continuation",
+        "pixels": 9
+      },
+      {
+        "frame": 35,
+        "kind": "source-edge-continuation",
+        "pixels": 31
+      },
+      {
+        "frame": 38,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      },
+      {
+        "frame": 39,
+        "kind": "source-edge-continuation",
+        "pixels": 6
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Known cross-cell rod in v1; excluded columns do not repair rod",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "fish-wait",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 1,
+    "edgeWarnings": [
+      {
+        "frame": 35,
+        "kind": "source-edge-continuation",
+        "pixels": 31
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Known cross-cell rod in v1; excluded columns do not repair rod",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "fish-catch",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 3,
+    "edgeWarnings": [
+      {
+        "frame": 32,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      },
+      {
+        "frame": 38,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      },
+      {
+        "frame": 39,
+        "kind": "source-edge-continuation",
+        "pixels": 6
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Known cross-cell rod in v1; excluded columns do not repair rod",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "chop",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 40,
+        "kind": "source-edge-continuation",
+        "pixels": 30
+      },
+      {
+        "frame": 41,
+        "kind": "source-edge-continuation",
+        "pixels": 21
+      },
+      {
+        "frame": 43,
+        "kind": "source-edge-continuation",
+        "pixels": 44
+      },
+      {
+        "frame": 44,
+        "kind": "source-edge-continuation",
+        "pixels": 30
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "chop-recover",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 5,
+    "edgeWarnings": [
+      {
+        "frame": 40,
+        "kind": "source-edge-continuation",
+        "pixels": 30
+      },
+      {
+        "frame": 44,
+        "kind": "source-edge-continuation",
+        "pixels": 30
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-combat-v2.json",
+    "image": "sword-sage-v2.png",
+    "state": "sword",
+    "directions": "Four separately painted diagonal sword views. Eight logical sectors retain nearest diagonal mapping. No mirrored directions.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 32,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-fishing-v2.json",
+    "image": "fishing-sage-v2.png",
+    "state": "fish-cast",
+    "directions": "Four separately painted diagonal fishing views SE, SW, NW, NE; eight logical sectors use existing nearest diagonal mapping. Seven authored stages with explicit holds.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 16,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-fishing-v2.json",
+    "image": "fishing-sage-v2.png",
+    "state": "fish-wait",
+    "directions": "Four separately painted diagonal fishing views SE, SW, NW, NE; eight logical sectors use existing nearest diagonal mapping. Seven authored stages with explicit holds.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 4,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-fishing-v2.json",
+    "image": "fishing-sage-v2.png",
+    "state": "fish-catch",
+    "directions": "Four separately painted diagonal fishing views SE, SW, NW, NE; eight logical sectors use existing nearest diagonal mapping. Seven authored stages with explicit holds.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 16,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "hurt",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 1,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "defend",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 9,
+        "kind": "source-edge-continuation",
+        "pixels": 16
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "defeat",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 16,
+        "kind": "source-edge-continuation",
+        "pixels": 28
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "item",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 24,
+        "kind": "source-edge-continuation",
+        "pixels": 28
+      },
+      {
+        "frame": 25,
+        "kind": "source-edge-continuation",
+        "pixels": 6
+      },
+      {
+        "frame": 28,
+        "kind": "source-edge-continuation",
+        "pixels": 4
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "chestnut-sage-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "interact",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 9,
+        "kind": "source-edge-continuation",
+        "pixels": 16
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "sword",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 2,
+        "kind": "source-edge-continuation",
+        "pixels": 16
+      },
+      {
+        "frame": 3,
+        "kind": "source-edge-continuation",
+        "pixels": 10
+      },
+      {
+        "frame": 4,
+        "kind": "source-edge-continuation",
+        "pixels": 16
+      },
+      {
+        "frame": 5,
+        "kind": "source-edge-continuation",
+        "pixels": 27
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "staff",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 8,
+        "kind": "source-edge-continuation",
+        "pixels": 74
+      },
+      {
+        "frame": 9,
+        "kind": "source-edge-continuation",
+        "pixels": 76
+      },
+      {
+        "frame": 10,
+        "kind": "source-edge-continuation",
+        "pixels": 94
+      },
+      {
+        "frame": 11,
+        "kind": "source-edge-continuation",
+        "pixels": 116
+      },
+      {
+        "frame": 12,
+        "kind": "source-edge-continuation",
+        "pixels": 130
+      },
+      {
+        "frame": 13,
+        "kind": "source-edge-continuation",
+        "pixels": 134
+      },
+      {
+        "frame": 14,
+        "kind": "source-edge-continuation",
+        "pixels": 64
+      },
+      {
+        "frame": 15,
+        "kind": "source-edge-continuation",
+        "pixels": 29
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "bow",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 16,
+        "kind": "source-edge-continuation",
+        "pixels": 56
+      },
+      {
+        "frame": 17,
+        "kind": "source-edge-continuation",
+        "pixels": 90
+      },
+      {
+        "frame": 18,
+        "kind": "source-edge-continuation",
+        "pixels": 106
+      },
+      {
+        "frame": 19,
+        "kind": "source-edge-continuation",
+        "pixels": 110
+      },
+      {
+        "frame": 20,
+        "kind": "source-edge-continuation",
+        "pixels": 54
+      },
+      {
+        "frame": 21,
+        "kind": "source-edge-continuation",
+        "pixels": 78
+      },
+      {
+        "frame": 22,
+        "kind": "source-edge-continuation",
+        "pixels": 29
+      },
+      {
+        "frame": 23,
+        "kind": "source-edge-continuation",
+        "pixels": 32
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "dagger",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 24,
+        "kind": "source-edge-continuation",
+        "pixels": 58
+      },
+      {
+        "frame": 25,
+        "kind": "source-edge-continuation",
+        "pixels": 49
+      },
+      {
+        "frame": 26,
+        "kind": "source-edge-continuation",
+        "pixels": 137
+      },
+      {
+        "frame": 27,
+        "kind": "source-edge-continuation",
+        "pixels": 116
+      },
+      {
+        "frame": 28,
+        "kind": "source-edge-continuation",
+        "pixels": 73
+      },
+      {
+        "frame": 29,
+        "kind": "source-edge-continuation",
+        "pixels": 44
+      },
+      {
+        "frame": 30,
+        "kind": "source-edge-continuation",
+        "pixels": 49
+      },
+      {
+        "frame": 31,
+        "kind": "source-edge-continuation",
+        "pixels": 60
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "fish-cast",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 6,
+    "edgeWarnings": [
+      {
+        "frame": 32,
+        "kind": "source-edge-continuation",
+        "pixels": 87
+      },
+      {
+        "frame": 33,
+        "kind": "source-edge-continuation",
+        "pixels": 135
+      },
+      {
+        "frame": 34,
+        "kind": "source-edge-continuation",
+        "pixels": 66
+      },
+      {
+        "frame": 35,
+        "kind": "source-edge-continuation",
+        "pixels": 48
+      },
+      {
+        "frame": 38,
+        "kind": "source-edge-continuation",
+        "pixels": 113
+      },
+      {
+        "frame": 39,
+        "kind": "source-edge-continuation",
+        "pixels": 84
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Known cross-cell rod in v1; excluded columns do not repair rod",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "fish-wait",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 1,
+    "edgeWarnings": [
+      {
+        "frame": 35,
+        "kind": "source-edge-continuation",
+        "pixels": 48
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Known cross-cell rod in v1; excluded columns do not repair rod",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "fish-catch",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 3,
+    "edgeWarnings": [
+      {
+        "frame": 32,
+        "kind": "source-edge-continuation",
+        "pixels": 87
+      },
+      {
+        "frame": 38,
+        "kind": "source-edge-continuation",
+        "pixels": 113
+      },
+      {
+        "frame": 39,
+        "kind": "source-edge-continuation",
+        "pixels": 84
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Known cross-cell rod in v1; excluded columns do not repair rod",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "chop",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 40,
+        "kind": "source-edge-continuation",
+        "pixels": 95
+      },
+      {
+        "frame": 41,
+        "kind": "source-edge-continuation",
+        "pixels": 133
+      },
+      {
+        "frame": 42,
+        "kind": "source-edge-continuation",
+        "pixels": 109
+      },
+      {
+        "frame": 43,
+        "kind": "source-edge-continuation",
+        "pixels": 95
+      },
+      {
+        "frame": 44,
+        "kind": "source-edge-continuation",
+        "pixels": 35
+      },
+      {
+        "frame": 45,
+        "kind": "source-edge-continuation",
+        "pixels": 59
+      },
+      {
+        "frame": 46,
+        "kind": "source-edge-continuation",
+        "pixels": 45
+      },
+      {
+        "frame": 47,
+        "kind": "source-edge-continuation",
+        "pixels": 49
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-actions-v1.json",
+    "image": "actions-coral-v1.png",
+    "state": "chop-recover",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 5,
+    "edgeWarnings": [
+      {
+        "frame": 40,
+        "kind": "source-edge-continuation",
+        "pixels": 95
+      },
+      {
+        "frame": 44,
+        "kind": "source-edge-continuation",
+        "pixels": 35
+      },
+      {
+        "frame": 45,
+        "kind": "source-edge-continuation",
+        "pixels": 59
+      },
+      {
+        "frame": 46,
+        "kind": "source-edge-continuation",
+        "pixels": 45
+      },
+      {
+        "frame": 47,
+        "kind": "source-edge-continuation",
+        "pixels": 49
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-combat-v2.json",
+    "image": "sword-coral-v2.png",
+    "state": "sword",
+    "directions": "Four separately painted diagonal sword views. Eight logical sectors retain nearest diagonal mapping. No mirrored directions.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 32,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-fishing-v2.json",
+    "image": "fishing-coral-v2.png",
+    "state": "fish-cast",
+    "directions": "Four separately painted diagonal fishing views SE, SW, NW, NE; eight logical sectors use existing nearest diagonal mapping. Seven authored stages with explicit holds.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 16,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-fishing-v2.json",
+    "image": "fishing-coral-v2.png",
+    "state": "fish-wait",
+    "directions": "Four separately painted diagonal fishing views SE, SW, NW, NE; eight logical sectors use existing nearest diagonal mapping. Seven authored stages with explicit holds.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 4,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-fishing-v2.json",
+    "image": "fishing-coral-v2.png",
+    "state": "fish-catch",
+    "directions": "Four separately painted diagonal fishing views SE, SW, NW, NE; eight logical sectors use existing nearest diagonal mapping. Seven authored stages with explicit holds.",
+    "mirrors": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "distinctSequences": 4,
+    "uniqueFrames": 16,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-reactions-v1.json",
+    "image": "reactions-coral-v1.png",
+    "state": "hurt",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-reactions-v1.json",
+    "image": "reactions-coral-v1.png",
+    "state": "defend",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-reactions-v1.json",
+    "image": "reactions-coral-v1.png",
+    "state": "defeat",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 16,
+        "kind": "source-edge-continuation",
+        "pixels": 31
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-reactions-v1.json",
+    "image": "reactions-coral-v1.png",
+    "state": "item",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 24,
+        "kind": "source-edge-continuation",
+        "pixels": 31
+      },
+      {
+        "frame": 25,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      },
+      {
+        "frame": 27,
+        "kind": "source-edge-continuation",
+        "pixels": 6
+      },
+      {
+        "frame": 28,
+        "kind": "source-edge-continuation",
+        "pixels": 12
+      },
+      {
+        "frame": 29,
+        "kind": "source-edge-continuation",
+        "pixels": 7
+      },
+      {
+        "frame": 31,
+        "kind": "source-edge-continuation",
+        "pixels": 3
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "dark-curls-coral-reactions-v1.json",
+    "image": "reactions-coral-v1.png",
+    "state": "interact",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "moonfox-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "attack",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 48,
+        "kind": "source-edge-continuation",
+        "pixels": 23
+      },
+      {
+        "frame": 49,
+        "kind": "source-edge-continuation",
+        "pixels": 41
+      },
+      {
+        "frame": 50,
+        "kind": "source-edge-continuation",
+        "pixels": 71
+      },
+      {
+        "frame": 51,
+        "kind": "source-edge-continuation",
+        "pixels": 15
+      },
+      {
+        "frame": 52,
+        "kind": "source-edge-continuation",
+        "pixels": 9
+      },
+      {
+        "frame": 54,
+        "kind": "source-edge-continuation",
+        "pixels": 69
+      },
+      {
+        "frame": 55,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "moonfox-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "special",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 48,
+        "kind": "source-edge-continuation",
+        "pixels": 23
+      },
+      {
+        "frame": 49,
+        "kind": "source-edge-continuation",
+        "pixels": 41
+      },
+      {
+        "frame": 50,
+        "kind": "source-edge-continuation",
+        "pixels": 71
+      },
+      {
+        "frame": 51,
+        "kind": "source-edge-continuation",
+        "pixels": 15
+      },
+      {
+        "frame": 52,
+        "kind": "source-edge-continuation",
+        "pixels": 9
+      },
+      {
+        "frame": 54,
+        "kind": "source-edge-continuation",
+        "pixels": 69
+      },
+      {
+        "frame": 55,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "moonfox-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "hurt",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 32,
+        "kind": "source-edge-continuation",
+        "pixels": 26
+      },
+      {
+        "frame": 33,
+        "kind": "source-edge-continuation",
+        "pixels": 70
+      },
+      {
+        "frame": 34,
+        "kind": "source-edge-continuation",
+        "pixels": 62
+      },
+      {
+        "frame": 35,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      },
+      {
+        "frame": 36,
+        "kind": "source-edge-continuation",
+        "pixels": 4
+      },
+      {
+        "frame": 39,
+        "kind": "source-edge-continuation",
+        "pixels": 5
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "moonfox-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "defend",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 40,
+        "kind": "source-edge-continuation",
+        "pixels": 19
+      },
+      {
+        "frame": 41,
+        "kind": "source-edge-continuation",
+        "pixels": 47
+      },
+      {
+        "frame": 42,
+        "kind": "source-edge-continuation",
+        "pixels": 135
+      },
+      {
+        "frame": 43,
+        "kind": "source-edge-continuation",
+        "pixels": 107
+      },
+      {
+        "frame": 44,
+        "kind": "source-edge-continuation",
+        "pixels": 85
+      },
+      {
+        "frame": 45,
+        "kind": "source-edge-continuation",
+        "pixels": 79
+      },
+      {
+        "frame": 46,
+        "kind": "source-edge-continuation",
+        "pixels": 35
+      },
+      {
+        "frame": 47,
+        "kind": "source-edge-continuation",
+        "pixels": 9
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "moonfox-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "defeat",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 4,
+    "edgeWarnings": [
+      {
+        "frame": 32,
+        "kind": "source-edge-continuation",
+        "pixels": 26
+      },
+      {
+        "frame": 33,
+        "kind": "source-edge-continuation",
+        "pixels": 70
+      },
+      {
+        "frame": 34,
+        "kind": "source-edge-continuation",
+        "pixels": 62
+      },
+      {
+        "frame": 35,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "slime-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "idle",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 3,
+        "kind": "source-edge-continuation",
+        "pixels": 12
+      },
+      {
+        "frame": 5,
+        "kind": "source-edge-continuation",
+        "pixels": 14
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "slime-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "walk",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 9,
+        "kind": "source-edge-continuation",
+        "pixels": 12
+      },
+      {
+        "frame": 10,
+        "kind": "source-edge-continuation",
+        "pixels": 34
+      },
+      {
+        "frame": 11,
+        "kind": "source-edge-continuation",
+        "pixels": 27
+      },
+      {
+        "frame": 12,
+        "kind": "source-edge-continuation",
+        "pixels": 21
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "slime-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "attack",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 17,
+        "kind": "source-edge-continuation",
+        "pixels": 10
+      },
+      {
+        "frame": 18,
+        "kind": "source-edge-continuation",
+        "pixels": 50
+      },
+      {
+        "frame": 19,
+        "kind": "source-edge-continuation",
+        "pixels": 38
+      },
+      {
+        "frame": 20,
+        "kind": "source-edge-continuation",
+        "pixels": 13
+      },
+      {
+        "frame": 21,
+        "kind": "source-edge-continuation",
+        "pixels": 17
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "slime-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "hurt",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 3,
+    "edgeWarnings": [
+      {
+        "frame": 24,
+        "kind": "source-edge-continuation",
+        "pixels": 13
+      },
+      {
+        "frame": 25,
+        "kind": "source-edge-continuation",
+        "pixels": 31
+      },
+      {
+        "frame": 26,
+        "kind": "source-edge-continuation",
+        "pixels": 14
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "slime-actions-v1.json",
+    "image": "mob-actions-v1.png",
+    "state": "defeat",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 6,
+    "edgeWarnings": [
+      {
+        "frame": 26,
+        "kind": "source-edge-continuation",
+        "pixels": 14
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "attack",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 56,
+        "kind": "source-edge-continuation",
+        "pixels": 89
+      },
+      {
+        "frame": 57,
+        "kind": "source-edge-continuation",
+        "pixels": 92
+      },
+      {
+        "frame": 58,
+        "kind": "source-edge-continuation",
+        "pixels": 88
+      },
+      {
+        "frame": 59,
+        "kind": "source-edge-continuation",
+        "pixels": 144
+      },
+      {
+        "frame": 60,
+        "kind": "source-edge-continuation",
+        "pixels": 132
+      },
+      {
+        "frame": 61,
+        "kind": "source-edge-continuation",
+        "pixels": 71
+      },
+      {
+        "frame": 62,
+        "kind": "source-edge-continuation",
+        "pixels": 124
+      },
+      {
+        "frame": 63,
+        "kind": "source-edge-continuation",
+        "pixels": 33
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-actions-v1.json",
+    "image": "actions-sage-v1.png",
+    "state": "special",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 56,
+        "kind": "source-edge-continuation",
+        "pixels": 89
+      },
+      {
+        "frame": 57,
+        "kind": "source-edge-continuation",
+        "pixels": 92
+      },
+      {
+        "frame": 58,
+        "kind": "source-edge-continuation",
+        "pixels": 88
+      },
+      {
+        "frame": 59,
+        "kind": "source-edge-continuation",
+        "pixels": 144
+      },
+      {
+        "frame": 60,
+        "kind": "source-edge-continuation",
+        "pixels": 132
+      },
+      {
+        "frame": 61,
+        "kind": "source-edge-continuation",
+        "pixels": 71
+      },
+      {
+        "frame": 62,
+        "kind": "source-edge-continuation",
+        "pixels": 124
+      },
+      {
+        "frame": 63,
+        "kind": "source-edge-continuation",
+        "pixels": 33
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-cleanup-v2.json",
+    "image": "deer-cleanup-v2.png",
+    "state": "attack",
+    "directions": "SE painted; SW/NW mirrored and NE reused. Two overlapping attack drawings excluded; contact held. Dedicated hurt and lying exhaustion, special aliases attack.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 6,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-cleanup-v2.json",
+    "image": "deer-cleanup-v2.png",
+    "state": "special",
+    "directions": "SE painted; SW/NW mirrored and NE reused. Two overlapping attack drawings excluded; contact held. Dedicated hurt and lying exhaustion, special aliases attack.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 6,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-cleanup-v2.json",
+    "image": "deer-cleanup-v2.png",
+    "state": "defend",
+    "directions": "SE painted; SW/NW mirrored and NE reused. Two overlapping attack drawings excluded; contact held. Dedicated hurt and lying exhaustion, special aliases attack.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-cleanup-v2.json",
+    "image": "deer-cleanup-v2.png",
+    "state": "hurt",
+    "directions": "SE painted; SW/NW mirrored and NE reused. Two overlapping attack drawings excluded; contact held. Dedicated hurt and lying exhaustion, special aliases attack.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-cleanup-v2.json",
+    "image": "deer-cleanup-v2.png",
+    "state": "defeat",
+    "directions": "SE painted; SW/NW mirrored and NE reused. Two overlapping attack drawings excluded; contact held. Dedicated hurt and lying exhaustion, special aliases attack.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-cleanup-v2.json",
+    "image": "deer-cleanup-v2.png",
+    "state": "exhausted",
+    "directions": "SE painted; SW/NW mirrored and NE reused. Two overlapping attack drawings excluded; contact held. Dedicated hurt and lying exhaustion, special aliases attack.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "No pixel continuation detected",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "hurt",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 56,
+        "kind": "source-edge-continuation",
+        "pixels": 52
+      },
+      {
+        "frame": 57,
+        "kind": "source-edge-continuation",
+        "pixels": 21
+      },
+      {
+        "frame": 58,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      },
+      {
+        "frame": 60,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "defend",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 48,
+        "kind": "source-edge-continuation",
+        "pixels": 45
+      },
+      {
+        "frame": 49,
+        "kind": "source-edge-continuation",
+        "pixels": 60
+      },
+      {
+        "frame": 50,
+        "kind": "source-edge-continuation",
+        "pixels": 15
+      },
+      {
+        "frame": 51,
+        "kind": "source-edge-continuation",
+        "pixels": 13
+      },
+      {
+        "frame": 52,
+        "kind": "source-edge-continuation",
+        "pixels": 8
+      },
+      {
+        "frame": 53,
+        "kind": "source-edge-continuation",
+        "pixels": 29
+      },
+      {
+        "frame": 54,
+        "kind": "source-edge-continuation",
+        "pixels": 15
+      },
+      {
+        "frame": 55,
+        "kind": "source-edge-continuation",
+        "pixels": 17
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  },
+  {
+    "atlas": "woodland-deer-reactions-v1.json",
+    "image": "reactions-sage-v1.png",
+    "state": "defeat",
+    "directions": "Provisional SE painted view; SW/NW mirrored SE, NE uses SE. Distinct rear/eight-view art still required.",
+    "mirrors": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "distinctSequences": 1,
+    "uniqueFrames": 8,
+    "edgeWarnings": [
+      {
+        "frame": 56,
+        "kind": "source-edge-continuation",
+        "pixels": 52
+      },
+      {
+        "frame": 57,
+        "kind": "source-edge-continuation",
+        "pixels": 21
+      },
+      {
+        "frame": 58,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      },
+      {
+        "frame": 60,
+        "kind": "source-edge-continuation",
+        "pixels": 18
+      }
+    ],
+    "logicalCanvas": [
+      "{\"w\":224,\"h\":224}"
+    ],
+    "pivot": {
+      "x": 0.5,
+      "y": 0.88
+    },
+    "footSlide": "Requires visual planted-contact review; fixed pivot is not proof of planted feet",
+    "scalePop": "State uses common scale; silhouette/body ratios require visual review",
+    "silhouetteCollision": "Source-edge continuation flagged; inspect sheet",
+    "weaponClipping": "Visual review required",
+    "contactTiming": "Presentation sequence only; authoritative hits are independent"
+  }
+]
