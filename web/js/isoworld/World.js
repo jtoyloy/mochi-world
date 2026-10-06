@@ -1937,6 +1937,18 @@ export class IsometricWorld {
           };
       spring(this.camera, this.cameraVelocity, desired, dt, 16);
     }
+    // Display interest affects replication only, never gameplay relevance.
+    if (performance.now() - (this.viewSentAt ?? -Infinity) > 1100) {
+      const halfWidth = this.host.clientWidth / (2 * this.zoom);
+      const halfHeight = this.host.clientHeight / (2 * this.zoom);
+      const key = `${Math.round(halfWidth)}:${Math.round(halfHeight)}`;
+      if ((key !== this.viewKey || performance.now() - (this.viewReportedAt ?? -Infinity) > 10000) && this.scene.snapshot().loading === false) {
+        this.bridge.send?.('view', { halfWidth, halfHeight });
+        this.viewKey = key;
+        this.viewReportedAt = performance.now();
+      }
+      this.viewSentAt = performance.now();
+    }
     this.root.scale.set(this.zoom);
     this.root.position.set(
       viewportWidth * 0.5 - this.camera.x * this.zoom,

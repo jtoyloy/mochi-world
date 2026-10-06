@@ -1,3 +1,4 @@
+import { SnapshotDecoder } from "../../web/js/game/network/snapshots.js";
 import WebSocket from "ws";
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
@@ -317,8 +318,9 @@ function socketClient(session) {
   });
   const events = [],
     waiters = [];
+  const decoder = new SnapshotDecoder();
   ws.on("message", (raw) => {
-    const e = JSON.parse(raw);
+    for (const e of decoder.consume(JSON.parse(raw))) {
     events.push(e);
     for (const w of [...waiters])
       if (w.type === e.type) {
@@ -326,6 +328,7 @@ function socketClient(session) {
         waiters.splice(waiters.indexOf(w), 1);
         w.resolve(e.data);
       }
+    }
   });
   return {
     ws,

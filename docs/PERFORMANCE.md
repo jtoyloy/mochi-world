@@ -112,3 +112,11 @@ does not establish a sustained renderer trace or 60 FPS. After load actors left,
 the renderer returned to 60 FPS/p95 17.6 ms with 20 entities, while the population
 HUD still displayed 40. That stale HUD must not be used as proof of visible load.
 Raw observations: [multiplayer-presentation.json](../assays/multiplayer-presentation.json).
+
+## Multiplayer protocol scaling — 2026-10-06
+
+Real 150-account/pet five-minute loopback payload fell from **28.86 to 5.91 MB/s** (4.88×), and recipient messages from **42017 to 2829/s**. Authority remains 10 Hz. Recipient batches, static descriptions on join/change, changed dynamic fields and projected viewport frequency tiers replace per-actor full broadcasts. Hysteresis retains presence at boundaries; interpolation smoothly retimes tier delay.
+
+Node mean CPU: 0.297 → 0.306 cores; app/native maximum RSS: 645 → 856 MiB. Peak app/native RSS increased; no memory reduction is claimed. Opt-in byte/GC/serialization counters are enabled; PostgreSQL and the generator are excluded from these process figures. Per-recipient batches increase generated string bytes while lowering delivered bytes, so this is not a universal serialization-allocation improvement.
+
+Two-browser near-motion samples were about 60 FPS /17.4 ms p95, with no reported hard snaps or corrections. Unit tests pin continuous 5 Hz motion and monotonic tier transitions. These are not sustained crowd or WAN/GPU results. The 30-minute extension was skipped for disk headroom; request errors/deadline failures remain in the evidence. **150 CCU is not launch-certified.** See [MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md) and [network-scaling-summary.json](assays/network-scaling-summary.json) for complete before/after types, counts, failures and limitations.

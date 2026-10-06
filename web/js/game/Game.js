@@ -1,3 +1,4 @@
+import { SnapshotDecoder } from "./network/snapshots.js";
 import { adventureUI } from "./AdventureUI.js";
 import { interactionArrived } from "./arrival.js";
 import { TOWN_RESIDENTS } from "./town.js";
@@ -231,8 +232,11 @@ export async function mountWorld(
         if (!closed && e.code !== 4001)
           reconnectTimer = setTimeout(() => bridge.connect(), 2000);
       };
+      const decoder = new SnapshotDecoder();
       const consume = (e) => {
-        const { type, data } = JSON.parse(e.data);
+        for (const decoded of decoder.consume(JSON.parse(e.data))) consumeState(decoded);
+      };
+      const consumeState = ({ type, data }) => {
         adventure?.event(type, data);
         bridge.scene?.motionEvent?.(type, data);
         if (type === "ready") {
@@ -382,12 +386,12 @@ export async function mountWorld(
           net = bridge.scene?.network;
         if (
           config.development &&
-          ["playerMoved", "moveAccepted", "moveRejected", "pong"].includes(
+          ["movementSnapshot", "playerMoved", "moveAccepted", "moveRejected", "pong"].includes(
             msg.type,
           )
         ) {
           if (
-            msg.type === "playerMoved" &&
+            ["movementSnapshot", "playerMoved"].includes(msg.type) &&
             Math.random() * 100 < (net?.loss ?? 0)
           )
             return;

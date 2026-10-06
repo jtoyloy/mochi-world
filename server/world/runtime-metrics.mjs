@@ -8,6 +8,8 @@ export class RuntimeMetrics {
   constructor(pool) {
     this.counts = {};
     this.timings = {};
+    this.protocol = {};
+    this.gauges = {};
     this.loop = monitorEventLoopDelay({ resolution: 10 });
     this.loop.enable();
     this.gc = new PerformanceObserver((list) => {
@@ -62,6 +64,21 @@ export class RuntimeMetrics {
       Math.min(11, Math.max(0, Math.ceil(Math.log2(Math.max(0.125, ms))) + 3))
     ]++;
   }
+  observe(key, value) {
+    this.gauges[key] = Math.max(this.gauges[key] ?? 0, value);
+  }
+  protocolEncoded(type, bytes) {
+    const t = (this.protocol[type] ??= { encoded: 0, recipients: 0, bytes: 0, sizes: {}, overflow: 0 });
+    t.encoded++;
+  }
+  protocolSent(type, bytes) {
+    const t = (this.protocol[type] ??= { encoded: 0, recipients: 0, bytes: 0, sizes: {}, overflow: 0 });
+    t.recipients++;
+    t.bytes += bytes;
+    if (t.sizes[bytes] !== undefined || Object.keys(t.sizes).length < 4096)
+      t.sizes[bytes] = (t.sizes[bytes] ?? 0) + 1;
+    else t.overflow++;
+  }
   sample(multiplayer, adventure) {
     const now = performance.now(),
       elapsed = (now - this.at) / 1000,
@@ -72,8 +89,11 @@ export class RuntimeMetrics {
       elapsed,
       cpuCores: (cpu.user + cpu.system) / 1e6 / elapsed,
       ...process.memoryUsage(),
+      eventLoopP95Ms: this.loop.percentile(95) / 1e6,
       eventLoopP99Ms: this.loop.percentile(99) / 1e6,
       eventLoopMaxMs: this.loop.max / 1e6,
+      gauges: this.gauges,
+      protocol: this.protocol,
       counts: this.counts,
       timings: this.timings,
       players: multiplayer.store.players.size,
@@ -85,6 +105,9 @@ export class RuntimeMetrics {
         ]),
       ),
       connections: multiplayer.wss.clients.size,
+      slowClients: [...multiplayer.store.players.values()].filter(p => p.slowSince != null).length,
+      criticalQueueBytes: [...multiplayer.store.players.values()].reduce((n,p) => n + (p.outboxBytes ?? 0), 0),
+      snapshotClients: multiplayer.snapshots?.clients.size ?? 0,
       encounters: multiplayer.encounters.size,
       companions: [...multiplayer.store.players.values()].filter(
         (p) => p.companion && p.room,
@@ -98,6 +121,8 @@ export class RuntimeMetrics {
     };
     this.counts = {};
     this.timings = {};
+    this.protocol = {};
+    this.gauges = {};
     this.loop.reset();
     return sample;
   }

@@ -36,7 +36,8 @@ export type ClientEvent =
       type: "talkToMochi";
       data: { mochiId: string; message: string; visibility: SpeechVisibility };
     }
-  | { type: "presence"; data: { status: "online" | "away" } };
+  | { type: "presence"; data: { status: "online" | "away" } }
+  | { type: "view"; data: { halfWidth: number; halfHeight: number } };
 export interface PlayerAvatar {
   user_id: string;
   display_name: string;
@@ -88,6 +89,23 @@ export type ServerEvent =
         players: PublicPlayer[];
       };
     }
+  | { type: "movementSnapshot"; data: {
+      instanceId: string;
+      sequence: number;
+      serverTime: number;
+      keyframe: boolean;
+      players: (Partial<Pick<PublicPlayer, "x" | "y" | "moving" | "rotation">> & {
+        userId: string;
+        snapshotIntervalMs: 100 | 200 | 1000;
+        moveSeq?: number;
+        speed?: number;
+        path?: { x: number; y: number }[];
+        seated?: unknown;
+        companion?: ({ id: string } & Partial<Pick<Companion, "x" | "y" | "state">> & {
+          rotation?: number; followSpeed?: number;
+        }) | null;
+      })[];
+    } }
   | { type: "playerJoined"; data: PublicPlayer }
   | { type: "playerLeft"; data: { userId: string } }
   | {

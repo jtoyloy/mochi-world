@@ -34,7 +34,7 @@ function fixture() {
     },
   };
   store.players.set("a", p);
-  store.rooms.set(p.room, { players: new Map([["a", p]]) });
+  store.rooms.set(p.room, { id: p.room, players: new Map([["a", p]]) });
   return {
     m,
     p,
@@ -56,7 +56,8 @@ test("authoritative tick carries distance past a path corner and exposes timesta
     f.step(100);
     assert.equal(f.p.x, 555);
     assert.equal(f.p.y, 853);
-    const s = f.messages.at(-1).data;
+    const packet = f.messages.at(-1).data;
+    const s = { ...packet.players.find(p=>p.userId===f.p.userId), serverTime: packet.serverTime };
     assert.equal(s.serverTime, 10100);
     assert.equal(s.path.length, 1);
     assert.equal(s.speed, 180);
