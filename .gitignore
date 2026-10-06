@@ -14,3 +14,8 @@ data/
 .env
 
 web/build/
+
+# Generated multiplayer windows, raw capacity runs and transient failures.
+assays/multiplayer-*.json
+assays/multiplayer-*.jsonl
+# Compact reviewed evidence lives in docs/assays/multiplayer-summary.json.

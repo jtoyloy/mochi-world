@@ -1,0 +1,179 @@
+{
+  "date": "2026-10-06",
+  "javascript": {
+    "passed": 177,
+    "failed": 0,
+    "skipped": 0,
+    "databaseEnabled": true
+  },
+  "python": {
+    "passed": 27,
+    "failed": 0
+  },
+  "animation": {
+    "passed": 17
+  },
+  "movement": {
+    "passed": 29
+  },
+  "npmCi": "passed",
+  "assets": "passed",
+  "build": "passed",
+  "soak": {
+    "initial": {
+      "users": 2,
+      "durationSeconds": 15.112,
+      "passed": false,
+      "sourceHashes": {
+        "multiplayer/load-test/soak.mjs": "24fa0572b75fbb35188162f2f9555884d51d700cba29fe02799ca9479b3b613f",
+        "server/index.mjs": "7bfa36dac9202b51cb7aa3e90aae2d00f718c320697fb3e0f3d1633a3378b434",
+        "server/social/multiplayer.mjs": "528f0e9161d502ec229e85c85155387167cc16f874e691684c989248dc18934d",
+        "server/world/runtime-metrics.mjs": "cd3f14a9bcd9fcde25d638ebb2a504a20b08282e71fd1c999edbd89a4ff909fd",
+        "server/world/checkpoints.mjs": "1649eb0725b80df9d06615fbb5e73c08caf6f70903af665d139a56bb304009d3",
+        "server/adventure/service.mjs": "a603cad74cdfa091d43d0821428e6babf27645fbd157ca4b0cf2ef321703013c",
+        "web/js/game/NavigationService.js": "ed7aff888f7438f71f8c73c2b3aa3f8e9f97332bf830a70efe235210825ff59f",
+        "web/js/game/CompanionFollowController.js": "8be883f4a070399bbc788ad2c2826aa1bd08c4584e772865b3101ee3718b8d9f"
+      },
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "clients": {
+        "rejections": [],
+        "wrongCompanions": 0,
+        "errors": [
+          {},
+          {}
+        ],
+        "unexpectedDisconnects": 0,
+        "reconnects": 0,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 2,
+        "arrivalGapP95Ms": 102,
+        "arrivalGapMaxMs": 180,
+        "companionMessages": 492,
+        "missingCompanions": 0
+      },
+      "errors": [],
+      "serverErrors": [
+        ".env not found. Continuing without it.\n"
+      ],
+      "tickMaxMs": 5.674874999996973,
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      }
+    },
+    "corrected": {
+      "users": 2,
+      "durationSeconds": 15.125,
+      "passed": true,
+      "sourceHashes": {
+        "multiplayer/load-test/soak.mjs": "eeb8d784a47659aec116b3c55126be3120c88f0f096a599b97b622406ff828e8",
+        "server/index.mjs": "7bfa36dac9202b51cb7aa3e90aae2d00f718c320697fb3e0f3d1633a3378b434",
+        "server/social/multiplayer.mjs": "528f0e9161d502ec229e85c85155387167cc16f874e691684c989248dc18934d",
+        "server/world/runtime-metrics.mjs": "cd3f14a9bcd9fcde25d638ebb2a504a20b08282e71fd1c999edbd89a4ff909fd",
+        "server/world/checkpoints.mjs": "1649eb0725b80df9d06615fbb5e73c08caf6f70903af665d139a56bb304009d3",
+        "server/adventure/service.mjs": "a603cad74cdfa091d43d0821428e6babf27645fbd157ca4b0cf2ef321703013c",
+        "web/js/game/NavigationService.js": "ed7aff888f7438f71f8c73c2b3aa3f8e9f97332bf830a70efe235210825ff59f",
+        "web/js/game/CompanionFollowController.js": "8be883f4a070399bbc788ad2c2826aa1bd08c4584e772865b3101ee3718b8d9f"
+      },
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "clients": {
+        "rejections": [],
+        "wrongCompanions": 0,
+        "errors": [
+          {},
+          {}
+        ],
+        "unexpectedDisconnects": 0,
+        "reconnects": 0,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 1,
+        "arrivalGapP95Ms": 102,
+        "arrivalGapMaxMs": 140,
+        "companionMessages": 496,
+        "missingCompanions": 0
+      },
+      "errors": [],
+      "serverErrors": [],
+      "tickMaxMs": 3.1109579999974812,
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      }
+    }
+  },
+  "renderer": {
+    "protocol": "10-second offline actual renderer samples; 1280x900 fixture, DPR2; not sustained live multiplayer certification",
+    "town": {
+      "fps": 60.04955837096839,
+      "p95Ms": 17.6,
+      "cpuP95Ms": 0.4,
+      "actors": 20,
+      "draws": 1
+    },
+    "forestCombat": {
+      "fps": 60.08017354273425,
+      "p95Ms": 17.6,
+      "cpuP95Ms": 0.2,
+      "actors": 2,
+      "mobs": 2,
+      "draws": 1
+    },
+    "uniqueActionTextureRgbaMiB": 29.990982055664062,
+    "finalRepeat": {
+      "town": {
+        "fps": 60.02257088356691,
+        "p95Ms": 17.4,
+        "cpuP95Ms": 1.7
+      },
+      "forestCombat": {
+        "fps": 60.06096037576024,
+        "p95Ms": 17.3,
+        "cpuP95Ms": 0.7
+      },
+      "diagnosticActionMemoryMiB": 30.0
+    }
+  },
+  "cadence": {
+    "legacyAssayReproduced": true,
+    "acquisitionReproduced": true,
+    "controlledExperimentExactJsonReproduced": true,
+    "frozenWinsOf480": {
+      "published": 20,
+      "random": 121,
+      "noProtectionBonus": 180,
+      "mother": 480
+    },
+    "candidatePairedSeedBootstrap95PercentagePoints": [
+      -5.21,
+      29.79
+    ],
+    "candidatePromoted": false,
+    "publishedPacksChanged": false
+  }
+}

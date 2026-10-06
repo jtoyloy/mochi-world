@@ -1,0 +1,506 @@
+{
+  "mother": {
+    "training": {
+      "episodes": 960,
+      "wins": 960,
+      "defeats": 0,
+      "timeouts": 0,
+      "damage": 43200.0,
+      "owner_damage": 24320.0,
+      "pet_damage": 0,
+      "protection": 0.0,
+      "wasted": 0,
+      "special": 960,
+      "decisions": 6080,
+      "refused": 0,
+      "pet_survivals": 960,
+      "reward": 794.6666666666717,
+      "actions": [
+        3840,
+        0,
+        0,
+        960,
+        1280,
+        0,
+        0
+      ],
+      "wins_by_seed": [
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120
+      ],
+      "paired_win_rate_difference": 0.7406250000000001,
+      "paired_seed_bootstrap_95": [
+        0.7104166666666667,
+        0.771875
+      ],
+      "seeds_beating_random": 8
+    },
+    "evaluation": {
+      "episodes": 480,
+      "wins": 480,
+      "defeats": 0,
+      "timeouts": 0,
+      "damage": 21600.0,
+      "owner_damage": 12160.0,
+      "pet_damage": 0,
+      "protection": 0.0,
+      "wasted": 0,
+      "special": 480,
+      "decisions": 3040,
+      "refused": 0,
+      "pet_survivals": 480,
+      "reward": 397.3333333333341,
+      "actions": [
+        1920,
+        0,
+        0,
+        480,
+        640,
+        0,
+        0
+      ],
+      "wins_by_seed": [
+        60,
+        60,
+        60,
+        60,
+        60,
+        60,
+        60,
+        60
+      ],
+      "paired_win_rate_difference": 0.7479166666666667,
+      "paired_seed_bootstrap_95": [
+        0.7124999999999999,
+        0.78125
+      ],
+      "seeds_beating_random": 8
+    }
+  },
+  "no_guard_bonus": {
+    "training": {
+      "episodes": 960,
+      "wins": 317,
+      "defeats": 551,
+      "timeouts": 92,
+      "damage": 21057.0,
+      "owner_damage": 81118.0,
+      "pet_damage": 0,
+      "protection": 19122.0,
+      "wasted": 5412,
+      "special": 1123,
+      "decisions": 25060,
+      "refused": 0,
+      "pet_survivals": 960,
+      "reward": -1568.3433333333178,
+      "actions": [
+        3899,
+        6374,
+        2486,
+        3575,
+        2260,
+        2942,
+        3524
+      ],
+      "wins_by_seed": [
+        58,
+        82,
+        63,
+        20,
+        37,
+        0,
+        5,
+        52
+      ],
+      "paired_win_rate_difference": 0.07083333333333335,
+      "paired_seed_bootstrap_95": [
+        -0.08127604166666663,
+        0.22083333333333333
+      ],
+      "seeds_beating_random": 5
+    },
+    "evaluation": {
+      "episodes": 480,
+      "wins": 180,
+      "defeats": 240,
+      "timeouts": 60,
+      "damage": 8128.0,
+      "owner_damage": 38168.0,
+      "pet_damage": 0,
+      "protection": 10800.0,
+      "wasted": 6300,
+      "special": 482,
+      "decisions": 12242,
+      "refused": 0,
+      "pet_survivals": 480,
+      "reward": -938.5111111111052,
+      "actions": [
+        3360,
+        3600,
+        0,
+        3782,
+        1,
+        1499,
+        0
+      ],
+      "wins_by_seed": [
+        20,
+        20,
+        40,
+        0,
+        20,
+        0,
+        40,
+        40
+      ],
+      "paired_win_rate_difference": 0.12291666666666665,
+      "paired_seed_bootstrap_95": [
+        -0.05208333333333334,
+        0.2979166666666666
+      ],
+      "seeds_beating_random": 5
+    }
+  },
+  "published": {
+    "training": {
+      "episodes": 960,
+      "wins": 176,
+      "defeats": 263,
+      "timeouts": 521,
+      "damage": 12780.0,
+      "owner_damage": 72355.0,
+      "pet_damage": 0,
+      "protection": 91497.0,
+      "wasted": 1758,
+      "special": 715,
+      "decisions": 40963,
+      "refused": 0,
+      "pet_survivals": 960,
+      "reward": -159.7233333333421,
+      "actions": [
+        1083,
+        30499,
+        712,
+        1886,
+        745,
+        3015,
+        3023
+      ],
+      "wins_by_seed": [
+        8,
+        115,
+        0,
+        1,
+        0,
+        0,
+        1,
+        51
+      ],
+      "paired_win_rate_difference": -0.07604166666666666,
+      "paired_seed_bootstrap_95": [
+        -0.2677083333333333,
+        0.171875
+      ],
+      "seeds_beating_random": 2
+    },
+    "evaluation": {
+      "episodes": 480,
+      "wins": 20,
+      "defeats": 160,
+      "timeouts": 300,
+      "damage": 942.0,
+      "owner_damage": 34484.0,
+      "pet_damage": 0,
+      "protection": 54000.0,
+      "wasted": 1000,
+      "special": 3,
+      "decisions": 22121,
+      "refused": 0,
+      "pet_survivals": 480,
+      "reward": -124.80000000000662,
+      "actions": [
+        1120,
+        18000,
+        0,
+        3,
+        0,
+        1499,
+        1499
+      ],
+      "wins_by_seed": [
+        0,
+        20,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "paired_win_rate_difference": -0.21041666666666667,
+      "paired_seed_bootstrap_95": [
+        -0.25625,
+        -0.14791666666666664
+      ],
+      "seeds_beating_random": 0
+    }
+  },
+  "random": {
+    "training": {
+      "episodes": 960,
+      "wins": 249,
+      "defeats": 711,
+      "timeouts": 0,
+      "damage": 24835.0,
+      "owner_damage": 90940.0,
+      "pet_damage": 0,
+      "protection": 10872.0,
+      "wasted": 4936,
+      "special": 1412,
+      "decisions": 25453,
+      "refused": 0,
+      "pet_survivals": 960,
+      "reward": -1602.207777777744,
+      "actions": [
+        3560,
+        3624,
+        3587,
+        3638,
+        3567,
+        3671,
+        3806
+      ],
+      "wins_by_seed": [
+        28,
+        34,
+        38,
+        36,
+        36,
+        29,
+        26,
+        22
+      ],
+      "paired_win_rate_difference": 0.0,
+      "paired_seed_bootstrap_95": [
+        0.0,
+        0.0
+      ],
+      "seeds_beating_random": 0
+    },
+    "evaluation": {
+      "episodes": 480,
+      "wins": 121,
+      "defeats": 359,
+      "timeouts": 0,
+      "damage": 12541.0,
+      "owner_damage": 45584.0,
+      "pet_damage": 0,
+      "protection": 5208.0,
+      "wasted": 2513,
+      "special": 711,
+      "decisions": 12698,
+      "refused": 0,
+      "pet_survivals": 480,
+      "reward": -809.3677777777735,
+      "actions": [
+        1818,
+        1736,
+        1777,
+        1833,
+        1813,
+        1855,
+        1866
+      ],
+      "wins_by_seed": [
+        17,
+        21,
+        14,
+        12,
+        11,
+        14,
+        17,
+        15
+      ],
+      "paired_win_rate_difference": 0.0,
+      "paired_seed_bootstrap_95": [
+        0.0,
+        0.0
+      ],
+      "seeds_beating_random": 0
+    }
+  },
+  "weak_trace": {
+    "training": {
+      "episodes": 960,
+      "wins": 109,
+      "defeats": 106,
+      "timeouts": 745,
+      "damage": 10189.0,
+      "owner_damage": 66759.0,
+      "pet_damage": 0,
+      "protection": 134913.0,
+      "wasted": 2163,
+      "special": 544,
+      "decisions": 50418,
+      "refused": 0,
+      "pet_survivals": 960,
+      "reward": 403.41555555553185,
+      "actions": [
+        1827,
+        44971,
+        573,
+        1297,
+        613,
+        539,
+        598
+      ],
+      "wins_by_seed": [
+        17,
+        7,
+        4,
+        9,
+        47,
+        10,
+        0,
+        15
+      ],
+      "paired_win_rate_difference": -0.14583333333333331,
+      "paired_seed_bootstrap_95": [
+        -0.21979166666666666,
+        -0.0625
+      ],
+      "seeds_beating_random": 1
+    },
+    "evaluation": {
+      "episodes": 480,
+      "wins": 20,
+      "defeats": 40,
+      "timeouts": 420,
+      "damage": 900.0,
+      "owner_damage": 29680.0,
+      "pet_damage": 0,
+      "protection": 75600.0,
+      "wasted": 1000,
+      "special": 0,
+      "decisions": 26320,
+      "refused": 0,
+      "pet_survivals": 480,
+      "reward": 266.333333333319,
+      "actions": [
+        1120,
+        25200,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "wins_by_seed": [
+        0,
+        0,
+        0,
+        0,
+        20,
+        0,
+        0,
+        0
+      ],
+      "paired_win_rate_difference": -0.21041666666666667,
+      "paired_seed_bootstrap_95": [
+        -0.28541666666666665,
+        -0.09791666666666668
+      ],
+      "seeds_beating_random": 1
+    }
+  },
+  "weak_trace_terminal": {
+    "training": {
+      "episodes": 960,
+      "wins": 155,
+      "defeats": 115,
+      "timeouts": 690,
+      "damage": 10899.0,
+      "owner_damage": 66685.0,
+      "pet_damage": 0,
+      "protection": 121875.0,
+      "wasted": 2963,
+      "special": 549,
+      "decisions": 47140,
+      "refused": 0,
+      "pet_survivals": 960,
+      "reward": 782.466666666876,
+      "actions": [
+        1688,
+        40625,
+        267,
+        2356,
+        646,
+        290,
+        1268
+      ],
+      "wins_by_seed": [
+        0,
+        81,
+        2,
+        8,
+        0,
+        1,
+        1,
+        62
+      ],
+      "paired_win_rate_difference": -0.09791666666666665,
+      "paired_seed_bootstrap_95": [
+        -0.2583333333333333,
+        0.11981770833333298
+      ],
+      "seeds_beating_random": 2
+    },
+    "evaluation": {
+      "episodes": 480,
+      "wins": 20,
+      "defeats": 100,
+      "timeouts": 360,
+      "damage": 914.0,
+      "owner_damage": 32080.0,
+      "pet_damage": 0,
+      "protection": 64800.0,
+      "wasted": 1000,
+      "special": 1,
+      "decisions": 24220,
+      "refused": 0,
+      "pet_survivals": 480,
+      "reward": 70.64444444443397,
+      "actions": [
+        1120,
+        21600,
+        0,
+        1,
+        0,
+        0,
+        1499
+      ],
+      "wins_by_seed": [
+        0,
+        20,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "paired_win_rate_difference": -0.21041666666666667,
+      "paired_seed_bootstrap_95": [
+        -0.25625,
+        -0.14791666666666667
+      ],
+      "seeds_beating_random": 0
+    }
+  }
+}

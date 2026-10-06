@@ -99,3 +99,16 @@ sheets4MiB remote/NPC,9MiB local. Do not interpret these as total VRAM: world,
 seated-art and render-target allocations are additional. Crowds use scripted
 visual routes and are not real networking capacity tests. Cached viewport
 sizes and unchanged bubble text avoid repeated DOM layout/content work per actor.
+
+## Real multiplayer follow-up
+
+See [MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md) for authenticated WebSocket capacity
+and native-process measurements. A separate real Town instance with 39 Node users
+and one independently authenticated browser owner, each with an active Mochi,
+sampled **20 FPS, p95 66.3 ms, CPU update 1.2 ms, two GL draws, 6,098 triangles**
+at DPR 2. Synthetic Animation crowd stayed at zero. This was one loaded diagnostic
+sample on a contended development host, with uncontrolled visibility/focus; it
+does not establish a sustained renderer trace or 60 FPS. After load actors left,
+the renderer returned to 60 FPS/p95 17.6 ms with 20 entities, while the population
+HUD still displayed 40. That stale HUD must not be used as proof of visible load.
+Raw observations: [multiplayer-presentation.json](../assays/multiplayer-presentation.json).

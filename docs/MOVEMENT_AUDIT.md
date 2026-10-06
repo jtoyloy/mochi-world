@@ -101,3 +101,12 @@ and reuse of a compatible human NW contact pose. Rich eight-view painted art,
 authored separate trot cycles, contact/stride polish and painted cosmetic/action
 sets remain artist work. See `ANIMATION_DELIVERY.md` and the exact prompts in
 `ANIMATION_PROMPTS.md` for evidence and replacement details.
+
+## Multiplayer reliability follow-up
+
+The real session harness now checks both Moonfox and Woodland Deer through walk,
+turn, catch-up, settle, resume and a room transition. See
+[MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md) and the multiplayer assays for evidence.
+Momo's captured spawn offset was blocked; an exact-coordinate regression verifies
+nearest-walkable companion placement. The existing controller and movement rate
+remain unchanged. Renderer performance is reported separately from server timing.

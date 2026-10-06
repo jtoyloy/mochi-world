@@ -1,0 +1,1564 @@
+{
+  "sourceCommit": "7e7066256352557684a062119ad99a83c1f01fae",
+  "note": "Original outcomes retained. Raw windows, process samples, follow traces and transient failure dumps intentionally excluded. 150 CCU is not launch-certified. See MULTIPLAYER_SOAK.md for failures and checkpoint storage findings.",
+  "runs": [
+    {
+      "source": "assays/multiplayer-10-300s.json",
+      "sha256": "fa2a8430e83744a7e5b61202aa7d7513afb828776ba3c77d1090061eef62e35f",
+      "users": 10,
+      "durationSeconds": 300.385,
+      "passed": true,
+      "summary": {
+        "observedPlayersMin": 10,
+        "observedPlayersMax": 10,
+        "processTreeCpuMeanCores": 0.032158816785625176,
+        "processTreeCpuP95Cores": 0.13391964821107333,
+        "processTreeRssMaxBytes": 628801536,
+        "cpuMeanCores": 0.01575479768292286,
+        "cpuP95Cores": 0.030487647126181464,
+        "rssMaxBytes": 223281152,
+        "heapMaxBytes": 51095016,
+        "heapStartBytes": 16821232,
+        "heapEndBytes": 41207024,
+        "eventLoopP99MaxMs": 17.956863,
+        "rates": {
+          "inboundMessages": 15.542983056954336,
+          "inboundBytes": 1010.7916805123526,
+          "outboundMessages": 325.17004161810394,
+          "outboundBytes": 206401.29280281195,
+          "actorUpdates": 99.38704852322653,
+          "companionUpdates": 99.38704852322653,
+          "databaseQueries": 44.58364159648383,
+          "disconnects": 0.01015881245552571,
+          "connects": 0.01015881245552571
+        },
+        "timing": {
+          "dispatchMs": {
+            "count": 4590,
+            "sum": 814.5723449991056,
+            "max": 23.140999999988708,
+            "buckets": [
+              4189,
+              105,
+              31,
+              98,
+              78,
+              51,
+              21,
+              13,
+              4,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.1774667418298705,
+            "p95UpperMs": 1
+          },
+          "movementValidationMs": {
+            "count": 1475,
+            "sum": 681.3041170004144,
+            "max": 23.134583000006387,
+            "buckets": [
+              1190,
+              57,
+              28,
+              63,
+              51,
+              49,
+              20,
+              13,
+              4,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.4619010962714674,
+            "p95UpperMs": 4
+          },
+          "tickIntervalMs": {
+            "count": 2935,
+            "sum": 295286,
+            "max": 130,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2934,
+              1
+            ],
+            "mean": 100.60851788756388,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 29350,
+            "sum": 259.3593680010381,
+            "max": 3.6993340000044554,
+            "buckets": [
+              29068,
+              165,
+              92,
+              19,
+              3,
+              3,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.008836775741091587,
+            "p95UpperMs": 0.125
+          },
+          "tickDurationMs": {
+            "count": 2935,
+            "sum": 1224.855043999727,
+            "max": 10.191459000023315,
+            "buckets": [
+              0,
+              165,
+              2266,
+              448,
+              44,
+              7,
+              3,
+              2,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.41732710187384225,
+            "p95UpperMs": 1
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 3,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 1,
+        "arrivalGapP95Ms": 102,
+        "arrivalGapMaxMs": 183,
+        "companionMessages": 78099,
+        "missingCompanions": 0
+      },
+      "clientErrors": {},
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 0,
+      "serverErrorChunks": 0
+    },
+    {
+      "source": "assays/multiplayer-150-1800s.json",
+      "sha256": "74c05d0085606f26c609b557efc3fed8ada670525cbd14edaa2b5dfeb0969a51",
+      "users": 150,
+      "durationSeconds": 1800.011,
+      "passed": false,
+      "summary": {
+        "observedPlayersMin": 149,
+        "observedPlayersMax": 150,
+        "processTreeCpuMeanCores": 0.569143700275911,
+        "processTreeCpuP95Cores": 1.1955217912834903,
+        "processTreeRssMaxBytes": 833699840,
+        "cpuMeanCores": 0.3191896871643291,
+        "cpuP95Cores": 0.42104933728111515,
+        "rssMaxBytes": 297517056,
+        "heapMaxBytes": 113377088,
+        "heapStartBytes": 101778288,
+        "heapEndBytes": 35816072,
+        "eventLoopP99MaxMs": 70.909951,
+        "rates": {
+          "outboundMessages": 42219.98932783156,
+          "outboundBytes": 28434948.79506205,
+          "databaseQueries": 583.1958861263605,
+          "actorUpdates": 1477.3274405160455,
+          "companionUpdates": 1477.3268834014777,
+          "inboundMessages": 222.0335540172542,
+          "inboundBytes": 14410.637390790798,
+          "droppedUpdates": 2.3075685391739564,
+          "disconnects": 0.2735432527123159,
+          "connects": 0.2735432527123159
+        },
+        "timing": {
+          "tickIntervalMs": {
+            "count": 17687,
+            "sum": 1794920,
+            "max": 190,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              17563,
+              124
+            ],
+            "mean": 101.48244473342002,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 2651747,
+            "sum": 15334.851108109375,
+            "max": 35.436958000063896,
+            "buckets": [
+              2628185,
+              13357,
+              8119,
+              1748,
+              271,
+              53,
+              10,
+              3,
+              0,
+              1,
+              0,
+              0
+            ],
+            "mean": 0.005782923901906696,
+            "p95UpperMs": 0.125
+          },
+          "tickDurationMs": {
+            "count": 17687,
+            "sum": 367651.9722229998,
+            "max": 173.1957499999553,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              819,
+              16662,
+              160,
+              43,
+              3
+            ],
+            "mean": 20.786564834228518,
+            "p95UpperMs": 32
+          },
+          "movementValidationMs": {
+            "count": 126058,
+            "sum": 54697.78855799038,
+            "max": 52.42079200001899,
+            "buckets": [
+              104258,
+              2180,
+              2926,
+              4668,
+              4436,
+              3678,
+              2587,
+              1208,
+              113,
+              4,
+              0,
+              0
+            ],
+            "mean": 0.43390969679029,
+            "p95UpperMs": 4
+          },
+          "dispatchMs": {
+            "count": 398542,
+            "sum": 104836.34590302464,
+            "max": 796.325208999915,
+            "buckets": [
+              359759,
+              11532,
+              3669,
+              6110,
+              5664,
+              6207,
+              2953,
+              1222,
+              1380,
+              39,
+              0,
+              7
+            ],
+            "mean": 0.26304968084423885,
+            "p95UpperMs": 1
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 492,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 28,
+        "arrivalGapP95Ms": 124,
+        "arrivalGapMaxMs": 216,
+        "companionMessages": 72931021,
+        "missingCompanions": 0
+      },
+      "clientErrors": {
+        "2": {
+          "That destination is unreachable": 1
+        },
+        "7": {
+          "That destination is unreachable": 1
+        },
+        "11": {
+          "That destination is unreachable": 1
+        },
+        "31": {
+          "That destination is unreachable": 1
+        },
+        "32": {
+          "That destination is unreachable": 1
+        },
+        "36": {
+          "That destination is unreachable": 1
+        },
+        "53": {
+          "That destination is unreachable": 1
+        },
+        "55": {
+          "That destination is unreachable": 1
+        },
+        "58": {
+          "Walk closer to interact": 1
+        },
+        "63": {
+          "That destination is unreachable": 1
+        },
+        "68": {
+          "That destination is unreachable": 1
+        },
+        "72": {
+          "Walk closer to interact": 1
+        },
+        "81": {
+          "Walk closer to interact": 1
+        },
+        "82": {
+          "Walk closer to interact": 1
+        },
+        "87": {
+          "That destination is unreachable": 1
+        },
+        "102": {
+          "That destination is unreachable": 1
+        },
+        "112": {
+          "That destination is unreachable": 1
+        },
+        "119": {
+          "That destination is unreachable": 1
+        },
+        "139": {
+          "That destination is unreachable": 2
+        },
+        "146": {
+          "That destination is unreachable": 1
+        }
+      },
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 17,
+      "serverErrorChunks": 258
+    },
+    {
+      "source": "assays/multiplayer-150-300s.json",
+      "sha256": "a6ca843f8a9619f738e1f05044d1eecc6864989bceef3506fe85280c05e72e18",
+      "users": 150,
+      "durationSeconds": 300.956,
+      "passed": false,
+      "summary": {
+        "observedPlayersMin": 150,
+        "observedPlayersMax": 150,
+        "processTreeCpuMeanCores": 0.38998505020535695,
+        "processTreeCpuP95Cores": 1.0806483890334184,
+        "processTreeRssMaxBytes": 874889216,
+        "cpuMeanCores": 0.26792111703177773,
+        "cpuP95Cores": 0.4175901475604865,
+        "rssMaxBytes": 331857920,
+        "heapMaxBytes": 124269648,
+        "heapStartBytes": 59075168,
+        "heapEndBytes": 44680264,
+        "eventLoopP99MaxMs": 45.350911,
+        "rates": {
+          "actorUpdates": 1476.6766593088241,
+          "companionUpdates": 1476.6732803097502,
+          "outboundMessages": 41595.262344594776,
+          "outboundBytes": 28200330.506910842,
+          "gcEvents": 12.39754760238544,
+          "databaseQueries": 615.7617592471801,
+          "inboundMessages": 221.3278183439217,
+          "inboundBytes": 14326.074154862374,
+          "droppedUpdates": 2.415984337886506,
+          "disconnects": 0.2703199259173713,
+          "connects": 0.2703199259173713
+        },
+        "timing": {
+          "tickIntervalMs": {
+            "count": 2915,
+            "sum": 295874,
+            "max": 154,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2900,
+              15
+            ],
+            "mean": 101.50051457975987,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 437015,
+            "sum": 2568.327630009255,
+            "max": 15.885208999970928,
+            "buckets": [
+              433031,
+              2532,
+              1100,
+              301,
+              44,
+              6,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.005876978204430637,
+            "p95UpperMs": 0.125
+          },
+          "roomTickDurationMs": {
+            "count": 17490,
+            "sum": 47960.49249401358,
+            "max": 50.48466800007736,
+            "buckets": [
+              0,
+              0,
+              0,
+              961,
+              6998,
+              6271,
+              2999,
+              243,
+              14,
+              4,
+              0,
+              0
+            ],
+            "mean": 2.742166523385568,
+            "p95UpperMs": 8
+          },
+          "tickDurationMs": {
+            "count": 2915,
+            "sum": 48098.94866199978,
+            "max": 96.1484590000473,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1801,
+              1087,
+              21,
+              6,
+              0
+            ],
+            "mean": 16.500496968095977,
+            "p95UpperMs": 32
+          },
+          "gcPauseMs": {
+            "count": 3669,
+            "sum": 1262.2976999916136,
+            "max": 21.453874999657273,
+            "buckets": [
+              134,
+              1798,
+              1452,
+              152,
+              78,
+              42,
+              12,
+              0,
+              1,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.3440440719519252,
+            "p95UpperMs": 1
+          },
+          "dispatchMs": {
+            "count": 65501,
+            "sum": 16441.52152099328,
+            "max": 34.62691700000141,
+            "buckets": [
+              59289,
+              1536,
+              675,
+              1036,
+              991,
+              1050,
+              466,
+              207,
+              249,
+              2,
+              0,
+              0
+            ],
+            "mean": 0.2510117634996913,
+            "p95UpperMs": 1
+          },
+          "movementValidationMs": {
+            "count": 20730,
+            "sum": 9327.702581998092,
+            "max": 34.62225000000035,
+            "buckets": [
+              16861,
+              437,
+              550,
+              794,
+              802,
+              652,
+              407,
+              203,
+              23,
+              1,
+              0,
+              0
+            ],
+            "mean": 0.4499615331402842,
+            "p95UpperMs": 4
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 83,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 23,
+        "arrivalGapP95Ms": 116,
+        "arrivalGapMaxMs": 174,
+        "companionMessages": 12122708,
+        "missingCompanions": 0
+      },
+      "clientErrors": {
+        "11": {
+          "That destination is unreachable": 2
+        },
+        "66": {
+          "Walk closer to interact": 1
+        },
+        "76": {
+          "That destination is unreachable": 1
+        },
+        "148": {
+          "That destination is unreachable": 1
+        }
+      },
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 4,
+      "serverErrorChunks": 399
+    },
+    {
+      "source": "assays/multiplayer-2-15s.json",
+      "sha256": "b80bf53d51f9de18890e8ff0ea72cc6527f1434adf13a5f8ff952319d718105d",
+      "users": 2,
+      "durationSeconds": 15.12,
+      "passed": true,
+      "summary": {
+        "observedPlayersMin": 2,
+        "observedPlayersMax": 2,
+        "processTreeCpuMeanCores": 0.015295633702398378,
+        "processTreeCpuP95Cores": 0.01599680063987204,
+        "processTreeRssMaxBytes": 330612736,
+        "cpuMeanCores": 0.01640029358275904,
+        "cpuP95Cores": 0.017676089784625724,
+        "rssMaxBytes": 124944384,
+        "heapMaxBytes": 14137360,
+        "heapStartBytes": 13848024,
+        "heapEndBytes": 14137360,
+        "eventLoopP99MaxMs": 13.238271,
+        "rates": {
+          "inboundMessages": 3.379515880978487,
+          "inboundBytes": 210.72275493159978,
+          "outboundMessages": 41.548165830853165,
+          "outboundBytes": 24855.643521915394,
+          "actorUpdates": 19.879505182226396,
+          "companionUpdates": 19.879505182226396,
+          "databaseQueries": 7.753007021068294,
+          "gcEvents": 0.8945777332001877
+        },
+        "timing": {
+          "movementValidationMs": {
+            "count": 10,
+            "sum": 2.580582000002323,
+            "max": 1.162665999996534,
+            "buckets": [
+              4,
+              4,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.25805820000023233,
+            "p95UpperMs": 2
+          },
+          "dispatchMs": {
+            "count": 34,
+            "sum": 8.766625999996904,
+            "max": 3.85320800000045,
+            "buckets": [
+              24,
+              4,
+              4,
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.25784194117637954,
+            "p95UpperMs": 2
+          },
+          "tickIntervalMs": {
+            "count": 100,
+            "sum": 10067,
+            "max": 102,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              100,
+              0
+            ],
+            "mean": 100.67,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 200,
+            "sum": 15.495498000032967,
+            "max": 8.026208999996015,
+            "buckets": [
+              191,
+              3,
+              5,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.07747749000016484,
+            "p95UpperMs": 0.125
+          },
+          "roomTickDurationMs": {
+            "count": 160,
+            "sum": 53.867542999985744,
+            "max": 8.5533329999962,
+            "buckets": [
+              41,
+              50,
+              48,
+              18,
+              1,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.3366721437499109,
+            "p95UpperMs": 1
+          },
+          "tickDurationMs": {
+            "count": 100,
+            "sum": 57.62907800004177,
+            "max": 8.629791999999725,
+            "buckets": [
+              1,
+              25,
+              31,
+              39,
+              2,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.5762907800004178,
+            "p95UpperMs": 1
+          },
+          "gcPauseMs": {
+            "count": 9,
+            "sum": 4.356292001903057,
+            "max": 0.9408749975264072,
+            "buckets": [
+              0,
+              0,
+              6,
+              3,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.48403244465589523,
+            "p95UpperMs": 1
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 0,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 2,
+        "arrivalGapP95Ms": 102,
+        "arrivalGapMaxMs": 140,
+        "companionMessages": 496,
+        "missingCompanions": 0
+      },
+      "clientErrors": {},
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 0,
+      "serverErrorChunks": 0
+    },
+    {
+      "source": "assays/multiplayer-25-300s.json",
+      "sha256": "7e86e4955d5d17c8ebc0b9203fb9a70ddd6373ef12dae71b534079d97197adb0",
+      "users": 25,
+      "durationSeconds": 300.123,
+      "passed": false,
+      "summary": {
+        "observedPlayersMin": 25,
+        "observedPlayersMax": 25,
+        "processTreeCpuMeanCores": 0.07669294582415824,
+        "processTreeCpuP95Cores": 0.832999599519424,
+        "processTreeRssMaxBytes": 783990784,
+        "cpuMeanCores": 0.03541310334865762,
+        "cpuP95Cores": 0.13432645938976834,
+        "rssMaxBytes": 231358464,
+        "heapMaxBytes": 50253384,
+        "heapStartBytes": 19447960,
+        "heapEndBytes": 49919256,
+        "eventLoopP99MaxMs": 30.146559,
+        "rates": {
+          "actorUpdates": 248.36116069977376,
+          "companionUpdates": 248.36116069977376,
+          "outboundMessages": 1959.312803181387,
+          "outboundBytes": 1297311.5019722756,
+          "inboundMessages": 38.65383815783662,
+          "inboundBytes": 2504.685352899691,
+          "databaseQueries": 107.73397708004731,
+          "disconnects": 0.0576063161815747,
+          "connects": 0.0576063161815747,
+          "droppedUpdates": 0.013554427336841104
+        },
+        "timing": {
+          "tickIntervalMs": {
+            "count": 2932,
+            "sum": 295144,
+            "max": 147,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2930,
+              2
+            ],
+            "mean": 100.66302864938608,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 73293,
+            "sum": 467.4059839988113,
+            "max": 3.6459170000161976,
+            "buckets": [
+              72709,
+              292,
+              223,
+              57,
+              10,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.00637722543761084,
+            "p95UpperMs": 0.125
+          },
+          "roomTickDurationMs": {
+            "count": 14491,
+            "sum": 4088.9465440001295,
+            "max": 60.82395899999392,
+            "buckets": [
+              6681,
+              3790,
+              1237,
+              2121,
+              622,
+              27,
+              9,
+              2,
+              1,
+              1,
+              0,
+              0
+            ],
+            "mean": 0.28217145428197704,
+            "p95UpperMs": 1
+          },
+          "tickDurationMs": {
+            "count": 2932,
+            "sum": 4135.337774999636,
+            "max": 101.26370799999859,
+            "buckets": [
+              0,
+              0,
+              0,
+              359,
+              2418,
+              143,
+              8,
+              1,
+              2,
+              0,
+              1,
+              0
+            ],
+            "mean": 1.4104153393586754,
+            "p95UpperMs": 4
+          },
+          "dispatchMs": {
+            "count": 11407,
+            "sum": 2204.650576998916,
+            "max": 27.71349999998347,
+            "buckets": [
+              10503,
+              152,
+              86,
+              220,
+              198,
+              115,
+              80,
+              42,
+              11,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.19327172586998476,
+            "p95UpperMs": 1
+          },
+          "movementValidationMs": {
+            "count": 3620,
+            "sum": 1845.2977970000502,
+            "max": 27.69216599999345,
+            "buckets": [
+              2972,
+              98,
+              71,
+              116,
+              132,
+              100,
+              78,
+              42,
+              11,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.5097507726519476,
+            "p95UpperMs": 4
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 18,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 3,
+        "arrivalGapP95Ms": 102,
+        "arrivalGapMaxMs": 150,
+        "companionMessages": 535479,
+        "missingCompanions": 0
+      },
+      "clientErrors": {},
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 0,
+      "serverErrorChunks": 0
+    },
+    {
+      "source": "assays/multiplayer-40-300s.json",
+      "sha256": "a705fcce3058476f1cc8ec7d2bb1f01546bcb241e11146a1d93d16390e095761",
+      "users": 40,
+      "durationSeconds": 300.088,
+      "passed": false,
+      "summary": {
+        "observedPlayersMin": 40,
+        "observedPlayersMax": 40,
+        "processTreeCpuMeanCores": 0.10891479346819175,
+        "processTreeCpuP95Cores": 0.8679999999999992,
+        "processTreeRssMaxBytes": 801832960,
+        "cpuMeanCores": 0.05770766763807242,
+        "cpuP95Cores": 0.15680610673513976,
+        "rssMaxBytes": 295534592,
+        "heapMaxBytes": 109068104,
+        "heapStartBytes": 23647608,
+        "heapEndBytes": 48086952,
+        "eventLoopP99MaxMs": 30.097407,
+        "rates": {
+          "actorUpdates": 395.7912125846036,
+          "companionUpdates": 395.7912125846036,
+          "outboundMessages": 4716.7497468778265,
+          "outboundBytes": 3162007.21030115,
+          "inboundMessages": 61.42955079640133,
+          "inboundBytes": 3969.526330335679,
+          "disconnects": 0.0610025330649467,
+          "databaseQueries": 172.2948765827125,
+          "connects": 0.0610025330649467,
+          "droppedUpdates": 0.07455865152382375
+        },
+        "timing": {
+          "tickIntervalMs": {
+            "count": 2920,
+            "sum": 295128,
+            "max": 144,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2919,
+              1
+            ],
+            "mean": 101.07123287671233,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 116786,
+            "sum": 731.0369659945645,
+            "max": 10.303583000000799,
+            "buckets": [
+              115796,
+              504,
+              395,
+              73,
+              15,
+              2,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.006259628431443533,
+            "p95UpperMs": 0.125
+          },
+          "roomTickDurationMs": {
+            "count": 14600,
+            "sum": 8089.574288002477,
+            "max": 29.82908400002634,
+            "buckets": [
+              2429,
+              4249,
+              3896,
+              1584,
+              1550,
+              867,
+              20,
+              4,
+              1,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.5540804306851012,
+            "p95UpperMs": 4
+          },
+          "tickDurationMs": {
+            "count": 2920,
+            "sum": 8145.624037000191,
+            "max": 32.11050000000978,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              188,
+              2580,
+              148,
+              1,
+              2,
+              1,
+              0,
+              0
+            ],
+            "mean": 2.789597272945271,
+            "p95UpperMs": 8
+          },
+          "movementValidationMs": {
+            "count": 5684,
+            "sum": 2661.653017999146,
+            "max": 21.921583999996074,
+            "buckets": [
+              4638,
+              135,
+              123,
+              203,
+              207,
+              192,
+              126,
+              52,
+              8,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.4682711150596668,
+            "p95UpperMs": 4
+          },
+          "dispatchMs": {
+            "count": 18126,
+            "sum": 3322.4579970058403,
+            "max": 21.92491699999664,
+            "buckets": [
+              16638,
+              239,
+              143,
+              339,
+              352,
+              215,
+              137,
+              54,
+              9,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.18329791443262938,
+            "p95UpperMs": 1
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 19,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 5,
+        "arrivalGapP95Ms": 103,
+        "arrivalGapMaxMs": 152,
+        "companionMessages": 1326162,
+        "missingCompanions": 0
+      },
+      "clientErrors": {
+        "35": {
+          "That destination is unreachable": 1
+        },
+        "36": {
+          "That destination is unreachable": 1
+        }
+      },
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 2,
+      "serverErrorChunks": 0
+    },
+    {
+      "source": "assays/multiplayer-75-300s.json",
+      "sha256": "68eb6e3ded9b253d552c8e9f1f7318f4635a93f4b887e1dd629e4478a7b0e588",
+      "users": 75,
+      "durationSeconds": 300.316,
+      "passed": false,
+      "summary": {
+        "observedPlayersMin": 75,
+        "observedPlayersMax": 75,
+        "processTreeCpuMeanCores": 0.23301919199485352,
+        "processTreeCpuP95Cores": 1.0267678785457452,
+        "processTreeRssMaxBytes": 876838912,
+        "cpuMeanCores": 0.12261589861208291,
+        "cpuP95Cores": 0.2145549327014695,
+        "rssMaxBytes": 305610752,
+        "heapMaxBytes": 110186760,
+        "heapStartBytes": 18953336,
+        "heapEndBytes": 45752416,
+        "eventLoopP99MaxMs": 31.604735,
+        "rates": {
+          "actorUpdates": 743.4396110109076,
+          "companionUpdates": 743.4396110109076,
+          "outboundMessages": 15010.567638336648,
+          "outboundBytes": 10163285.643073991,
+          "databaseQueries": 310.9814079976479,
+          "gcEvents": 5.279538441340881,
+          "inboundMessages": 114.0366757368267,
+          "inboundBytes": 7386.964926395528,
+          "droppedUpdates": 0.29462465965147955,
+          "disconnects": 0.1523920653369722,
+          "connects": 0.1523920653369722
+        },
+        "timing": {
+          "tickIntervalMs": {
+            "count": 2928,
+            "sum": 295254,
+            "max": 195,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2925,
+              3
+            ],
+            "mean": 100.83811475409836,
+            "p95UpperMs": 128
+          },
+          "companionFollowMs": {
+            "count": 219531,
+            "sum": 1197.5448940133501,
+            "max": 12.490875000017695,
+            "buckets": [
+              217924,
+              828,
+              628,
+              135,
+              9,
+              5,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.005455014981999582,
+            "p95UpperMs": 0.125
+          },
+          "roomTickDurationMs": {
+            "count": 15169,
+            "sum": 22519.459469989335,
+            "max": 54.45141799998237,
+            "buckets": [
+              616,
+              715,
+              2723,
+              5859,
+              2183,
+              1441,
+              1453,
+              167,
+              8,
+              4,
+              0,
+              0
+            ],
+            "mean": 1.4845711299353508,
+            "p95UpperMs": 8
+          },
+          "tickDurationMs": {
+            "count": 2928,
+            "sum": 22602.94854800118,
+            "max": 70.43283399997745,
+            "buckets": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2088,
+              812,
+              21,
+              5,
+              2,
+              0
+            ],
+            "mean": 7.719586252732643,
+            "p95UpperMs": 16
+          },
+          "gcPauseMs": {
+            "count": 1559,
+            "sum": 506.01730201300234,
+            "max": 6.459416000172496,
+            "buckets": [
+              52,
+              811,
+              586,
+              58,
+              30,
+              19,
+              3,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "mean": 0.32457812829570387,
+            "p95UpperMs": 1
+          },
+          "dispatchMs": {
+            "count": 33674,
+            "sum": 7252.298060994828,
+            "max": 527.8153750000056,
+            "buckets": [
+              30817,
+              755,
+              304,
+              475,
+              558,
+              379,
+              238,
+              126,
+              18,
+              2,
+              0,
+              2
+            ],
+            "mean": 0.21536788207503796,
+            "p95UpperMs": 1
+          },
+          "movementValidationMs": {
+            "count": 10710,
+            "sum": 4419.317267998733,
+            "max": 42.613540999998804,
+            "buckets": [
+              9019,
+              243,
+              229,
+              310,
+              308,
+              285,
+              215,
+              85,
+              14,
+              2,
+              0,
+              0
+            ],
+            "mean": 0.4126346655461002,
+            "p95UpperMs": 4
+          }
+        }
+      },
+      "clients": {
+        "wrongCompanions": 0,
+        "unexpectedDisconnects": 0,
+        "reconnects": 46,
+        "lateUpdates": 0,
+        "snapshotLatencyP95Ms": 10,
+        "arrivalGapP95Ms": 105,
+        "arrivalGapMaxMs": 179,
+        "companionMessages": 4336843,
+        "missingCompanions": 0
+      },
+      "clientErrors": {
+        "29": {
+          "Walk closer to interact": 1
+        },
+        "46": {
+          "That path is blocked": 1
+        }
+      },
+      "follow": [
+        {
+          "species": "Moonfox",
+          "passed": true
+        },
+        {
+          "species": "Woodland Deer",
+          "passed": true
+        }
+      ],
+      "cleanup": {
+        "players": 0,
+        "rooms": 0,
+        "connections": 0,
+        "companions": 0,
+        "adventureStates": 0,
+        "adventureInstances": 0
+      },
+      "harnessErrorCount": 1,
+      "serverErrorChunks": 0
+    }
+  ],
+  "diskIncident": {
+    "type": "checkpoint-storage-exhaustion",
+    "measuredRuns": [
+      "multiplayer-150-300s.json",
+      "multiplayer-150-1800s.json"
+    ],
+    "availableBytesApproxAtFailure": 134217728,
+    "error": "OSError: [Errno 28] No space left on device",
+    "obsoleteTestVersionsRemoved": 1468,
+    "bytesFreedApprox": 10948466490.474497,
+    "referencedCheckpointKeysPreserved": 156,
+    "medianLifeMiB": 6.23,
+    "estimated150PetWritesGiBPerHour": 10.9,
+    "productionRetentionResolved": false,
+    "harnessStorageIsolatedAfterIncident": true,
+    "scope": "Only unreferenced test versions older than five minutes in this worktree data/checkpoints; all PostgreSQL-referenced keys preserved."
+  },
+  "knownHarnessFailures": {
+    "scope": "Preliminary attempts; never use as capacity support evidence",
+    "failures": [
+      {
+        "stage": "native environment",
+        "issue": "Python runtime absent/3.9 incompatible",
+        "resolution": "Used existing Python 3.12 with cadence-net 0.74.0; subsequent native ticks enabled"
+      },
+      {
+        "stage": "movement harness",
+        "issue": "Movement sequence reset across rooms caused moveAccepted timeout",
+        "resolution": "Preserve monotonic sequence and reject pending move waiters on moveRejected"
+      },
+      {
+        "stage": "10-user preliminary smoke",
+        "issue": "One 118.25 ms authoritative movement pass; browser probe produced missing-build/favicon errors; emote scheduler violated cooldown",
+        "evidence": "multiplayer-10-300s-preliminary.json",
+        "resolution": "Retained failed result; built presentation; separated observer; added cooldown and follow timing"
+      },
+      {
+        "stage": "25-user preliminary aggregation",
+        "issue": "Math.max(...250000 samples) exceeded call stack; completed windows were not saved by the initial harness",
+        "resolution": "Reduction without argument spreading; fatal failures now save raw windows to an assay; rerun required"
+      },
+      {
+        "stage": "first 150-user long attempt",
+        "issue": "Stopped shortly after startup to avoid losing the run to the same aggregation bug",
+        "resolution": "Stopped only harness-owned processes and removed only its generated schema; restarted corrected harness"
+      },
+      {
+        "stage": "post-suite follow rechecks",
+        "issue": "Short scripted follow retries timed out; one captured host-clock gap exceeded 16 minutes while the last owner snapshot was still moving. No completed load windows.",
+        "evidence": [
+          "multiplayer-2-15s-failure-1791288522811.json",
+          "multiplayer-2-15s-failure-1791292646232.json"
+        ],
+        "resolution": "Preserve raw timeout diagnostics; add 10-second application pings during account setup/follow as well as load. Host suspension is not a reliable soak environment."
+      }
+    ]
+  },
+  "presentation": {
+    "host": "Local Codex in-app browser on same development host as concurrent server runs",
+    "protocol": "39 independent authenticated Node actors plus devuser browser observer and its adopted Mochi, real WebSocket Town instance; synthetic Animation crowd remained zero",
+    "serverHz": 10,
+    "dpr": 2,
+    "samples": [
+      {
+        "at": "2026-10-06T09:24:23.549Z",
+        "players": 40,
+        "companions": 40,
+        "entities": 98,
+        "fps": 20,
+        "frameP95Ms": 66.3,
+        "cpuUpdateMs": 1.2,
+        "draws": 2,
+        "triangles": 6098,
+        "interpolationMs": 132,
+        "arrivalMaxMs": 115,
+        "remoteSpeed": 176.3,
+        "hardSnaps": 0
+      },
+      {
+        "at": "2026-10-06T09:26:11.434Z",
+        "phase": "After load actors had left; population HUD still said 40",
+        "entities": 20,
+        "fps": 60,
+        "frameP95Ms": 17.6,
+        "cpuUpdateMs": 0.3,
+        "draws": 1,
+        "triangles": 1574,
+        "hardSnaps": 0
+      }
+    ],
+    "sustained60FpsAt40": false,
+    "limits": [
+      "One loaded diagnostic sample, not a sustained renderer trace",
+      "DPR2 differs from earlier DPR1 synthetic controls",
+      "Browser visibility/focus and concurrent development-host load were not controlled",
+      "No browser heap/GPU memory measurement",
+      "The population HUD was stale after actors left; do not use it alone to certify crowd size"
+    ]
+  }
+}

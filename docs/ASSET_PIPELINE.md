@@ -239,3 +239,14 @@ Appearance sheets precompose synchronized existing equipment placeholders with
 painted base outfits; local cells192px, NPC/remote128px, maximum eight caches.
 No cloth simulation or additional procedural legs. Future cosmetic layers must
 export identical direction/frame/canvas/pivot registration before compositing.
+
+### Gameplay action atlases v1
+
+See [ACTION_ANIMATION_DELIVERY.md](ACTION_ANIMATION_DELIVERY.md) for action
+state/event contracts, provisional generated art, aliases, validation and renderer
+performance. Action/reaction PNG siblings use the same 224px logical canvas,
+(.5,.88) ground pivot and (.5,.12) logical head anchor. `tools/register-actions.mjs`
+registers source pixels without editing PNGs. Optional action exports provide
+`states` (direction → eight source-frame indices), `requiredStates`, `height`,
+`mirrors`, `sourceSize`, `spriteSourceSize` and `pivot`; loader failures retain
+compatible locomotion. Renderer decisions remain exclusively authoritative.

@@ -22,9 +22,18 @@ Home instances are owner/accepted-friend only. Presence is ephemeral and restart
 membership. Multi-process deployment needs Redis/pubsub, distributed room assignment,
 session revalidation and rate counters; the store boundary is present but Redis is not implemented.
 
-## Current3D presentation
+## Current presentation
 
-The main world now uses React Three Fiber/Three.js. The previous Phaser section is
-historical. See [3D_DELIVERY.md](3D_DELIVERY.md) for implemented scope and limits and
-[ASSET_PIPELINE.md](ASSET_PIPELINE.md) for models/rigs. Domain services and Cadence
-contracts remain preserved. Build with `npm run build` before serving/deploying.
+The main world uses PixiJS painterly isometric rendering. Three.js/React Three
+Fiber and Phaser documentation describes historical prototypes. See
+[ASSET_PIPELINE.md](ASSET_PIPELINE.md) for current sprite registration and
+[ACTION_ANIMATION_DELIVERY.md](ACTION_ANIMATION_DELIVERY.md) for presentation
+contracts. Build with `npm run build` before serving.
+
+## Real load and soak
+
+`npm run bench:multiplayer` runs persisted independent accounts through `/socket`
+against the actual server and PostgreSQL. See [MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md)
+for five-minute/30-minute/multi-hour profiles, measured results, failures, resource
+sizing limits and companion acceptance. IPC metrics are opt-in and have no public
+endpoint. Server authority and the default 10 Hz movement cadence remain unchanged.

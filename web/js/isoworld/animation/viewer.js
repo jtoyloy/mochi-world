@@ -1,7 +1,20 @@
-import { AnimationPlayback, DIRECTIONS8, directionIndex } from "./registry.js";
+import {
+  AnimationPlayback,
+  DIRECTIONS8,
+  directionIndex,
+  STATES,
+  ACTION_STATES,
+} from "./registry.js";
+import { selectTexture, stateFrames } from "./atlas.js";
 import { Gait } from "../../game/locomotion/core.js";
 // Development-only atlas playback. Identical profile/state selection as world actors.
-export function openAnimationViewer(atlases, gestures = []) {
+export function openAnimationViewer(
+  atlases,
+  gestures = [],
+  actions = [],
+  mobs = {},
+) {
+  atlases = [...atlases, ...Object.values(mobs)];
   const d = document.createElement("dialog");
   d.className = "world-dialog";
   d.innerHTML =
@@ -32,14 +45,7 @@ export function openAnimationViewer(atlases, gestures = []) {
       atlases.map((a) => a.set.id),
     ),
     direction = select("Animation direction", DIRECTIONS8),
-    state = select("Animation state", [
-      "walk",
-      "idle",
-      "talk",
-      "vendor-idle",
-      "gesture",
-      "trot",
-    ]),
+    state = select("Animation state", STATES),
     speed = select("Animation speed", ["50%", "100%", "150%"]),
     guides = select("Show animation anchors", ["yes", "no"]);
   const close = document.createElement("button");
@@ -56,6 +62,11 @@ export function openAnimationViewer(atlases, gestures = []) {
     art = atlases.find((a) => a.set.id === body.value);
     gait = new Gait(art.set.strideDistance);
     playback = new AnimationPlayback(art.set);
+    state.onchange?.();
+  };
+  state.onchange = () => {
+    playback.clearAction();
+    if (ACTION_STATES[state.value]) playback.play(state.value);
   };
   const cross = (ctx, x, y, color) => {
     ctx.strokeStyle = color;
@@ -76,16 +87,16 @@ export function openAnimationViewer(atlases, gestures = []) {
     const angle = (logical * Math.PI) / 4;
     gait.update(Math.cos(angle) * v * dt, Math.sin(angle) * v * dt, dt);
     gait.facing = logical;
-    playback.update(gait, v, dt, state.value);
+    if (ACTION_STATES[state.value] && !playback.action)
+      playback.play(state.value);
+    playback.update(gait, v, (dt * parseInt(speed.value)) / 100, state.value);
     const di = directionIndex(set, logical),
-      active = ["talk", "gesture"].includes(playback.state)
-        ? (gestures[atlases.indexOf(art)] ?? art)
-        : art,
-      row = active.rows[di],
-      frames = ["walk", "trot", "settle"].includes(playback.state)
-        ? row.walk
-        : row.idle,
-      t = frames[playback.frame],
+      active = playback.action
+        ? (actions[atlases.indexOf(art)] ?? art)
+        : ["talk", "gesture"].includes(playback.state)
+          ? (gestures[atlases.indexOf(art)] ?? art)
+          : art,
+      t = selectTexture(active, playback, di),
       f = t.frame,
       ctx = canvas.getContext("2d"),
       scale = 1.8,
@@ -95,7 +106,7 @@ export function openAnimationViewer(atlases, gestures = []) {
     ctx.fillStyle = "#e7ddc7";
     ctx.fillRect(0, 0, 640, 420);
     ctx.save();
-    if (active.metadata.mirrors[di]) {
+    if (active.metadata.mirrors?.[di]) {
       ctx.translate(640, 0);
       ctx.scale(-1, 1);
     }
@@ -129,7 +140,11 @@ export function openAnimationViewer(atlases, gestures = []) {
         "#3568b2",
       );
     }
-    info.textContent = `${set.id} · ${direction.value} → ${set.directions[di]} art · ${playback.state} · frame ${playback.frame} · phase ${playback.phase.toFixed(3)} · stride ${playback.state === "trot" ? set.trotStrideDistance : set.strideDistance} · speed ${v} · ground ${set.footAnchor.x},${set.footAnchor.y} · cell ${set.cell.join("×")}`;
+    const displayed =
+      Object.entries(active.rows[di]).find(
+        ([, frames]) => frames === stateFrames(active, playback.state, di),
+      )?.[0] ?? "idle";
+    info.textContent = `${set.id} · ${direction.value} → ${set.directions[di]} art · ${playback.state} · painted ${displayed} · frame ${playback.frame} · phase ${playback.phase.toFixed(3)} · stride ${playback.state === "trot" ? set.trotStrideDistance : set.strideDistance} · speed ${v} · ground ${set.footAnchor.x},${set.footAnchor.y} · cell ${set.cell.join("×")}`;
     raf = requestAnimationFrame(tick);
   };
   raf = requestAnimationFrame(tick);

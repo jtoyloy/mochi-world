@@ -297,6 +297,7 @@ export function adventureUI({
         notice(`Gathered ${RESOURCE_NAMES[result.itemId]} · +${result.xp} XP`);
         bridge.scene.audio.cue(result.kind);
       } catch (e) {
+        bridge.scene.gatherCancelled = start.id;
         notice(e.message);
       } finally {
         gather = null;

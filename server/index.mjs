@@ -1,3 +1,4 @@
+import { RuntimeMetrics } from "./world/runtime-metrics.mjs";
 import { AdventureService } from "./adventure/service.mjs";
 import { AvatarService } from "./social/avatar.mjs";
 import { DialogueService } from "./social/dialogue.mjs";
@@ -30,6 +31,7 @@ const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL }),
   store = new BrainRepository(service),
   competitions = new Competitions(service),
   root = resolve("web");
+const runtimeMetrics = process.env.MULTIPLAYER_METRICS === "true" ? new RuntimeMetrics(pool) : null;
 const dev = process.env.DEV_MODE === "true";
 const avatars = new AvatarService(service),
   dialogue = new DialogueService(service),
@@ -669,6 +671,7 @@ const server = createServer(async (req, res) => {
 });
 multiplayer = new Multiplayer({
   server,
+  metrics: runtimeMetrics,
   world: service,
   avatars,
   dialogue,
@@ -688,6 +691,9 @@ multiplayer = new Multiplayer({
     return row.user_id;
   },
 });
+if (runtimeMetrics) process.on("message", message => {
+  if (message === "runtimeMetrics") process.send?.({ runtimeMetrics: runtimeMetrics.sample(multiplayer, adventure) });
+});
 multiplayer.adventure = adventure;
 adventure.attach(multiplayer);
 server.listen(
@@ -700,6 +706,7 @@ server.listen(
 );
 for (const signal of ["SIGINT", "SIGTERM"])
   process.on(signal, async () => {
+    runtimeMetrics?.close();
     adventure.close();
     multiplayer.close();
     server.close();

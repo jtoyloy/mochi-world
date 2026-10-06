@@ -4,7 +4,9 @@ import { randomUUID, createHash } from "node:crypto";
 import { GameError } from "./service.mjs";
 /** Checkpoint keys are opaque; paths never leave the server. Replace this adapter for S3/R2. */
 export class FileCheckpointStorage {
-  constructor(directory = resolve("data/checkpoints")) {
+  constructor(
+    directory = process.env.CHECKPOINT_DIRECTORY ?? resolve("data/checkpoints"),
+  ) {
     this.directory = directory;
   }
   async write(mochiId, version, bytes) {

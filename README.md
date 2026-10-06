@@ -107,15 +107,18 @@ See [social-world delivery](docs/SOCIAL_WORLD_DELIVERY.md), [architecture](docs/
 [token payments](docs/TOKEN_PAYMENTS.md), [treasury](docs/TREASURY.md), and [deployment](docs/DEPLOYMENT.md).
 No neural mechanism or published brain pack was changed; measured behavior stays in STATUS.md.
 
-## 3D world development
+## World development
 
-The primary world is React Three Fiber, bundled by Vite; backend domain panels are retained
-inside React dialog shells. Run `npm run build` after frontend changes, or run
-`npm run build:watch` in a second terminal while `npm start` serves the app.
-`npm run assets:models` regenerates the original rigged prototype GLBs; it is optional
-because exported models are included. See docs/ASSET_PIPELINE.md and docs/3D_DELIVERY.md.
-WebGL2 is the tested renderer. WebGPU, production artist animation and large-room
-GPU benchmarks remain future work. No Phaser runtime is loaded by the main world.
+The primary world uses PixiJS for a painterly isometric presentation, bundled by
+Vite. The server owns movement and gameplay outcomes; sprite animation presents
+accepted events. Run `npm run build` after frontend changes, or run
+`npm run build:watch` while `npm start` serves the app.
+See [the asset pipeline](docs/ASSET_PIPELINE.md) and
+[action animation delivery](docs/ACTION_ANIMATION_DELIVERY.md).
+
+React Three Fiber/Three.js and `npm run assets:models` remain historical 3D
+prototype tooling. Exported prototype GLBs are included; they are not the primary
+world renderer. See [3D prototype delivery](docs/3D_DELIVERY.md).
 
 ## Adventure milestone
 

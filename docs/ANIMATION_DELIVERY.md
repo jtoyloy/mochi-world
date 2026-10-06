@@ -103,3 +103,12 @@ An isolated controller→Gait→AnimationPlayback integration test now covers bo
 species following in Yard, turning, catching up, settling idle and resuming.
 This passes using the existing follow controller and does not override the live
 browser-session limitation above.
+
+## Subsequent server-follow acceptance
+
+[MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md) records isolated authenticated server
+sessions for both current species, including unchanged owner/companion identity
+after transition. Momo's historical captured spawn was inside a collider; join
+and refresh now place the companion on walkable floor. This resolves a reproducible
+placement defect without changing the animation registry or assets. The new real
+40-player/40-companion browser sample still does not certify sustained 60 FPS.
