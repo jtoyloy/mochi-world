@@ -18,7 +18,7 @@ function fixture(decide) {
   game.multiplayer={store:{players,rooms},send(){}};
   game.save=async()=>{}; game.advancePoison=async()=>{};
   game.ownerAttack=async p=>events.push('owner:'+p.userId);
-  game.petAction=async p=>events.push('pet:'+p.userId);
+  game.petAction=async (p,_s,_m,_action,onExecuted)=>{onExecuted?.();events.push('pet:'+p.userId);};
   game.advanceEnemies=async()=>events.push('enemies');
   return {game,players,events};
 }
@@ -48,7 +48,7 @@ test('a slow room does not block another room motor, and departure skips a queue
     if(id==='a1') {started.resolve(); await slow.promise;}
     return {action:'WAIT',version:1};
   });
-  const motor=game.petAction; game.petAction=async p=>{await motor(p);if(p.userId==='b2')otherDone.resolve();};
+  const motor=game.petAction; game.petAction=async (...args)=>{await motor(...args);if(args[0].userId==='b2')otherDone.resolve();};
   const ticking=game.tick(); await started.promise; await otherDone.promise;
   assert.ok(events.includes('pet:b2')); assert.ok(!events.includes('pet:a1'));
   game.departure(players.get('a1'),'disconnect'); players.delete('a1');
@@ -65,7 +65,7 @@ test('a failed lane drains sibling motors and acknowledgements before releasing 
     return {action:'WAIT',version:1};
   });
   const motor=game.petAction;
-  game.petAction=async p=>{if(p.userId==='a1')throw Error('motor failed');await motor(p);};
+  game.petAction=async (...args)=>{if(args[0].userId==='a1')throw Error('motor failed');await motor(...args);};
   let next=false, completed=false;
   const ticking=game.serialize(()=>game.tick()); ticking.catch(()=>{}).finally(()=>completed=true);
   const following=game.serialize(()=>{next=true;});
