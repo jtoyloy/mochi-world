@@ -88,3 +88,21 @@ test('a queued actor changing rooms cannot execute in the destination room lane'
   assert.ok(!events.includes('owner:a2'));assert.ok(!events.includes('pet:a2'));
   assert.equal(events.at(-1),'enemies');
 });
+
+for(const stage of ['state','poison','pet-switch','progress','owner-attack'])
+test(`room changes during awaited ${stage} stop cross-lane work`,async()=>{
+  let fixtureData;
+  const {game,players,events}=fixture(async(id,_user,_obs,_reward,options)=>{
+    if(stage==='pet-switch'&&options.finish&&id==='old-a1')fixtureData.players.get('a1').room='b';
+    return options.execution||options.finish?{}:{action:'WAIT',version:1};
+  });
+  fixtureData={players};const moving=players.get('a1');
+  if(stage==='state') {const state=game.state.bind(game);game.state=async id=>{const s=await state(id);if(id==='a1')moving.room='b';return s;};}
+  if(stage==='poison') game.advancePoison=async p=>{if(p===moving)moving.room='b';};
+  if(stage==='pet-switch')Object.assign(game.states.get('a1'),{activePet:'old-a1',inBattle:true});
+  if(stage==='progress'){moving.roomId='exchange';game.progress=async user=>{if(user==='a1')moving.room='b';};}
+  if(stage==='owner-attack'){const owner=game.ownerAttack;game.ownerAttack=async p=>{await owner(p);if(p===moving)moving.room='b';};}
+  await game.tick();assert.ok(!events.includes('pet:a1'));
+  if(stage!=='owner-attack')assert.ok(!events.includes('owner:a1'));
+  assert.ok(events.includes('pet:b2'));assert.equal(events.at(-1),'enemies');
+});

@@ -759,7 +759,8 @@ export class AdventureService {
     await this.save(p.userId, s);
     this.effect(p, "victory", { targetId: m.id, loot, xp: m.xp });
   }
-  async petAction(p, s, m, action) {
+  async petAction(p, s, m, action, onExecuted = null) {
+    onExecuted?.();
     if (!BATTLE_ACTIONS.includes(action) || !p.companion || s.petHp <= 0)
       return;
     const now = this.service.now(),
@@ -897,6 +898,7 @@ export class AdventureService {
           if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
           if (s.pendingBattleRequest || s.battleExecution) continue;
           await this.advancePoison(p, s, now);
+          if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
           if (s.activePet !== (p.companion?.id ?? null)) {
             s.petVitals ??= {};
             if (s.activePet) {
@@ -943,6 +945,7 @@ export class AdventureService {
             await this.progress(p.userId, s, "tradingHall");
             await this.save(p.userId, s);
           }
+          if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
           const room = this.instance(p);
           let m = this.mob(p, s.target);
           if (!m) {
@@ -988,6 +991,7 @@ export class AdventureService {
           }
           if (m && s.hp > 0) {
             await this.ownerAttack(p, s, m, now);
+            if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
             if (
               m.hp > 0 &&
               p.companion &&
@@ -1025,11 +1029,21 @@ export class AdventureService {
                 if (!answer.unavailable) {
                   s.pendingBattleRequest = null;
                   const live = this.executionLive(encounter);
-                  // The body executes synchronously up to its first await. Its resulting
-                  // feedback belongs to this motor even if departure occurs during a hit save.
-                  if (live) await this.petAction(p, s, m, answer.action);
-                  s.battleExecution = {petId:encounter.petId, execution:live ? "ack" : "cancel",
+                  // Own a recoverable cancellation before entering the motor. The
+                  // production motor marks execution before its first body mutation,
+                  // so a failed hit save still credits the action the body executed.
+                  s.battleExecution = {petId:encounter.petId, execution:"cancel",
                     requestId:requestId + ":execution", expectedVersion:answer.version};
+                  if (live) {
+                    try {
+                      await this.petAction(p, s, m, answer.action, () => {
+                        s.battleExecution.execution = "ack";
+                      });
+                    } catch (error) {
+                      await this.save(p.userId, s);
+                      throw error;
+                    }
+                  }
                   const acknowledged = this.completeExecution(p.userId, s);
                   acknowledged.catch(() => {});
                   settlements.push(async () => {
