@@ -6,6 +6,9 @@ const requestId = id => {
   if(typeof id!=='string'||!/^[a-zA-Z0-9-]{16,80}$/.test(id)) throw new GameError('A unique commerce ID is required');
   return id;
 };
+const identifier = (value, name) => {
+  if(typeof value!=='string'||!/^[a-z0-9-]{1,80}$/.test(value))throw new GameError(`Invalid ${name}`);
+};
 const owned = row => Number(row?.quantity ?? 0);
 export class AdventureCommerce {
   constructor(service, {isActorLive = ()=>true}={}) {
@@ -50,7 +53,7 @@ export class AdventureCommerce {
     return result;
   }
   async buy(userId,{id,vendor,itemId,quantity=1},actor) {
-    requestId(id);integer(quantity,1,50);
+    requestId(id);identifier(vendor,'vendor');identifier(itemId,'item');integer(quantity,1,50);
     const request={kind:'buy',vendor,itemId,quantity};
     return this.service.transaction([userId],async tx=>{
       // An authenticated owner may recover a committed receipt after departure.
@@ -70,10 +73,12 @@ export class AdventureCommerce {
     });
   }
   async sell(userId,{id,vendor,items},actor) {
-    requestId(id);
+    requestId(id);identifier(vendor,'vendor');
     if(!items||typeof items!=='object'||Array.isArray(items)||!Object.keys(items).length||Object.keys(items).length>8)
       throw new GameError('Choose owned resources');
-    const selected=Object.fromEntries(Object.keys(items).sort().map(itemId=>[itemId,integer(items[itemId],1,999)]));
+    const selected=Object.fromEntries(Object.keys(items).sort().map(itemId=>{
+      identifier(itemId,'item');return [itemId,integer(items[itemId],1,999)];
+    }));
     const request={kind:'sell',vendor,items:selected};
     return this.service.transaction([userId],async tx=>{
       const prior=await this.receipt(tx,userId,id,request);if(prior)return prior;

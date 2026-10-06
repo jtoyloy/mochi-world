@@ -85,7 +85,7 @@ test('item, quantity, buyer and overflow validation cannot change inventory or p
  await assert.rejects(commerce.buy(user.id,{id:randomUUID(),vendor:'mage',itemId:'small-potion'},actor(user,COIN_SHOPS.mage)),/does not sell/);
  for(const items of [{softwood:0},{softwood:1.5},{softwood:1000},{'small-potion':1},[],{},null])
    await assert.rejects(commerce.sell(user.id,{id:randomUUID(),vendor:'wood',items},actor(user,COIN_BUYERS.wood)));
- await assert.rejects(commerce.sell(user.id,{id:randomUUID(),vendor:'__proto__',items:{softwood:1}},actor(user,COIN_BUYERS.wood)),/Walk/);
+ await assert.rejects(commerce.sell(user.id,{id:randomUUID(),vendor:'__proto__',items:{softwood:1}},actor(user,COIN_BUYERS.wood)),/Invalid vendor/);
  assert.equal(await coins(user),500);assert.equal(await quantity(user,'small-potion'),0);
 });
 
