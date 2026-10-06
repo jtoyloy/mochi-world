@@ -22,7 +22,11 @@ async function request(path, data) {
       : {},
   );
   const b = await r.json();
-  if (!r.ok) throw new Error(b.error ?? "Please try again");
+  if (!r.ok) {
+    const error = new Error(b.error ?? "Please try again");
+    error.status = r.status;
+    throw error;
+  }
   return b;
 }
 const btn = (text, fn) => {

@@ -1,16 +1,72 @@
 // Ordinary earned Coins are a separate game balance from optional SPL payments.
-export function commerceUI({ request, dialog, btn, element, notice, bridge, afterSale, openTokenShop, openTokenBuyer }) {
+export function commerceUI({ request, dialog, btn, element, notice, bridge, afterSale, openTokenShop, openTokenBuyer, storage }) {
+  try { storage ??= globalThis.sessionStorage; } catch { storage = null; }
   const itemId = (item) => item.id ?? item.itemId;
   const name = (item) => item.name ?? itemId(item).replaceAll("-", " ");
-  function operation(path) {
-    let attempt;
-    return async (payload) => {
-      const signature = JSON.stringify(payload);
-      if (attempt?.signature !== signature) attempt = { signature, id: crypto.randomUUID() };
-      const result = await request(path, { ...payload, id: attempt.id });
-      attempt = null;
+  const key = (owner) => "mochi:pending-commerce:" + owner;
+  function pending(owner) {
+    const raw = storage?.getItem(key(owner));
+    if (!raw) return null;
+    const receipt = JSON.parse(raw);
+    if (receipt.owner !== owner || receipt.payload?.expectedOwner !== owner || !["/api/adventure/commerce/buy", "/api/adventure/commerce/sell"].includes(receipt.path)
+      || typeof receipt.payload?.id !== "string" || typeof receipt.payload?.vendor !== "string")
+      throw new Error("Saved commerce receipt is invalid. Do not repeat the purchase; contact support.");
+    return receipt;
+  }
+  function ownerOf(catalog) {
+    if (typeof catalog.userId !== "string" || !catalog.userId)
+      throw new Error("Your account could not be verified for commerce.");
+    return catalog.userId;
+  }
+  function clear(receipt) {
+    if (pending(receipt.owner)?.payload.id === receipt.payload.id)
+      storage.removeItem(key(receipt.owner));
+  }
+  async function dispatch(receipt) {
+    // A stale panel must never replay another account's receipt after sign-in changes.
+    const current = await request("/api/adventure/commerce");
+    if (ownerOf(current) !== receipt.owner)
+      throw new Error("This receipt belongs to another account. Open the shop again after signing in.");
+    try {
+      const result = await request(receipt.path, receipt.payload);
+      clear(receipt);
       return result;
+    } catch (error) {
+      // Network errors, timeouts and server failures may follow a committed trade.
+      if (Number.isInteger(error.status) && error.status >= 400 && error.status < 500
+        && ![401, 408, 429].includes(error.status)) clear(receipt);
+      throw error;
+    }
+  }
+  function operation(path, owner) {
+    return async (payload) => {
+      payload = { ...payload, expectedOwner: owner };
+      const saved = pending(owner);
+      if (saved) {
+        const { id, ...original } = saved.payload;
+        if (saved.path !== path || JSON.stringify(original) !== JSON.stringify(payload))
+          throw new Error("Resolve your pending Coins transaction before starting another.");
+        return dispatch(saved);
+      }
+      const receipt = { owner, path, payload: { ...payload, id: crypto.randomUUID() } };
+      if (!storage) throw new Error("Browser storage is unavailable. Coins checkout cannot safely begin.");
+      storage.setItem(key(owner), JSON.stringify(receipt));
+      return dispatch(receipt);
     };
+  }
+  function recovery(d, catalog, reopen) {
+    const saved = pending(ownerOf(catalog));
+    if (!saved) return false;
+    d.append(element("p", "A Coins transaction has an unresolved response. Retry its saved receipt before buying or selling again."),
+      element("p", `Receipt ${saved.payload.id} · ${saved.path.endsWith("/buy") ? "purchase" : "sale"} · ${saved.payload.vendor}`),
+      btn("Retry saved Coins transaction", async () => {
+        const result = await dispatch(saved);
+        notice(result.message);
+        d.close();
+        if (saved.path.endsWith("/sell")) await afterSale?.();
+        await reopen();
+      }));
+    return true;
   }
   function heading(d, catalog) {
     d.append(element("p", `${catalog.coins} Coins · earned game currency`),
@@ -19,6 +75,7 @@ export function commerceUI({ request, dialog, btn, element, notice, bridge, afte
   async function shops() {
     const catalog = await request("/api/adventure/commerce"), d = dialog("Adventure shops · Coins");
     heading(d, catalog);
+    if (recovery(d, catalog, shops)) return;
     d.append(element("p", "Visit the merchants west of Town to buy. Gathering and monster loot can be sold for Coins."));
     for (const vendor of catalog.shops)
       d.append(btn(vendor.name, () => { d.close(); return shop(vendor.id); }));
@@ -30,13 +87,14 @@ export function commerceUI({ request, dialog, btn, element, notice, bridge, afte
     if (!vendor) throw new Error("This adventure shop is unavailable.");
     const d = dialog(vendor.name + " · Coins");
     heading(d, catalog);
+    if (recovery(d, catalog, () => shop(id))) return;
     d.append(element("p", "Stand near this merchant in Town to buy."));
     for (const item of vendor.items) {
       const quantity = element("input");
       quantity.type = "number"; quantity.min = 1; quantity.max = item.maxQuantity; quantity.value = 1;
       quantity.setAttribute("aria-label", name(item) + " purchase quantity");
       d.append(element("p", `${name(item)} · ${item.price} Coins each · level ${item.requiredLevel ?? 1} · owned ${item.owned}`), quantity);
-      const buy = operation("/api/adventure/commerce/buy");
+      const buy = operation("/api/adventure/commerce/buy", ownerOf(catalog));
       d.append(btn("Buy " + name(item) + " for Coins", async () => {
         const count = Number(quantity.value);
         if (!Number.isInteger(count) || count < 1 || count > item.maxQuantity) throw new Error("Choose a valid purchase quantity.");
@@ -56,6 +114,7 @@ export function commerceUI({ request, dialog, btn, element, notice, bridge, afte
     if (!vendor) throw new Error("This resource buyer is unavailable.");
     const d = dialog(vendor.name + " · Coins"), selected = {};
     heading(d, catalog);
+    if (recovery(d, catalog, () => buyer(id))) return;
     d.append(element("p", "Stand near the buyer in Town to sell. Choose Coins for wallet-free adventure upgrades."));
     const preview = element("p", "Choose resources to sell");
     const estimate = () => preview.textContent = "Sale value: " + vendor.items.reduce((total, item) => total + item.price * (selected[itemId(item)] ?? 0), 0) + " Coins";
@@ -73,7 +132,7 @@ export function commerceUI({ request, dialog, btn, element, notice, bridge, afte
       };
       d.append(element("p", `${name(item)} ×${item.owned} · ${item.price} Coins each`), field);
     }
-    const sell = operation("/api/adventure/commerce/sell");
+    const sell = operation("/api/adventure/commerce/sell", ownerOf(catalog));
     const complete = async (items) => {
       if (!Object.keys(items).length) throw new Error("Choose owned resources to sell.");
       const result = await sell({ vendor: id, items: { ...items } });
