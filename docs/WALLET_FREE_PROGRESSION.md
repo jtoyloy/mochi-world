@@ -10,12 +10,12 @@ purchases/resource rewards retain their existing accounting and fee rules.
 ## Server contract and integration
 
 `AdventureCommerce` exposes `catalog(userId)`, `buy(userId,input,actor)` and
-`sell(userId,input,actor)`. Mount GET `/api/adventure/commerce`, POST `/buy` and
+`sell(userId,input,actor)`. The integrated HTTP routes mount GET `/api/adventure/commerce`, POST `/buy` and
 POST `/sell` through the existing authenticated session and global Adventure queue.
 Pass `isActorLive: p => multiplayer.store.players.get(p.userId) === p` to the
 constructor. Apply `server/adventure/commerce-schema.sql` in the migration path.
 
-Buying takes `{id,vendor,itemId,quantity}`; selling takes `{id,vendor,items}`. Prices
+Buying takes `{id,vendor,itemId,quantity,expectedOwner}`; selling takes `{id,vendor,items,expectedOwner}`. The HTTP boundary requires `expectedOwner` to equal the authenticated account before replay or mutation, preventing an account switch from executing another account’s pending intent. Prices
 come exclusively from `web/js/game/commerce.js`. Town, actor ownership, finite
 coordinates, connection identity and 130-unit vendor range are checked before and
 during mutation. Consumables allow 1–50 per request, other goods one, resource
@@ -36,8 +36,7 @@ callers unchanged. Commerce passes `false`. When mock mode is enabled, an absent
 compatibility balance must be seeded from the **pre-trade** Coins balance before
 the soft Coin delta, so `TokenService.balance` cannot later turn newly earned Coins
 into test SPL through its legacy lazy initialization. No soft trade adds a mock
-SPL ledger credit or changes an existing mock SPL balance. This method patch is
-owned by the integration supervisor and excluded from the commerce module commit.
+SPL ledger credit or changes an existing mock SPL balance. The integrated method applies this baseline freeze before every soft delta.
 
 ## Initial pacing
 

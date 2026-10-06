@@ -23,3 +23,11 @@ Host has ~4GiB free versus documented ≥8.12GiB measured warm-run need and >26G
 ## 2026-10-06 — Account access and session ownership
 
 Use native salted scrypt password authentication independent of wallet linking; no external identity credential needed for the ordinary account loop. Never claim existing development usernames. Production Secure cookies require HTTPS. Hash stored bearer tokens; revalidate late socket admission and enforce expiry. Review found and fixed malformed-JSON password logging and pending-connect/logout races. Recovery/legacy migration remain explicit debt. Soft gameplay commerce will explicitly bypass mock token mirroring; it never grants SPL balances.
+
+## 2026-10-06 — Resource interruption and review branch
+
+The integrated JavaScript gate was interrupted when host free space fell to ~1GiB and swap usage reached ~7.9GiB. Stop owned heavy test/game/preview processes; keep the 3GiB floor and prior results. Use a draft integration PR for hosted exact-SHA validation, with main unchanged until its milestone gates and reviews pass. Do not mislabel the interrupted run or corrected-but-unrun commerce cases as passing.
+
+## 2026-10-06 — Ordinary Coins and durable trade identity
+
+Add separate ordinary Coins vendors/buyers so combat/gathering progression works without a wallet or funded token rewards. Atomic immutable receipts own each transaction. Persist ambiguous requests under their original account; bind every POST to expectedOwner at the authenticated HTTP boundary before replay or mutation. Freeze the legacy mock SPL baseline before soft Coins change. These changes require PostgreSQL and full browser acceptance before promotion.

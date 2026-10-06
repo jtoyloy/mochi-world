@@ -89,6 +89,14 @@ export class WorldService {
     { mirrorMockTokens = true } = {},
   ) {
     integer(Math.abs(amount), 0);
+    if (this.tokenConfig?.mock && !mirrorMockTokens) {
+      // Freeze the pre-commerce mock compatibility balance before soft Coins
+      // change; TokenService's lazy initial balance must never include this delta.
+      await tx.query(
+        "INSERT INTO mock_token_balances(user_id,amount_raw) SELECT id,coins::numeric*$2::numeric FROM users WHERE id=$1 ON CONFLICT DO NOTHING",
+        [userId, (10n ** BigInt(this.tokenConfig.decimals)).toString()],
+      );
+    }
     const result = await tx.query(
       "UPDATE users SET coins=coins+$2 WHERE id=$1 AND coins+$2>=0 RETURNING coins",
       [userId, amount],

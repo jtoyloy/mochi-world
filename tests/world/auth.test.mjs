@@ -30,7 +30,7 @@ before(async () => {
   const url = new URL(process.env.TEST_DATABASE_URL);
   url.searchParams.set('options', '-c search_path=' + schema);
   pool = new pg.Pool({ connectionString: url.href });
-  for (const file of ['server/schema.sql', 'server/world/schema.sql', 'server/social/schema.sql', 'server/adventure/schema.sql']) await pool.query(await readFile(file, 'utf8'));
+  for (const file of ['server/schema.sql', 'server/world/schema.sql', 'server/social/schema.sql', 'server/adventure/schema.sql', 'server/adventure/commerce-schema.sql']) await pool.query(await readFile(file, 'utf8'));
   for (const item of ITEMS) await pool.query('INSERT INTO items(id,data) VALUES($1,$2)', [item.id, item]);
   service = new WorldService(pool);
   auth = new AccountAuth(service, { now: () => now });
@@ -153,6 +153,18 @@ check('malformed account JSON never returns or logs credential fragments', async
   assert(!output.includes(secret));
   const large = await fetch(origin + '/api/auth/login', { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ password: 'a'.repeat(5000) }) });
   assert.equal(large.status, 413);
+});
+check('commerce retries cannot cross an authenticated account boundary', async () => {
+  const signed = await call('/api/auth/login', { username: 'http_auth', password });
+  const missing = await call('/api/adventure/commerce/buy', {
+    id: 'cross-account-receipt', vendor: 'apothecary', itemId: 'small-potion', quantity: 1,
+  }, signed.cookie);
+  assert.equal(missing.status, 401);
+  const wrong = await call('/api/adventure/commerce/buy', {
+    id: 'cross-account-receipt', vendor: 'apothecary', itemId: 'small-potion', quantity: 1,
+    expectedOwner: 'user-another-account',
+  }, signed.cookie);
+  assert.equal(wrong.status, 401);
 });
 
 class TestSocket extends EventEmitter {

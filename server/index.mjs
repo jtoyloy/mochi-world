@@ -1,6 +1,7 @@
 import { RuntimeMetrics } from "./world/runtime-metrics.mjs";
 import { AccountAuth } from "./world/auth.mjs";
 import { AdventureService } from "./adventure/service.mjs";
+import { AdventureCommerce } from "./adventure/commerce.mjs";
 import { AvatarService } from "./social/avatar.mjs";
 import { DialogueService } from "./social/dialogue.mjs";
 import { Multiplayer } from "./social/multiplayer.mjs";
@@ -49,6 +50,9 @@ service.tokenConfig = tokens.config;
 const adventure = new AdventureService(service);
 await adventure.init();
 let multiplayer;
+const commerce = new AdventureCommerce(service, {
+  isActorLive: actor => multiplayer?.store.players.get(actor.userId) === actor,
+});
 const history = new Map();
 let liveCache = null,
   liveAt = 0;
@@ -152,7 +156,7 @@ const server = createServer(async (req, res) => {
         req.headers.origin !== `https://${req.headers.host}`
       )
         throw new GameError("Cross-origin action refused", 403);
-      b = await body(req, path.startsWith("/api/auth/") ? 4096 : 30000000);
+      b = await body(req, path.startsWith("/api/auth/") || path.startsWith("/api/adventure/commerce/") ? 4096 : 30000000);
     }
     if (path.startsWith("/api/")) {
       if (path === "/api/auth/config" && req.method === "GET")
@@ -172,6 +176,17 @@ const server = createServer(async (req, res) => {
         return json(res, 200, { message: "Signed out on all devices." });
       }
       const user = await session(req, res);
+      if (path === "/api/adventure/commerce" && req.method === "GET")
+        return json(res, 200, await commerce.catalog(user));
+      if (["/api/adventure/commerce/buy", "/api/adventure/commerce/sell"].includes(path) && req.method === "POST") {
+        if (typeof b.expectedOwner !== "string" || b.expectedOwner !== user)
+          throw new GameError("Sign in to the original commerce account before retrying.", 401);
+        const actor = multiplayer.store.players.get(user);
+        // Owned receipts can be read again while offline. New transactions still
+        // require the exact live actor and authoritative vendor proximity.
+        return json(res, 200, await adventure.serialize(() =>
+          path.endsWith("/buy") ? commerce.buy(user, b, actor) : commerce.sell(user, b, actor)));
+      }
       if (path === "/api/adventure" && req.method === "GET")
         return json(res, 200, await adventure.status(user));
       if (path.startsWith("/api/adventure/") && req.method === "POST") {

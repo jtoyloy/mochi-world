@@ -6,18 +6,24 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 
 | Subsystem | Status | Evidence / next action |
 | --- | --- | --- |
-| Account/session | IN_PROGRESS | Dev-only base; implement real account flow |
-| Player combat/mobs/spells/equipment/inventory | FUNCTIONAL | Wave 4 tests; UI defects being fixed; complete live journeys open |
-| Fishing/woodcutting/vendors/progression | FUNCTIONAL | Authoritative code/tests; timer/supply UX and onboarding open |
+| Account/session | IN_PROGRESS | Salted scrypt, hashed sessions, revocation/expiry and account UI implemented; 11 targeted tests passed; returning/expiry browser acceptance open |
+| Player combat/mobs/spells/equipment/inventory | FUNCTIONAL | Equipment rollback/slots and all consumables repaired; handler checks pass; complete live journeys open |
+| Fishing/woodcutting/vendors/progression | FUNCTIONAL | Stale gather controls repaired; ordered server-backed guide and Coins vendors implemented; native commerce and live progression gates pending |
 | Movement/presence/reconnect | FUNCTIONAL | 42 movement tests historically; sustained capacity/WAN open |
 | Mochi persistence/personality/follow | FUNCTIONAL | Pack and checkpoint controls; full candidate playtest open |
 | Cadence battle | IN_PROGRESS | NO PROMOTION; measured context discrimination weak |
 | Cadence trading | FUNCTIONAL | PAPER only, separate persistent domain |
-| Adventure performance | IN_PROGRESS | Room lanes proposed; matched measurement and lifecycle gates required |
+| Adventure performance | IN_PROGRESS | Room lanes integrated; matched 25-actor motor p95 272–364ms versus 741–752ms baseline; 50/100/150 and sustained gates pending |
 | Wallet/economy | FUNCTIONAL | Test verification/ledger; real production reconciliation and review open |
-| Art/animation/world/UI | IN_PROGRESS | Provisional directions/mobs/cosmetics and fine-detail audit |
-| Audio/accessibility/responsive | IN_PROGRESS | Scope required; reduced motion audit underway |
-| 150 CCU/storage capacity | BLOCKED | No unsafe rerun with ~4GiB free; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Full independent release review and restore evidence required |
+| Art/animation/world/UI | IN_PROGRESS | Shared texture teardown fixed and browser remount verified; foliage candidate remains provisional; directions/mobs/cosmetics open |
+| Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
+| 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Dedicated PostgreSQL/native hosted workflow prepared; current exact-SHA hosted CI and restore evidence pending |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
+
+## Current integration evidence and limitations
+
+Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.
+
+The later full integrated JavaScript run was interrupted, not passed: free disk fell through the 3GiB safety floor to ~1GiB while concurrent tests, local game and browser increased swap pressure. Owned test/game/preview processes were stopped and an abandoned schema in the dedicated test database was cleaned up. No unrelated files or operating-system swap were deleted. Corrected commerce PostgreSQL cases and a complete final hosted suite remain pending. No 150-player certification, full browser journey, production art approval or Cadence promotion is claimed.
