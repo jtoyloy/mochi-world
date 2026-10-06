@@ -467,6 +467,7 @@ export class Multiplayer {
     }
   }
   leave(p) {
+    this.adventure?.departure(p, "room-departure");
     if (!p.room) return;
     const old = p.room;
     this.snapshots.forget(p.userId);

@@ -54,7 +54,7 @@ export function petBattleAbility(pet) {
 export class AdventureService {
   constructor(
     service,
-    { random = Math.random, brains = null, rewards = null } = {},
+    { random = Math.random, brains = null, rewards = null, encounterTtlMs = 120000 } = {},
   ) {
     this.service = service;
     this.pool = service.pool;
@@ -67,6 +67,83 @@ export class AdventureService {
     this.queue = Promise.resolve();
     this.tickAt = service.now();
     this.lastError = null;
+    this.encounterTtlMs = encounterTtlMs;
+    this.encounters = new Map();
+    this.stopping = false;
+  }
+  // Invalidate synchronously at the body boundary; native work may still be running.
+  departure(p, reason = "departure") {
+    const encounter = this.encounters.get(p.userId);
+    if (encounter && encounter.player === p) encounter.invalid = reason;
+    const state = this.states.get(p.userId);
+    if (state) state.target = null;
+  }
+  executionContext(p, s, m) {
+    let encounter = this.encounters.get(p.userId);
+    if (!encounter) {
+      encounter = { id: randomUUID(), player: p, petId: p.companion.id,
+        room: p.room, mob: m, state:s, startedAt: this.service.now(), sequence: 0 };
+      this.encounters.set(p.userId, encounter);
+    }
+    return encounter;
+  }
+  executionLive(e) {
+    return !this.stopping && !e.invalid &&
+      this.service.now() - e.startedAt < this.encounterTtlMs &&
+      this.encounters.get(e.player.userId) === e &&
+      this.multiplayer.store.players.get(e.player.userId) === e.player &&
+      e.player.room === e.room && e.player.companion?.id === e.petId &&
+      e.state.target === e.mob.id && e.state.hp > 0 && e.state.petHp > 0 &&
+      this.instances.get(e.room)?.mobs.get(e.mob.id) === e.mob && e.mob.hp > 0;
+  }
+  async completeExecution(userId, s) {
+    if (!s.battleExecution) return true;
+    const {petId, ...options} = s.battleExecution;
+    const receipt = await this.battleDecision(petId, userId, [], 0, options);
+    if (receipt.unavailable) return false;
+    s.battleExecution = null;
+    return true;
+  }
+  async recoverDecision(userId, s) {
+    const pending = s.pendingBattleRequest;
+    if (!pending) return true;
+    // Retry only the identical receipt. An expired uncommitted request is safe
+    // to clear; a committed one replays before the database deadline check.
+    const answer = await this.battleDecision(pending.petId,userId,
+      pending.observation,pending.reward,pending.options);
+    if (answer.unavailable) {
+      if (answer.error?.includes("deadline")) {
+        const owed = pending.options.outcome ?? {};
+        for (const [key,value] of Object.entries(owed)) {
+          if (key === "battleRequestId") continue;
+          s.outcome ??= {};
+          s.outcome[key] = typeof value === "number" ? (s.outcome[key] ?? 0) + value : (s.outcome[key] ?? value);
+        }
+        s.pendingBattleRequest=null; return true;
+      }
+      return false;
+    }
+    s.pendingBattleRequest=null;
+    s.battleExecution={petId:pending.petId,execution:"cancel",
+      requestId:pending.options.requestId+":execution",expectedVersion:answer.version};
+    return this.completeExecution(userId,s);
+  }
+  async closeEncounter(userId, s, reason) {
+    if (!await this.recoverDecision(userId,s) || !await this.completeExecution(userId,s)) return false;
+    const e = this.encounters.get(userId);
+    if (e) e.invalid ??= reason;
+    if (!s.inBattle) { this.encounters.delete(userId); return true; }
+    const petId = e?.petId ?? s.activePet;
+    if (!petId) return false;
+    const outcome = s.outcome ?? {};
+    const closed = await this.battleDecision(petId, userId,
+      [s.hp/s.stats.maxHp,s.petHp/80,0,1,0,0,0,0,0,0,0,0,0,Number(s.petHp<=0),0,1],
+      battleReward(outcome), {finish:true,outcome});
+    if (closed.unavailable) return false;
+    s.outcome = {}; s.inBattle = false; s.target = null;
+    this.encounters.delete(userId);
+    await this.save(userId, s);
+    return true;
   }
   async init() {
     await this.rewards.init();
@@ -748,7 +825,7 @@ export class AdventureService {
   }
   async battleDecision(id, userId, obs, reward, options = {}) {
     const settlement = options.outcome;
-    if (settlement) {
+    if (settlement && !options.requestId) {
       settlement.battleRequestId ??= randomUUID();
       options = {...options, requestId: settlement.battleRequestId + (options.finish ? ":finish" : ":tick")};
     }
@@ -764,7 +841,7 @@ export class AdventureService {
         mochiId: id,
         reason: error.message,
       });
-      return { action: null, refused: true, unavailable: true };
+      return { action: null, refused: true, unavailable: true, error:error.message };
     }
   }
   async defeat(p, s) {
@@ -787,12 +864,17 @@ export class AdventureService {
     const now = this.service.now(),
       dt = Math.min(0.6, Math.max(0, (now - this.tickAt) / 1000));
     this.tickAt = now;
-    const decisions = [], presentations = [], decisionRooms = new Set();
+    const decisions = [], settlements = [], presentations = [], decisionRooms = new Set();
     for (const [key, room] of this.instances)
       if (!this.multiplayer.store.rooms.has(key)) this.instances.delete(key);
     // Persist idle cached state before eviction. Combat settlement retains its owner
     // until its existing finish path has run; never discard pending brain feedback.
     for (const [userId, state] of this.states) {
+      const e = this.encounters.get(userId);
+      if (!await this.recoverDecision(userId,state) || !await this.completeExecution(userId,state)) continue;
+      if (state.inBattle && (!this.multiplayer.store.players.has(userId) ||
+          (e && !this.executionLive(e))))
+        await this.closeEncounter(userId, state, e?.invalid ?? "expired-or-target-removed");
       if (!this.multiplayer.store.players.has(userId) && !state.inBattle) {
         await this.save(userId, state);
         if (!this.multiplayer.store.players.has(userId)) this.states.delete(userId);
@@ -807,6 +889,7 @@ export class AdventureService {
       }
       decisionRooms.add(p.room);
       const s = await this.state(p.userId);
+      if (s.pendingBattleRequest || s.battleExecution) continue;
       await this.advancePoison(p, s, now);
       if (s.activePet !== (p.companion?.id ?? null)) {
         s.petVitals ??= {};
@@ -847,6 +930,7 @@ export class AdventureService {
         s.outcome = {};
         s.petDecisionAt = 0;
         s.inBattle = false;
+        this.encounters.delete(p.userId);
         await this.save(p.userId, s);
       }
       if (p.roomId === "exchange" && !s.progress.tradingHall) {
@@ -886,6 +970,7 @@ export class AdventureService {
           if (!closed.unavailable) {
             s.outcome = {};
             s.inBattle = false;
+            this.encounters.delete(p.userId);
           }
           await this.save(p.userId, s);
         }
@@ -913,25 +998,43 @@ export class AdventureService {
           s.enemyCount = [...room.mobs.values()].filter(
             (x) => x.hp > 0 && dist(p, x) < 350,
           ).length;
-          const outcome = s.outcome ?? {};
-          const pending = this.battleDecision(
-            p.companion.id,
-            p.userId,
-            battleObservation(s, p, m, p.companion),
-            battleReward(outcome),
-            { outcome, ability: s.favoriteAbility ?? null, deadlineAt: Date.now() + 1400 },
-          );
+          const encounter = this.executionContext(p, s, m);
+          const requestId = encounter.id + ":" + (++encounter.sequence);
+          const outcome = structuredClone(s.outcome ?? {});
+          s.outcome = {};
+          const observation = battleObservation(s, p, m, p.companion);
+          const options = {outcome, requestId, executionRequired:true,
+            ability:s.favoriteAbility ?? null, deadlineAt:Date.now()+1400};
+          s.pendingBattleRequest = {petId:encounter.petId, observation,
+            reward:battleReward(outcome), options};
+          await this.save(p.userId,s);
+          const pending = this.battleDecision(encounter.petId, p.userId,
+            observation, battleReward(outcome), options);
           pending.catch(() => {}); // Awaited during application; attach rejection handling now.
           decisions.push(async () => {
             const answer = await pending;
-            if (!answer.unavailable) s.outcome = {};
             s.ownerDamage = 0;
             s.petDamage = 0;
             s.damageDealt = 0;
-            await this.petAction(p, s, m, answer.action);
-            await this.save(p.userId, s);
+            if (!answer.unavailable) {
+              s.pendingBattleRequest = null;
+              const live = this.executionLive(encounter);
+              // The body executes synchronously up to its first await. Its resulting
+              // feedback belongs to this motor even if departure occurs during a hit save.
+              if (live) await this.petAction(p, s, m, answer.action);
+              s.battleExecution = {petId:encounter.petId, execution:live ? "ack" : "cancel",
+                requestId:requestId + ":execution", expectedVersion:answer.version};
+              const acknowledged = this.completeExecution(p.userId, s);
+              acknowledged.catch(() => {});
+              settlements.push(async () => {
+                await acknowledged;
+                if (!this.executionLive(encounter))
+                  await this.closeEncounter(p.userId, s, encounter.invalid ?? "stale-response");
+                await this.save(p.userId, s);
+              });
+            } else await this.save(p.userId,s);
             this.multiplayer.send(p, "battleDecision", {
-              mochiId: p.companion.id,
+              mochiId: encounter.petId,
               ...answer,
             });
           });
@@ -961,6 +1064,7 @@ export class AdventureService {
     // Submit independent brains together; apply authoritative motors in player order.
     // Enemies remain paused through the batch, as in the previous awaited tick.
     for (const apply of decisions) await apply();
+    for (const settle of settlements) await settle();
     for (const present of presentations) await present();
     await this.advanceEnemies(now, dt);
   }
@@ -1129,8 +1233,16 @@ export class AdventureService {
     }
   }
   async close() {
+    this.stopping = true;
     clearInterval(this.timer);
+    for (const e of this.encounters.values()) e.invalid = "shutdown";
     await this.queue;
+    const unsettled = [];
+    for (const [userId, s] of this.states) {
+      if (!await this.closeEncounter(userId, s, "shutdown")) unsettled.push(userId);
+      await this.save(userId,s);
+    }
     await this.brains.close();
+    if (unsettled.length) throw Error("Shutdown retained owed battle feedback for " + unsettled.length + " players");
   }
 }

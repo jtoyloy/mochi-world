@@ -1,0 +1,108 @@
+{
+  "kind": "real PostgreSQL/fsync/native-load/physical deletion cycles; collector age accelerated, not a CCU soak",
+  "sampleBytes": 9161225,
+  "policy": {
+    "enabled": true,
+    "keepRecent": 3,
+    "retentionHours": 0,
+    "intervalMs": 60000,
+    "graceMs": 600000
+  },
+  "cycles": [
+    {
+      "version": 1,
+      "beforeCount": 1,
+      "beforeBytes": 9161242,
+      "deleted": 0,
+      "afterCount": 1,
+      "afterBytes": 9161242,
+      "catalogCount": 1,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 2,
+      "beforeCount": 2,
+      "beforeBytes": 18322484,
+      "deleted": 0,
+      "afterCount": 2,
+      "afterBytes": 18322484,
+      "catalogCount": 2,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 3,
+      "beforeCount": 3,
+      "beforeBytes": 27483726,
+      "deleted": 0,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 4,
+      "beforeCount": 4,
+      "beforeBytes": 36644968,
+      "deleted": 1,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 5,
+      "beforeCount": 4,
+      "beforeBytes": 36644968,
+      "deleted": 1,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 6,
+      "beforeCount": 4,
+      "beforeBytes": 36644968,
+      "deleted": 1,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 7,
+      "beforeCount": 4,
+      "beforeBytes": 36644968,
+      "deleted": 1,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 8,
+      "beforeCount": 4,
+      "beforeBytes": 36644968,
+      "deleted": 1,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    },
+    {
+      "version": 9,
+      "beforeCount": 4,
+      "beforeBytes": 36644968,
+      "deleted": 1,
+      "afterCount": 3,
+      "afterBytes": 27483726,
+      "catalogCount": 3,
+      "idempotentDeleted": 0
+    }
+  ],
+  "deletedFiles": 6,
+  "peakBytes": 36644968,
+  "plateauBytes": 27483726,
+  "safetyFloorBytes": 3221225472,
+  "freeDiskBeforeBytes": 4065169408
+}

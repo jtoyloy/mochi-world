@@ -74,3 +74,30 @@ def test_matched_brains_develop_different_free_actions_after_different_feedback(
         h.handle({'op':'finish','obs':OBS,'reward':reward})
         choices.append(h.handle({'op':'tick','obs':OBS,'aroused':False})['action'][0])
     assert choices==[0,1]
+
+@pytest.mark.parametrize('ack_first',[False,True])
+def test_unexecuted_proposal_cancellation_preserves_prior_feedback_after_reload(ack_first):
+    h=boot();h.handle({'op':'tick','obs':OBS})
+    h.handle({'op':'tick','obs':OBS,'reward':.4,'executionRequired':True})
+    assert h.life.brain.basal_ganglia.updates==1
+    weights=h.life.brain.brain.weights.copy()
+    if ack_first:h.handle({'op':'ack'})
+    saved=h.handle({'op':'save'})['checkpoint']
+    other=boot();other.handle({'op':'boot','domain':DOMAIN,'checkpoint':saved})
+    other.handle({'op':'cancel'})
+    assert other.life.brain.basal_ganglia._pending is None
+    assert other.life.brain.basal_ganglia.updates==1
+    np.testing.assert_array_equal(other.life.brain.brain.weights,weights)
+    other.handle({'op':'cancel'})
+    other.handle({'op':'finish','obs':OBS,'reward':0})
+    assert other.life.brain.basal_ganglia.updates==1
+
+def test_proposal_requires_explicit_execution_before_feedback():
+    h=boot();h.handle({'op':'tick','obs':OBS,'executionRequired':True})
+    with pytest.raises(ValueError,match='unacknowledged'):
+        h.handle({'op':'tick','obs':OBS,'reward':.2,'executionRequired':True})
+    with pytest.raises(ValueError,match='cancel unexecuted'):
+        h.handle({'op':'finish','obs':OBS,'reward':.2})
+    h.handle({'op':'ack'})
+    h.handle({'op':'finish','obs':OBS,'reward':.2})
+    assert h.life.brain.basal_ganglia.updates==1

@@ -1,0 +1,9 @@
+# Wave 4 encounter lifecycle follow-up
+
+Battle decisions now carry a durable execution context: player, pet, room instance, mob identity, encounter identity, request ID and returned brain version. Adventure persists a pending proposal before submitting native work. A response is applied only while that context is still live; departure, room change, pet switch, target change/removal/death, TTL expiry and shutdown invalidate it synchronously.
+
+The motor runs before its acknowledgement is settled. The acknowledgement is then recorded against the exact request and version. A stale response is cancelled and cannot execute against a new room or body. A committed proposal that has not executed is rewound to the post-feedback checkpoint, preserving the preceding action's learning and preventing an unexecuted action from receiving reward. Duplicate acknowledgements and old cancellations are rejected by request/version ownership. Pending requests are recovered after reload before a new decision is admitted.
+
+`AdventureService` closes abandoned encounters through the same finish path, settles or cancels pending work once, evicts state after closure, and marks shutdown explicitly. The active-combat TTL is two minutes by default and is configurable for tests.
+
+The native PostgreSQL fixture in `tests/adventure/battle-workers.test.mjs` passes 27 cases, including 12 lifecycle race cases and duplicate receipt replay. The Python proposal contract passes 9 tests. This fixes correctness and ownership races; it does not certify multiplayer capacity. Adventure-level profiling still measures durable acknowledgement and database work separately from direct worker deadlines.

@@ -4,7 +4,11 @@ import { retentionPolicy } from "../../server/world/checkpoint-retention.mjs";
 import { BrainProcess } from "../../sim/brain_proc.mjs";
 import { TRADER_SPEC } from "../../web/js/traders/brain.js";
 const file = "web/brains/traders-0.74.0-v1/basic.life",
-  bytes = (await stat(file)).size;
+  baselineBytes = (await stat(file)).size;
+// Size with the largest measured trained life, not the cold published life.
+const measured = JSON.parse(await readFile("assays/wave4-checkpoint-payload.json", "utf8"));
+const bytes = Number(process.env.CHECKPOINT_SIZING_BYTES ?? Math.max(...measured.samples.map(x => x.bytes)));
+if (!Number.isSafeInteger(bytes) || bytes < baselineBytes) throw Error("Invalid conservative checkpoint sizing bytes");
 const policy = retentionPolicy({ ...process.env, DEV_MODE: "true" });
 if (!policy.enabled) throw Error("Simulation needs an explicit policy");
 const saveIntervalMs = 300000;
@@ -85,6 +89,9 @@ const result = {
   kind: "deterministic bounded timestamp simulation, not a live 150-pet soak",
   representativeFile: file,
   representativeBytes: bytes,
+  sizingSource: "assays/wave4-checkpoint-payload.json maximum; CHECKPOINT_SIZING_BYTES may increase the bound",
+  coldPublishedBytes: baselineBytes,
+  excludesAdditionalPinsLeasesOrphansAndTemporaryFiles: true,
   policy,
   saveIntervalMs,
   initialCheckpoint: true,
@@ -96,7 +103,7 @@ const result = {
 };
 await mkdir("assays", { recursive: true });
 await writeFile(
-  "assays/checkpoint-storage.json",
+  "assays/wave4-checkpoint-storage.json",
   JSON.stringify(result, null, 2) + "\n",
 );
 console.log(JSON.stringify(result, null, 2));

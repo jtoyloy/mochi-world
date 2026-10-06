@@ -72,7 +72,7 @@ before(async () => {
   await game.state(a.id);
 });
 after(async () => {
-  game?.close();
+  await game?.close();
   await pool?.end();
   if (admin) {
     await admin.query("DROP SCHEMA " + schema + " CASCADE");

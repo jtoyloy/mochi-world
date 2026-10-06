@@ -1,0 +1,603 @@
+{
+  "kind": "read-only real life payload audit; compression candidate not deployed",
+  "samples": [
+    {
+      "sampleName": "basic.life",
+      "sha256": "e7802ba621ff501f1271688d0c9fb97b56432164b20691bf4a01b09c00c0f881",
+      "bytes": 6487877,
+      "outerDeflateBytes": 6385122,
+      "outerDeflateMs": 161.93374999420485,
+      "allPayloadsByteIdentical": true,
+      "counters": {
+        "ticks": 0,
+        "routine": 0,
+        "aroused": 0,
+        "guided": 0,
+        "refused": 0,
+        "dropped": 0,
+        "lessons": 0,
+        "sweeps_routine": 0,
+        "sweeps_aroused": 0,
+        "sweeps_guided": 0,
+        "agree": 0,
+        "scored": 0
+      },
+      "entries": {
+        "brain.npz": [
+          {
+            "name": "meta.npy",
+            "rawBytes": 30464,
+            "compressedBytes": 3762,
+            "method": 8
+          },
+          {
+            "name": "pre.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 32665,
+            "method": 8
+          },
+          {
+            "name": "post.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 6126,
+            "method": 8
+          },
+          {
+            "name": "count.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 4937,
+            "method": 8
+          },
+          {
+            "name": "sign.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3182726,
+            "method": 8
+          },
+          {
+            "name": "efficacy.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3182967,
+            "method": 8
+          },
+          {
+            "name": "log_gain.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 4195,
+            "method": 8
+          },
+          {
+            "name": "outputs.npy",
+            "rawBytes": 312,
+            "compressedBytes": 133,
+            "method": 8
+          },
+          {
+            "name": "plastic_synapses.npy",
+            "rawBytes": 415360,
+            "compressedBytes": 502,
+            "method": 8
+          },
+          {
+            "name": "plastic_neurons.npy",
+            "rawBytes": 1428,
+            "compressedBytes": 82,
+            "method": 8
+          },
+          {
+            "name": "tie_groups.npy",
+            "rawBytes": 128,
+            "compressedBytes": 68,
+            "method": 8
+          },
+          {
+            "name": "synapse_rate.npy",
+            "rawBytes": 128,
+            "compressedBytes": 68,
+            "method": 8
+          },
+          {
+            "name": "velocity.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "velocity_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "second_moment.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "second_moment_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "actor/w_critic.npy",
+            "rawBytes": 4224,
+            "compressedBytes": 98,
+            "method": 8
+          },
+          {
+            "name": "actor/second_moment.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "actor/second_moment_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "actor/velocity.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "actor/velocity_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "valence/mean.npy",
+            "rawBytes": 136,
+            "compressedBytes": 69,
+            "method": 8
+          },
+          {
+            "name": "valence/var.npy",
+            "rawBytes": 136,
+            "compressedBytes": 71,
+            "method": 8
+          },
+          {
+            "name": "working/trace.npy",
+            "rawBytes": 128,
+            "compressedBytes": 72,
+            "method": 8
+          },
+          {
+            "name": "working/last.npy",
+            "rawBytes": 128,
+            "compressedBytes": 72,
+            "method": 8
+          },
+          {
+            "name": "working/cold.npy",
+            "rawBytes": 128,
+            "compressedBytes": 68,
+            "method": 8
+          },
+          {
+            "name": "episodic/pre.npy",
+            "rawBytes": 2152,
+            "compressedBytes": 517,
+            "method": 8
+          },
+          {
+            "name": "episodic/post.npy",
+            "rawBytes": 312,
+            "compressedBytes": 133,
+            "method": 8
+          },
+          {
+            "name": "episodic/strength.npy",
+            "rawBytes": 128,
+            "compressedBytes": 75,
+            "method": 8
+          },
+          {
+            "name": "episodic/mass.npy",
+            "rawBytes": 128,
+            "compressedBytes": 68,
+            "method": 8
+          },
+          {
+            "name": "episodic/consolidated.npy",
+            "rawBytes": 46680,
+            "compressedBytes": 146,
+            "method": 8
+          },
+          {
+            "name": "generic.npy",
+            "rawBytes": 4472,
+            "compressedBytes": 810,
+            "method": 8
+          }
+        ],
+        "shown.npz": [
+          {
+            "name": "strength.npy",
+            "rawBytes": 128,
+            "compressedBytes": 128,
+            "method": 0
+          },
+          {
+            "name": "mass.npy",
+            "rawBytes": 128,
+            "compressedBytes": 128,
+            "method": 0
+          },
+          {
+            "name": "consolidated.npy",
+            "rawBytes": 46680,
+            "compressedBytes": 46680,
+            "method": 0
+          },
+          {
+            "name": "writes.npy",
+            "rawBytes": 136,
+            "compressedBytes": 136,
+            "method": 0
+          }
+        ]
+      },
+      "observedArrayRawBytes": 30514668
+    },
+    {
+      "sampleName": "34ee844cac3f54b53b16e6eed75d412a34ee97e7a41512aea8b0e87aeb9a8318-7-8eb8f938-c7ab-4613-a2cd-048ac10ccd25.life",
+      "sha256": "38e500b43c0792bc14274080bb850e4a649027c669b26330d021918ecc043ba1",
+      "bytes": 9161225,
+      "outerDeflateBytes": 9058557,
+      "outerDeflateMs": 238.33012500108453,
+      "allPayloadsByteIdentical": true,
+      "counters": {
+        "ticks": 7,
+        "routine": 0,
+        "aroused": 7,
+        "guided": 0,
+        "refused": 0,
+        "dropped": 0,
+        "lessons": 0,
+        "sweeps_routine": 0,
+        "sweeps_aroused": 256,
+        "sweeps_guided": 0,
+        "agree": 0,
+        "scored": 0
+      },
+      "entries": {
+        "brain.npz": [
+          {
+            "name": "meta.npy",
+            "rawBytes": 30464,
+            "compressedBytes": 3765,
+            "method": 8
+          },
+          {
+            "name": "pre.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 32665,
+            "method": 8
+          },
+          {
+            "name": "post.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 6126,
+            "method": 8
+          },
+          {
+            "name": "count.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 4937,
+            "method": 8
+          },
+          {
+            "name": "sign.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3182726,
+            "method": 8
+          },
+          {
+            "name": "efficacy.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3182967,
+            "method": 8
+          },
+          {
+            "name": "log_gain.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 4195,
+            "method": 8
+          },
+          {
+            "name": "outputs.npy",
+            "rawBytes": 312,
+            "compressedBytes": 133,
+            "method": 8
+          },
+          {
+            "name": "plastic_synapses.npy",
+            "rawBytes": 415360,
+            "compressedBytes": 502,
+            "method": 8
+          },
+          {
+            "name": "plastic_neurons.npy",
+            "rawBytes": 1428,
+            "compressedBytes": 82,
+            "method": 8
+          },
+          {
+            "name": "tie_groups.npy",
+            "rawBytes": 128,
+            "compressedBytes": 68,
+            "method": 8
+          },
+          {
+            "name": "synapse_rate.npy",
+            "rawBytes": 128,
+            "compressedBytes": 68,
+            "method": 8
+          },
+          {
+            "name": "velocity.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "velocity_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "second_moment.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "second_moment_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "pending/value.npy",
+            "rawBytes": 136,
+            "compressedBytes": 71,
+            "method": 8
+          },
+          {
+            "name": "pending/plus/v.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 8646,
+            "method": 8
+          },
+          {
+            "name": "pending/plus/activation.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 8691,
+            "method": 8
+          },
+          {
+            "name": "pending/plus/adaptation.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 110,
+            "method": 8
+          },
+          {
+            "name": "pending/minus/v.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 8646,
+            "method": 8
+          },
+          {
+            "name": "pending/minus/activation.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 8713,
+            "method": 8
+          },
+          {
+            "name": "pending/minus/adaptation.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 110,
+            "method": 8
+          },
+          {
+            "name": "moment/observations.npy",
+            "rawBytes": 2152,
+            "compressedBytes": 569,
+            "method": 8
+          },
+          {
+            "name": "moment/action.npy",
+            "rawBytes": 136,
+            "compressedBytes": 72,
+            "method": 8
+          },
+          {
+            "name": "actor/w_critic.npy",
+            "rawBytes": 4224,
+            "compressedBytes": 98,
+            "method": 8
+          },
+          {
+            "name": "actor/trace.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 2597047,
+            "method": 8
+          },
+          {
+            "name": "actor/trace_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 4264,
+            "method": 8
+          },
+          {
+            "name": "actor/trace_critic.npy",
+            "rawBytes": 4232,
+            "compressedBytes": 4035,
+            "method": 8
+          },
+          {
+            "name": "actor/second_moment.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "actor/second_moment_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "actor/velocity.npy",
+            "rawBytes": 3321984,
+            "compressedBytes": 3320,
+            "method": 8
+          },
+          {
+            "name": "actor/velocity_bias.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 109,
+            "method": 8
+          },
+          {
+            "name": "actor/_drive.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 4585,
+            "method": 8
+          },
+          {
+            "name": "valence/mean.npy",
+            "rawBytes": 136,
+            "compressedBytes": 69,
+            "method": 8
+          },
+          {
+            "name": "valence/var.npy",
+            "rawBytes": 136,
+            "compressedBytes": 71,
+            "method": 8
+          },
+          {
+            "name": "free/v.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 8644,
+            "method": 8
+          },
+          {
+            "name": "free/activation.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 8695,
+            "method": 8
+          },
+          {
+            "name": "free/adaptation.npy",
+            "rawBytes": 10528,
+            "compressedBytes": 110,
+            "method": 8
+          },
+          {
+            "name": "working/trace.npy",
+            "rawBytes": 4224,
+            "compressedBytes": 4036,
+            "method": 8
+          },
+          {
+            "name": "working/last.npy",
+            "rawBytes": 4224,
+            "compressedBytes": 4010,
+            "method": 8
+          },
+          {
+            "name": "working/cold.npy",
+            "rawBytes": 129,
+            "compressedBytes": 69,
+            "method": 8
+          },
+          {
+            "name": "episodic/pre.npy",
+            "rawBytes": 2152,
+            "compressedBytes": 517,
+            "method": 8
+          },
+          {
+            "name": "episodic/post.npy",
+            "rawBytes": 312,
+            "compressedBytes": 133,
+            "method": 8
+          },
+          {
+            "name": "episodic/strength.npy",
+            "rawBytes": 46680,
+            "compressedBytes": 149,
+            "method": 8
+          },
+          {
+            "name": "episodic/mass.npy",
+            "rawBytes": 136,
+            "compressedBytes": 77,
+            "method": 8
+          },
+          {
+            "name": "episodic/consolidated.npy",
+            "rawBytes": 46680,
+            "compressedBytes": 146,
+            "method": 8
+          },
+          {
+            "name": "generic.npy",
+            "rawBytes": 5364,
+            "compressedBytes": 973,
+            "method": 8
+          }
+        ],
+        "shown.npz": [
+          {
+            "name": "strength.npy",
+            "rawBytes": 128,
+            "compressedBytes": 128,
+            "method": 0
+          },
+          {
+            "name": "mass.npy",
+            "rawBytes": 128,
+            "compressedBytes": 128,
+            "method": 0
+          },
+          {
+            "name": "consolidated.npy",
+            "rawBytes": 46680,
+            "compressedBytes": 46680,
+            "method": 0
+          },
+          {
+            "name": "writes.npy",
+            "rawBytes": 136,
+            "compressedBytes": 136,
+            "method": 0
+          }
+        ]
+      },
+      "observedArrayRawBytes": 34014761
+    }
+  ]
+}

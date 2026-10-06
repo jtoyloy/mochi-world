@@ -14,7 +14,7 @@ export class BattleBrains {
     userId,
     obs,
     reward = 0,
-    { aroused = true, finish = false, outcome = {}, ability = null, expectedVersion = null, deadlineAt = Infinity, requestId = randomUUID() } = {},
+    { aroused = true, finish = false, execution = null, executionRequired = false, outcome = {}, ability = null, expectedVersion = null, deadlineAt = Infinity, requestId = randomUUID() } = {},
   ) {
     const submitted = performance.now();
     return this.workers.run(id, async (call, scheduling) => {
@@ -43,7 +43,7 @@ export class BattleBrains {
           pack: row.pack ?? "battle-0.74.0-v1",
           seed: createHash("sha256").update(id).digest().readUInt32BE(0),
           checkpoint: row.checkpoint?.toString("base64"),
-          decision: {op: finish ? "finish" : "tick", obs, reward, aroused},
+          decision: {op: execution ?? (finish ? "finish" : "tick"), obs, reward, aroused, executionRequired},
         });
         timing.ipc = performance.now()-ipcAt;
         Object.assign(timing, response.timings);
@@ -53,8 +53,8 @@ export class BattleBrains {
           ? null
           : (BATTLE_ACTIONS[answer.action?.[0]] ?? null);
         const metrics = row.metrics;
-        metrics.decisions = (metrics.decisions ?? 0) + Number(!finish);
-        metrics.refused = (metrics.refused ?? 0) + Number(!finish && !action);
+        metrics.decisions = (metrics.decisions ?? 0) + Number(!finish && !execution);
+        metrics.refused = (metrics.refused ?? 0) + Number(!finish && !execution && !action);
         metrics.actions ??= {};
         if (action)
           metrics.actions[action] = (metrics.actions[action] ?? 0) + 1;
@@ -66,6 +66,8 @@ export class BattleBrains {
         ])
           metrics[key] = (metrics[key] ?? 0) + (outcome[key] ?? 0);
         if (outcome.victory) metrics.wins = (metrics.wins ?? 0) + 1;
+        if (execution) metrics[execution === "ack" ? "executed" : "cancelled"] =
+          (metrics[execution === "ack" ? "executed" : "cancelled"] ?? 0) + 1;
         metrics.last = {
           at: this.service.now(),
           action,
@@ -73,7 +75,7 @@ export class BattleBrains {
           refused: answer.refused,
           learning: answer.learning,
         };
-        if (!finish) {
+        if (!finish && !execution) {
           metrics.recent = [
             ...(metrics.recent ?? []),
             { at: this.service.now(), action, refused: !action },
@@ -84,7 +86,7 @@ export class BattleBrains {
           }
         }
         const receipt = {
-          action, refused: !finish && !action, finished: finish,
+          action, refused: !finish && !execution && !action, finished: finish, execution,
           version: row.version + 1, requestId,
         };
         await tx.query(

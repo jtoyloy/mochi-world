@@ -1,0 +1,161 @@
+{
+  "kind": "deterministic bounded timestamp simulation, not a live 150-pet soak",
+  "representativeFile": "web/brains/traders-0.74.0-v1/basic.life",
+  "representativeBytes": 9161225,
+  "sizingSource": "assays/wave4-checkpoint-payload.json maximum; CHECKPOINT_SIZING_BYTES may increase the bound",
+  "coldPublishedBytes": 6487877,
+  "excludesAdditionalPinsLeasesOrphansAndTemporaryFiles": true,
+  "policy": {
+    "enabled": true,
+    "keepRecent": 3,
+    "retentionHours": 0,
+    "intervalMs": 60000,
+    "graceMs": 600000
+  },
+  "saveIntervalMs": 300000,
+  "initialCheckpoint": true,
+  "pins": 0,
+  "leases": 0,
+  "crashOrphans": 0,
+  "duplicateMeasurement": {
+    "unchangedNativeBytesA": 6487877,
+    "unchangedNativeBytesB": 6487877,
+    "identicalAcross2200ms": false,
+    "sha256A": "74bb99cff350d9fc65d62dab59369b0ead5418446ccff18301281dfe8e88f288",
+    "sha256B": "6d89d7cd3369c6c6eb03e8b615de8de92480c9d7e7b24269c5936c11d71f9e00"
+  },
+  "rows": [
+    {
+      "pets": 1,
+      "hours": 1,
+      "beforeVersions": 13,
+      "beforeBytes": 119095925,
+      "afterVersions": 3,
+      "afterBytes": 27483675,
+      "peakBeforeGcBytes": 36644900,
+      "createdFiles": 13,
+      "deletedFiles": 10
+    },
+    {
+      "pets": 1,
+      "hours": 4,
+      "beforeVersions": 49,
+      "beforeBytes": 448900025,
+      "afterVersions": 3,
+      "afterBytes": 27483675,
+      "peakBeforeGcBytes": 36644900,
+      "createdFiles": 49,
+      "deletedFiles": 46
+    },
+    {
+      "pets": 1,
+      "hours": 24,
+      "beforeVersions": 289,
+      "beforeBytes": 2647594025,
+      "afterVersions": 3,
+      "afterBytes": 27483675,
+      "peakBeforeGcBytes": 36644900,
+      "createdFiles": 289,
+      "deletedFiles": 286
+    },
+    {
+      "pets": 10,
+      "hours": 1,
+      "beforeVersions": 130,
+      "beforeBytes": 1190959250,
+      "afterVersions": 30,
+      "afterBytes": 274836750,
+      "peakBeforeGcBytes": 366449000,
+      "createdFiles": 130,
+      "deletedFiles": 100
+    },
+    {
+      "pets": 10,
+      "hours": 4,
+      "beforeVersions": 490,
+      "beforeBytes": 4489000250,
+      "afterVersions": 30,
+      "afterBytes": 274836750,
+      "peakBeforeGcBytes": 366449000,
+      "createdFiles": 490,
+      "deletedFiles": 460
+    },
+    {
+      "pets": 10,
+      "hours": 24,
+      "beforeVersions": 2890,
+      "beforeBytes": 26475940250,
+      "afterVersions": 30,
+      "afterBytes": 274836750,
+      "peakBeforeGcBytes": 366449000,
+      "createdFiles": 2890,
+      "deletedFiles": 2860
+    },
+    {
+      "pets": 40,
+      "hours": 1,
+      "beforeVersions": 520,
+      "beforeBytes": 4763837000,
+      "afterVersions": 120,
+      "afterBytes": 1099347000,
+      "peakBeforeGcBytes": 1465796000,
+      "createdFiles": 520,
+      "deletedFiles": 400
+    },
+    {
+      "pets": 40,
+      "hours": 4,
+      "beforeVersions": 1960,
+      "beforeBytes": 17956001000,
+      "afterVersions": 120,
+      "afterBytes": 1099347000,
+      "peakBeforeGcBytes": 1465796000,
+      "createdFiles": 1960,
+      "deletedFiles": 1840
+    },
+    {
+      "pets": 40,
+      "hours": 24,
+      "beforeVersions": 11560,
+      "beforeBytes": 105903761000,
+      "afterVersions": 120,
+      "afterBytes": 1099347000,
+      "peakBeforeGcBytes": 1465796000,
+      "createdFiles": 11560,
+      "deletedFiles": 11440
+    },
+    {
+      "pets": 150,
+      "hours": 1,
+      "beforeVersions": 1950,
+      "beforeBytes": 17864388750,
+      "afterVersions": 450,
+      "afterBytes": 4122551250,
+      "peakBeforeGcBytes": 5496735000,
+      "createdFiles": 1950,
+      "deletedFiles": 1500
+    },
+    {
+      "pets": 150,
+      "hours": 4,
+      "beforeVersions": 7350,
+      "beforeBytes": 67335003750,
+      "afterVersions": 450,
+      "afterBytes": 4122551250,
+      "peakBeforeGcBytes": 5496735000,
+      "createdFiles": 7350,
+      "deletedFiles": 6900
+    },
+    {
+      "pets": 150,
+      "hours": 24,
+      "beforeVersions": 43350,
+      "beforeBytes": 397139103750,
+      "afterVersions": 450,
+      "afterBytes": 4122551250,
+      "peakBeforeGcBytes": 5496735000,
+      "createdFiles": 43350,
+      "deletedFiles": 42900
+    }
+  ]
+}

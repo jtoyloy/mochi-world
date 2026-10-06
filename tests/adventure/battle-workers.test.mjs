@@ -99,10 +99,11 @@ test('Adventure batches independent rooms and applies decisions in player order 
  const {ServerArena,scenario}=await import('../../sim/server_battle.mjs');
  const arena=new ServerArena({...scenario(1000,0),geometry:'open',distance:40});
  const order=[];let submitted=0,release;const gate=new Promise(r=>release=r);
- const game=new AdventureService(world,{brains:{decide:async()=>{submitted++;if(submitted===2)release();await gate;return {action:'WAIT'};},close(){}}});
+ const game=new AdventureService(world,{brains:{decide:async(id,user,obs,reward,options)=>{if(options.execution || options.finish)return {};submitted++;if(submitted===2)release();await gate;return {action:'WAIT'};},close(){}}});
  const players=actors.slice(0,2).map((a,i)=>({...structuredClone(arena.p),userId:a.user,room:'instance-'+i,roomId:'yard',companion:{...structuredClone(arena.p.companion),id:a.id}}));
  for(const p of players){const state=structuredClone(arena.s);state.activePet=p.companion.id;state.target='enemy';state.petDecisionAt=0;state.savedAt=world.now();game.states.set(p.userId,state);}
  game.multiplayer={store:{players:new Map(players.map(p=>[p.userId,p])),rooms:new Map(players.map(p=>[p.room,{players:new Map([[p.userId,p]])}]))},send(){}};
+ for(const p of players)game.instances.set(p.room,{mobs:new Map([["enemy",arena.m]])});
  game.instance=()=>({mobs:new Map([['enemy',arena.m]])});game.mob=()=>arena.m;game.ownerAttack=async()=>{};game.advancePoison=async()=>{};game.save=async()=>{};
  game.petAction=async p=>order.push(p.userId);game.advanceEnemies=async()=>order.push('enemies');
  const timer=setTimeout(()=>release(),2000);
@@ -117,4 +118,56 @@ test('durable current receipt replays after response loss without learning or ve
  const v=await version(actors[9]),requestId=randomUUID();await assert.rejects(decide(b,actors[9],{requestId,expectedVersion:v}),/lost committed/);
  const replay=await decide(b,actors[9],{requestId,expectedVersion:v});assert.equal(replay.version,v+1);assert.equal(await version(actors[9]),v+1);assert.equal(replay.requestId,requestId);
  }finally{await b.close();}
+});
+
+for (const reason of ['disconnect','room-change','reconnect','pet-switch','ttl','target-death','target-removal','target-change','shutdown','response-loss','before-dispatch'])
+test(`native committed proposal cannot move a departed body: ${reason}`,async()=>{
+ const {AdventureService}=await import('../../server/adventure/service.mjs');
+ const {ServerArena,scenario}=await import('../../sim/server_battle.mjs');
+ const a=actors[20];await pool.query('DELETE FROM mochi_battle_brains WHERE mochi_id=$1',[a.id]);
+ const native=new BattleBrains(world,{count:1});let signal,release;
+ const committed=new Promise(r=>signal=r),gate=new Promise(r=>release=r);
+ let lose=true;
+ const wrapped={decide:async(...args)=>{if(reason==='before-dispatch' && args[4]?.executionRequired){signal();await gate;}const answer=await native.decide(...args);if(args[4]?.executionRequired && reason!=='before-dispatch'){signal();await gate;if(reason==='response-loss' && lose){lose=false;throw Error('committed response lost');}}return answer;},close:()=>native.close()};
+ const game=new AdventureService(world,{brains:wrapped,encounterTtlMs:120000});
+ const arena=new ServerArena({...scenario(1000,0),geometry:'open',distance:40});
+ const p={...structuredClone(arena.p),userId:a.user,room:'race-room',roomId:'yard',companion:{...structuredClone(arena.p.companion),id:a.id}};
+ const state={...structuredClone(arena.s),activePet:a.id,target:'enemy',petDecisionAt:0,savedAt:world.now()};
+ game.states.set(a.user,state);const room={mobs:new Map([['enemy',arena.m]])};game.instances.set(p.room,room);
+ game.multiplayer={store:{players:new Map([[a.user,p]]),rooms:new Map([[p.room,{players:new Map([[a.user,p]])}]])},send(){}};
+ game.instance=()=>room;game.mob=()=>arena.m;game.ownerAttack=async()=>{};game.advancePoison=async()=>{};game.save=async()=>{};game.advanceEnemies=async()=>{};
+ let motors=0;game.petAction=async()=>{motors++;};
+ const ticking=game.tick();await committed;
+ if(['disconnect','response-loss','before-dispatch'].includes(reason)){game.departure(p,'disconnect');game.multiplayer.store.players.delete(a.user);}
+ if(reason==='room-change'){game.departure(p);p.room='new-room';}
+ if(reason==='reconnect'){game.departure(p);game.multiplayer.store.players.set(a.user,{...p});}
+ if(reason==='pet-switch')p.companion={...p.companion,id:'other-pet'};
+ if(reason==='ttl')game.encounters.get(a.user).startedAt-=120001;
+ if(reason==='target-death'){arena.m.hp=0;state.outcome.victory=true;}
+ if(reason==='target-removal')room.mobs.clear();
+ if(reason==='target-change')state.target='different-target';
+ game.queue=ticking;
+ const closing=reason==='shutdown'?game.close():null;
+ release();await ticking;if(reason==='response-loss')await game.tick();if(closing)await closing;
+ assert.equal(motors,0);
+ assert.equal(state.inBattle,false);
+ assert.equal(game.encounters.size,0);
+ const row=(await pool.query('SELECT checkpoint,metrics FROM mochi_battle_brains WHERE mochi_id=$1',[a.id])).rows[0];
+ const saved=JSON.parse(row.checkpoint.toString());assert.equal(saved.proposal,null);
+ assert.equal(row.metrics.wins??0,reason==='target-death'?1:0);
+ if(!closing)await game.close();
+});
+
+test('execution receipt replay and old cancellation cannot close a newer proposal',async()=>{
+ const a=actors[21],b=new BattleBrains(world,{count:1});
+ try {
+  const first=await decide(b,a,{requestId:'proposal-one',executionRequired:true});
+  const options={execution:'cancel',requestId:'proposal-one:execution',expectedVersion:first.version};
+  const cancel=await b.decide(a.id,a.user,[],0,options);
+  assert.equal((await b.decide(a.id,a.user,[],0,options)).version,cancel.version);
+  const second=await decide(b,a,{requestId:'proposal-two',executionRequired:true});
+  await assert.rejects(b.decide(a.id,a.user,[],0,options),/Stale/);
+  assert.equal(await version(a),second.version);
+  await b.decide(a.id,a.user,[],0,{execution:'cancel',requestId:'proposal-two:execution',expectedVersion:second.version});
+ } finally {await b.close();}
 });
