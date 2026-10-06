@@ -1,0 +1,28 @@
+{
+  "description": "supplemental species transfer; fixed original arms; six independent brain/world seed pairs each direction; training 60 one-species encounters, frozen evaluation 36 other-species encounters",
+  "directions": [
+    [
+      "moon",
+      "forest"
+    ],
+    [
+      "forest",
+      "moon"
+    ]
+  ],
+  "replicas": 6,
+  "trainingEpisodes": 60,
+  "evaluationEpisodes": 36,
+  "trainingSeeds": "5000 + direction*100 + replica",
+  "evaluationSeeds": "6000 + direction*100 + replica",
+  "arms": [
+    "random",
+    "published",
+    "no_protection",
+    "expanded",
+    "causal",
+    "expanded_causal",
+    "terminal",
+    "mother"
+  ]
+}

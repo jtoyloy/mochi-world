@@ -40,6 +40,13 @@ const fresh = () => ({
   starter: true,
 });
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+// Physical species mapping shared by execution and battle observation assays.
+export function petBattleAbility(pet) {
+  const variant = String(pet.profile?.variant ?? "").toLowerCase();
+  const species = variant.includes("ember") || variant.includes("red")
+    ? "ember" : variant.includes("mint") || variant.includes("green") ? "forest" : "moon";
+  return MOCHI_ABILITIES[species];
+}
 export class AdventureService {
   constructor(
     service,
@@ -667,14 +674,7 @@ export class AdventureService {
       return;
     const now = this.service.now(),
       pet = p.companion,
-      variant = String(pet.profile?.variant ?? "").toLowerCase(),
-      species =
-        variant.includes("ember") || variant.includes("red")
-          ? "ember"
-          : variant.includes("mint") || variant.includes("green")
-            ? "forest"
-            : "moon",
-      ability = MOCHI_ABILITIES[species];
+      ability = petBattleAbility(pet);
     s.outcome ??= {};
     if (action === "DEFEND_OWNER") {
       s.ownerGuardUntil = now + 1800;
@@ -772,16 +772,7 @@ export class AdventureService {
     for (const p of this.multiplayer.store.players.values()) {
       if (!p.room) continue;
       const s = await this.state(p.userId);
-      if (s.poisonUntil > now && (s.nextPoisonAt ?? 0) <= now) {
-        s.hp = clampHealth(s.hp - 2, s.stats.maxHp);
-        s.nextPoisonAt = now + 2000;
-        s.outcome ??= {};
-        s.outcome.ownerDamage = (s.outcome.ownerDamage ?? 0) + 2;
-        s.ownerDamage = (s.ownerDamage ?? 0) + 2;
-        this.effect(p, "mob-hit", { amount: 2, poison: true });
-        if (s.hp <= 0) await this.defeat(p, s);
-        await this.save(p.userId, s);
-      }
+      await this.advancePoison(p, s, now);
       if (s.activePet !== (p.companion?.id ?? null)) {
         s.petVitals ??= {};
         if (s.activePet) {
@@ -870,24 +861,7 @@ export class AdventureService {
         }
       }
       if (m && s.hp > 0) {
-        const w = WEAPONS[s.equipment.weapon];
-        if (
-          dist(p, m) <= w.range &&
-          validSegment(p.roomId, p, m) &&
-          (s.cooldowns.attack ?? 0) <= now
-        ) {
-          s.cooldowns.attack = now + 1000 / w.attackSpeed;
-          await this.hit(
-            p,
-            s,
-            m,
-            damage(
-              w.attackPower + s.stats.attack + (s.foodUntil > now ? 3 : 0),
-              1,
-            ),
-          );
-          this.effect(p, "hit", { targetId: m.id });
-        }
+        await this.ownerAttack(p, s, m, now);
         if (
           m.hp > 0 &&
           p.companion &&
@@ -943,6 +917,42 @@ export class AdventureService {
         await this.save(p.userId, s);
       }
     }
+    await this.advanceEnemies(now, dt);
+  }
+  // Shared physical stages: production tick and deterministic combat assays.
+  async advancePoison(p, s, now) {
+    if (s.poisonUntil > now && (s.nextPoisonAt ?? 0) <= now) {
+      s.hp = clampHealth(s.hp - 2, s.stats.maxHp);
+      s.nextPoisonAt = now + 2000;
+      s.outcome ??= {};
+      s.outcome.ownerDamage = (s.outcome.ownerDamage ?? 0) + 2;
+      s.ownerDamage = (s.ownerDamage ?? 0) + 2;
+      this.effect(p, "mob-hit", { amount: 2, poison: true });
+      if (s.hp <= 0) await this.defeat(p, s);
+      await this.save(p.userId, s);
+    }
+  }
+  async ownerAttack(p, s, m, now) {
+    const w = WEAPONS[s.equipment.weapon];
+    if (
+      dist(p, m) <= w.range &&
+      validSegment(p.roomId, p, m) &&
+      (s.cooldowns.attack ?? 0) <= now
+    ) {
+      s.cooldowns.attack = now + 1000 / w.attackSpeed;
+      await this.hit(
+        p,
+        s,
+        m,
+        damage(
+          w.attackPower + s.stats.attack + (s.foodUntil > now ? 3 : 0),
+          1,
+        ),
+      );
+      this.effect(p, "hit", { targetId: m.id });
+    }
+  }
+  async advanceEnemies(now, dt) {
     for (const [key, room] of this.instances) {
       const players = [
         ...(this.multiplayer.store.rooms.get(key)?.players.values() ?? []),
