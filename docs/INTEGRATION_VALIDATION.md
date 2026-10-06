@@ -147,3 +147,14 @@ mirrored/reused directions and poses; viewer spot checks expose cropped source
 edges on some Deer/fishing frames. Dedicated directional art, contact refinement
 and sustained GPU-memory measurement remain open. No improved Cadence combat
 competence is claimed beyond the controlled counts in the battle investigation.
+
+## Battle worker scaling follow-up
+
+The historical single-host figures above remain the control. Bounded persistent workers,
+version/checkpoint cache validation and per-brain transaction ownership now replace the
+global BattleBrains queue. The initial matrix reached 713 ms p95 at 100 distinct brains with eight workers;
+the final repeat reached 1,359 ms with 10/300 deadline misses. Final 150-brain p95 was
+1,017 ms with zero misses; the earlier matrix had four. Both remain recorded.
+No brain pack, learning rule, observation, reward or decision interval changed. Shared-room
+Adventure operations remain serialized. See [BATTLE_BRAIN_SCALING.md](BATTLE_BRAIN_SCALING.md)
+for the full matrix, crash boundary, receipt limits and capacity exclusions.
