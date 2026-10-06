@@ -747,6 +747,11 @@ export class AdventureService {
     }
   }
   async battleDecision(id, userId, obs, reward, options = {}) {
+    const settlement = options.outcome;
+    if (settlement) {
+      settlement.battleRequestId ??= randomUUID();
+      options = {...options, requestId: settlement.battleRequestId + (options.finish ? ":finish" : ":tick")};
+    }
     try {
       return await this.brains.decide(id, userId, obs, reward, options);
     } catch (error) {
@@ -782,6 +787,7 @@ export class AdventureService {
     const now = this.service.now(),
       dt = Math.min(0.6, Math.max(0, (now - this.tickAt) / 1000));
     this.tickAt = now;
+    const decisions = [], presentations = [], decisionRooms = new Set();
     for (const [key, room] of this.instances)
       if (!this.multiplayer.store.rooms.has(key)) this.instances.delete(key);
     // Persist idle cached state before eviction. Combat settlement retains its owner
@@ -794,6 +800,12 @@ export class AdventureService {
     }
     for (const p of this.multiplayer.store.players.values()) {
       if (!p.room) continue;
+      // Shared room combat keeps its previous ordering; independent rooms can batch.
+      if (decisionRooms.has(p.room)) {
+        for (const apply of decisions.splice(0)) await apply();
+        decisionRooms.clear();
+      }
+      decisionRooms.add(p.room);
       const s = await this.state(p.userId);
       await this.advancePoison(p, s, now);
       if (s.activePet !== (p.companion?.id ?? null)) {
@@ -902,44 +914,54 @@ export class AdventureService {
             (x) => x.hp > 0 && dist(p, x) < 350,
           ).length;
           const outcome = s.outcome ?? {};
-          const answer = await this.battleDecision(
+          const pending = this.battleDecision(
             p.companion.id,
             p.userId,
             battleObservation(s, p, m, p.companion),
             battleReward(outcome),
-            { outcome, ability: s.favoriteAbility ?? null },
+            { outcome, ability: s.favoriteAbility ?? null, deadlineAt: Date.now() + 1400 },
           );
-          if (!answer.unavailable) s.outcome = {};
-          s.ownerDamage = 0;
-          s.petDamage = 0;
-          s.damageDealt = 0;
-          await this.petAction(p, s, m, answer.action);
-          await this.save(p.userId, s);
-          this.multiplayer.send(p, "battleDecision", {
-            mochiId: p.companion.id,
-            ...answer,
+          pending.catch(() => {}); // Awaited during application; attach rejection handling now.
+          decisions.push(async () => {
+            const answer = await pending;
+            if (!answer.unavailable) s.outcome = {};
+            s.ownerDamage = 0;
+            s.petDamage = 0;
+            s.damageDealt = 0;
+            await this.petAction(p, s, m, answer.action);
+            await this.save(p.userId, s);
+            this.multiplayer.send(p, "battleDecision", {
+              mochiId: p.companion.id,
+              ...answer,
+            });
           });
         }
       }
-      this.multiplayer.send(p, "adventureState", {
-        player: {
-          hp: s.hp,
-          mp: s.mp,
-          petHp: s.petHp,
-          stats: s.stats,
-          target: s.target,
-          levels: Object.fromEntries(
-            Object.entries(s.xp).map(([k, v]) => [k, levelFor(v)]),
-          ),
-          cooldowns: s.cooldowns,
-        },
-        serverTime: now,
+      presentations.push(async () => {
+        this.multiplayer.send(p, "adventureState", {
+          player: {
+            hp: s.hp,
+            mp: s.mp,
+            petHp: s.petHp,
+            stats: s.stats,
+            target: s.target,
+            levels: Object.fromEntries(
+              Object.entries(s.xp).map(([k, v]) => [k, levelFor(v)]),
+            ),
+            cooldowns: s.cooldowns,
+          },
+          serverTime: now,
+        });
+        if (now - (s.savedAt ?? 0) > 10000) {
+          s.savedAt = now;
+          await this.save(p.userId, s);
+        }
       });
-      if (now - (s.savedAt ?? 0) > 10000) {
-        s.savedAt = now;
-        await this.save(p.userId, s);
-      }
     }
+    // Submit independent brains together; apply authoritative motors in player order.
+    // Enemies remain paused through the batch, as in the previous awaited tick.
+    for (const apply of decisions) await apply();
+    for (const present of presentations) await present();
     await this.advanceEnemies(now, dt);
   }
   async advancePoison(p, s, now) {
@@ -1106,8 +1128,9 @@ export class AdventureService {
         );
     }
   }
-  close() {
+  async close() {
     clearInterval(this.timer);
-    this.brains.close();
+    await this.queue;
+    await this.brains.close();
   }
 }

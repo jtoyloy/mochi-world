@@ -35,3 +35,7 @@ DROP TRIGGER IF EXISTS verified_reward_payout ON game_reward_payouts;
 CREATE TRIGGER verified_reward_payout BEFORE INSERT ON game_reward_payouts FOR EACH ROW EXECUTE FUNCTION reward_payout_guard();
 ALTER TABLE reward_treasury ADD COLUMN IF NOT EXISTS currency jsonb NOT NULL DEFAULT '{}';
 ALTER TABLE mochi_battle_brains ADD COLUMN IF NOT EXISTS pack text NOT NULL DEFAULT 'battle-0.74.0-v1';
+
+-- Last durable receipt supports retry of the currently owed battle settlement.
+ALTER TABLE mochi_battle_brains ADD COLUMN IF NOT EXISTS last_request_id text;
+ALTER TABLE mochi_battle_brains ADD COLUMN IF NOT EXISTS last_response jsonb;

@@ -1,22 +1,27 @@
-import { createHash } from "node:crypto";
-import { BrainProcess } from "../../sim/brain_proc.mjs";
+import { createHash, randomUUID } from "node:crypto";
+import { BattleWorkers } from "./battle-workers.mjs";
+import { performance } from "node:perf_hooks";
 import { BATTLE_ACTIONS } from "../../web/js/game/adventure.js";
 export class BattleBrains {
-  constructor(service) {
+  constructor(service, options = {}) {
     this.service = service;
     this.pool = service.pool;
-    this.host = null;
-    this.queue = Promise.resolve();
+    this.workers = new BattleWorkers(options);
+    this.samples = [];
   }
   decide(
     id,
     userId,
     obs,
     reward = 0,
-    { aroused = true, finish = false, outcome = {}, ability = null } = {},
+    { aroused = true, finish = false, outcome = {}, ability = null, expectedVersion = null, deadlineAt = Infinity, requestId = randomUUID() } = {},
   ) {
-    const task = () =>
-      this.service.transaction([userId], async (tx) => {
+    const submitted = performance.now();
+    return this.workers.run(id, async (call, scheduling) => {
+      const timing = { ...scheduling, db: 0 };
+      const started = performance.now();
+      const result = await this.service.transaction([userId], async (client) => {
+        const tx = { query: async (...args) => { const at=performance.now(); try { return await client.query(...args); } finally { timing.db += performance.now()-at; } } };
         await this.service.owner(tx, userId, id);
         await tx.query(
           "INSERT INTO mochi_battle_brains(mochi_id) VALUES($1) ON CONFLICT DO NOTHING",
@@ -28,24 +33,22 @@ export class BattleBrains {
             [id],
           )
         ).rows[0];
-        this.host ??= new BrainProcess({
-          module: "mochi.battle",
-          timeoutMs: 10000,
-        });
-        await this.host.call({
-          op: "boot",
-          domain: "battle-v1",
+        if (row.last_request_id === requestId) return row.last_response;
+        if (expectedVersion !== null && row.version !== expectedVersion)
+          throw Error("Stale battle brain version");
+        if (Date.now() > deadlineAt) throw Error("Battle decision deadline expired waiting for database");
+        const ipcAt = performance.now();
+        const response = await call({
+          op: "execute", id, version: row.version,
           pack: row.pack ?? "battle-0.74.0-v1",
           seed: createHash("sha256").update(id).digest().readUInt32BE(0),
           checkpoint: row.checkpoint?.toString("base64"),
+          decision: {op: finish ? "finish" : "tick", obs, reward, aroused},
         });
-        const answer = await this.host.call({
-          op: finish ? "finish" : "tick",
-          obs,
-          reward,
-          aroused,
-        });
-        const saved = await this.host.call({ op: "save" });
+        timing.ipc = performance.now()-ipcAt;
+        Object.assign(timing, response.timings);
+        timing.transport = Math.max(0, timing.ipc-response.timings.host);
+        const answer = response.answer, saved = response;
         const action = answer.refused
           ? null
           : (BATTLE_ACTIONS[answer.action?.[0]] ?? null);
@@ -80,25 +83,24 @@ export class BattleBrains {
             metrics.abilities[ability] = (metrics.abilities[ability] ?? 0) + 1;
           }
         }
-        await tx.query(
-          "UPDATE mochi_battle_brains SET checkpoint=$2,version=version+1,metrics=$3,updated_at=now() WHERE mochi_id=$1",
-          [id, Buffer.from(saved.checkpoint, "base64"), metrics],
-        );
-        return {
-          action,
-          refused: !finish && !action,
-          finished: finish,
-          version: row.version + 1,
+        const receipt = {
+          action, refused: !finish && !action, finished: finish,
+          version: row.version + 1, requestId,
         };
+        await tx.query(
+          "UPDATE mochi_battle_brains SET checkpoint=$2,version=version+1,metrics=$3,updated_at=now(),last_request_id=$4,last_response=$5 WHERE mochi_id=$1",
+          [id, Buffer.from(saved.checkpoint, "base64"), metrics, requestId, receipt],
+        );
+        return receipt;
       });
-    const result = this.queue.then(task);
-    this.queue = result.catch(() => {
-      this.host?.close();
-      this.host = null;
-    });
-    return result;
+      timing.service = performance.now()-started;
+      timing.endToEnd = performance.now()-submitted;
+      this.samples.push(timing);
+      if(this.samples.length>10000)this.samples.shift();
+      return result;
+    }, {deadlineAt});
   }
   close() {
-    this.host?.close();
+    return this.workers.close();
   }
 }

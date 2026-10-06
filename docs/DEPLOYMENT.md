@@ -2,7 +2,7 @@
 
 Local development runs Node 22+, PostgreSQL 16+, Python 3.12/NumPy/bundled Cadence and local
 PixiJS painterly isometric world with DOM/React overlays; Redis, external LLM and Solana funds are not required. Build with npm run build and use npm run db:migrate before
-npm start. The server serves web files plus /socket and reuses a single serial native brain host.
+npm start. The server serves web files plus /socket and uses a bounded persistent native BattleBrain worker pool. Scheduled trading retains its existing host.
 
 Initial production topology: HTTPS reverse proxy → Node web/game/socket server → PostgreSQL;
 Cadence worker → versioned checkpoint storage; optional dialogue provider and configured Solana
@@ -40,3 +40,17 @@ Do not share production storage with a test clone. Review
 commands, disk formula, legacy-file safety and alerts. The development three-file
 policy is an example, not an approved production recovery objective. This change
 does not certify 150 CCU or resolve the other deployment/identity-provider limits.
+
+## Battle worker configuration
+
+Run `npm run db:migrate` to add the last-request receipt columns before starting the
+new coordinator. Set `BATTLE_WORKERS` for available CPU/RAM; the default is 2. On the
+measured local eight-logical-CPU machine, 8 outperformed 4 at 100 distinct brains,
+but this is not a universal sizing rule. `BATTLE_QUEUE_LIMIT=256`,
+`BATTLE_RESIDENT_LIMIT=64`, `BATTLE_IDLE_SECONDS=300` bound admitted work and cached lives.
+One worker is the control; do not run one process per pet. Allow graceful shutdown
+to drain admitted decisions before terminating PostgreSQL access. Worker readiness
+is required before the listener opens. Observe runtime diagnostics and repeat the
+PostgreSQL matrix on candidate production hardware. Shared-room combat and the
+Adventure operation queue still limit full runtime throughput. See
+[BATTLE_BRAIN_SCALING.md](BATTLE_BRAIN_SCALING.md); no deployment was performed.

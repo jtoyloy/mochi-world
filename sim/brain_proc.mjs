@@ -34,12 +34,8 @@ export class BrainProcess {
     });
     this.child.on("error", (error) => this.fail(error));
     this.child.stdin.on("error", (error) => this.fail(error));
-    this.child.on("exit", (code) => {
-      for (const next of this.waiting) {
-        clearTimeout(next.timer);
-        next.reject(new Error(`the brain process ended (${code})`));
-      }
-      this.waiting = [];
+    this.child.on("exit", (code, signal) => {
+      this.fail(new Error(`the brain process ended (${signal ?? code})`));
     });
   }
   fail(error) {

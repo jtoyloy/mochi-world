@@ -696,8 +696,9 @@ multiplayer = new Multiplayer({
   },
 });
 if (runtimeMetrics) process.on("message", message => {
-  if (message === "runtimeMetrics") process.send?.({ runtimeMetrics: { ...runtimeMetrics.sample(multiplayer, adventure), checkpoints: store.diagnostics() } });
+  if (message === "runtimeMetrics") process.send?.({ runtimeMetrics: { ...runtimeMetrics.sample(multiplayer, adventure), checkpoints: store.diagnostics(), battleWorkers: adventure.brains.workers.diagnostics() } });
 });
+await adventure.brains.workers.ready();
 multiplayer.adventure = adventure;
 adventure.attach(multiplayer);
 server.listen(
@@ -712,7 +713,7 @@ for (const signal of ["SIGINT", "SIGTERM"])
   process.on(signal, async () => {
     runtimeMetrics?.close();
     await checkpointCollector.stop();
-    adventure.close();
+    await adventure.close();
     multiplayer.close();
     server.close();
     await brains.stop();
