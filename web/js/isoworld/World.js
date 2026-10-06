@@ -5,7 +5,14 @@ import {
   facing8,
   spring,
 } from "../game/locomotion/core.js";
-import { walkFramesFromAtlas } from "./WalkFrames.js";
+import {
+  ANIMATION_SETS,
+  AnimationPlayback,
+  directionIndex,
+} from "./animation/registry.js";
+import { loadAnimationAtlas, selectTexture } from "./animation/atlas.js";
+import { AppearanceCache } from "./animation/appearance.js";
+import { openAnimationViewer } from "./animation/viewer.js";
 import { VENDORS, COMBAT_VENDORS, RESOURCE_NODES } from "../game/adventure.js";
 import {
   Application,
@@ -94,16 +101,11 @@ export class IsometricWorld {
       "aria-label",
       "Painterly isometric world. Click paths to walk, residents to talk, or buildings to enter.",
     );
-    const [buildings, props, characters, terrain, adventure, walk] =
+    const [buildings, props, characters, terrain, adventure] =
       await Promise.all(
-        [
-          "buildings",
-          "props",
-          "characters",
-          "terrain",
-          "adventure",
-          "walk-rig",
-        ].map((n) => Assets.load("/assets/isoworld/" + n + "-v1.png")),
+        ["buildings", "props", "characters", "terrain", "adventure"].map((n) =>
+          Assets.load("/assets/isoworld/" + n + "-v1.png"),
+        ),
       );
     this.terrain = terrain;
     this.atlases = {
@@ -112,15 +114,19 @@ export class IsometricWorld {
       adventure: this.split(adventure, 4, 2),
       characters: this.split(characters, 4, 4),
     };
-    const walkMetadata = await (
-      await fetch("/assets/isoworld/locomotion-v1.json")
-    ).json();
-    this.walkFrames = walkFramesFromAtlas(
-      this.atlases.characters,
-      walk,
-      walkMetadata,
+    this.animationAtlases = await Promise.all(
+      ANIMATION_SETS.map(async (set) => {
+        const texture = await Assets.load("/assets/isoworld/" + set.texture);
+        this.textures.push(texture);
+        const metadata = await (
+          await fetch(
+            "/assets/isoworld/" + set.texture.replace(".png", ".json"),
+          )
+        ).json();
+        return loadAnimationAtlas(texture, set, metadata);
+      }),
     );
-    this.textures.push(this.walkFrames.texture);
+    this.appearanceCache = new AppearanceCache(this.app.renderer);
     this.cameraVelocity = { x: 0, y: 0 };
     this.motionMetrics = {
       snaps: 0,
@@ -812,6 +818,9 @@ export class IsometricWorld {
     const s = new Sprite(this.atlases.characters[0]);
     s.anchor.set(0.5, 1);
     group.addChild(s);
+    const transitionSprite = new Sprite(s.texture);
+    transitionSprite.visible = false;
+    group.addChild(transitionSprite);
     const seatLegs = new Graphics()
       .moveTo(-9, -22)
       .lineTo(-10, -4)
@@ -846,6 +855,7 @@ export class IsometricWorld {
       target: data,
       group,
       s,
+      transitionSprite,
       shadow,
       cape,
       cosmetics,
@@ -874,6 +884,7 @@ export class IsometricWorld {
     ]);
     if (a.styleKey === styleKey) return;
     a.styleKey = styleKey;
+    a.gestureAppearance = null;
     const d = a.data,
       pet = a.type === "pet";
     a.row = pet
@@ -883,7 +894,11 @@ export class IsometricWorld {
       : d.avatar?.appearance?.style === "curly"
         ? 1
         : 0;
-    a.s.texture = this.atlases.characters[frameIndex(a.row, a.facing)];
+    a.animationSet = ANIMATION_SETS[a.row];
+    a.playback = new AnimationPlayback(a.animationSet);
+    a.playback.idleTime = (hash(a.key) % 480) / 100;
+    a.gait.stride = a.animationSet.strideDistance;
+    a.s.texture = this.animationAtlases[a.row].rows[a.facing].idle[0];
     a.s.height = pet ? 83 : 124;
     a.s.scale.x = a.s.scale.y;
     a.height = a.s.height;
@@ -891,9 +906,6 @@ export class IsometricWorld {
     a.cosmetics.clear();
     const slots = d.avatar?.equipment ?? d.equipment ?? {};
     if (!pet) {
-      a.cape
-        .poly([-16, -25, -24, -50, 0, -68, 23, -46, 18, -24])
-        .fill(d.avatar?.body_color ?? "#6f8c7a");
       if (slots.back)
         a.cape
           .poly([-24, -30, -26, -64, 0, -78, 25, -57, 20, -28])
@@ -912,12 +924,6 @@ export class IsometricWorld {
           .stroke({ color: "#684c52", width: 2 });
       if (slots.hand || slots.accessory)
         a.cosmetics.circle(22, -30, 7).fill("#d8b56b");
-      if (slots.feet)
-        a.cosmetics
-          .ellipse(-9, -5, 10, 4)
-          .fill("#79596b")
-          .ellipse(9, -5, 10, 4)
-          .fill("#79596b");
       if (slots.top)
         a.cosmetics
           .poly([-11, -39, 11, -39, 9, -23, -9, -23])
@@ -965,6 +971,19 @@ export class IsometricWorld {
           .circle(15, -34, 3)
           .fill("#574739");
     }
+    a.slots = slots;
+    a.cosmetics.visible = a.cape.visible = true;
+    a.appearanceArt = this.appearanceCache.compose(
+      this.animationAtlases[a.row],
+      a.styleKey,
+      [
+        { kind: "cape", graphics: a.cape },
+        { kind: "cosmetics", graphics: a.cosmetics },
+      ],
+      slots,
+      a.key === "player:" + this.bridge.selfId ? 192 : 128,
+    );
+    a.cosmetics.visible = a.cape.visible = !a.appearanceArt?.composited;
     a.node.textContent =
       (d.avatar?.display_name ?? d.name ?? "Mochi") +
       (a.type === "npc" ? " · NPC" : "");
@@ -1005,7 +1024,8 @@ export class IsometricWorld {
       }
     }
     for (const [key, a] of this.actors)
-      if (!keep.has(key) && !key.startsWith("home:")) this.removeActor(key);
+      if (!keep.has(key) && !key.startsWith("home:") && !key.startsWith("dev:"))
+        this.removeActor(key);
     if (this.marker !== snap.marker) {
       this.marker = snap.marker;
       if (this.marker) this.markerAt = performance.now();
@@ -1253,43 +1273,46 @@ export class IsometricWorld {
       this.dev.append(fpsLabel);
       this.motionDebug = el("p", "");
       this.dev.append(this.motionDebug);
-      const preview = el("button", "", "Preview walk frames");
-      preview.onclick = () => {
-        const dialog = el("dialog", "world-dialog"),
-          close = el("button", "", "Close walk preview"),
-          title = el("h2", "", "Temporary locomotion atlas"),
-          description = el(
-            "p",
-            "",
-            "Eight genuine articulated gait frames per direction. Rows: four directions each for two villagers, Moonfox and Woodland Deer. Fixed cells and foot anchors; artist replacements retain this contract.",
-          ),
-          canvas = document.createElement("canvas");
-        canvas.width = this.walkFrames.texture.width;
-        canvas.height = this.walkFrames.texture.height;
-        canvas.style.width = "100%";
-        canvas
-          .getContext("2d")
-          .drawImage(this.walkFrames.texture.source.resource, 0, 0);
-        canvas.setAttribute(
-          "aria-label",
-          "Articulated walk atlas: 128 fixed-pivot frames",
-        );
-        close.onclick = () => {
-          dialog.close();
-          dialog.remove();
-        };
-        const atlasImage = el("img", "");
-        atlasImage.alt = "Articulated walk atlas: 128 fixed-pivot frames";
-        atlasImage.src = canvas.toDataURL("image/png");
-        atlasImage.style.width = "100%";
-        atlasImage.dataset.heights = JSON.stringify(
-          this.walkFrames.rows.map((row) => row.map((d) => d.height)),
-        );
-        dialog.append(close, title, description, atlasImage);
-        document.body.append(dialog);
-        dialog.showModal();
+      const preview = el("button", "", "Animation viewer");
+      preview.onclick = async () => {
+        await this.loadGestures();
+        openAnimationViewer(this.animationAtlases, this.gestureAtlases);
       };
       this.dev.append(preview);
+      const crowdLabel = el("label", "", "Animation crowd (client-only)"),
+        crowd = el("select", "");
+      crowd.setAttribute("aria-label", "Animation crowd");
+      for (const count of [0, 20, 40]) {
+        const o = el("option", "", `${count} remote players + ${count} Mochis`);
+        o.value = count;
+        crowd.append(o);
+      }
+      crowd.onchange = () => this.animationCrowd(Number(crowd.value));
+      crowdLabel.append(crowd);
+      this.dev.append(crowdLabel);
+      const legacyLabel = el("label", "", "Animation comparison"),
+        legacy = el("select", "");
+      legacy.setAttribute("aria-label", "Animation comparison");
+      for (const text of ["Full body", "Legacy prototype"])
+        legacy.append(el("option", "", text));
+      legacy.onchange = async () => {
+        if (legacy.value === "Legacy prototype" && !this.legacyWalk) {
+          const { walkFramesFromAtlas } = await import("./WalkFrames.js");
+          const texture = await Assets.load("/assets/isoworld/walk-rig-v1.png");
+          const m = await (
+            await fetch("/assets/isoworld/locomotion-v1.json")
+          ).json();
+          this.legacyWalk = walkFramesFromAtlas(
+            this.atlases.characters,
+            texture,
+            m,
+          );
+        }
+        this.legacyComparison = legacy.value === "Legacy prototype";
+        this.frameTimes.length = 0;
+      };
+      legacyLabel.append(legacy);
+      this.dev.append(legacyLabel);
       for (const [name, values] of [
         ["latency", [0, 50, 100, 200]],
         ["jitter", [0, 25, 50]],
@@ -1352,9 +1375,67 @@ export class IsometricWorld {
       g.circle(q.x, q.y, 24).stroke({ color: "#cc9361", width: 3 });
     }
   }
+  loadGestures() {
+    if (this.gestureLoading) return this.gestureLoading;
+    this.gestureLoading = Promise.all(
+      ANIMATION_SETS.slice(0, 2).map(async (set, i) => {
+        const m = await (
+          await fetch(
+            "/assets/isoworld/human-" +
+              (i ? "coral" : "sage") +
+              "-gesture-v2.json",
+          )
+        ).json();
+        const t = await Assets.load("/assets/isoworld/" + m.image);
+        return loadAnimationAtlas(t, set, m);
+      }),
+    )
+      .then((a) => {
+        if (!this.dead) this.gestureAtlases = a;
+      })
+      .catch((e) => {
+        console.warn("Gesture art unavailable; using compatible idle", e);
+      });
+    return this.gestureLoading;
+  }
+  animationCrowd(count) {
+    if (!this.config.development) return;
+    for (const key of [...this.actors.keys()])
+      if (key.startsWith("dev:")) this.removeActor(key);
+    const self = this.actors.get("player:" + this.bridge.selfId),
+      center = self?.p ?? { x: 550, y: 550 };
+    for (let i = 0; i < count; i++)
+      for (const pet of [false, true]) {
+        const x = center.x + ((i % 8) - 3.5) * 42,
+          y = center.y + (Math.floor(i / 8) - 2) * 65 + (pet ? 32 : 0),
+          key = `dev:${pet ? "pet" : "player"}:${i}`;
+        const a = this.actor(
+          key,
+          {
+            x,
+            y,
+            id: key,
+            userId: key,
+            name: pet ? `Mochi ${i + 1}` : `Walker ${i + 1}`,
+            avatar: {
+              display_name: pet ? `Mochi ${i + 1}` : `Walker ${i + 1}`,
+              appearance: { style: i % 2 ? "curly" : "classic" },
+            },
+            profile: {
+              beast: { archetype: i % 2 ? "woodland-deer" : "moonfox" },
+            },
+          },
+          pet ? "pet" : "player",
+        );
+        a.demo = { x, y, phase: i * 0.6, rate: 1.2 + (i % 3) * 0.4 };
+      }
+    this.frameTimes.length = 0;
+  }
   frame(dt) {
     if (this.dead) return;
-    const start = performance.now();
+    const start = performance.now(),
+      viewportWidth = this.host.clientWidth,
+      viewportHeight = this.host.clientHeight;
     this.motionMetrics.frameMs = dt * 1000;
     dt = Math.min(0.1, dt);
     this.elapsed += dt;
@@ -1372,7 +1453,13 @@ export class IsometricWorld {
       }
       const oldX = a.p.x,
         oldY = a.p.y;
-      if (a.definition) {
+      if (a.demo) {
+        const t = this.elapsed * a.demo.rate + a.demo.phase;
+        a.p = {
+          x: a.demo.x + Math.cos(t) * 80,
+          y: a.demo.y + Math.sin(t) * 80,
+        };
+      } else if (a.definition) {
         a.p = residentPosition(a.definition, now + offset);
       } else if (a.key === "player:" + this.bridge.selfId) {
         const m = this.scene.motion.get(this.bridge.selfId);
@@ -1420,27 +1507,98 @@ export class IsometricWorld {
         a.node.dataset.facing = a.gait.facing;
       }
       const seated = !!a.data.seated || a.definition?.state === "sit";
-      const art =
-        this.walkFrames.rows[a.row][
-          this.walkFrames.directions === 8 ? a.gait.facing : a.facing
-        ];
+      const profile = a.animationSet;
+      const directionIndexForArt = directionIndex(profile, a.gait.facing);
+      const art = a.appearanceArt ?? this.animationAtlases[a.row];
+      const requested =
+        a.definition?.state === "vendor"
+          ? "vendor-idle"
+          : snapshot.bubbles.get(a.key)?.text ||
+              (a.type === "npc" && !a.bubble.hidden && a.bubble.textContent)
+            ? "talk"
+            : (a.definition?.state ?? "");
+      a.playback.update(a.gait, speed, dt, requested);
+      if (
+        a.row < 2 &&
+        ["talk", "gesture"].includes(a.playback.state) &&
+        !this.gestureAtlases
+      )
+        this.loadGestures();
+      const gesture = this.gestureAtlases?.[a.row];
+      const gestureActive =
+        !!gesture && ["talk", "gesture"].includes(a.playback.state);
+      let activeArt = gestureActive ? gesture : art;
+      if (gestureActive && !a.gestureAppearance)
+        a.gestureAppearance = this.appearanceCache.compose(
+          gesture,
+          a.styleKey,
+          [
+            { kind: "cape", graphics: a.cape },
+            { kind: "cosmetics", graphics: a.cosmetics },
+          ],
+          a.slots,
+          a.key === "player:" + this.bridge.selfId ? 192 : 128,
+        );
+      if (gestureActive && a.gestureAppearance) activeArt = a.gestureAppearance;
+      a.cosmetics.visible = a.cape.visible = !activeArt.composited;
       a.s.texture =
         seated && a.type !== "pet"
           ? this.seatedFrames[frameIndex(a.row, a.facing)]
-          : moving
-            ? art.walk[a.gait.frame]
-            : art.idle;
-      // Fixed source rectangle: changing gait frame never changes the foot pivot.
-      const height = a.type === "pet" ? 83 : 124;
+          : selectTexture(activeArt, a.playback, directionIndexForArt);
+      const height = profile.height;
       a.s.scale.set(
         height /
           (seated && a.type !== "pet"
-            ? art.idle.height
-            : moving
-              ? art.height
-              : a.s.texture.height),
+            ? this.atlases.characters[frameIndex(a.row, a.facing)].height
+            : activeArt.metadata.heights[
+                ["walk", "trot", "settle"].includes(a.playback.state)
+                  ? "walk"
+                  : "idle"
+              ]),
       );
-      a.s.anchor.set(0.5, moving && !seated ? this.walkFrames.anchor.y : 1);
+      if (!seated && activeArt.metadata.mirrors[directionIndexForArt])
+        a.s.scale.x *= -1;
+      a.s.anchor.set(profile.footAnchor.x, seated ? 1 : profile.footAnchor.y);
+      if (this.config.development) {
+        a.node.dataset.animation = a.playback.state;
+        a.node.dataset.frame = a.playback.frame;
+      }
+      a.s.alpha = 1;
+      a.transitionSprite.visible = false;
+      if (!seated && a.playback.state === "settle" && !this.legacyComparison) {
+        const blend = 1 - a.playback.settleTime / profile.settleSeconds;
+        a.transitionSprite.texture = a.s.texture;
+        a.transitionSprite.anchor.copyFrom(a.s.anchor);
+        a.transitionSprite.scale.copyFrom(a.s.scale);
+        a.transitionSprite.alpha = 1 - blend;
+        a.transitionSprite.visible = true;
+        a.s.texture = art.rows[directionIndexForArt].idle[0];
+        a.s.scale.set(height / art.metadata.heights.idle);
+        if (art.metadata.mirrors[directionIndexForArt]) a.s.scale.x *= -1;
+        a.s.alpha = blend;
+      }
+      // Overlay cosmetics share the body phase/direction; world/UI anchors stay stable.
+      const secondary = moving
+        ? Math.sin(a.playback.phase * Math.PI * 2)
+        : Math.sin(a.playback.idleTime * 1.3) * 0.2;
+      a.cosmetics.rotation = secondary * 0.018;
+      a.cosmetics.x = secondary * 1.2;
+      a.cape.rotation =
+        Math.sin(a.playback.phase * Math.PI * 2 - 0.5) *
+        (moving ? 0.025 : 0.004);
+      if (
+        this.config.development &&
+        this.legacyComparison &&
+        this.legacyWalk &&
+        !seated
+      ) {
+        const oldArt = this.legacyWalk.rows[a.row][a.facing];
+        a.s.texture = moving ? oldArt.walk[a.gait.frame] : oldArt.idle;
+        a.s.scale.set(
+          profile.height / (moving ? oldArt.height : oldArt.idle.height),
+        );
+        a.s.anchor.set(0.5, moving ? this.legacyWalk.anchor.y : 1);
+      }
       a.s.y = seated ? -18 : 0;
       a.s.rotation = 0;
       const q = project(a.p);
@@ -1464,17 +1622,18 @@ export class IsometricWorld {
           Math.sin(((a.hitUntil - performance.now()) / 300) * Math.PI) * 0.16;
         a.s.y -= 4;
       }
+      a.transitionSprite.y = a.s.y;
       a.cosmetics.y = a.s.y;
       a.cape.y = a.s.y;
       const screen = this.root.toGlobal(q),
         inView =
           screen.x > -200 &&
-          screen.x < this.host.clientWidth + 200 &&
+          screen.x < viewportWidth + 200 &&
           screen.y > -200 &&
-          screen.y < this.host.clientHeight + 200;
+          screen.y < viewportHeight + 200;
       a.group.renderable = inView;
       a.node.style.left = screen.x + "px";
-      a.node.style.top = screen.y - a.height * this.zoom - 10 + "px";
+      a.node.style.top = screen.y - profile.height * this.zoom - 10 + "px";
       a.node.hidden =
         !inView ||
         !a.group.visible ||
@@ -1491,7 +1650,10 @@ export class IsometricWorld {
       )
         text = a.definition.ambient;
       a.bubble.hidden = !text || !inView || !a.group.visible;
-      a.bubble.textContent = text ?? "";
+      if (a.bubbleText !== (text ?? "")) {
+        a.bubbleText = text ?? "";
+        a.bubble.textContent = a.bubbleText;
+      }
       a.bubble.onclick = bubble?.dismiss ?? null;
       a.bubble.style.left = screen.x + "px";
       a.bubble.style.top = screen.y - a.height * this.zoom - 42 + "px";
@@ -1540,7 +1702,7 @@ export class IsometricWorld {
     if (self) {
       const center = project({ x: 600, y: 500 }),
         q = project(self.p),
-        mobile = this.host.clientWidth < 650;
+        mobile = viewportWidth < 650;
       const desired = mobile
         ? q
         : {
@@ -1551,8 +1713,8 @@ export class IsometricWorld {
     }
     this.root.scale.set(this.zoom);
     this.root.position.set(
-      this.host.clientWidth * 0.5 - this.camera.x * this.zoom,
-      this.host.clientHeight * (this.host.clientWidth < 650 ? 0.46 : 0.48) -
+      viewportWidth * 0.5 - this.camera.x * this.zoom,
+      viewportHeight * (viewportWidth < 650 ? 0.46 : 0.48) -
         this.camera.y * this.zoom,
     );
     if (this.motionDebug && this.frames % 15 === 0) {
@@ -1577,11 +1739,10 @@ export class IsometricWorld {
       label.node.style.top = q.y - label.height * this.zoom + "px";
       label.node.hidden =
         q.x < 0 ||
-        q.x > this.host.clientWidth ||
+        q.x > viewportWidth ||
         q.y < 95 ||
-        (q.y < 185 && Math.abs(q.x - this.host.clientWidth * 0.5) < 180) ||
-        q.y >
-          this.host.clientHeight - (this.host.clientWidth < 650 ? 255 : 145);
+        (q.y < 185 && Math.abs(q.x - viewportWidth * 0.5) < 180) ||
+        q.y > viewportHeight - (viewportWidth < 650 ? 255 : 145);
     }
     for (const p of this.props) {
       const s = p.sprite;
@@ -1640,7 +1801,12 @@ export class IsometricWorld {
       if (this.metrics) {
         const sorted = [...this.frameTimes].sort((a, b) => a - b),
           p95 = sorted[Math.floor(sorted.length * 0.95)] ?? 0;
-        this.metrics.textContent = `${Math.round(this.app.ticker.FPS)} FPS · p95 ${p95.toFixed(1)} ms · ${this.actors.size} entities · ${this.objects.children.length} depth objects · CPU update ${(performance.now() - start).toFixed(2)} ms · PixiJS/WebGL · DPR ${this.app.renderer.resolution}. ${this.gpuCounts?.draws ?? "…"} GL draws · ${Math.round(this.gpuCounts?.triangles ?? 0)} triangles · painted atlases + walk frames + ground.`;
+        const countSprites = (n) =>
+          !n.visible || !n.renderable
+            ? 0
+            : (n instanceof Sprite ? 1 : 0) +
+              (n.children ?? []).reduce((sum, c) => sum + countSprites(c), 0);
+        this.metrics.textContent = `${Math.round(this.app.ticker.FPS)} FPS · p95 ${p95.toFixed(1)} ms · ${this.actors.size} entities · ${this.objects.children.length} depth objects · CPU update ${(performance.now() - start).toFixed(2)} ms · PixiJS/WebGL · DPR ${this.app.renderer.resolution}. ${this.gpuCounts?.draws ?? "…"} GL draws · ${Math.round(this.gpuCounts?.triangles ?? 0)} triangles · character RGBA ${((this.animationAtlases.reduce((n, a) => n + a.texture.width * a.texture.height * 4, 0) + (this.gestureAtlases ? this.gestureAtlases[0].texture.width * this.gestureAtlases[0].texture.height * 4 : 0)) / 1048576).toFixed(1)} MiB · ${[...this.actors.values()].filter((a) => a.group.renderable).length} visible actors · ${countSprites(this.root)} visible sprites · appearance cache ${(this.appearanceCache.bytes / 1048576).toFixed(1)} MiB · ${this.legacyComparison ? "legacy prototype" : "full body"}.`;
       }
     }
   }
@@ -1721,6 +1887,7 @@ export class IsometricWorld {
   }
   destroy() {
     this.dead = true;
+    this.appearanceCache?.destroy();
     if (this.renderProbe) {
       this.app.renderer.runners.prerender.remove(this.renderProbe);
       this.app.renderer.runners.postrender.remove(this.renderProbe);

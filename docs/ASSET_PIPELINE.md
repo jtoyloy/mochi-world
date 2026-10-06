@@ -224,3 +224,18 @@ The current primary renderer uses actual eight-frame walk sets rather than stati
 `web/assets/isoworld/locomotion-v1.json` records the contract; developer World diagnostics → Preview walk frames exposes the source atlas. The temporary rig draws real hip/knee/foot changes, grounded stance and lifted swing; code-native leg detail is explicitly prototype art. Human stride is 105 logical units/loop; Mochi 82. Ground contact displacement is projected consistently with that distance. Future artist sprites should retain original rectangles, pivots and trim offsets and implement the same rows/archetype/direction texture interface. Do not run silhouette trimming on individual walk frames. Foot-contact hooks are at phase 0 and 0.5; surface audio can be extended later.
 
 The generated original `walk-rig-v1.png` is checked in and loaded by the renderer with `locomotion-v1.json`. The metadata records source-body heights for stable scale across directional frames. Startup validates dimensions/pivots; automated checks verify all 128 frame rectangles and reject malformed metadata. The generator remains available in WalkFrames.js for future rig adjustments.
+
+### Full-body animation v2
+
+See [ANIMATION_DELIVERY.md](ANIMATION_DELIVERY.md) for all current sets/limits and
+[ANIMATION_PROMPTS.md](ANIMATION_PROMPTS.md) for original built-in imagegen prompts.
+`animation/registry.js` defines stride, direction order, body type, anchors and
+states. PNG+JSON atlases preserve sourceSize, spriteSourceSize and pivots;
+`npm run assets:register` registers these provisional irregular source grids,
+`npm run assets:validate` rejects missing/out-of-bounds frames/pivots. Build runs
+validation automatically. Artist sheets may replace the PNG/JSON pair without
+changing movement; eight-view exports use the registry's eight logical row order.
+Appearance sheets precompose synchronized existing equipment placeholders with
+painted base outfits; local cells192px, NPC/remote128px, maximum eight caches.
+No cloth simulation or additional procedural legs. Future cosmetic layers must
+export identical direction/frame/canvas/pivot registration before compositing.

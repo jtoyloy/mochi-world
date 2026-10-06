@@ -87,3 +87,15 @@ Adventure mobs use viewport culling/interpolation; effects use a 16-entry pool a
 ## Locomotion measurements — 2026-10-05
 
 See MOVEMENT_AUDIT.md for isolated route/transport tests and browser samples. The old latest-target chase caused stationary presentation frames despite near-60 FPS. Movement now carries waypoint distance, predicts locally and buffers remote snapshots. Default movement stays 10 Hz. A 144-case synthetic network sweep across 10/15/20 Hz found no hard snaps/backsteps on straight paths and at most 0.36% stationary remote frames. Town two-client samples were 57–62 FPS, p95 17.2–18.7 ms with 1.0–2.1 ms sampled CPU update. Screenshot capture affected stress-run frame time. These are local samples, not a capacity guarantee or a GC analysis.
+
+### Full-body animation (2026-10-06)
+
+Developer-only World diagnostics provides client-only20/40 player+Mochi crowds,
+legacy/full-body presentation comparison, GL draws/triangles, visible sprites,
+RGBA source/cache estimates and existing FPS/p95/update timings. See
+`docs/assays/animation-crowd.json` and `ANIMATION_DELIVERY.md` for matched live
+samples and limits. Source art23.99MiB plus lazy gestures6.0MiB; bounded appearance
+sheets4MiB remote/NPC,9MiB local. Do not interpret these as total VRAM: world,
+seated-art and render-target allocations are additional. Crowds use scripted
+visual routes and are not real networking capacity tests. Cached viewport
+sizes and unchanged bubble text avoid repeated DOM layout/content work per actor.

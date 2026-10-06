@@ -1,0 +1,67 @@
+{
+  "viewport": [
+    1280,
+    900
+  ],
+  "note": "Preliminary matched DPR2 presentation comparison; final optimized renderer samples DPR1, so do not attribute differences solely to art. Scripted circles bypass networking. Legacy retains new texture caches. HUD samples; screenshot/browser focus can perturb timings.",
+  "samples": [
+    {
+      "scene": "0",
+      "mode": "legacy",
+      "text": [
+        "60 FPS · p95 16.8 ms · 20 entities · 72 depth objects · CPU update 1.50 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 2238 triangles · character RGBA 24.0 MiB · 20 visible actors · legacy prototype.",
+        "Movement: 10 Hz server · frame 16.6 ms · ping 1 ms · buffers 32 · interpolation 120 ms · arrival max 104 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 0.0 · idle facing 2 · 0 path nodes · waypoint none"
+      ]
+    },
+    {
+      "scene": "20",
+      "mode": "legacy",
+      "text": [
+        "60 FPS · p95 17.6 ms · 60 entities · 112 depth objects · CPU update 4.10 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 4534 triangles · character RGBA 24.0 MiB · 60 visible actors · legacy prototype.",
+        "Movement: 10 Hz server · frame 16.6 ms · ping 0 ms · buffers 32 · interpolation 120 ms · arrival max 106 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 128.0 · idle facing 2 · 0 path nodes · waypoint none"
+      ]
+    },
+    {
+      "scene": "20",
+      "mode": "fullbody",
+      "text": [
+        "60 FPS · p95 17.5 ms · 60 entities · 112 depth objects · CPU update 4.30 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 4518 triangles · character RGBA 24.0 MiB · 60 visible actors · full body.",
+        "Movement: 10 Hz server · frame 17.4 ms · ping 1 ms · buffers 32 · interpolation 120 ms · arrival max 107 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 128.0 · idle facing 2 · 0 path nodes · waypoint none"
+      ]
+    },
+    {
+      "scene": "40",
+      "mode": "fullbody",
+      "text": [
+        "60 FPS · p95 33.4 ms · 100 entities · 152 depth objects · CPU update 7.10 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 6878 triangles · character RGBA 24.0 MiB · 100 visible actors · full body.",
+        "Movement: 10 Hz server · frame 16.6 ms · ping 0 ms · buffers 32 · interpolation 120 ms · arrival max 110 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 96.0 · idle facing 2 · 0 path nodes · waypoint none"
+      ]
+    },
+    {
+      "scene": "40",
+      "mode": "legacy",
+      "text": [
+        "60 FPS · p95 33.4 ms · 100 entities · 152 depth objects · CPU update 7.70 ms · PixiJS/WebGL · DPR 2. 3 GL draws · 6862 triangles · character RGBA 24.0 MiB · 100 visible actors · legacy prototype.",
+        "Movement: 10 Hz server · frame 33.3 ms · ping 1 ms · buffers 32 · interpolation 120 ms · arrival max 109 ms · error 0.00 · corrections 0 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 96.0 · idle facing 2 · 0 path nodes · waypoint none"
+      ]
+    },
+    {
+      "stage": "final",
+      "scene": "40",
+      "mode": "fullbody",
+      "text": [
+        "60 FPS · p95 33.9 ms · 100 entities · 152 depth objects · CPU update 1.20 ms · PixiJS/WebGL · DPR 1. 2 GL draws · 6144 triangles · character RGBA 30.0 MiB · 100 visible actors · 154 visible sprites · appearance cache 37.0 MiB · full body.",
+        "Movement: 10 Hz server · frame 33.4 ms · ping 1 ms · buffers 32 · interpolation 120 ms · arrival max 104 ms · error 0.00 · corrections 4 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 96.0 · idle facing 5 · 0 path nodes · waypoint none"
+      ]
+    },
+    {
+      "stage": "final",
+      "scene": "20",
+      "mode": "fullbody",
+      "text": [
+        "60 FPS · p95 17.4 ms · 60 entities · 112 depth objects · CPU update 1.00 ms · PixiJS/WebGL · DPR 1. 2 GL draws · 3832 triangles · character RGBA 30.0 MiB · 60 visible actors · 114 visible sprites · appearance cache 37.0 MiB · full body.",
+        "Movement: 10 Hz server · frame 16.7 ms · ping 0 ms · buffers 32 · interpolation 120 ms · arrival max 103 ms · error 0.00 · corrections 4 (0.0/s) · hard snaps 0 · speed local 0.0 / remote 128.0 · idle facing 5 · 0 path nodes · waypoint none"
+      ]
+    }
+  ]
+}

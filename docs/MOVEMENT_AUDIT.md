@@ -54,3 +54,50 @@ The unchanged navigation implementation was also profiled natively: first obstru
 Final local delayed-input check: 100 ms one-way latency, 25 ms jitter, 3% missed snapshots and 30 FPS cap. The first captured pose was already walking at 9.87 units/sec during acceleration; later captured speed was 182.29. Sampled prediction error was 0.31 units with zero hard snaps; the completed route recorded nine small corrections and returned to idle. See assays/movement-local-100ms.json. Developer controls were reset and the second test tab closed afterward. Authoritative movement retains normal timer jitter and caps suspended gaps at 250 ms; render/prediction deltas cap at 100 ms. This avoids throwing away a few milliseconds on every slightly-late 10 Hz tick.
 
 Gathering now records an authoritative facing vector toward the validated resource when it stops movement. Idle player facing follows that confirmed pose; WALK still depends on actual visual velocity. Seated upper-body scaling remains consistent with existing chair art, and repeated seated snapshots do not inflate hard-snap counts. Atlas validation, seating metrics and ordinary authoritative timer jitter have regression coverage. Final validation: 145 JavaScript tests, 21 Python tests, successful production build.
+
+## Production Animation Upgrade
+
+2026-10-06: the previous presentation used `WalkFrames.createWalkFrames`: the
+original painted upper 77% (human) / 80% (beast) was placed over newly drawn
+hip/knee/foot strokes. Only the cutout translated slightly; arms, clothing, hair,
+head and tails did not participate. Idle was one static direction pose. The
+128-frame PNG was a useful control, not finished art.
+
+That generator has been removed. Normal play now loads original painterly
+**full-body** walk and idle frames through `animation/registry.js` and
+`animation/atlas.js`. Two human outfits, Moonfox and Woodland Deer each have
+four art directions and eight walk/eight idle frame slots per direction. Eight
+logical directions remain supported, and eight distinct art rows can replace the
+four-view sets without changing movement. Human arm swing, torso/hip response,
+cloth/satchel/hair motion are painted into each frame; the beasts include head,
+spine, ear and tail changes. Basic idle includes breathing, blinking and weight
+shift. A short grounded crossfade settles walk into compatible idle.
+
+`AnimationPlayback` consumes **actual gait distance**, not elapsed walk time;
+turns preserve phase. Metadata supplies strides/body types/idle timing and
+catch-up thresholds. Remote animation continues to consume interpolated visual
+velocity. The underlying Gait, paths, prediction, settlement, camera spring,
+network protocol and server rate are unchanged.
+
+Generated grids required registration: explicit row boundaries, largest alpha
+silhouette source rectangles, original 224×224 canvas, trim offsets and one
+normalized foot pivot (.5,.88). Pixels are preserved, and frames are never
+individually resized by their silhouette. One shared median source height per
+state keeps idle/walk scale comparable. Nameplates/bubbles use fixed logical
+entity height; shadows and depth remain at the world ground anchor.
+
+`AppearanceCache` precomposes existing equipment placeholders into synchronized
+sheets (128 pixel cells for NPC/remotes, 192 for the local player), with common
+224-unit logical canvas/pivot. Clothing/hair/boots in base outfits are painted
+full-body art. Additional existing hats/aprons/charms/capes remain simple
+placeholders; a boot color overlay follows the painted feet. Cache limit eight
+bounds memory; excess appearances retain compatible base and attachment layers.
+The obsolete baked-leg atlas loads only through an explicit developer comparison
+control, never normal play.
+
+The new art is **cohesive provisional full-body art**, not artist-final production
+cycles. Generated rear views required row mapping, a mirrored Moonfox NW fallback
+and reuse of a compatible human NW contact pose. Rich eight-view painted art,
+authored separate trot cycles, contact/stride polish and painted cosmetic/action
+sets remain artist work. See `ANIMATION_DELIVERY.md` and the exact prompts in
+`ANIMATION_PROMPTS.md` for evidence and replacement details.

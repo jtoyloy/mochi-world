@@ -34,12 +34,7 @@
     "characters-v1.png": {
       "columns": 4,
       "rows": 4,
-      "directions": [
-        "southeast",
-        "southwest",
-        "northwest",
-        "northeast"
-      ],
+      "directions": ["southeast", "southwest", "northwest", "northeast"],
       "rowsByArchetype": [
         "classic-human",
         "curly-human",
@@ -50,12 +45,7 @@
     "terrain-v1.png": {
       "columns": 2,
       "rows": 2,
-      "items": [
-        "sandstone",
-        "meadow",
-        "cobblestones",
-        "water"
-      ],
+      "items": ["sandstone", "meadow", "cobblestones", "water"],
       "usage": "Projected CanvasPattern into the authored ground, water retained for future effects"
     },
     "adventure-v1.png": {
@@ -77,7 +67,38 @@
       "columns": 8,
       "rows": 16,
       "metadata": "locomotion-v1.json",
-      "provenance": "Original project character cutout bodies with code-native articulated legs; generated and visually inspected in the developer gallery on 2026-10-05. Temporary art, not AI-generated walk poses."
+      "provenance": "Original project character cutout bodies with code-native articulated legs; generated and visually inspected in the developer gallery on 2026-10-05. Temporary art, not AI-generated walk poses.",
+      "usage": "Legacy developer comparison only; never normal play."
+    },
+    "human-sage-v2.png": {
+      "columns": 8,
+      "rows": 8,
+      "metadata": "human-sage-v2.json",
+      "provenance": "Original built-in imagegen full-body walk/idle sheet,2026-10-06; existing repository character identity/style reference. Provisional art; see docs/ANIMATION_DELIVERY.md."
+    },
+    "human-coral-v2.png": {
+      "columns": 8,
+      "rows": 8,
+      "metadata": "human-coral-v2.json",
+      "provenance": "Original built-in imagegen full-body walk/idle sheet,2026-10-06; existing repository character identity/style reference. Provisional art; see docs/ANIMATION_DELIVERY.md."
+    },
+    "moonfox-v2.png": {
+      "columns": 8,
+      "rows": 8,
+      "metadata": "moonfox-v2.json",
+      "provenance": "Original built-in imagegen full-body walk/idle sheet,2026-10-06; existing repository character identity/style reference. Provisional art; see docs/ANIMATION_DELIVERY.md."
+    },
+    "woodland-deer-v2.png": {
+      "columns": 8,
+      "rows": 8,
+      "metadata": "woodland-deer-v2.json",
+      "provenance": "Original built-in imagegen full-body walk/idle sheet,2026-10-06; existing repository character identity/style reference. Provisional art; see docs/ANIMATION_DELIVERY.md."
+    },
+    "vendor-gesture-v2.png": {
+      "columns": 8,
+      "rows": 6,
+      "metadata": ["human-sage-gesture-v2.json", "human-coral-gesture-v2.json"],
+      "provenance": "Original built-in imagegen quiet full-body gestures,2026-10-06; opposite rear fallback mirrored."
     }
   },
   "runtime": {

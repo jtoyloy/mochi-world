@@ -1,0 +1,103 @@
+{
+  "viewer": [
+    "chestnut-sage · NE → NE art · walk · frame 7 · phase 0.936 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · NE → NE art · walk · frame 7 · phase 0.936 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · SE → SE art · walk · frame 7 · phase 0.980 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · S → SW art · walk · frame 7 · phase 0.993 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · S → SW art · walk · frame 0 · phase 0.008 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · W → NW art · walk · frame 0 · phase 0.022 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · W → NW art · walk · frame 0 · phase 0.022 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "chestnut-sage · W → NW art · walk · frame 0 · phase 0.022 · stride 105 · speed 90 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · NE → NE art · walk · frame 5 · phase 0.699 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · E → SE art · walk · frame 5 · phase 0.740 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · SE → SE art · walk · frame 7 · phase 0.914 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · S → SW art · walk · frame 5 · phase 0.684 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · SW → SW art · walk · frame 7 · phase 0.941 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · W → NW art · walk · frame 1 · phase 0.200 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · NW → NW art · walk · frame 3 · phase 0.414 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "dark-curls-coral · N → NE art · walk · frame 7 · phase 0.969 · stride 105 · speed 270 · ground 0.5,0.88 · cell 224×224",
+    "woodland-deer · SE → SE art · settle · frame 3 · phase 0.386 · stride 112 · speed 0 · ground 0.5,0.88 · cell 224×224",
+    "woodland-deer · SE → SE art · idle · frame 2 · phase 0.386 · stride 112 · speed 0 · ground 0.5,0.88 · cell 224×224"
+  ],
+  "actors": [
+    [
+      {
+        "animation": "idle",
+        "facing": "2",
+        "frame": "3",
+        "name": "City Explorer",
+        "speed": "0.00",
+        "worldX": "1309.38",
+        "worldY": "964.55"
+      },
+      {
+        "animation": "idle",
+        "facing": "0",
+        "frame": "5",
+        "name": "Momo",
+        "speed": "0.00",
+        "worldX": "1214.38",
+        "worldY": "1004.55"
+      },
+      {
+        "animation": "idle",
+        "facing": "2",
+        "frame": "0",
+        "name": "motionwitness",
+        "speed": "0.00",
+        "worldX": "1270.00",
+        "worldY": "900.00"
+      }
+    ],
+    [
+      {
+        "animation": "idle",
+        "facing": "2",
+        "frame": "6",
+        "name": "City Explorer",
+        "speed": "0.00",
+        "worldX": "1309.38",
+        "worldY": "964.55"
+      },
+      {
+        "animation": "talk",
+        "facing": "0",
+        "frame": "1",
+        "name": "Momo",
+        "speed": "0.00",
+        "worldX": "1214.38",
+        "worldY": "1004.55"
+      },
+      {
+        "animation": "walk",
+        "facing": "1",
+        "frame": "0",
+        "name": "motionwitness",
+        "speed": "170.89",
+        "worldX": "1357.45",
+        "worldY": "938.87"
+      }
+    ],
+    [
+      {
+        "animation": "idle",
+        "facing": "5",
+        "frame": "7",
+        "name": "City Explorer",
+        "speed": "0.00",
+        "worldX": "1066.24",
+        "worldY": "392.76"
+      },
+      {
+        "animation": "idle",
+        "facing": "0",
+        "frame": "6",
+        "name": "Momo",
+        "speed": "0.00",
+        "worldX": "1214.38",
+        "worldY": "1004.55"
+      }
+    ]
+  ],
+  "note": "Remote test: City Explorer browser observer + independently authenticated motionwitness Node WebSocket client. Later same-user browser session conflict showed Open in another tab; final follow execution could not be isolated. Species idle/walk/turn/catch-up presentation checked with viewer and synthetic crowd."
+}
