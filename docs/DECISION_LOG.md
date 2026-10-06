@@ -19,3 +19,7 @@ Release requires bounded UI/combat/gather/spell/ambient/companion feedback with 
 ## 2026-10-06 — Capacity safety
 
 Host has ~4GiB free versus documented ≥8.12GiB measured warm-run need and >26GiB conservative production checkpoint allowance. Keep ≥3GiB floor; small controlled tests can proceed, full certification requires suitable storage/hardware. Do not delete unrelated data or purchase resources autonomously.
+
+## 2026-10-06 — Account access and session ownership
+
+Use native salted scrypt password authentication independent of wallet linking; no external identity credential needed for the ordinary account loop. Never claim existing development usernames. Production Secure cookies require HTTPS. Hash stored bearer tokens; revalidate late socket admission and enforce expiry. Review found and fixed malformed-JSON password logging and pending-connect/logout races. Recovery/legacy migration remain explicit debt. Soft gameplay commerce will explicitly bypass mock token mirroring; it never grants SPL balances.

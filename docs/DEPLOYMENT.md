@@ -12,7 +12,9 @@ Use sticky routing only as an interim measure, not shared-state consistency.
 
 Bind HOST=0.0.0.0 only in the intended hosting environment, terminate TLS, forward WebSocket
 upgrades, keep DATABASE_URL/API keys server-only, back up DB and checkpoint files, and run
-migrations as a release step. DEV_MODE=false requires a real identity provider (not implemented),
+migrations as a release step. DEV_MODE=false uses password account authentication and Secure
+HttpOnly/SameSite cookies; HTTPS termination is required. Registration never claims legacy
+development accounts. Account recovery/migration remains a release-review item.
 MOCK_TOKEN_MODE=false requires verified token/RPC config; production is not launch-ready.
 
 Treasury execution stays offline/admin-authorized; enable neither arbitrary signing nor hot
@@ -51,6 +53,7 @@ but this is not a universal sizing rule. `BATTLE_QUEUE_LIMIT=256`,
 One worker is the control; do not run one process per pet. Allow graceful shutdown
 to drain admitted decisions before terminating PostgreSQL access. Worker readiness
 is required before the listener opens. Observe runtime diagnostics and repeat the
-PostgreSQL matrix on candidate production hardware. Shared-room combat and the
-Adventure operation queue still limit full runtime throughput. See
+PostgreSQL matrix on candidate production hardware. The Adventure operation queue retains
+authoritative ordering while independent rooms run concurrent tick lanes. Local 25-actor
+measurements improved; full runtime capacity remains unverified. See
 [BATTLE_BRAIN_SCALING.md](BATTLE_BRAIN_SCALING.md); no deployment was performed.

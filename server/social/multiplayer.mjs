@@ -61,11 +61,13 @@ export class Multiplayer {
           )
             throw new Error("Socket origin refused");
           const userId = await authenticate(req);
-          this.wss.handleUpgrade(req, socket, head, (ws) =>
+          this.wss.handleUpgrade(req, socket, head, (ws) => {
+            ws.sessionExpiresAt = req.sessionExpiresAt;
+            ws.revalidateSession = () => authenticate(req);
             this.connect(ws, userId).catch(() =>
               ws.close(1011, "Room unavailable"),
-            ),
-          );
+            );
+          });
         } catch {
           socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
           socket.destroy();
@@ -236,6 +238,11 @@ export class Multiplayer {
   async connect(ws, userId) {
     const user = await this.world.account(userId),
       avatar = await this.avatars.get(userId);
+    // Account revocation may occur while the avatar is loading after upgrade.
+    if (ws.revalidateSession && await ws.revalidateSession() !== userId) {
+      ws.close(4003, "Sign in again");
+      return;
+    }
     if (ws.readyState !== 1) return;
     const existing = this.store.players.get(userId);
     if (existing) {
@@ -270,6 +277,11 @@ export class Multiplayer {
       serial = serial
         .then(async () => {
           if (this.store.players.get(userId) !== p) return;
+          if (p.ws.sessionExpiresAt <= this.now()) {
+            this.disconnect(p);
+            p.ws.close(4003, "Session expired; sign in again");
+            return;
+          }
           const msg = JSON.parse(raw.toString());
           const startedAt = performance.now();
           try {
@@ -741,6 +753,11 @@ export class Multiplayer {
     this.metrics?.time("tickIntervalMs", now - this.tickAt);
     this.tickAt = now;
     for (const p of this.store.players.values()) {
+      if (p.ws.sessionExpiresAt <= now) {
+        this.disconnect(p);
+        p.ws.close(4003, "Session expired; sign in again");
+        continue;
+      }
       if (now - p.lastSeen > 45000) {
         p.ws.terminate?.();
         this.disconnect(p);

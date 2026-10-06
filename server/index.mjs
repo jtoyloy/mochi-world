@@ -1,4 +1,5 @@
 import { RuntimeMetrics } from "./world/runtime-metrics.mjs";
+import { AccountAuth } from "./world/auth.mjs";
 import { AdventureService } from "./adventure/service.mjs";
 import { AvatarService } from "./social/avatar.mjs";
 import { DialogueService } from "./social/dialogue.mjs";
@@ -37,6 +38,8 @@ const checkpointCollector = new CheckpointCollector(store);
 if (!checkpointCollector.policy.enabled) throw new Error(checkpointCollector.policy.reason);
 checkpointCollector.start();
 const dev = process.env.DEV_MODE === "true";
+const authRequired = !dev || process.env.AUTH_REQUIRED === "true";
+const auth = new AccountAuth(service, { development: dev });
 const avatars = new AvatarService(service),
   dialogue = new DialogueService(service),
   tokens = new TokenService(service);
@@ -115,50 +118,27 @@ const json = (res, status, data) => {
   });
   res.end(JSON.stringify(data));
 };
-async function body(req) {
+async function body(req, maximum = 30000000) {
   let size = 0;
   const chunks = [];
   for await (const c of req) {
     size += c.length;
-    if (size > 30000000) throw new GameError("Request exceeds 30MB", 413);
+    if (size > maximum) throw new GameError("Request is too large", 413);
     chunks.push(c);
   }
-  return chunks.length ? JSON.parse(Buffer.concat(chunks).toString()) : {};
+  if (!chunks.length) return {};
+  try { return JSON.parse(Buffer.concat(chunks).toString()); }
+  catch { throw new GameError("Invalid JSON request.", 400); }
 }
 async function session(req, res) {
-  const token = (req.headers.cookie ?? "")
-    .split(";")
-    .map((x) => x.trim())
-    .find((x) => x.startsWith("mochi_session="))
-    ?.slice(14);
-  const row = token
-    ? (
-        await pool.query(
-          "SELECT user_id FROM game_sessions WHERE id=$1 AND expires_at>now()",
-          [token],
-        )
-      ).rows[0]
-    : null;
-  if (row) return row.user_id;
-  if (!dev)
-    throw new GameError(
-      "Authentication required. Production identity provider is not configured.",
-      401,
-    );
+  const userId = await auth.identify(req);
+  if (userId) return userId;
+  if (authRequired) throw new GameError("Sign in to enter Mochi World.", 401);
   return login(res, "devuser");
 }
 async function login(res, username) {
   const user = await service.ensureUser(username);
-  const token = randomUUID();
-  await pool.query(
-    "INSERT INTO game_sessions(id,user_id,expires_at) VALUES($1,$2,now()+interval '7 days')",
-    [token, user.id],
-  );
-  res.setHeader(
-    "Set-Cookie",
-    `mochi_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800`,
-  );
-  return user.id;
+  return auth.issue(res, user.id);
 }
 const server = createServer(async (req, res) => {
   try {
@@ -172,9 +152,25 @@ const server = createServer(async (req, res) => {
         req.headers.origin !== `https://${req.headers.host}`
       )
         throw new GameError("Cross-origin action refused", 403);
-      b = await body(req);
+      b = await body(req, path.startsWith("/api/auth/") ? 4096 : 30000000);
     }
     if (path.startsWith("/api/")) {
+      if (path === "/api/auth/config" && req.method === "GET")
+        return json(res, 200, { required: authRequired, development: dev });
+      if (["/api/auth/register", "/api/auth/login", "/api/auth/logout"].includes(path)) {
+        if (req.method !== "POST") throw new GameError("Use POST for account actions.", 405);
+        if (req.headers.origin !== `http://${req.headers.host}` && req.headers.origin !== `https://${req.headers.host}`)
+          throw new GameError("Account actions require the same origin.", 403);
+        if (path.endsWith("/register")) return json(res, 201, await auth.register(req, res, b));
+        if (path.endsWith("/login")) return json(res, 200, await auth.login(req, res, b));
+        const revoked = await auth.logout(req, res);
+        const actor = revoked && multiplayer.store.players.get(revoked);
+        if (actor) {
+          multiplayer.disconnect(actor);
+          actor.ws.close(4003, "Signed out");
+        }
+        return json(res, 200, { message: "Signed out on all devices." });
+      }
       const user = await session(req, res);
       if (path === "/api/adventure" && req.method === "GET")
         return json(res, 200, await adventure.status(user));
@@ -212,10 +208,11 @@ const server = createServer(async (req, res) => {
           dialogueProvider: process.env.MOCHI_DIALOGUE_PROVIDER ?? "template",
           marketMode: process.env.MARKET_MODE ?? "mock",
           decisionIntervalMs: 300000,
-          development: dev,
+          development: dev && !authRequired,
+          authentication: authRequired,
         });
       if (path === "/api/dev/login" && req.method === "POST") {
-        if (!dev) throw new GameError("Development login is disabled", 403);
+        if (!dev || authRequired) throw new GameError("Development login is disabled", 403);
         await login(res, b.username);
         return json(res, 200, { message: "Development account changed" });
       }
@@ -680,19 +677,10 @@ multiplayer = new Multiplayer({
   avatars,
   dialogue,
   authenticate: async (req) => {
-    const token = (req.headers.cookie ?? "")
-      .split(";")
-      .map((x) => x.trim())
-      .find((x) => x.startsWith("mochi_session="))
-      ?.slice(14);
-    const row = (
-      await pool.query(
-        "SELECT user_id FROM game_sessions WHERE id=$1 AND expires_at>now()",
-        [token ?? ""],
-      )
-    ).rows[0];
-    if (!row) throw new GameError("Sign in before joining a room", 401);
-    return row.user_id;
+    const authenticated = await auth.session(req);
+    if (!authenticated) throw new GameError("Sign in before joining a room", 401);
+    req.sessionExpiresAt = authenticated.expiresAt;
+    return authenticated.userId;
   },
 });
 if (runtimeMetrics) process.on("message", message => {

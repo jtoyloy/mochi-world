@@ -1,4 +1,5 @@
 import { mountWorld } from "../game/Game.js";
+import { accountGate } from "./account.js";
 import { tokenCheckout, walletPage, treasuryPage } from "../game/ui/TokenUI.js";
 import { ITEMS, SHOPS, LOCATIONS, DAILY_ACTIVITIES } from "./catalog.js";
 import { portfolioValue } from "../traders/trading.js";
@@ -70,7 +71,11 @@ async function api(path, data) {
       : {},
   );
   const b = await r.json();
-  if (!r.ok) throw new Error(b.error ?? "Unable to open this page");
+  if (!r.ok) {
+    const error = new Error(b.error ?? "Unable to open this page");
+    error.status = r.status;
+    throw error;
+  }
   return b;
 }
 function notice(text) {
@@ -2010,9 +2015,22 @@ for (const [title, path] of [
     };
   document.querySelector("#navigation").append(a);
 }
-try {
+async function enterWorld() {
   config = await api("/api/config");
   await refresh();
+  document.querySelector("#navigation").hidden = false;
+  document.querySelector(".account").hidden = false;
+  document.querySelector("#signOut").hidden = !config.authentication;
+  document.querySelector("#signOut").onclick = async () => {
+    const button = document.querySelector("#signOut");
+    button.disabled = true;
+    try {
+      if (currentCleanup) { await currentCleanup(); currentCleanup = null; }
+      await api("/api/auth/logout", {});
+      location.assign("/home");
+    } catch (e) { notice(e.message); }
+    finally { button.disabled = false; }
+  };
   document.querySelector("#devLogin").hidden = !config.development;
   document.querySelector("#devLogin").onclick = () =>
     modal(
@@ -2046,7 +2064,15 @@ try {
     );
   if (location.pathname === "/") history.replaceState({}, "", "/home");
   await render();
+}
+try {
+  await enterWorld();
 } catch (e) {
+  if (e.status === 401) {
+    document.querySelector("#navigation").hidden = true;
+    document.querySelector(".account").hidden = true;
+    accountGate(app, { request: api, ready: enterWorld });
+  } else {
   app.replaceChildren(
     head("The city gates are resting.", e.message),
     node(
@@ -2055,4 +2081,5 @@ try {
       "muted",
     ),
   );
+  }
 }

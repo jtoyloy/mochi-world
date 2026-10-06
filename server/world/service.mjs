@@ -86,6 +86,7 @@ export class WorldService {
     metadata = {},
     relatedUser = null,
     itemId = null,
+    { mirrorMockTokens = true } = {},
   ) {
     integer(Math.abs(amount), 0);
     const result = await tx.query(
@@ -106,7 +107,7 @@ export class WorldService {
         new Date(this.now()),
       ],
     );
-    if (this.tokenConfig?.mock && amount > 0) {
+    if (mirrorMockTokens && this.tokenConfig?.mock && amount > 0) {
       const scale = (10n ** BigInt(this.tokenConfig.decimals)).toString();
       await tx.query(
         "INSERT INTO mock_token_balances(user_id,amount_raw) VALUES($1,$2::numeric*$3::numeric) ON CONFLICT(user_id) DO UPDATE SET amount_raw=mock_token_balances.amount_raw+$4::numeric",
@@ -155,7 +156,7 @@ export class WorldService {
       );
     }
   }
-  async ensureUser(username, displayName = username) {
+  async ensureUser(username, displayName = username, { passwordHash = null } = {}) {
     if (!/^[a-z0-9_-]{3,24}$/.test(username))
       throw new GameError(
         "Username needs 3–24 lowercase letters, numbers or underscores",
@@ -165,15 +166,19 @@ export class WorldService {
       const old = await tx.query("SELECT * FROM users WHERE username=$1", [
         username,
       ]);
-      if (old.rows[0]) return safeUser(old.rows[0]);
+      if (old.rows[0]) {
+        if (passwordHash) throw new GameError("That username is already in use.", 409);
+        return safeUser(old.rows[0]);
+      }
       const row = await tx.query(
-        "INSERT INTO users(id,username,display_name,coins,profile,created_at) VALUES($1,$2,$3,0,$4,$5) RETURNING *",
+        "INSERT INTO users(id,username,display_name,coins,profile,created_at,password_hash) VALUES($1,$2,$3,0,$4,$5,$6) RETURNING *",
         [
           id,
           username,
           displayName,
           { locations: [], careCount: 0, arcadeGames: 0 },
           new Date(this.now()),
+          passwordHash,
         ],
       );
       await this.coins(tx, id, 500, "admin", { reason: "Starter Coins" });
