@@ -27,3 +27,15 @@ Scope: inspected actual AdventureUI, shared adventure catalog, adventure server 
 ## Onboarding milestone validation
 
 Guidance model/UI: 11 tests pass. Native PostgreSQL historical sale test: 1 passes, zero skips; verifies actual sale, paid claim, persistent sale evidence, separate user and fishing isolation. Production build and asset validation pass. Authenticated Settings now provides an explicit sign-out-on-all-devices action through the server logout endpoint. Independent visual/source review passed with no critical/high findings after dynamic mob names, honest adventure-victory wording and narrow-HUD wrapping corrections. Integrated browser UX remains pending; dummy facts require service commit `519f63c`.
+
+## Wallet-free commerce frontend milestone
+
+Primary combat NPC interactions now open ordinary earned Coins shops; resource buyers open Coins sale panels. Separate explicit buttons open optional $MOCHI token markets/rewards. Labels, estimates and authoritative endpoints stay separate; no client converts Coins to tokens. Bram also exposes monster-material sales when its catalog includes a buyer. Purchase/sale retries retain the same receipt ID for the same payload after uncertain responses. Quantity controls validate owned/request limits before dispatch; the server remains authoritative.
+
+The first-journey sale step now accepts historical successful Coins wood-sale receipts as well as historical token wood-sale records. Clearing claimable token balance cannot erase progress. Paused optional token rewards do not prevent the ordinary Coins buyer step.
+
+Validation: 16 model/UI tests pass, zero skips; production build/asset validation passes. New frontend cases verify separate Coins endpoints, stable response retry receipts, owned quantity validation, explicit optional token paths, and persisted Coins sale progress with optional token treasury paused. Commerce server/endpoint integration and full browser buy→equip→fight→gather→sell→resupply remain required before declaring the loop polished.
+
+Independent authentication review of the integrated parent patch: 11 native PostgreSQL/HTTP/WebSocket tests passed, zero skips. Malformed JSON password-fragment logging found in review was fixed with generic parser errors and verified by regression. No critical/high auth issue remains identified in this focused scope; broader whole-product security certification remains outstanding.
+
+Independent commerce source review approved with no critical/high findings. Remaining receipt UX debt: uncertain responses preserve the receipt within the current dialog, but closing/reloading loses the client receipt ID; durable pending-receipt recovery should be added before claiming complete failure/reconnect polish. Server atomic/idempotent receipts and integrated live loop remain separate validation gates.

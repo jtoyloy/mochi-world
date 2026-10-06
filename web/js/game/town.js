@@ -11,7 +11,7 @@ export const TOWN_RESIDENTS = [
     y: v.y,
     color: "#8faaa2",
     vendor: id,
-    line: "Bring your gathered resources. Rewards come from our funded treasury, within daily limits.",
+    line: "Bring your gathered resources. Sell for Coins to buy adventure supplies, or explore optional token rewards.",
     ambient: "Keep a few supplies for your next adventure.",
   })),
   ...COMBAT_VENDORS.map((v) => ({
@@ -22,7 +22,7 @@ export const TOWN_RESIDENTS = [
     y: v.y,
     color: "#a39485",
     shop: v.id,
-    line: "Gear for your next adventure. Starter equipment is free in your Adventure pack.",
+    line: "Gear for your next adventure, bought with earned Coins. Your starter equipment is free in Adventure.",
     ambient: "Travel with your Mochi. Come home together.",
   })),
   {

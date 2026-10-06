@@ -559,6 +559,11 @@ export async function mountWorld(
       return;
     }
     if (id.startsWith("shop:")) {
+      const vendorId = id.slice(5);
+      if (["blacksmith", "mage", "apothecary", "charms"].includes(vendorId)) {
+        adventure.shop(vendorId).catch((e) => showNotice(e.message));
+        return;
+      }
       const shops = {
         foods: "mochi-foods",
         toys: "toy-box",
@@ -782,6 +787,7 @@ export async function mountWorld(
   }
   adventure = adventureUI({
     chooseCompanion,
+    openTokenShop: (id) => panel("Optional token market", "/explore/market/" + id),
     shell,
     bridge,
     request,

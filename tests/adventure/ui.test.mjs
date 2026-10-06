@@ -28,6 +28,7 @@ function fixture(t, changes = {}) {
     inventory: [{ item_id: "basic-sword", quantity: 1 }, { item_id: "travel-cap", quantity: 1 }, { item_id: "padded-coat", quantity: 1 }, { item_id: "mana-potion", quantity: 2 }],
     battle: [], serverTime: 10000, ...changes,
   };
+  const commerceState = { woodSales: 0 };
   let respond = async (data) => data.action === "gather"
     ? { id: "harvest", durationMs: 1000 }
     : { itemId: "softwood", xp: 12, kind: "woodcutting" };
@@ -37,7 +38,7 @@ function fixture(t, changes = {}) {
     bridge: { join: (room) => notices.push("travel:" + room), selfId: "player", scene: { data: new Map([["player", { x: 0, y: 0 }]]), audio: { cue: (cue) => cues.push(cue) } } },
     request: async (path, data) => {
       requests.push({ path, data });
-      return data ? respond(data) : state;
+      return data ? respond(data) : path === "/api/adventure/commerce" ? commerceState : state;
     },
     dialog: () => { const d = new Element("dialog"); dialogs.push(d); return d; },
     btn: (text, onclick) => Object.assign(new Element("button", text), { onclick }),
@@ -45,7 +46,7 @@ function fixture(t, changes = {}) {
     notice: (text) => notices.push(text), refresh: async () => {},
   });
   t.after(() => { ui.destroy(); Object.assign(globalThis, originals); });
-  return { ui, state, dialogs, requests, notices, cues, setRespond(fn) { respond = fn; } };
+  return { ui, state, commerceState, dialogs, requests, notices, cues, setRespond(fn) { respond = fn; } };
 }
 const button = (d, text) => d.children.find((e) => e.tagName === "BUTTON" && e.textContent === text);
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
@@ -138,5 +139,17 @@ test("beginner pack offers actual companion and travel controls derived from ser
   await f.ui.pack();
   await button(f.dialogs[1], "Travel to Training Yard").onclick();
   assert.ok(f.notices.includes("travel:yard"));
+  assert.equal(f.requests.filter((r) => r.data).length, 0);
+});
+
+
+test("persisted Coins wood sale advances guide even when optional token treasury is paused", async (t) => {
+  const f = fixture(t, { rewards: { enabled: false, woodSales: 0 } });
+  Object.assign(f.state.player, { starter: true, activePet: "owned" });
+  Object.assign(f.state.player.progress, { kills: 1, woodcutting: 1 });
+  f.commerceState.woodSales = 1;
+  await f.ui.pack();
+  assert.ok(button(f.dialogs[0], "Travel to Trading Hall"));
+  assert.ok(!f.dialogs[0].children.some((e) => e.textContent?.includes("sale remains unfinished")));
   assert.equal(f.requests.filter((r) => r.data).length, 0);
 });

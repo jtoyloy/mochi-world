@@ -1,3 +1,4 @@
+import { commerceUI } from "./CommerceUI.js";
 import { beginnerJourney } from "./beginner-guide.js";
 import {
   WEAPONS,
@@ -20,13 +21,15 @@ export function adventureUI({
   notice,
   refresh,
   chooseCompanion,
+  openTokenShop,
 }) {
   let state = null,
     gather = null,
     gatherTimer = null,
     gatherCompletion = null,
     disposed = false,
-    guidanceRequest = null;
+    guidanceRequest = null,
+    coinWoodSales = 0;
   const hud = element("div", null, "adventure-hud"),
     vitals = element("div", "Preparing adventure…", "adventure-vitals"),
     target = element("small", "Town is safe"),
@@ -47,7 +50,7 @@ export function adventureUI({
   function update(data) {
     state = { ...state, ...data, player: { ...state?.player, ...data.player } };
     if (state.player?.progress) {
-      const journey = beginnerJourney(state);
+      const journey = journeyFor(state);
       guidance.textContent = journey.next ? "Next: " + journey.next.title : journey.complete ? "First adventures complete" : "Resource sale paused · explore freely";
     } else reloadGuidance();
     const p = data.player;
@@ -56,16 +59,25 @@ export function adventureUI({
       hud.classList.toggle("in-combat", !!p.target);
     }
   }
+  function journeyFor(data) {
+    return beginnerJourney({ ...data, rewards: { ...data.rewards,
+      woodSales: (data.rewards?.woodSales ?? 0) + coinWoodSales,
+      enabled: true, // Ordinary Coins buyers remain available without token treasury funding.
+    } });
+  }
+  const commerce = commerceUI({ request, dialog, btn, element, notice, bridge, openTokenShop,
+    openTokenBuyer: tokenVendor, afterSale: reloadGuidance });
   function reloadGuidance() {
     if (guidanceRequest || disposed) return guidanceRequest;
-    guidanceRequest = request("/api/adventure")
-      .then((data) => { if (!disposed) update(data); })
+    guidanceRequest = Promise.all([request("/api/adventure"), request("/api/adventure/commerce")])
+      .then(([data, catalog]) => { if (!disposed) { coinWoodSales = catalog.woodSales ?? 0; update(data); } })
       .catch(() => {})
       .finally(() => { guidanceRequest = null; });
     return guidanceRequest;
   }
   async function pack() {
-    const s = await request("/api/adventure");
+    const [s, catalog] = await Promise.all([request("/api/adventure"), request("/api/adventure/commerce")]);
+    coinWoodSales = catalog.woodSales ?? 0;
     update(s);
     if (s.harvest && gather?.id !== s.harvest.id)
       trackGather({ id: s.harvest.id }, Math.max(0, Number(s.harvest.ready_at) - s.serverTime));
@@ -125,7 +137,7 @@ export function adventureUI({
           d.close();
         }),
       );
-    const journey = beginnerJourney(s);
+    const journey = journeyFor(s);
     d.append(element("h3", "Your first journey"));
     for (const step of journey.steps)
       d.append(element("p", `${step.done ? "✓" : step.blocked ? "Paused" : "○"} ${step.title}`));
@@ -142,6 +154,7 @@ export function adventureUI({
     }
     const paused = journey.steps.find((step) => step.blocked && !step.done);
     if (paused) d.append(element("p", paused.detail));
+    d.append(btn("Adventure shops · Coins", () => { d.close(); return commerce.shops(); }));
     d.append(element("h3", "Spells"));
     for (const id of s.player.spells)
       d.append(
@@ -247,10 +260,10 @@ export function adventureUI({
       ),
     );
   }
-  async function vendor(id) {
+  async function tokenVendor(id) {
     const s = await request("/api/adventure"),
       v = VENDORS[id],
-      d = dialog(v.name),
+      d = dialog(v.name + " · optional token rewards"),
       selected = {};
     update(s);
     d.append(
@@ -399,7 +412,8 @@ export function adventureUI({
   return {
     update,
     pack,
-    vendor,
+    vendor: commerce.buyer,
+    shop: commerce.shop,
     rewards,
     gatherNode,
     event(type, data) {
