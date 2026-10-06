@@ -27,7 +27,9 @@
     "test:animation": "node --test tests/animation/*.test.mjs",
     "assets:validate": "node tools/validate-animation.mjs",
     "assets:register": "node tools/register-animation.mjs",
-    "bench:multiplayer": "node --env-file-if-exists=.env multiplayer/load-test/soak.mjs"
+    "bench:multiplayer": "node --env-file-if-exists=.env multiplayer/load-test/soak.mjs",
+    "checkpoints:gc": "node --env-file-if-exists=.env tools/checkpoint-gc.mjs",
+    "bench:checkpoints": "node --env-file-if-exists=.env tools/checkpoints/storage-benchmark.mjs"
   },
   "devDependencies": {
     "pngjs": "^7.0.0",

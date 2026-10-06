@@ -18,6 +18,7 @@ import {
   TROPHIES,
 } from "../web/js/world/catalog.js";
 import { WorldService, GameError } from "./world/service.mjs";
+import { CheckpointCollector } from "./world/checkpoint-retention.mjs";
 import { BrainRepository } from "./world/checkpoints.mjs";
 import { Competitions } from "./world/competitions.mjs";
 import { BrainService } from "./world/brain-service.mjs";
@@ -32,6 +33,9 @@ const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL }),
   competitions = new Competitions(service),
   root = resolve("web");
 const runtimeMetrics = process.env.MULTIPLAYER_METRICS === "true" ? new RuntimeMetrics(pool) : null;
+const checkpointCollector = new CheckpointCollector(store);
+if (!checkpointCollector.policy.enabled) throw new Error(checkpointCollector.policy.reason);
+checkpointCollector.start();
 const dev = process.env.DEV_MODE === "true";
 const avatars = new AvatarService(service),
   dialogue = new DialogueService(service),
@@ -692,7 +696,7 @@ multiplayer = new Multiplayer({
   },
 });
 if (runtimeMetrics) process.on("message", message => {
-  if (message === "runtimeMetrics") process.send?.({ runtimeMetrics: runtimeMetrics.sample(multiplayer, adventure) });
+  if (message === "runtimeMetrics") process.send?.({ runtimeMetrics: { ...runtimeMetrics.sample(multiplayer, adventure), checkpoints: store.diagnostics() } });
 });
 multiplayer.adventure = adventure;
 adventure.attach(multiplayer);
@@ -707,6 +711,7 @@ server.listen(
 for (const signal of ["SIGINT", "SIGTERM"])
   process.on(signal, async () => {
     runtimeMetrics?.close();
+    await checkpointCollector.stop();
     adventure.close();
     multiplayer.close();
     server.close();

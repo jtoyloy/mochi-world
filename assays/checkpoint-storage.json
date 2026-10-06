@@ -1,0 +1,158 @@
+{
+  "kind": "deterministic bounded timestamp simulation, not a live 150-pet soak",
+  "representativeFile": "web/brains/traders-0.74.0-v1/basic.life",
+  "representativeBytes": 6487877,
+  "policy": {
+    "enabled": true,
+    "keepRecent": 3,
+    "retentionHours": 0,
+    "intervalMs": 60000,
+    "graceMs": 600000
+  },
+  "saveIntervalMs": 300000,
+  "initialCheckpoint": true,
+  "pins": 0,
+  "leases": 0,
+  "crashOrphans": 0,
+  "duplicateMeasurement": {
+    "unchangedNativeBytesA": 6487877,
+    "unchangedNativeBytesB": 6487877,
+    "identicalAcross2200ms": false,
+    "sha256A": "41ea460a64980a5f28f9c41c9d99c1e9780a5536bc9220b50ef3cb4513f89135",
+    "sha256B": "a05e90b913f5775ac89e02d3012d31d8cbba99fcf0bbca3fa4c7c9c6bd9e4d9c"
+  },
+  "rows": [
+    {
+      "pets": 1,
+      "hours": 1,
+      "beforeVersions": 13,
+      "beforeBytes": 84342401,
+      "afterVersions": 3,
+      "afterBytes": 19463631,
+      "peakBeforeGcBytes": 25951508,
+      "createdFiles": 13,
+      "deletedFiles": 10
+    },
+    {
+      "pets": 1,
+      "hours": 4,
+      "beforeVersions": 49,
+      "beforeBytes": 317905973,
+      "afterVersions": 3,
+      "afterBytes": 19463631,
+      "peakBeforeGcBytes": 25951508,
+      "createdFiles": 49,
+      "deletedFiles": 46
+    },
+    {
+      "pets": 1,
+      "hours": 24,
+      "beforeVersions": 289,
+      "beforeBytes": 1874996453,
+      "afterVersions": 3,
+      "afterBytes": 19463631,
+      "peakBeforeGcBytes": 25951508,
+      "createdFiles": 289,
+      "deletedFiles": 286
+    },
+    {
+      "pets": 10,
+      "hours": 1,
+      "beforeVersions": 130,
+      "beforeBytes": 843424010,
+      "afterVersions": 30,
+      "afterBytes": 194636310,
+      "peakBeforeGcBytes": 259515080,
+      "createdFiles": 130,
+      "deletedFiles": 100
+    },
+    {
+      "pets": 10,
+      "hours": 4,
+      "beforeVersions": 490,
+      "beforeBytes": 3179059730,
+      "afterVersions": 30,
+      "afterBytes": 194636310,
+      "peakBeforeGcBytes": 259515080,
+      "createdFiles": 490,
+      "deletedFiles": 460
+    },
+    {
+      "pets": 10,
+      "hours": 24,
+      "beforeVersions": 2890,
+      "beforeBytes": 18749964530,
+      "afterVersions": 30,
+      "afterBytes": 194636310,
+      "peakBeforeGcBytes": 259515080,
+      "createdFiles": 2890,
+      "deletedFiles": 2860
+    },
+    {
+      "pets": 40,
+      "hours": 1,
+      "beforeVersions": 520,
+      "beforeBytes": 3373696040,
+      "afterVersions": 120,
+      "afterBytes": 778545240,
+      "peakBeforeGcBytes": 1038060320,
+      "createdFiles": 520,
+      "deletedFiles": 400
+    },
+    {
+      "pets": 40,
+      "hours": 4,
+      "beforeVersions": 1960,
+      "beforeBytes": 12716238920,
+      "afterVersions": 120,
+      "afterBytes": 778545240,
+      "peakBeforeGcBytes": 1038060320,
+      "createdFiles": 1960,
+      "deletedFiles": 1840
+    },
+    {
+      "pets": 40,
+      "hours": 24,
+      "beforeVersions": 11560,
+      "beforeBytes": 74999858120,
+      "afterVersions": 120,
+      "afterBytes": 778545240,
+      "peakBeforeGcBytes": 1038060320,
+      "createdFiles": 11560,
+      "deletedFiles": 11440
+    },
+    {
+      "pets": 150,
+      "hours": 1,
+      "beforeVersions": 1950,
+      "beforeBytes": 12651360150,
+      "afterVersions": 450,
+      "afterBytes": 2919544650,
+      "peakBeforeGcBytes": 3892726200,
+      "createdFiles": 1950,
+      "deletedFiles": 1500
+    },
+    {
+      "pets": 150,
+      "hours": 4,
+      "beforeVersions": 7350,
+      "beforeBytes": 47685895950,
+      "afterVersions": 450,
+      "afterBytes": 2919544650,
+      "peakBeforeGcBytes": 3892726200,
+      "createdFiles": 7350,
+      "deletedFiles": 6900
+    },
+    {
+      "pets": 150,
+      "hours": 24,
+      "beforeVersions": 43350,
+      "beforeBytes": 281249467950,
+      "afterVersions": 450,
+      "afterBytes": 2919544650,
+      "peakBeforeGcBytes": 3892726200,
+      "createdFiles": 43350,
+      "deletedFiles": 42900
+    }
+  ]
+}

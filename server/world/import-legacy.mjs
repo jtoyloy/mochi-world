@@ -17,9 +17,11 @@ try {
   await s.adopt(user.id, "momo", old?.state?.name ?? "Momo");
   if (old?.life?.brain)
     await s.transaction([user.id], async (tx) => {
+      await repo.lock(tx, "momo");
       const brain = await repo.ensure(tx, "momo");
       if (brain.checkpoint_key) return;
-      const key = await repo.storage.write(
+      const key = await repo.writeCheckpoint(
+        tx,
         "momo",
         1,
         Buffer.from(old.life.brain, "base64"),

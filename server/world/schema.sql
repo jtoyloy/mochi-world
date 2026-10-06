@@ -11,6 +11,24 @@ ALTER TABLE mochi_brains ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAU
 ALTER TABLE mochi_brains ADD COLUMN IF NOT EXISTS lease_token text;
 ALTER TABLE mochi_brains ADD COLUMN IF NOT EXISTS lease_until timestamptz;
 ALTER TABLE mochi_brains ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
+-- Trading checkpoint lifecycle is separate from battle-v1 bytea checkpoints.
+ALTER TABLE mochi_brains ADD COLUMN IF NOT EXISTS lease_checkpoint_key text;
+ALTER TABLE mochi_brains ADD COLUMN IF NOT EXISTS lease_checkpoint_known boolean NOT NULL DEFAULT false;
+CREATE TABLE IF NOT EXISTS checkpoint_storage_scope(singleton boolean PRIMARY KEY DEFAULT true CHECK(singleton),id uuid NOT NULL UNIQUE);
+INSERT INTO checkpoint_storage_scope(singleton,id) VALUES(true,gen_random_uuid()) ON CONFLICT DO NOTHING;
+CREATE TABLE IF NOT EXISTS brain_checkpoints(
+ key text PRIMARY KEY,
+ mochi_id text NOT NULL REFERENCES mochis(id),
+ domain text NOT NULL DEFAULT 'trading' CHECK(domain='trading'),
+ version integer NOT NULL,
+ sha256 text NOT NULL,
+ bytes bigint NOT NULL CHECK(bytes>0),
+ created_at timestamptz NOT NULL DEFAULT now(),
+ host_verified boolean NOT NULL DEFAULT false,
+ pinned boolean NOT NULL DEFAULT false
+);
+ALTER TABLE brain_checkpoints ADD COLUMN IF NOT EXISTS host_verified boolean NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS brain_checkpoints_history ON brain_checkpoints(mochi_id,version DESC,created_at DESC);
 CREATE TABLE IF NOT EXISTS game_sessions(id text PRIMARY KEY,user_id text NOT NULL REFERENCES users(id),expires_at timestamptz NOT NULL);
 CREATE TABLE IF NOT EXISTS player_inventory(user_id text REFERENCES users(id),item_id text REFERENCES items(id),location text NOT NULL DEFAULT 'bag' CHECK(location IN('bag','storage')),quantity integer NOT NULL CHECK(quantity>=0),PRIMARY KEY(user_id,item_id,location));
 CREATE TABLE IF NOT EXISTS collection_entries(user_id text REFERENCES users(id),item_id text REFERENCES items(id),discovered_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(user_id,item_id));

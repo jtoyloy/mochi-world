@@ -284,3 +284,17 @@ small recheck does not certify revised tooling at 150 CCU.
 Validation: 164 JavaScript tests passed with PostgreSQL integration enabled;
 21 Python tests passed; asset validation and production build passed;
 `git diff --check` passed. No multi-hour run was completed.
+
+## Checkpoint retention follow-up
+
+The storage incident above remains the original measured result. New trading
+checkpoints now use a cataloged database-bound namespace, durable fsync-before-commit
+writes and background fail-closed retention. Production requires an explicit policy.
+Current, leased, pinned, recent and age/grace-protected snapshots survive; legacy
+files remain untouched. See [CHECKPOINT_RETENTION.md](CHECKPOINT_RETENTION.md) and
+`assays/checkpoint-storage.json`. The representative 150-pet timestamp simulation
+converges to 2.72 GiB retained / 3.63 GiB pre-GC peak under the development policy,
+versus ~10.88 GiB/hour append-only growth. This resolves normal configured append-only
+growth, not historical legacy storage or write bandwidth. A short live smoke checks
+runtime integration; the failed original 150-CCU run has not been reclassified or
+replaced by a sustained production-capacity test.
