@@ -207,3 +207,24 @@ without changing their formulas or installing an action chooser. The real persis
 shows 50/100-request bursts exceed 1400 ms; this is not a multiplayer capacity guarantee.
 Raw episodes, curves, seed uncertainty, transfer and CPU/RAM/latency measurements are linked
 in the full report. **33 Python and 171 JavaScript tests pass with no skips.**
+
+## Action affordance acquisition (2026-10-06)
+
+The next controlled panel starts at `925cdbe` and keeps the published one-region brain
+and seven unmasked action indices. It tests three physical possibility senses, a bounded
+executed-invalid penalty, a versioned deterministic approach motor, staged curriculum and
+training-only reduced owner damage. Wider-sense controls and owner pressure use validation
+only. All seven primary held-out arms use unchanged production combat on new seeds.
+
+Held-out wins /432: random 211, published 203, minimal affordance 208, stronger penalty 211,
+persistent approach 215, curriculum 219, reference 286. No candidate qualifies. Aggregate
+executable rates improve through cheap defense; penalty selects zero ATTACK. Pet damage
+shares are 14.96% random versus 4.69% affordance, 1.84% penalty, 3.48% persistent and 4.18%
+curriculum. A disclosed WAIT diagnostic wins 191/432 with zero pet damage. Learned policies
+remain poorly sensitive to changing physical contexts in private probes; clearing working
+trace usually leaves their dominant choices intact. Owner terminal feedback occasionally
+credits invalid pet choices, but most invalid choices are already negatively rewarded.
+
+Nothing ships to production and the published pack is unchanged. See
+[full acquisition protocol, validity tables, transfer and limitations](CADENCE_ACTION_LEARNING.md)
+and [decision receipts and paired confidence counts](assays/action-learning-summary.json).

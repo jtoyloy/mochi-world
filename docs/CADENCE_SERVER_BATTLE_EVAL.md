@@ -286,3 +286,26 @@ the final repeat reached 1,359 ms with 10/300 deadline misses. Final 150-brain p
 No brain pack, learning rule, observation, reward or decision interval changed. Shared-room
 Adventure operations remain serialized. See [BATTLE_BRAIN_SCALING.md](BATTLE_BRAIN_SCALING.md)
 for the full matrix, crash boundary, receipt limits and capacity exclusions.
+## Follow-up: useful executable actions
+
+The [action-learning study](CADENCE_ACTION_LEARNING.md) extends this server-physics driver
+with per-decision observation/execution validity, signed range thresholds, cooldown and path
+reasons, guard state, previous invalid choices, movement time and pet contribution. It adds
+three physical affordance senses and compares original waste against a bounded stronger
+penalty. Its `approach-target-v2` uses existing pathfinding only for Cadence-selected
+MOVE_CLOSER; no failed attack is replaced. The old pack and `short-hop-v1` remain controls.
+
+All base validation precedes curriculum selection and fresh held-out evaluation. New seeds
+7000/8000/9000 avoid retuning on the previous panel. Seven primary frozen arms produce wins
+/432: random 211, published 203, affordance 208, penalty 211, persistent 215, curriculum 219,
+reference 286. Curriculum's +1.85-point paired gain has 95% bounds −1.39 to +5.09 and pet
+damage share 4.18% versus random 14.96%; **nothing qualifies or is promoted**. The executable
+rate alone is misleading: always-available guards can inflate it while attacks disappear.
+
+Six-pair whole-species transfer tests the selected affordance arm and its curriculum in both
+directions. Affordance/random wins /216: Moonfox→Woodland Deer 108/107; reverse 108/104.
+Neither establishes robust gain. Fresh WAIT-only diagnostic wins 191/432 with zero pet damage.
+Full continuation, freeze, body/domain rejection and pack immutability remain checked.
+The expanded suite passes 42 Python and 227 JavaScript tests, with a real disposable database
+and no skips. [Compressed complete receipts](assays/action-learning.json.gz) and
+[summary](assays/action-learning-summary.json) preserve all failed arms and factor classes.
