@@ -171,3 +171,16 @@ test('execution receipt replay and old cancellation cannot close a newer proposa
   await b.decide(a.id,a.user,[],0,{execution:'cancel',requestId:'proposal-two:execution',expectedVersion:second.version});
  } finally {await b.close();}
 });
+
+test('persisted abandoned combat without an in-memory encounter closes during recovery sweep',async()=>{
+ const {AdventureService}=await import('../../server/adventure/service.mjs');
+ const {ServerArena,scenario}=await import('../../sim/server_battle.mjs');
+ const a=actors[21],arena=new ServerArena({...scenario(1000,0),geometry:'open',distance:40});
+ const game=new AdventureService(world,{brains:{decide:async()=>({action:'WAIT'}),close(){}},rewards:{}});
+ const p={...structuredClone(arena.p),userId:a.user,room:'recovered-room',roomId:'yard',companion:{...structuredClone(arena.p.companion),id:a.id}};
+ const s=structuredClone(arena.s);s.activePet=a.id;s.inBattle=true;s.target='missing-mob';s.petDecisionAt=0;
+ game.states.set(a.user,s);game.multiplayer={store:{players:new Map(),rooms:new Map()},send(){}};
+ game.instance=()=>({mobs:new Map()});game.save=async()=>{};
+ try { await game.tick(); assert.equal(s.inBattle,false); assert.equal(game.states.has(a.user),false); }
+ finally { await game.close(); }
+});

@@ -874,7 +874,7 @@ export class AdventureService {
       if (!await this.recoverDecision(userId,state) || !await this.completeExecution(userId,state)) continue;
       if (state.inBattle && (!this.multiplayer.store.players.has(userId) ||
           (e && !this.executionLive(e))))
-        await this.closeEncounter(userId, state, e?.invalid ?? "expired-or-target-removed");
+        await this.closeEncounter(userId, state, e?.invalid ?? "expired-or-recovered");
       if (!this.multiplayer.store.players.has(userId) && !state.inBattle) {
         await this.save(userId, state);
         if (!this.multiplayer.store.players.has(userId)) this.states.delete(userId);
