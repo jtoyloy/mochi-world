@@ -750,6 +750,11 @@ export async function mountWorld(
       const pre = element("pre", JSON.stringify(diagnostic, null, 2));
       info.append(pre);
     }
+    if (config.authentication)
+      d.append(btn("Sign out on all devices", async () => {
+        await request("/api/auth/logout", {});
+        location.assign("/home");
+      }));
     if (config.development) {
       const loginInput = element("input");
       loginInput.placeholder = "Development username";
@@ -776,6 +781,7 @@ export async function mountWorld(
     openConversation({ pet: world.activeMochi, bridge, refresh });
   }
   adventure = adventureUI({
+    chooseCompanion,
     shell,
     bridge,
     request,

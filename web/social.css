@@ -725,3 +725,6 @@ div.iso-road-label,
 div.iso-landmark-label {
   pointer-events: none;
 }
+
+/* Beginner guidance stays readable on narrow adventure HUDs. */
+.adventure-guidance {display:block;width:100%;max-width:100%;margin-top:5px;padding:5px 9px;border:1px solid #c7b895;border-radius:8px;background:#f4ecd7;color:#5b513f;font-size:11px;white-space:normal;overflow-wrap:anywhere}

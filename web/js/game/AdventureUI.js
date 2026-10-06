@@ -1,3 +1,4 @@
+import { beginnerJourney } from "./beginner-guide.js";
 import {
   WEAPONS,
   SPELLS,
@@ -18,12 +19,14 @@ export function adventureUI({
   element,
   notice,
   refresh,
+  chooseCompanion,
 }) {
   let state = null,
     gather = null,
     gatherTimer = null,
     gatherCompletion = null,
-    disposed = false;
+    disposed = false,
+    guidanceRequest = null;
   const hud = element("div", null, "adventure-hud"),
     vitals = element("div", "Preparing adventure…", "adventure-vitals"),
     target = element("small", "Town is safe"),
@@ -37,15 +40,29 @@ export function adventureUI({
   ];
   for (const [name, fn] of actions) hotbar.append(btn(name, fn));
   hotbar.append(btn("Adventure", () => pack()));
-  hud.append(vitals, target, hotbar);
+  const guidance = btn("First adventures", () => pack());
+  guidance.className = "adventure-guidance";
+  hud.append(vitals, target, hotbar, guidance);
   shell.append(hud);
   function update(data) {
-    state = { ...state, ...data };
+    state = { ...state, ...data, player: { ...state?.player, ...data.player } };
+    if (state.player?.progress) {
+      const journey = beginnerJourney(state);
+      guidance.textContent = journey.next ? "Next: " + journey.next.title : journey.complete ? "First adventures complete" : "Resource sale paused · explore freely";
+    } else reloadGuidance();
     const p = data.player;
     if (p) {
       vitals.textContent = `♥ ${Math.ceil(p.hp)}/${p.stats.maxHp}   ✧ ${Math.ceil(p.mp)}/${p.stats.maxMp}   Mochi ♥ ${Math.ceil(p.petHp)}/80`;
       hud.classList.toggle("in-combat", !!p.target);
     }
+  }
+  function reloadGuidance() {
+    if (guidanceRequest || disposed) return guidanceRequest;
+    guidanceRequest = request("/api/adventure")
+      .then((data) => { if (!disposed) update(data); })
+      .catch(() => {})
+      .finally(() => { guidanceRequest = null; });
+    return guidanceRequest;
   }
   async function pack() {
     const s = await request("/api/adventure");
@@ -108,6 +125,23 @@ export function adventureUI({
           d.close();
         }),
       );
+    const journey = beginnerJourney(s);
+    d.append(element("h3", "Your first journey"));
+    for (const step of journey.steps)
+      d.append(element("p", `${step.done ? "✓" : step.blocked ? "Paused" : "○"} ${step.title}`));
+    if (journey.next) {
+      const next = journey.next;
+      d.append(element("p", next.detail));
+      if (next.action === "companion" && chooseCompanion)
+        d.append(btn("Choose a Mochi", () => { d.close(); return chooseCompanion(); }));
+      if (next.room)
+        d.append(btn("Travel to " + ({ yard: "Training Yard", forest: "Whispering Forest", town: "Town", exchange: "Trading Hall" }[next.room]), () => {
+          d.close();
+          bridge.join(next.room);
+        }));
+    }
+    const paused = journey.steps.find((step) => step.blocked && !step.done);
+    if (paused) d.append(element("p", paused.detail));
     d.append(element("h3", "Spells"));
     for (const id of s.player.spells)
       d.append(
@@ -271,6 +305,7 @@ export function adventureUI({
         });
         notice(r.message + " " + tokenText(r.amountRaw, r.mock));
         d.close();
+        await reloadGuidance();
       }),
       btn("Sell all", async () => {
         const items = Object.fromEntries(
@@ -285,6 +320,7 @@ export function adventureUI({
         });
         notice(r.message);
         d.close();
+        await reloadGuidance();
       }),
       btn("Game rewards", () => {
         d.close();
@@ -322,6 +358,7 @@ export function adventureUI({
         if (!disposed) {
           notice(`Gathered ${RESOURCE_NAMES[result.itemId]} · +${result.xp} XP`);
           bridge.scene.audio.cue(result.kind);
+          reloadGuidance();
         }
         return result;
       } catch (e) {
@@ -379,7 +416,7 @@ export function adventureUI({
               : "Click a mob to target · click a resource to gather";
         }
       }
-      if (type === "adventureNotice") notice(data.message);
+      if (type === "adventureNotice") { notice(data.message); reloadGuidance(); }
       if (type === "battleDecision") bridge.scene.battleDecision = data;
       if (type === "combatEffect") {
         bridge.scene.combatEffects ??= [];
@@ -387,8 +424,10 @@ export function adventureUI({
         if (bridge.scene.combatEffects.length > 24)
           bridge.scene.combatEffects.shift();
         bridge.scene.audio.cue(data.kind);
-        if (data.kind === "victory" && data.userId === bridge.selfId)
+        if (data.kind === "victory" && data.userId === bridge.selfId) {
           notice(`Victory · +${data.xp} combat XP`);
+          reloadGuidance();
+        }
       }
     },
     destroy() {

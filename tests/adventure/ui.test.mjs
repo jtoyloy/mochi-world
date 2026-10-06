@@ -33,7 +33,8 @@ function fixture(t, changes = {}) {
     : { itemId: "softwood", xp: 12, kind: "woodcutting" };
   const ui = adventureUI({
     shell: new Element("section"),
-    bridge: { selfId: "player", scene: { data: new Map([["player", { x: 0, y: 0 }]]), audio: { cue: (cue) => cues.push(cue) } } },
+    chooseCompanion: async () => notices.push("choose companion"),
+    bridge: { join: (room) => notices.push("travel:" + room), selfId: "player", scene: { data: new Map([["player", { x: 0, y: 0 }]]), audio: { cue: (cue) => cues.push(cue) } } },
     request: async (path, data) => {
       requests.push({ path, data });
       return data ? respond(data) : state;
@@ -44,7 +45,7 @@ function fixture(t, changes = {}) {
     notice: (text) => notices.push(text), refresh: async () => {},
   });
   t.after(() => { ui.destroy(); Object.assign(globalThis, originals); });
-  return { ui, dialogs, requests, notices, cues, setRespond(fn) { respond = fn; } };
+  return { ui, state, dialogs, requests, notices, cues, setRespond(fn) { respond = fn; } };
 }
 const button = (d, text) => d.children.find((e) => e.tagName === "BUTTON" && e.textContent === text);
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
@@ -124,4 +125,18 @@ test("stale pack finish and cancel controls cannot affect a newer harvest", asyn
   t.mock.timers.tick(1250);
   await flush();
   assert.deepEqual(f.requests.filter((r) => r.data?.action === "finishGather").map((r) => r.data.harvestId), ["new"]);
+});
+
+
+test("beginner pack offers actual companion and travel controls derived from server state", async (t) => {
+  const f = fixture(t);
+  f.state.player.starter = true;
+  await f.ui.pack();
+  await button(f.dialogs[0], "Choose a Mochi").onclick();
+  assert.ok(f.notices.includes("choose companion"));
+  f.state.player.activePet = "server-owned-pet";
+  await f.ui.pack();
+  await button(f.dialogs[1], "Travel to Training Yard").onclick();
+  assert.ok(f.notices.includes("travel:yard"));
+  assert.equal(f.requests.filter((r) => r.data).length, 0);
 });
