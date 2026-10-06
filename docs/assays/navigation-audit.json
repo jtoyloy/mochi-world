@@ -1,0 +1,86 @@
+{
+  "interactionMismatches": [],
+  "movingResidentRequests": [
+    {
+      "id": "otto",
+      "at": 5000,
+      "requestedOrigin": {
+        "x": 280,
+        "y": 660
+      },
+      "authoritativeTarget": {
+        "x": 360,
+        "y": 760,
+        "state": "idle",
+        "rotation": 0
+      },
+      "distance": 128.06248474865697,
+      "interactionRadius": 120,
+      "classification": "C"
+    },
+    {
+      "id": "luna",
+      "at": 0,
+      "requestedOrigin": {
+        "x": 1000,
+        "y": 540
+      },
+      "authoritativeTarget": {
+        "x": 1140,
+        "y": 657.1428571428571,
+        "state": "walk",
+        "rotation": 0
+      },
+      "distance": 182.54437537100898,
+      "interactionRadius": 120,
+      "classification": "C"
+    }
+  ],
+  "routeProbes": [
+    {
+      "room": "town",
+      "probes": 24853,
+      "invalid": 0,
+      "roundedBlocked": 0,
+      "routeInvalid": 0,
+      "witnesses": []
+    },
+    {
+      "room": "forest",
+      "probes": 1363,
+      "invalid": 0,
+      "roundedBlocked": 0,
+      "routeInvalid": 0,
+      "witnesses": []
+    },
+    {
+      "room": "lake",
+      "probes": 1102,
+      "invalid": 0,
+      "roundedBlocked": 0,
+      "routeInvalid": 0,
+      "witnesses": []
+    },
+    {
+      "room": "market",
+      "probes": 696,
+      "invalid": 0,
+      "roundedBlocked": 0,
+      "routeInvalid": 0,
+      "witnesses": []
+    },
+    {
+      "room": "exchange",
+      "probes": 1015,
+      "invalid": 0,
+      "roundedBlocked": 0,
+      "routeInvalid": 0,
+      "witnesses": []
+    }
+  ],
+  "classifications": {
+    "C": 2,
+    "E": 0
+  },
+  "anchorHypothesis": "No shared prop/local IDs: differing radii did not prove historical false rejection. Moving resident authored-position request was a harness bug, reproduced in diagnostic soak."
+}

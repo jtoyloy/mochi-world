@@ -234,12 +234,33 @@ export function walkable(roomId, x, y) {
   }
   return true;
 }
+// Continuous intersection with the same footprints as walkable(). Sampling
+// every 10 units misses short corner crossings and can strand an authority body.
 export function validSegment(room, x, y, tx, ty) {
-  if (![x, y, tx, ty].every(Number.isFinite)) return false;
-  const n = Math.ceil(Math.hypot(tx - x, ty - y) / 10);
-  for (let i = 1; i <= n; i++)
-    if (!walkable(room, x + ((tx - x) * i) / n, y + ((ty - y) * i) / n))
-      return false;
+  if (![x, y, tx, ty].every(Number.isFinite) ||
+      !walkable(room, x, y) || !walkable(room, tx, ty)) return false;
+  const dx = tx-x, dy = ty-y;
+  const circle = (cx, cy, r, yScale = 1, inclusive = false) => {
+    const ax=x-cx, ay=(y-cy)*yScale, vx=dx, vy=dy*yScale;
+    const t=Math.max(0,Math.min(1,-(ax*vx+ay*vy)/(vx*vx+vy*vy || 1)));
+    const d=(ax+t*vx)**2+(ay+t*vy)**2;
+    return inclusive ? d <= r*r : d < r*r;
+  };
+  const rectangle = (cx, cy, w, h) => {
+    let low=0, high=1;
+    for (const [start, delta, min, max] of [[x,dx,cx-w/2,cx+w/2],[y,dy,cy-h/2,cy+h/2]]) {
+      if (delta === 0) { if (start <= min || start >= max) return false; }
+      else { const a=(min-start)/delta,b=(max-start)/delta;
+        low=Math.max(low,Math.min(a,b));high=Math.min(high,Math.max(a,b)); }
+    }
+    return low < high;
+  };
+  const base=room.split(":")[0];
+  for(const c of WORLD_COLLIDERS[base] ?? [])
+    if(c.r ? circle(c.x,c.y,c.r) : rectangle(c.x,c.y,c.w,c.h)) return false;
+  if(base === "town" && circle(600,430,94,1.6,true)) return false;
+  for(const [id,,px,py] of roomSpec(room)?.props ?? [])
+    if(id !== "town" && rectangle(px,py,188,126)) return false;
   return true;
 }
 export function moveToward(p, target, speed, dt) {

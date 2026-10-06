@@ -158,3 +158,15 @@ the final repeat reached 1,359 ms with 10/300 deadline misses. Final 150-brain p
 No brain pack, learning rule, observation, reward or decision interval changed. Shared-room
 Adventure operations remain serialized. See [BATTLE_BRAIN_SCALING.md](BATTLE_BRAIN_SCALING.md)
 for the full matrix, crash boundary, receipt limits and capacity exclusions.
+## Authoritative navigation and capacity follow-up
+
+Started exactly from main `925cdbec4399b249bbf1872a26edfaad217d2547`.
+[CCU_CERTIFICATION.md](CCU_CERTIFICATION.md) records the predeclared protocol and
+fresh sequential real-account/PostgreSQL stages. The repaired segment validator
+uses continuous collision geometry with unchanged footprints/authority/ranges.
+The initial failing navigation diagnostic and all failed acceptance arms remain
+reported. Active-combat disconnect retention and pending-native-response departure
+races were independently reproduced using real PostgreSQL and BattleBrains.
+No brain mechanism, checkpoint domain, trading policy or published pack changed.
+**150 CCU is NOT CERTIFIED.** Full validation and exact stage/profile results are
+recorded in the certification report and its compact assay.

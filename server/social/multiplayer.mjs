@@ -528,6 +528,18 @@ export class Multiplayer {
     }
     if (p.room) this.broadcast(p.room, "playerJoined", this.public(p));
   }
+  rejection(p, data, reason, target = null, radius = null) {
+    if (!this.metrics) return;
+    this.metrics.count(target || radius ? "interactionRejections" : "movementRejections");
+    this.metrics.rejections ??= [];
+    if (this.metrics.rejections.length >= 1000) { this.metrics.count("rejectionTraceOverflow"); return; }
+    this.metrics.rejections.push({at: this.now(), room: p.roomId, instance: p.room, user: p.userId, reason,
+      request: data, authoritative: {x: p.x, y: p.y, seated: p.seated ?? null},
+      target: target && {x: target.x, y: target.y}, interactionRadius: radius,
+      requestAgeMs: Number.isFinite(data.clientTime) ? this.now()-data.clientTime : null,
+      originWalkable: walkable(p.roomId, p.seated?.approach.x ?? p.x, p.seated?.approach.y ?? p.y),
+      destinationWalkable: Number.isFinite(data.x) ? walkable(p.roomId, data.x, data.y) : null});
+  }
   async handle(p, msg) {
     if (
       !msg ||
@@ -603,6 +615,7 @@ export class Multiplayer {
             movementHz: this.movementHz,
           });
         } catch (e) {
+          this.rejection(p, data, e.message);
           this.send(p, "moveRejected", {
             ...this.public(p),
             rejectedSeq: data.seq,
@@ -658,8 +671,10 @@ export class Multiplayer {
           p.roomId === "town" &&
           TOWN_INTERACTIONS.find((v) => v.id === data.propId);
         if (local) {
-          if (Math.hypot(p.x - local.x, p.y - local.y) > 120)
+          if (Math.hypot(p.x - local.x, p.y - local.y) > 120) {
+            this.rejection(p, data, "Walk closer to interact", local, 120);
             throw new GameError("Walk closer to interact");
+          }
           if (local.seat) {
             if (
               [...this.store.rooms.get(p.room).players.values()].some(
@@ -687,8 +702,10 @@ export class Multiplayer {
         if (
           !prop ||
           Math.hypot(p.x - prop[2], p.y - Math.max(370, prop[3] + 140)) > 190
-        )
+        ) {
+          this.rejection(p, data, "Walk closer to interact", prop && {x: prop[2], y: Math.max(370, prop[3]+140)}, 190);
           throw new GameError("Walk closer to interact");
+        }
         this.send(p, "interaction", { propId: data.propId });
         break;
       }
@@ -807,7 +824,9 @@ export class Multiplayer {
     this.snapshots.tick(this, now);
     for (const duration of roomDurations.values())
       this.metrics?.time("roomTickDurationMs", duration);
-    this.metrics?.time("tickDurationMs", performance.now() - startedAt);
+    const durationMs = performance.now() - startedAt;
+    this.metrics?.time("tickDurationMs", durationMs);
+    if (durationMs >= 100) this.metrics?.count("movementDeadlineOverruns");
     for (const [key, at] of this.encounters)
       if (now - at > 120000) this.encounters.delete(key);
   }

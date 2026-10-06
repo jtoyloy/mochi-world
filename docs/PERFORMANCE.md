@@ -120,3 +120,15 @@ Real 150-account/pet five-minute loopback payload fell from **28.86 to 5.91 MB/s
 Node mean CPU: 0.297 → 0.306 cores; app/native maximum RSS: 645 → 856 MiB. Peak app/native RSS increased; no memory reduction is claimed. Opt-in byte/GC/serialization counters are enabled; PostgreSQL and the generator are excluded from these process figures. Per-recipient batches increase generated string bytes while lowering delivered bytes, so this is not a universal serialization-allocation improvement.
 
 Two-browser near-motion samples were about 60 FPS /17.4 ms p95, with no reported hard snaps or corrections. Unit tests pin continuous 5 Hz motion and monotonic tier transitions. These are not sustained crowd or WAN/GPU results. The 30-minute extension was skipped for disk headroom; request errors/deadline failures remain in the evidence. **150 CCU is not launch-certified.** See [MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md) and [network-scaling-summary.json](assays/network-scaling-summary.json) for complete before/after types, counts, failures and limitations.
+
+## Capacity certification follow-up
+
+The final-main investigation and retained measurements are in
+[CCU_CERTIFICATION.md](CCU_CERTIFICATION.md). Network payload optimization alone
+cannot certify capacity. The new sequential real PostgreSQL stages retain timing
+failures, actual checkpoint GC/write/delete measurements and filesystem headroom.
+These are shared-host application/native measurements; they exclude PostgreSQL,
+generator/proxy process resources and WAN framing/retransmission bytes. Tick and
+query percentiles are histogram upper bounds. One-room crowd results are separate
+from normal instanced CCU. **150 CCU is NOT CERTIFIED**, and active-combat departure
+cleanup has independently reproduced blockers.

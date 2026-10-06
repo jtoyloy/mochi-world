@@ -471,3 +471,15 @@ Before request errors: `{'That path is blocked': 1, 'Walk closer to interact': 3
 **150 CCU remains un-certified.** Checkpoint storage/retention, authoritative navigation rejections and any recorded tick deadline misses still need resolution. Repeat isolated long runs on candidate production hardware, with WAN/TLS and real-browser crowds; measure PostgreSQL separately and budget native work by registered pets, not only CCU. Distributed room/session/rate state remains unimplemented. Transient combat effects after an explicit slow-client disconnect do not have durable replay.
 
 Validation: 185 JavaScript tests passed with PostgreSQL, zero skips; movement/queue tests and production asset validation/build passed; whitespace checks passed. No Cadence/reward/checkpoint mechanism or published pack was changed.
+
+## Navigation and capacity certification follow-up
+
+See [CCU_CERTIFICATION.md](CCU_CERTIFICATION.md) for predeclared final-main
+10/40/75/150 stages, exact acceptance failures, WAN/TLS/crowd profiles, real disk
+telemetry and encounter departure evidence. The prior 150-user failures above
+remain historical failures. Checkpoint retention is now implemented; its presence
+alone does not prove a live storage equilibrium or 150-user capacity. The new
+harness uses the real development-default retention settings and stops below
+3 GiB free. No existing production/legacy checkpoint files are deleted by the test.
+A measured collider corner defect is repaired without loosening validation.
+**150 CCU remains NOT CERTIFIED.**

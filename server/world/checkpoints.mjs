@@ -320,7 +320,10 @@ export class BrainRepository {
         n[x.id] = (n[x.id] ?? 0) + 1;
         return n;
       }, {}),
+      gcScans: m.gcScans ?? 0,
       gcDurationMs: m.gcDurationMs,
+      gcDurationTotalMs: m.gcDurationTotalMs ?? 0,
+      gcDurationMaxMs: m.gcDurationMaxMs ?? 0,
       gcLastError: m.gcLastError ?? null,
       policy: this.retentionPolicy,
     };
