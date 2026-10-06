@@ -1,9 +1,13 @@
+import { recordDisconnect } from "./disconnects.mjs";
+import https from "node:https";
+import { ImpairedTransport } from "./transport.mjs";
+import { TOWN_INTERACTIONS, TOWN_RESIDENTS, residentAvailable, residentPosition } from "../../web/js/game/town.js";
 import { SnapshotDecoder } from "../../web/js/game/network/snapshots.js";
 import { resolve } from "node:path";
 import { maximum, percentile } from "./stats.mjs";
 import { processTree } from "./process-tree.mjs";
 import { fork } from "node:child_process";
-import { readFile, writeFile, appendFile, mkdir, rm } from "node:fs/promises";
+import { readFile, writeFile, appendFile, mkdir, rm, statfs, readdir, stat } from "node:fs/promises";
 import { once } from "node:events";
 import { randomUUID, createHash } from "node:crypto";
 import os from "node:os";
@@ -17,12 +21,14 @@ import {
 } from "../../web/js/world/catalog.js";
 import { NavigationService } from "../../web/js/game/NavigationService.js";
 import { beastArchetype } from "../../web/js/isoworld/projection.js";
-import { SPAWNS } from "../../web/js/game/adventure.js";
+import { SPAWNS, RESOURCE_NODES } from "../../web/js/game/adventure.js";
 import { ROOMS, roomSpec, walkable } from "../../web/js/game/model.js";
 const sourceHashes = Object.fromEntries(
   await Promise.all(
     [
       "multiplayer/load-test/soak.mjs",
+      "multiplayer/load-test/transport.mjs",
+      "multiplayer/load-test/disconnects.mjs",
       "server/index.mjs",
       "server/social/multiplayer.mjs",
       "server/world/runtime-metrics.mjs",
@@ -68,10 +74,12 @@ if (
   duration < 1
 )
   throw Error("Invalid load arguments");
+if (![Number(args.rtt ?? 0), Number(args.jitter ?? 0)].every(n=>Number.isFinite(n)&&n>=0&&n<=10000) || !Number.isFinite(Number(args.loss ?? 0)) || Number(args.loss ?? 0)<0 || Number(args.loss ?? 0)>1) throw Error("Invalid impairment arguments");
 let seed = Number(args.seed ?? 42) >>> 0;
 const random = () => (seed = (1664525 * seed + 1013904223) >>> 0) / 4294967296;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const origin = `http://127.0.0.1:${port}`;
+const origin = args.origin ?? `http://127.0.0.1:${port}`;
+if (args.origin && !["https://127.0.0.1:8899"].includes(args.origin)) throw Error("Only the local certification proxy is supported");
 const rooms = (
   args.rooms ?? "town,town,town,forest,lake,market,exchange"
 ).split(",");
@@ -115,16 +123,19 @@ export class Actor {
     });
   }
   async connect() {
+    this.transport = new ImpairedTransport({rtt: Number(args.rtt ?? 0), jitter: Number(args.jitter ?? 0), loss: Number(args.loss ?? 0), burst: args.burst === "true", random: this.random});
     this.ws = new WebSocket(origin.replace("http", "ws") + "/socket", {
       headers: { Cookie: this.cookie, Origin: origin },
+      rejectUnauthorized: args.origin ? false : true,
     });
+    const socket = this.ws;
     this.ws.on("error", (e) => {
       this.errors[e.message] = (this.errors[e.message] ?? 0) + 1;
     });
-    this.ws.on("close", () => this.disconnects++);
+    this.ws.on("close", (code, reason) => recordDisconnect(this, socket, code, reason));
     const decoder = new SnapshotDecoder();
     this.ws.on("message", (raw) => {
-      for (const e of decoder.consume(JSON.parse(raw))) this.receive(e);
+      this.transport.schedule("in", () => { for (const e of decoder.consume(JSON.parse(raw))) this.receive(e); });
     });
     const ready = await this.wait("ready");
     this.selfId = ready.userId;
@@ -136,6 +147,8 @@ export class Actor {
     this.keepalive.unref();
   }
   receive(e) {
+      if (e.type === "adventureRoom") this.adventureRoom = e.data;
+      if (e.type === "battleDecision") { this.battleDecisions ??= []; this.battleDecisions.push(e.data); }
       const now = Date.now();
       this.lastMessage = { type: e.type, moveSeq: e.data?.moveSeq };
       if (e.type === "roomSnapshot") {
@@ -208,7 +221,7 @@ export class Actor {
     });
   }
   send(type, data) {
-    if (this.ws.readyState === 1) this.ws.send(JSON.stringify({ type, data }));
+    if (this.ws.readyState === 1) { const socket = this.ws; this.transport.schedule("out", () => { if (socket.readyState === 1) socket.send(JSON.stringify({ type, data })); }); }
   }
   async join(room) {
     await this.beforeJoin?.(room);
@@ -220,6 +233,8 @@ export class Actor {
   }
   async move(x, y) {
     this.pendingDestination = { x, y };
+    this.requests ??= [];
+    this.requests.push({type: "move", at: Date.now(), room: this.room, origin: {x: this.self.x, y: this.self.y}, destination: {x,y}, predicted: null, seq: this.seq+1});
     const seq = ++this.seq,
       pending = this.wait("moveAccepted", (d) => d.moveSeq === seq);
     this.send("move", { x, y, seq, roomId: this.room, clientTime: Date.now() });
@@ -227,14 +242,24 @@ export class Actor {
   }
   async close() {
     clearInterval(this.keepalive);
+    this.transport?.close();
     if (this.ws.readyState === 3) return;
     const closed = once(this.ws, "close");
+    this.ws.plannedClose = true;
     this.ws.close();
     await closed;
   }
 }
+// Self-signed certificate exception is restricted to this local fixture.
+async function localTLSFetch(url, options) {
+  return new Promise((resolve,reject)=>{
+    const req=https.request(url,{...options,rejectUnauthorized:false},res=>{
+      const chunks=[];res.on("data",chunk=>chunks.push(chunk));res.on("end",()=>resolve({ok:res.statusCode>=200&&res.statusCode<300,json:async()=>JSON.parse(Buffer.concat(chunks)),headers:{get:key=>key==="set-cookie" ? res.headers[key]?.[0] : res.headers[key]}}));
+    });req.on("error",reject);req.end(options.body);
+  });
+}
 async function api(path, data, cookie) {
-  const r = await fetch(origin + path, {
+  const r = await (args.origin ? localTLSFetch : fetch)(origin + path, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -315,6 +340,22 @@ async function follow(actor, species) {
   actor.trace = null;
   return { species, passed, samples, trace };
 }
+// Supplemental mixed-workload correctness profile; never a capacity promotion arm.
+async function exercise(actor, gather) {
+  actor.exercise = [];
+  const arrive = async point => { const accepted=await actor.move(point.x,point.y); if(accepted.moving) await actor.wait("playerMoved",d=>d.userId===actor.selfId&&d.moveSeq===actor.seq&&!d.moving); };
+  const adventure = async data => {const pending=actor.wait("adventureResult");actor.send("adventure",data);return pending;};
+  await actor.join("town"); const vendor=TOWN_RESIDENTS.find(n=>n.id==="mina");await arrive(vendor);
+  const talked=actor.wait("npcDialogue",d=>d.id===vendor.id);actor.send("npc",{id:vendor.id});actor.exercise.push({phase:"vendor",at:Date.now(),reply:await talked});
+  if(gather){await actor.join("forest");const node=RESOURCE_NODES.find(n=>n.id==="forest-soft"),goal=new NavigationService("forest").nearestWalkable(node);await arrive(goal);
+    actor.exercise.push({phase:"gather-start",at:Date.now(),reply:await adventure({action:"gather",nodeId:node.id})});await sleep(300);
+    actor.exercise.push({phase:"gather-cancel",at:Date.now(),reply:await adventure({action:"cancelGather"})});}
+  await actor.join("yard");await arrive({x:600,y:420});
+  if(actor.adventureRoom?.room!==actor.snapshot.instanceId)await actor.wait("adventureRoom",d=>d.room===actor.snapshot.instanceId);
+  const mob=actor.adventureRoom.mobs.find(m=>m.hp>0);if(!mob)throw Error("No living safe Yard dummy");
+  actor.exercise.push({phase:"combat-target",at:Date.now(),reply:await adventure({action:"target",targetId:mob.id})});await sleep(2500);
+  actor.exercise.push({phase:"combat-stop",at:Date.now(),reply:await adventure({action:"stop"})});await actor.join("town");actor.exercised=true;
+}
 async function run(users) {
   const schema = "soak_" + randomUUID().replaceAll("-", ""),
     admin = new pg.Pool({ connectionString: process.env.TEST_DATABASE_URL });
@@ -324,6 +365,17 @@ async function run(users) {
   const progressFile = `data/multiplayer-${users}-${duration}s-${schema}-windows.jsonl`;
   await writeFile(progressFile, "");
   let telemetryWrites = Promise.resolve();
+  const diskSamples = [];
+  const checkpointDisk = async () => {
+    let bytes=0, files=0, temporary=0; const dirs=[checkpointDirectory];
+    while(dirs.length) { const dir=dirs.pop(); let entries;
+      try {entries=await readdir(dir,{withFileTypes:true});} catch(e){if(e.code==='ENOENT')continue;throw e;}
+      for(const entry of entries){const path=resolve(dir,entry.name);if(entry.isDirectory())dirs.push(path);
+        else {try {const info=await stat(path);bytes+=info.size;files++;temporary+=Number(entry.name.includes('.tmp'));}catch(e){if(e.code!=='ENOENT')throw e;}}}
+    }
+    return {bytes,files,temporary};
+  };
+  const disk = async () => { const fs = await statfs("data"); const sample = {at: Date.now(), availableBytes: Number(fs.bavail)*Number(fs.bsize), checkpointDisk: await checkpointDisk()}; diskSamples.push(sample); if (sample.availableBytes < Number(args.diskFloorGiB ?? 3)*2**30) { stopping = true; errors.push("Disk safety floor reached"); } };
   let pool,
     child,
     interval,
@@ -335,6 +387,8 @@ async function run(users) {
   const db = new URL(process.env.TEST_DATABASE_URL);
   db.searchParams.set("options", "-c search_path=" + schema);
   try {
+    await disk();
+    if (stopping) throw Error("Disk safety floor reached before setup");
     await admin.query("CREATE SCHEMA " + schema);
     pool = new pg.Pool({ connectionString: db.href });
     for (const path of [
@@ -385,6 +439,10 @@ async function run(users) {
         MAX_PLAYERS_PER_ROOM: String(capacity),
         MULTIPLAYER_METRICS: "true",
         CHECKPOINT_DIRECTORY: checkpointDirectory,
+        CHECKPOINT_KEEP_RECENT: "3",
+        CHECKPOINT_RETENTION_HOURS: "0",
+        CHECKPOINT_GC_INTERVAL_MS: "60000",
+        CHECKPOINT_GC_GRACE_MS: "600000",
         MOVEMENT_HZ: "10",
         MULTIPLAYER_STORAGE: "memory",
       },
@@ -475,6 +533,7 @@ async function run(users) {
       a.latencies = [];
       a.gaps = [];
       a.disconnects = 0;
+      a.unexpectedDisconnects = 0; a.disconnectEvents = []; a.reconnectWindows = [];
       a.reconnects = 0;
       a.companions = 0;
     }
@@ -503,6 +562,7 @@ async function run(users) {
     processSamples.push(await processTree(child.pid));
     interval = setInterval(() => {
       child.send("runtimeMetrics");
+      disk().catch(e => { stopping = true; errors.push(e.message); });
       processTree(child.pid)
         .then((s) => processSamples.push(s))
         .catch((e) => errors.push(e.message));
@@ -511,27 +571,32 @@ async function run(users) {
       await Promise.all(
         actors.map(async (a) => {
           try {
-            if (a.ws.readyState !== 1 || random() < reconnectProbability) {
+            if (args.exercise === "true" && !a.exercised) { await exercise(a,a===actors[0]); }
+            else if (a.ws.readyState !== 1 || random() < reconnectProbability) {
+              const window = {start: Date.now(), end: null, user: a.selfId, planned: a.ws.readyState === 1};
+              a.reconnectWindows.push(window);
               await a.close();
               a.reconnects++;
               await a.connect();
+              window.end = Date.now();
             } else if (random() < transitionProbability) {
               await a.join(rooms[Math.floor(random() * rooms.length)]);
               if (["forest", "lake"].includes(a.room)) await a.move(100, 640);
             } else if (random() < emoteProbability) {
               if (Date.now() - (a.emoteAt ?? 0) >= 1600) {
-                a.send("emote", { emote: "wave" });
+                if (random()<.5) a.send("emote", { emote: "wave" });
+                else a.send("phrase", {phrase: "Hello!"});
                 a.emoteAt = Date.now();
               }
             } else if (random() < interactionProbability) {
-              const prop = roomSpec(a.room).props.find(
-                (p) =>
-                  Math.hypot(
-                    a.self.x - p[2],
-                    a.self.y - Math.max(370, p[3] + 140),
-                  ) <= 190,
-              );
-              if (prop) a.send("interact", { propId: prop[0] });
+              // Compare the same logical anchor/radius the server validates.
+              const point = a.self.seated?.approach ?? a.self;
+              const local = a.room === "town" ? TOWN_INTERACTIONS.find(p => !p.seat && Math.hypot(point.x-p.x,point.y-p.y) < 65) : null;
+              const prop = a.room !== "town" && roomSpec(a.room).props.find(p => Math.hypot(point.x-p[2],point.y-Math.max(370,p[3]+140)) < 130);
+              const id = local?.id ?? prop?.[0];
+              if (id) { a.requests ??= []; a.requests.push({type:"interact", at:Date.now(), room:a.room, origin:{x:a.self.x,y:a.self.y}, target:id}); a.send("interact", {propId:id, clientTime:Date.now()}); }
+              const resident = a.room === "town" && TOWN_RESIDENTS.find(n => residentAvailable(n) && Math.hypot(point.x-residentPosition(n).x,point.y-residentPosition(n).y) < 65);
+              if (resident && Date.now()-(a.npcAt ?? 0)>2000) { a.send("npc", {id:resident.id}); a.npcAt=Date.now(); }
             } else if (random() < movementProbability) {
               const nav = new NavigationService(a.room);
               for (let attempt = 0; attempt < 5; attempt++) {
@@ -586,6 +651,8 @@ async function run(users) {
     for (const t of Object.values(timing)) {
       t.mean = t.sum / t.count;
       let n = 0;
+      t.p50UpperMs = null; t.p99UpperMs = null;
+      for (const [key, fraction] of [["p50UpperMs",.5],["p99UpperMs",.99]]) { let count=0; for(let i=0;i<12;i++) {count+=t.buckets[i]; if(count>=t.count*fraction) {t[key]=i===11?null:2**(i-3);break;}} }
       t.p95UpperMs = null;
       for (let i = 0; i < 12; i++) {
         n += t.buckets[i];
@@ -618,8 +685,11 @@ async function run(users) {
       rejections: actors.flatMap((a) => a.rejections ?? []),
       wrongCompanions: actors.reduce((n, a) => n + a.wrongCompanions, 0),
       errors: actors.map((a) => a.errors),
+      disconnectAuditVersion: 1,
+      disconnectEvents: actors.flatMap(a=>a.disconnectEvents ?? []),
+      reconnectWindows: actors.flatMap(a=>a.reconnectWindows ?? []),
       unexpectedDisconnects: actors.reduce(
-        (n, a) => n + Math.max(0, a.disconnects - a.reconnects),
+        (n, a) => n + (a.unexpectedDisconnects ?? 0),
         0,
       ),
       reconnects: actors.reduce((n, a) => n + a.reconnects, 0),
@@ -651,6 +721,10 @@ async function run(users) {
       );
     const result = {
       sourceHashes,
+      diskSamples,
+      impairment: {rtt:Number(args.rtt ?? 0), jitter:Number(args.jitter ?? 0), loss:Number(args.loss ?? 0), burst:args.burst === "true", model:"ordered TCP retransmission stalls", counters:actors.map(a=>a.transport.stats)},
+      exercises: actors.map(a=>({user:a.selfId,phases:a.exercise??[],battleDecisions:a.battleDecisions??[]})),
+      requests: actors.map(a=>({user:a.selfId, requests:a.requests ?? []})),
       processSamples,
       users,
       durationSeconds: loadDurationSeconds,
@@ -791,6 +865,8 @@ async function run(users) {
     }
     await telemetryWrites;
     await rm(checkpointDirectory, { recursive: true, force: true });
+    await disk();
+    await writeFile(progressFile + ".disk.json", JSON.stringify(diskSamples));
     await pool?.end();
     await admin.query("DROP SCHEMA IF EXISTS " + schema + " CASCADE");
     await admin.end();

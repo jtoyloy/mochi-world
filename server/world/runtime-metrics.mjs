@@ -26,7 +26,16 @@ export class RuntimeMetrics {
         const query = client.query;
         client.query = (...args) => {
           this.count("databaseQueries");
-          return query.apply(client, args);
+          const at = performance.now();
+          const done = () => this.time("databaseQueryMs", performance.now()-at);
+          if (typeof args.at(-1) === "function") {
+            const callback = args.pop();
+            args.push((...values) => { done(); callback(...values); });
+            return query.apply(client, args);
+          }
+          const result = query.apply(client, args);
+          if (result?.then) return result.then(value => { done(); return value; }, error => { done(); throw error; });
+          return result;
         };
         client.__runtimeMeasured = true;
       }
@@ -87,6 +96,7 @@ export class RuntimeMetrics {
     this.at = now;
     const sample = {
       elapsed,
+      rejections: this.rejections ?? [],
       cpuCores: (cpu.user + cpu.system) / 1e6 / elapsed,
       ...process.memoryUsage(),
       eventLoopP95Ms: this.loop.percentile(95) / 1e6,
@@ -106,6 +116,7 @@ export class RuntimeMetrics {
       ),
       connections: multiplayer.wss.clients.size,
       slowClients: [...multiplayer.store.players.values()].filter(p => p.slowSince != null).length,
+      criticalQueueDepth: [...multiplayer.store.players.values()].reduce((n,p) => n + (p.outbox?.length ?? 0), 0),
       criticalQueueBytes: [...multiplayer.store.players.values()].reduce((n,p) => n + (p.outboxBytes ?? 0), 0),
       snapshotClients: multiplayer.snapshots?.clients.size ?? 0,
       encounters: multiplayer.encounters.size,
@@ -119,6 +130,7 @@ export class RuntimeMetrics {
       adventureStates: adventure.states.size,
       activeResources: process.getActiveResourcesInfo(),
     };
+    this.rejections = [];
     this.counts = {};
     this.timings = {};
     this.protocol = {};

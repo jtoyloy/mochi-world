@@ -85,6 +85,7 @@ export class CheckpointCollector {
         )
       ).rows[0].locked;
       if (!locked) return { skipped: "another collector" };
+      r.checkpointMetrics.gcScans = (r.checkpointMetrics.gcScans ?? 0) + 1;
       const files = await r.storage.list(scope);
       const identities = (
         await coordinator.query("SELECT id FROM mochis ORDER BY id")
@@ -347,6 +348,8 @@ export class CheckpointCollector {
             });
         coordinator?.release(destroy);
         r.checkpointMetrics.gcDurationMs = performance.now() - started;
+        r.checkpointMetrics.gcDurationTotalMs = (r.checkpointMetrics.gcDurationTotalMs ?? 0) + r.checkpointMetrics.gcDurationMs;
+        r.checkpointMetrics.gcDurationMaxMs = Math.max(r.checkpointMetrics.gcDurationMaxMs ?? 0, r.checkpointMetrics.gcDurationMs);
       }
     }
   }

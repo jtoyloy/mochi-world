@@ -94,3 +94,16 @@ Byte histograms cap distinct sizes at 4096 per window/type; overflow makes p95
 unavailable. Diagnostic component serialization is timed separately and is
 absent when metrics are disabled. Serialized byte volume is an allocation proxy,
 not an exact V8 heap allocation measurement.
+
+## Authoritative navigation certification follow-up
+
+[CCU_CERTIFICATION.md](CCU_CERTIFICATION.md) records the main-base protocol,
+real PostgreSQL capacity stages and remaining failures. Continuous collision
+intersection now replaces 10-unit segment sampling: an accepted shortcut could
+cross a collider corner between samples and leave the authoritative body blocked.
+The same physical footprints, speed and interaction ranges apply. Client origins
+are not trusted. Harness residents use their time-dependent logical anchor.
+Opt-in rejection traces and query/GC/deadline/queue metrics support diagnosis.
+Distributed capacity and single-room crowd limits are separate; the configured
+room limit remains at most 100. **150 CCU is NOT CERTIFIED**, including active
+combat disconnect/pending-decision races. No published brain pack changed.

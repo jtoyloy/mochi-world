@@ -1,0 +1,62 @@
+{
+  "base": "925cdbec4399b249bbf1872a26edfaad217d2547",
+  "postgres": true,
+  "results": [
+    {
+      "case": "real native combat decision",
+      "decisions": 1,
+      "inBattle": true
+    },
+    {
+      "case": "disconnect active combat and advance 24h",
+      "retainedState": true,
+      "inBattle": true,
+      "instances": 0,
+      "finishCalls": 0,
+      "ttlExpired": false
+    },
+    {
+      "case": "room change after combat",
+      "inBattle": false,
+      "finishCalls": 1
+    },
+    {
+      "case": "disconnect while real native reply pending",
+      "postDisconnectExecutions": [
+        {
+          "room": "yard",
+          "connected": false,
+          "action": "DEFEND_OWNER"
+        }
+      ],
+      "retainedState": true
+    },
+    {
+      "case": "room change while real native reply pending",
+      "postTransitionExecutions": [
+        {
+          "room": "town",
+          "connected": true,
+          "action": "USE_SPECIAL"
+        }
+      ],
+      "inBattle": true
+    },
+    {
+      "case": "mob leash reset",
+      "target": null,
+      "state": "RETURN"
+    },
+    {
+      "case": "kill/duplicate hit/respawn",
+      "settlements": 1,
+      "xpDelta": 0,
+      "newMobId": true
+    }
+  ],
+  "certified": false,
+  "blockers": [
+    "disconnected active state has no TTL/finish path",
+    "pending brain response executes against departed body or changed room"
+  ]
+}
