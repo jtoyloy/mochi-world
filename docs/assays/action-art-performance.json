@@ -1,0 +1,17 @@
+{
+  "base": "925cdbec4399b249bbf1872a26edfaad217d2547",
+  "fixture": "web/dev/animation-benchmark.html; actual IsometricWorld; offline outcome replay",
+  "date": "2026-10-06",
+  "warmupSeconds": 2,
+  "sampleSecondsPerScene": 10,
+  "width": 1280,
+  "height": 900,
+  "samples": [
+    {"name":"Town","dpr":1,"frames":601,"fps":60.050758378120996,"p95ms":17.599999999998545,"cpuP95ms":1.2000000029802322,"actors":20,"mobs":0,"glDraws":1,"actionTextureMiB":45.61598205566406,"textureSourceMiB":93.61705780029297},
+    {"name":"Forest combat","dpr":1,"frames":601,"fps":60.09218801556246,"p95ms":17.5,"cpuP95ms":0.4000000022351742,"actors":2,"mobs":2,"glDraws":1,"actionTextureMiB":45.61598205566406,"textureSourceMiB":93.61705780029297},
+    {"name":"Town","dpr":2,"frames":601,"fps":60.05315853635954,"p95ms":17.600000000000364,"cpuP95ms":0.6999999992549419,"actors":20,"mobs":0,"glDraws":1,"actionTextureMiB":45.61598205566406,"textureSourceMiB":93.61705780029297},
+    {"name":"Forest combat","dpr":2,"frames":601,"fps":60.08738164985353,"p95ms":17.599999999998545,"cpuP95ms":0.3999999985098839,"actors":2,"mobs":2,"glDraws":1,"actionTextureMiB":45.61598205566406,"textureSourceMiB":93.61705780029297}
+  ],
+  "memoryMethod": "Unique loaded texture-source width*height*4, shared across actors; allocation estimate, not GPU VRAM measurement. textureSourceMiB excludes appearance-cache/render-target allocations. Observed appearance cache 20 MiB, eight-entry bound unchanged.",
+  "limitations": "Local desktop short offline renderer fixtures; not live server, mobile, sustained crowd or controlled engine benchmark. New fishing/Deer sheets are loaded but fixture combat plays sword/Moonfox/slime/boar. Export-only spare cells were subsequently filled with recovery duplicates without changing dimensions, used frames or texture memory."
+}

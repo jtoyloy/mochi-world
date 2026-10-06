@@ -26,7 +26,7 @@
     "bench:movement": "node tools/movement-benchmark.mjs",
     "test:animation": "node --test tests/animation/*.test.mjs",
     "assets:validate": "node tools/validate-animation.mjs",
-    "assets:register": "node tools/register-animation.mjs && node tools/register-actions.mjs --coral",
+    "assets:register": "node tools/register-animation.mjs && node tools/register-actions.mjs --coral && node tools/register-cleanup.mjs",
     "bench:multiplayer": "node --env-file-if-exists=.env multiplayer/load-test/soak.mjs",
     "checkpoints:gc": "node --env-file-if-exists=.env tools/checkpoint-gc.mjs",
     "bench:checkpoints": "node --env-file-if-exists=.env tools/checkpoints/storage-benchmark.mjs"

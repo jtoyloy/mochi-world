@@ -120,3 +120,36 @@ Real 150-account/pet five-minute loopback payload fell from **28.86 to 5.91 MB/s
 Node mean CPU: 0.297 → 0.306 cores; app/native maximum RSS: 645 → 856 MiB. Peak app/native RSS increased; no memory reduction is claimed. Opt-in byte/GC/serialization counters are enabled; PostgreSQL and the generator are excluded from these process figures. Per-recipient batches increase generated string bytes while lowering delivered bytes, so this is not a universal serialization-allocation improvement.
 
 Two-browser near-motion samples were about 60 FPS /17.4 ms p95, with no reported hard snaps or corrections. Unit tests pin continuous 5 Hz motion and monotonic tier transitions. These are not sustained crowd or WAN/GPU results. The 30-minute extension was skipped for disk headroom; request errors/deadline failures remain in the evidence. **150 CCU is not launch-certified.** See [MULTIPLAYER_SOAK.md](MULTIPLAYER_SOAK.md) and [network-scaling-summary.json](assays/network-scaling-summary.json) for complete before/after types, counts, failures and limitations.
+
+## Action art cleanup renderer fixture — 2026-10-06
+
+Actual `IsometricWorld`, 1280×900, two-second warm-up and ten-second samples per
+scene. Reproduce via Vite rooted at `web`,
+`/dev/animation-benchmark.html?dpr=1` or `?dpr=2`.
+Evidence: [action-art-performance.json](assays/action-art-performance.json).
+
+| Scene | DPR | Mean FPS | Frame p95 | CPU update p95 | GL draws |
+|---|---:|---:|---:|---:|---:|
+| Town, 20 actors | 1 | 60.05 | 17.6 ms | 1.2 ms | 1 |
+| Forest combat, player/pet + two mobs | 1 | 60.09 | 17.5 ms | 0.4 ms | 1 |
+| Town, 20 actors | 2 | 60.05 | 17.6 ms | 0.7 ms | 1 |
+| Forest combat, player/pet + two mobs | 2 | 60.09 | 17.6 ms | 0.4 ms | 1 |
+
+Unique loaded action sources total **45.62 MiB RGBA**, up from 29.99 MiB by five
+fixed shared 1280×640 exports (15.625 MiB). Total tracked loaded texture sources
+are **93.62 MiB RGBA**; this excludes appearance cache (20 MiB observed), text and
+render targets and is not actual total GPU VRAM. Original optional v1 sheets are
+still needed by unchanged states. Full-resolution cleanup source PNGs are not
+requested by the renderer. No per-actor action allocation/cache expansion occurs.
+
+The fixture uses offline authoritative-result replay and includes new sword art;
+it loads fishing/Deer art but does not measure a full fishing/Deer encounter.
+These are local desktop samples, not sustained/live/mobile/crowd certification.
+Filling export-only spare cells with recovery art after sampling changed neither
+used frame pixels, dimensions nor memory estimates.
+
+Final cleanup validation: asset validation and Vite build pass; **19 animation
+checks and 221 JavaScript tests pass, zero skipped** with local PostgreSQL and
+the existing native Python environment. Historical failed setup runs (missing
+Python environment/unmigrated test database) were resolved before this acceptance.
+Original v1 clipping warnings remain documented in the per-state audit.

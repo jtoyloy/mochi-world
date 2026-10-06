@@ -115,3 +115,46 @@ build passed.** See [INTEGRATION_VALIDATION.md](INTEGRATION_VALIDATION.md) and
 repeat measured Town 60.02 FPS/p95 17.4 ms and Forest combat 60.06 FPS/p95 17.3 ms
 at DPR2. The diagnostic counts only unique action textures: 29.99 MiB RGBA.
 These short fixtures do not certify sustained live multiplayer performance.
+
+## Production cleanup pass — 2026-10-06
+
+See [ACTION_ART_AUDIT.md](ACTION_ART_AUDIT.md) and the regenerated
+[per-state audit](assays/action-art-audit.json) for the current acceptance boundary.
+Five versioned runtime sheets now supplement the immutable v1 art:
+`sword-sage-v2`, `sword-coral-v2`, `fishing-sage-v2`, `fishing-coral-v2`,
+`deer-cleanup-v2`. Both human sword/fishing sets have distinct four diagonal
+views with no mirrors. Eight logical sectors retain nearest-diagonal selection.
+Fishing has full bodies and contained rods, explicit cast/line-forward/wait,
+reel/catch/recover holds. Deer has complete antlers/hooves, dedicated recoil and
+lying exhaustion; attack omits two overlapping source drawings and holds its
+complete contact pose. Deer directional mirrors/special alias remain disclosed.
+
+`tools/register-cleanup.mjs` exports fixed-scale, padded 160px cells inside the
+existing 224px logical canvas, using measured body feet instead of rod/antler
+bounds. Five shared runtime sheets add **15.625 MiB** decoded RGBA. Full-resolution
+source siblings are provenance/export inputs and are never loaded by the renderer.
+No per-entity action textures or action appearance caches are created. Supplemental
+sheets have per-state mirroring, so loading reactions cannot overwrite their
+independent directional views. Existing fallback/whole-connectome/gameplay and
+server event authority remain unchanged.
+
+Viewer adds simultaneous eight logical directions, mirrored labels, actual
+source/trim metadata, runtime body scaling, one-shot recovery and a painted
+contact/release timeline. The timeline has no damage callback. Physical hand
+sockets and side-by-side historical art are not delivered.
+
+Validation rejects invalid/missing mirror fallback, empty used frames, malformed
+rectangles/canvases/pivots and meaningful opaque pixels on padded cell boundaries.
+It warns about opaque pixels on image boundaries and alpha continuing beyond a
+source rectangle. Original v1 warnings remain visible, rather than disabling
+checks to label those assets clean. New cleanup sheets have zero pixel-edge
+warnings. Human non-sword combat, chop, Moonfox and mobs remain provisional;
+no complete eight-direction state is labeled production-final.
+
+Final cleanup validation: **19 animation tests, 221 full JavaScript tests,
+zero skips**, local PostgreSQL/native host; assets and production build pass.
+Final renderer results at DPR1/DPR2 are recorded in
+[PERFORMANCE.md](PERFORMANCE.md): Town/Forest ≈60 FPS, p95 17.5–17.6ms,
+one GL draw, 45.62 MiB shared action-source RGBA. These are short offline
+fixtures, not sustained multiplayer or device certification. Export spare cells
+contain valid recovery duplicates; no blank cells ship in the cleanup sheets.

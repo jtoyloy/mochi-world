@@ -100,6 +100,8 @@ export function validateActionAtlas(m, set) {
     !m.size?.every((v) => Number.isInteger(v) && v > 0)
   )
     throw Error("Missing action frames");
+  if (!Array.isArray(m.mirrors) || m.mirrors.length !== set.directions.length || m.mirrors.some(v => typeof v !== "boolean"))
+    throw Error("Missing directional mirror fallback");
   if (m.requiredStates?.some((state) => !m.states[state]))
     throw Error("Missing required action state");
   if (!Number.isFinite(m.height) || m.height <= 0)
@@ -156,6 +158,11 @@ export function loadActionAtlas(texture, set, m, baseArt) {
       ...baseArt.metadata,
       ...m,
       heights: baseArt.metadata.heights,
+      mirrors: baseArt.metadata.mirrors ?? m.mirrors,
+      stateMirrors: {
+        ...baseArt.metadata.stateMirrors,
+        ...Object.fromEntries(Object.keys(m.states).map(state => [state, m.stateMirrors?.[state] ?? m.mirrors])),
+      },
       stateHeights: {
         ...baseArt.metadata.stateHeights,
         ...Object.fromEntries(Object.keys(m.states).map((s) => [s, m.height])),
@@ -182,4 +189,14 @@ export function stateHeight(art, state) {
     state = ACTION_FALLBACKS[state];
   }
   return art.metadata.heights.idle;
+}
+
+export function stateMirrored(art, state, direction) {
+  const seen = new Set();
+  while (state && !seen.has(state)) {
+    if (art.metadata.stateMirrors?.[state]) return !!art.metadata.stateMirrors[state][direction];
+    seen.add(state);
+    state = ACTION_FALLBACKS[state];
+  }
+  return !!art.metadata.mirrors?.[direction];
 }

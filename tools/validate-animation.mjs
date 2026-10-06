@@ -5,6 +5,7 @@ import {
   validateAtlas,
   validateActionAtlas,
 } from "../web/js/isoworld/animation/atlas.js";
+import { auditPixels } from "../web/js/isoworld/animation/pixel-audit.js";
 let bytes = 0;
 for (const set of ANIMATION_SETS) {
   const root = "web/assets/isoworld/",
@@ -20,6 +21,7 @@ for (const set of ANIMATION_SETS) {
         if (p.data[(y * p.width + x) * 4 + 3] > 160) opaque++;
     if (opaque < 100) throw Error("Empty frame");
   }
+  for (const warning of auditPixels(p, m)) console.warn(set.id, warning);
   const memory = p.width * p.height * 4;
   bytes += memory;
   console.log(
@@ -44,10 +46,10 @@ for (let i = 0; i < 2; i++) {
 }
 
 for (const file of readdirSync("web/assets/isoworld").filter((f) =>
-  /-(actions|reactions)-v1\.json$/.test(f),
+  /-(actions|reactions)-v1\.json$|-(fishing|cleanup|combat)-v2\.json$/.test(f),
 )) {
   const m = JSON.parse(readFileSync("web/assets/isoworld/" + file));
-  const id = file.replace(/-(actions|reactions)-v1\.json$/, "");
+  const id = file.replace(/-(actions|reactions)-v1\.json$|-(fishing|cleanup|combat)-v2\.json$/, "");
   const set = ANIMATION_SETS.find((s) => s.id === id) ?? {
     ...ANIMATION_SETS[2],
     id,
@@ -64,6 +66,7 @@ for (const file of readdirSync("web/assets/isoworld").filter((f) =>
         if (p.data[(y * p.width + x) * 4 + 3] > 160) count++;
     if (count < 100) throw Error("Empty action frame: " + file + ":" + i);
   }
+  for (const warning of auditPixels(p, m)) console.warn(file, warning);
   console.log(
     `${id}: ${Object.keys(m.states).join(", ")} registered/pivots valid`,
   );

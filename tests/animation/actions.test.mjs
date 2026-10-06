@@ -243,3 +243,29 @@ test("victory survives trailing hit/stale snapshot; confirmed respawn restores m
   assert.equal(e.g.eventMode, "static");
   for (const fx of w.effectPool) fx.g.destroy();
 });
+
+test('cleanup sheets preserve per-state direction mirrors across merged action layers', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { PNG } = await import('pngjs');
+  const { auditPixels } = await import('../../web/js/isoworld/animation/pixel-audit.js');
+  const { validateActionAtlas, loadActionAtlas, stateMirrored } = await import('../../web/js/isoworld/animation/atlas.js');
+  const { Texture, TextureSource } = await import('pixi.js');
+  for (const [id, set] of [['chestnut-sage-fishing-v2', ANIMATION_SETS[0]], ['dark-curls-coral-fishing-v2', ANIMATION_SETS[1]], ['chestnut-sage-combat-v2', ANIMATION_SETS[0]], ['dark-curls-coral-combat-v2', ANIMATION_SETS[1]], ['woodland-deer-cleanup-v2', ANIMATION_SETS[3]]]) {
+    const m = JSON.parse(readFileSync(`web/assets/isoworld/${id}.json`));
+    validateActionAtlas(m, set);
+    assert.throws(() => validateActionAtlas({...m,mirrors:[]}, set), /directional mirror/);
+    const p = PNG.sync.read(readFileSync('web/assets/isoworld/' + m.image));
+    assert.deepEqual(auditPixels(p, m), [], 'complete padded silhouettes');
+    assert.deepEqual(auditPixels(p, {...m,states:undefined}), [], 'all export cells contain valid art');
+    const base = { rows: set.directions.map(() => ({idle:[Texture.EMPTY]})), metadata: {heights:{idle:100}, mirrors:[false,false,false,false], stateMirrors:{sword:[false,true,true,false]}} };
+    const source = new TextureSource({width:p.width,height:p.height});
+    const art = loadActionAtlas(new Texture({source}), set, m, base);
+    assert.equal(stateMirrored(art, 'sword', 1), !id.includes('combat'));
+    assert.equal(stateMirrored(art, 'idle', 1), false, 'fallback keeps locomotion facing');
+    if (id.includes('fishing')) {
+      assert.equal(new Set(m.states['fish-cast'].map(row => row.join(','))).size, 4);
+      for (let d=0;d<4;d++) assert.equal(stateMirrored(art, 'fish', d), false);
+    } else assert.equal(stateMirrored(art, 'attack', 1), !id.includes('combat'));
+    source.destroy();
+  }
+});

@@ -15,6 +15,7 @@ import {
   loadActionAtlas,
   selectTexture,
   stateHeight,
+  stateMirrored,
 } from "./animation/atlas.js";
 import { animationCommands } from "./animation/events.js";
 import { AppearanceCache } from "./animation/appearance.js";
@@ -138,10 +139,10 @@ export class IsometricWorld {
     await Promise.all(
       ANIMATION_SETS.map(async (set, i) => {
         let art = this.animationAtlases[i];
-        for (const suffix of ["actions", "reactions"]) {
+        for (const suffix of ["actions-v1", "reactions-v1", ...(i < 2 ? ["fishing-v2", "combat-v2"] : i === 3 ? ["cleanup-v2"] : [])]) {
           try {
             const response = await fetch(
-              `/assets/isoworld/${set.id}-${suffix}-v1.json`,
+              `/assets/isoworld/${set.id}-${suffix}.json`,
             );
             if (!response.ok) continue;
             const m = await response.json();
@@ -1236,7 +1237,7 @@ export class IsometricWorld {
         e.art.set,
         e.playback.action ? (e.actionFacing ?? e.gait.facing) : e.gait.facing,
       );
-      if (e.art.metadata.mirrors[di]) e.g.scale.x *= -1;
+      if (stateMirrored(e.art, e.playback.state, di)) e.g.scale.x *= -1;
       e.g.anchor.set(
         e.art.set.footAnchor.x,
         e.art === this.mobAnimationAtlases?.[e.m.type]
@@ -1787,7 +1788,7 @@ export class IsometricWorld {
                     : "idle"
                 ]),
       );
-      if (!seated && activeArt.metadata.mirrors[directionIndexForArt])
+      if (!seated && stateMirrored(activeArt, a.playback.state, directionIndexForArt))
         a.s.scale.x *= -1;
       a.s.anchor.set(profile.footAnchor.x, seated ? 1 : profile.footAnchor.y);
       if (this.config.development) {
