@@ -8,6 +8,7 @@ const app = document.querySelector("#app"),
 let world,
   config,
   currentCleanup = null,
+  accountGateVisible = false,
   routeSerial = Promise.resolve(),
   toastTimer;
 const money = (n) =>
@@ -74,6 +75,7 @@ async function api(path, data) {
   if (!r.ok) {
     const error = new Error(b.error ?? "Unable to open this page");
     error.status = r.status;
+    if (r.status === 401) window.dispatchEvent(new Event("mochi:session-expired"));
     throw error;
   }
   return b;
@@ -2065,13 +2067,23 @@ async function enterWorld() {
   if (location.pathname === "/") history.replaceState({}, "", "/home");
   await render();
 }
+async function showAccountGate() {
+  if (accountGateVisible) return;
+  accountGateVisible = true;
+  if (currentCleanup) { await currentCleanup(); currentCleanup = null; }
+  document.querySelector("#navigation").hidden = true;
+  document.querySelector(".account").hidden = true;
+  accountGate(app, { request: api, ready: async () => {
+    accountGateVisible = false;
+    await enterWorld();
+  } });
+}
+window.addEventListener("mochi:session-expired", () => { showAccountGate().catch((e) => notice(e.message)); });
 try {
   await enterWorld();
 } catch (e) {
   if (e.status === 401) {
-    document.querySelector("#navigation").hidden = true;
-    document.querySelector(".account").hidden = true;
-    accountGate(app, { request: api, ready: enterWorld });
+    await showAccountGate();
   } else {
   app.replaceChildren(
     head("The city gates are resting.", e.message),

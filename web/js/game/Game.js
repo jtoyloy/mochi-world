@@ -25,6 +25,7 @@ async function request(path, data) {
   if (!r.ok) {
     const error = new Error(b.error ?? "Please try again");
     error.status = r.status;
+    if (r.status === 401) window.dispatchEvent(new Event("mochi:session-expired"));
     throw error;
   }
   return b;
