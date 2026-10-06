@@ -3,6 +3,7 @@ import {
   SPELLS,
   ACCESSORIES,
   ARMOR,
+  CONSUMABLES,
   RESOURCE_NAMES,
   VENDORS,
   QUESTS,
@@ -21,6 +22,7 @@ export function adventureUI({
   let state = null,
     gather = null,
     gatherTimer = null,
+    gatherCompletion = null,
     disposed = false;
   const hud = element("div", null, "adventure-hud"),
     vitals = element("div", "Preparing adventure…", "adventure-vitals"),
@@ -48,6 +50,8 @@ export function adventureUI({
   async function pack() {
     const s = await request("/api/adventure");
     update(s);
+    if (s.harvest && gather?.id !== s.harvest.id)
+      trackGather({ id: s.harvest.id }, Math.max(0, Number(s.harvest.ready_at) - s.serverTime));
     const d = dialog("Adventure pack");
     d.append(
       element(
@@ -66,19 +70,25 @@ export function adventureUI({
       for (const i of s.inventory)
         if (
           (slot === "weapon"
-            ? WEAPONS
+            ? WEAPONS[i.item_id]
             : ["head", "body"].includes(slot)
-              ? ARMOR
-              : ACCESSORIES)[i.item_id]
+              ? ARMOR[i.item_id]?.slot === slot
+              : ACCESSORIES[i.item_id])
         )
           select.append(new Option(i.item_id.replaceAll("-", " "), i.item_id));
       select.value = s.player.equipment[slot] ?? "";
+      let equipped = select.value;
       select.onchange = async () => {
+        select.disabled = true;
         try {
           await send({ action: "equip", slot, itemId: select.value });
+          equipped = select.value;
           notice("Combat equipment saved.");
         } catch (e) {
+          select.value = equipped;
           notice(e.message);
+        } finally {
+          select.disabled = false;
         }
       };
       d.append(element("label", slot), select);
@@ -87,15 +97,12 @@ export function adventureUI({
       d.append(
         element("p", "A gathering activity is pending."),
         btn("Finish gathering", async () => {
-          const r = await send({
-            action: "finishGather",
-            harvestId: s.harvest.id,
-          });
-          notice("Gathered " + RESOURCE_NAMES[r.itemId]);
+          await finishGather(s.harvest.id);
           d.close();
         }),
         btn("Cancel gathering", async () => {
           await send({ action: "cancelGather" });
+          clearGather(s.harvest.id);
           d.close();
         }),
       );
@@ -112,13 +119,22 @@ export function adventureUI({
           ),
         );
     d.append(element("h3", "Resources & supplies"));
-    for (const i of s.inventory)
+    for (const i of s.inventory) {
       d.append(
         element(
           "p",
           `${RESOURCE_NAMES[i.item_id] ?? i.item_id.replaceAll("-", " ")} ×${i.quantity}`,
         ),
       );
+      if (CONSUMABLES[i.item_id]) {
+        const use = btn("Use " + i.item_id.replaceAll("-", " "), async () => {
+          await send({ action: "item", itemId: i.item_id });
+          d.close();
+          await pack();
+        });
+        d.append(use);
+      }
+    }
     d.append(element("h3", "Your Mochi in battle"));
     for (const b of s.battle) {
       const counts = b.metrics.actions ?? {},
@@ -284,26 +300,46 @@ export function adventureUI({
       return;
     }
     const start = await send({ action: "gather", nodeId: node.id });
-    gather = { ...start, name: node.name };
+    trackGather({ ...start, name: node.name }, start.durationMs);
     target.textContent = `${node.kind === "fishing" ? "Fishing" : "Chopping"} · ${node.name}… stay here`;
+  }
+  function clearGather(id) {
+    if (gather?.id !== id) return;
     clearTimeout(gatherTimer);
-    gatherTimer = setTimeout(async () => {
-      if (disposed) return;
+    gather = null;
+    target.textContent = "Click a mob or resource to interact";
+  }
+  function finishGather(id) {
+    if (gatherCompletion?.id === id) return gatherCompletion.promise;
+    clearTimeout(gatherTimer);
+    const promise = (async () => {
       try {
-        const result = await send({
-          action: "finishGather",
-          harvestId: start.id,
-        });
-        notice(`Gathered ${RESOURCE_NAMES[result.itemId]} · +${result.xp} XP`);
-        bridge.scene.audio.cue(result.kind);
+        const result = await send({ action: "finishGather", harvestId: id });
+        if (!disposed) {
+          notice(`Gathered ${RESOURCE_NAMES[result.itemId]} · +${result.xp} XP`);
+          bridge.scene.audio.cue(result.kind);
+        }
+        return result;
       } catch (e) {
-        bridge.scene.gatherCancelled = start.id;
-        notice(e.message);
+        if (!disposed) bridge.scene.gatherCancelled = id;
+        throw e;
       } finally {
-        gather = null;
-        target.textContent = "Click a mob or resource to interact";
+        clearGather(id);
+        if (gatherCompletion?.id === id) gatherCompletion = null;
       }
-    }, start.durationMs + 250);
+    })();
+    gatherCompletion = { id, promise };
+    return promise;
+  }
+  function trackGather(activity, remainingMs) {
+    clearTimeout(gatherTimer);
+    gather = activity;
+    gatherTimer = setTimeout(() => {
+      if (disposed || gather?.id !== activity.id) return;
+      finishGather(activity.id).catch((e) => {
+        if (!disposed) notice(e.message);
+      });
+    }, remainingMs + 250);
   }
   const keydown = (e) => {
     if (
