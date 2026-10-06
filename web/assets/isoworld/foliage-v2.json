@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "image": "foliage-v2.png",
+  "size": [
+    1774,
+    887
+  ],
+  "classification": "USABLE_PROVISIONAL",
+  "provenance": "Original built-in imagegen, 2026-10-06. props-v1.png style reference. Source alpha preserved; explicit measured rectangles replace equal-cell assumption.",
+  "frames": [
+    {
+      "id": "oak",
+      "region": {
+        "x": 0,
+        "y": 0,
+        "w": 907,
+        "h": 887
+      },
+      "frame": {
+        "x": 30,
+        "y": 18,
+        "w": 862,
+        "h": 843
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    {
+      "id": "blossom-tree",
+      "region": {
+        "x": 907,
+        "y": 0,
+        "w": 867,
+        "h": 887
+      },
+      "frame": {
+        "x": 922,
+        "y": 24,
+        "w": 828,
+        "h": 844
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    }
+  ]
+}

@@ -53,4 +53,24 @@ The source audit remains [ACTION_ART_AUDIT.md](ACTION_ART_AUDIT.md); architectur
 
 Installed Pixi `assets/loader/parsers/textures/utils/createTexture.mjs` removes its cache entry and warns when an Assets-owned Texture is destroyed directly. The original World teardown destroyed those cached PNG wrappers while leaving their sources alive, forcing repeat loads and retaining registrations. World now retains shared Assets PNGs for the document and explicitly releases its own frame views, generated split canvases and appearance canvases. Optional frames arriving after unmount release immediately; generated sources release exactly once. Texture-frame lists include unselected action registration cells, so none leaves a resize listener attached to a shared source.
 
-The visual fixture's **Remount renderer** button destroys and reconstructs the actual renderer without page navigation, reports cached sheet identity/source validity, prior ownership release and current allocation/canvas counts. Automated follow-up: 22 animation tests passed, including actual installed Pixi TextureSource listener counts across three ownership lifecycles; production build and asset validation passed. Same-document browser remount evidence remains pending until the parent browser session runs the fixture; source/test evidence alone is not browser acceptance.
+The visual fixture's **Remount renderer** button destroys and reconstructs the actual renderer without page navigation, reports cached sheet identity/source validity, prior ownership release and current allocation/canvas counts. Automated follow-up: 22 animation tests passed, including actual installed Pixi TextureSource listener counts across three ownership lifecycles; production build and asset validation passed. Parent browser acceptance at frozen texture commit `a12c1ea`: two same-document remounts (mounts 2 and 3) reused valid shared sheets, released previous ownership, held ownedFrames=1108 / ownedCanvasSources=4 / hostCanvases=2, and emitted no warning/error logs. These are the pre-foliage allocation counts; the later foliage candidate still requires its own integrated inspection.
+
+## Foliage candidate cleanup
+
+Added immutable versioned `web/assets/isoworld/foliage-v2.png` (built-in imagegen,
+project-owned props-v1 style reference only) and explicit registration. The two
+complete oak/blossom silhouettes are read through unequal source rectangles
+split inside a measured 30px transparent gutter, not a half-width assumption.
+The generated alpha is preserved. Static validation rejects clipped region
+boundaries, pixels outside the registered trim, invalid pivots and overlapping
+regions. Source: 2.35 MiB compressed / 6.00 MiB RGBA, one shared optional load and
+two World-owned frame views; previous published assets and brain packs unchanged.
+The loader retains old foliage on missing/malformed supplemental art. Existing
+world anchors, sprite width, collision and server gameplay are unchanged.
+
+`node tools/validate-foliage.mjs` passed. Browser integration and build are pending
+while the host free-disk floor is below 3 GiB; no new heavy build, browser or art
+generation was run during that constraint. Foliage remains USABLE_PROVISIONAL
+pending actual Town/Forest/narrow-view inspection. Original action-edge warnings
+and all other documented visual debt remain open. Prompt and provenance are in
+`web/assets/isoworld/PROMPTS.md`; no production-art completion claim is made.

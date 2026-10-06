@@ -18,6 +18,7 @@ import {
   stateMirrored,
 } from "./animation/atlas.js";
 import { animationCommands } from "./animation/events.js";
+import { loadFoliage } from "./animation/foliage.js";
 import { WorldTextures } from "./animation/texture-lifecycle.js";
 import { AppearanceCache } from "./animation/appearance.js";
 import { openAnimationViewer } from "./animation/viewer.js";
@@ -133,6 +134,19 @@ export class IsometricWorld {
       adventure: this.split(adventure, 4, 2),
       characters: this.split(characters, 4, 4),
     };
+    try {
+      const response = await fetch("/assets/isoworld/foliage-v2.json");
+      if (response.ok) {
+        const metadata = await response.json();
+        const texture = await Assets.load("/assets/isoworld/" + metadata.image);
+        this.textureOwnership.shared(texture);
+        const foliage = this.textureOwnership.atlas(loadFoliage(texture, metadata));
+        // Explicit source rectangles keep both crowns inside their own cutout.
+        [this.atlases.props[0], this.atlases.props[1]] = foliage.ownedTextures;
+      }
+    } catch (error) {
+      console.warn("Foliage art fallback:", error.message);
+    }
     this.animationAtlases = await Promise.all(
       ANIMATION_SETS.map(async (set) => {
         const texture = await Assets.load("/assets/isoworld/" + set.texture);
