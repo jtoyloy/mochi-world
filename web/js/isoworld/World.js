@@ -90,12 +90,15 @@ export class IsometricWorld {
     this.elapsed = 0;
     this.dead = false;
     this.reducedMotion = false;
+    this.motionOverride = null;
   }
   async init() {
     this.motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    this.reducedMotion = this.motionPreference.matches;
+    const savedMotion = window.localStorage.getItem("mochi-reduced-motion");
+    this.motionOverride = savedMotion === null ? null : savedMotion === "true";
+    this.reducedMotion = this.motionOverride ?? this.motionPreference.matches;
     this.onMotionPreference = (event) => {
-      if (this.motionOverride) return;
+      if (this.motionOverride !== null) return;
       this.reducedMotion = event.matches;
       this.updateMotionControl();
     };
@@ -1447,8 +1450,9 @@ export class IsometricWorld {
     this.motionControl.type = "button";
     this.motionControl.setAttribute("aria-label", "Reduce decorative motion");
     this.motionControl.onclick = () => {
-      this.motionOverride = true;
       this.reducedMotion = !this.reducedMotion;
+      this.motionOverride = this.reducedMotion;
+      window.localStorage.setItem("mochi-reduced-motion", String(this.reducedMotion));
       this.updateMotionControl();
     };
     this.updateMotionControl();
