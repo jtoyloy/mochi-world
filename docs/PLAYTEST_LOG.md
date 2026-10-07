@@ -22,3 +22,8 @@ Observed sequence:
 This is direct browser evidence for account sign-out/sign-in and preference
 persistence on the local candidate. It does not certify the complete new-player,
 combat, gather, reconnect, responsive, WAN or production staging journeys.
+
+After migrating the dedicated database with `server/world/migrate.mjs`, an
+authenticated request to `/api/adventure/commerce` returned the same account,
+`currency: "Coins"`, 500 starting Coins, inventory, four shops and two buyers.
+The server log remained free of commerce relation errors during that check.
