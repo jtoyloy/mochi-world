@@ -12,7 +12,7 @@
 | R06 | End-to-end onboarding/progression/returning/failure browser evidence absent | Required complete journeys not validated at a release candidate |
 | R07 | Sustained client/crowd/physical-device evidence absent | Short offline fixture ≠ live/WAN/phone certification |
 | R08 | Production wallet/reconciliation/legal review | Fixtures exist; actual funded execution/credentials/legal decisions external; no real-funds testing |
-| R09 | Backup restore/deployment/alerts and staging smoke not validated | Hosted exact-SHA workflow 24 passed build, full JS/PostgreSQL, brain, audit and hygiene; restore/deployment/alerts remain |
+| R09 | Backup restore/deployment/alerts and staging smoke not validated | Non-destructive checksum manifest tooling and a tamper test now exist; hosted exact-SHA workflow 28 passed build, full JS/PostgreSQL, brain, audit and hygiene; owned staging restore/deployment/alerts remain |
 | R10 | Equipment/supplies/gather timers UX defects | Audit found rejected slot offers, missing consumable controls and obsolete timers; handler fixes integrated and bounded checks pass; full browser acceptance remains |
 | R11 | Audio/settings/accessibility/responsive completeness | Scope and per-control evidence required; reduced motion integrated; persistent settings/audio and broader acceptance open |
 
