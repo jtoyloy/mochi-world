@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { chmod, mkdtemp, mkdir, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, mkdir, readFile, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
-import { createBackup, verifyBackup } from "../../tools/checkpoints/backup.mjs";
+import { createBackup, postgresConnectionEnvironment, verifyBackup } from "../../tools/checkpoints/backup.mjs";
 
 const digest = (value) => createHash("sha256").update(value).digest("hex");
 async function fixture(t) {
@@ -102,8 +102,48 @@ test("multi-chunk dump hashes and byte counts are verified without changing cont
 test("creation requires quiescence and rejects source links before copying or invoking pg_dump", async (t) => {
   const { root } = await fixture(t);
   const destination = join(root, "unused-target");
-  await assert.rejects(createBackup({ destination, databaseUrl: "postgres://unused", checkpointDirectory: join(root, "checkpoints") }), /explicit quiesced/);
+  await assert.rejects(createBackup({ destination, databaseUrl: "postgres://unused/unused", checkpointDirectory: join(root, "checkpoints") }), /explicit quiesced/);
   await symlink(join(root, "database.dump"), join(root, "checkpoints", "source-link"));
-  await assert.rejects(createBackup({ destination, databaseUrl: "postgres://unused", checkpointDirectory: join(root, "checkpoints"), quiesced: true }), /non-regular/);
+  await assert.rejects(createBackup({ destination, databaseUrl: "postgres://unused/unused", checkpointDirectory: join(root, "checkpoints"), quiesced: true }), /non-regular/);
   assert.ok(!(await readdir(root)).includes("unused-target"));
+});
+
+test("creation passes parsed connection settings to fake pg_dump without secrets in argv and keeps artifacts private", async (t) => {
+  const { root } = await fixture(t);
+  const executable = join(root, "fake-pg_dump"), capture = join(root, "capture.json"), destination = join(root, "created");
+  await mkdir(join(root, "checkpoints", "empty"), { mode: 0o700 });
+  await writeFile(executable, `#!${process.execPath}\nconst fs = require('node:fs');
+const args = process.argv.slice(2), dump = args[args.indexOf('--file') + 1];
+fs.writeFileSync(${JSON.stringify(capture)}, JSON.stringify({ args,
+  env: Object.fromEntries(Object.entries(process.env).filter(([key]) => key.startsWith('PG'))),
+  initialMode: fs.statSync(dump).mode & 0o777 }), { mode: 0o600 });
+fs.writeFileSync(dump, 'fake database dump');\n`, { mode: 0o700 });
+  const databaseUrl = "postgresql://backup%20user:p%40ss%2Fword@127.0.0.1:55439/game%20backup?sslmode=require&options=-c%20search_path%3Dmochi&application_name=mochi_backup";
+  await createBackup({ destination, databaseUrl, checkpointDirectory: join(root, "checkpoints"), quiesced: true, pgDumpCommand: executable });
+  const observed = JSON.parse(await readFile(capture, "utf8"));
+  assert.deepEqual(observed.args, ["--format=custom", "--no-owner", "--file", join(destination, "database.dump")]);
+  assert.deepEqual(observed.env, { PGHOST: "127.0.0.1", PGPORT: "55439", PGDATABASE: "game backup",
+    PGUSER: "backup user", PGPASSWORD: "p@ss/word", PGSSLMODE: "require", PGOPTIONS: "-c search_path=mochi", PGAPPNAME: "mochi_backup" });
+  assert.equal(observed.initialMode, 0o600);
+  for (const path of [destination, join(destination, "checkpoints"), join(destination, "checkpoints", "empty")])
+    assert.equal((await stat(path)).mode & 0o777, 0o700);
+  for (const path of ["database.dump", "manifest.json", "checkpoints/one.life"])
+    assert.equal((await stat(join(destination, path))).mode & 0o777, 0o600);
+  assert.deepEqual(await verifyBackup(destination), { format: 1, checkpoints: 1, databaseBytes: 18 });
+  assert.ok(!(await readFile(join(destination, "manifest.json"), "utf8")).includes("p@ss"));
+});
+
+test("connection URI overrides inherited libpq configuration and invalid options fail without exposing credentials", async (t) => {
+  const inherited = { PATH: "/test/bin", PGHOST: "wrong", PGPORT: "5432", PGDATABASE: "wrong",
+    PGSERVICE: "wrong", PGSERVICEFILE: "/wrong", PGPASSWORD: "wrong", PGOPTIONS: "wrong" };
+  assert.deepEqual(postgresConnectionEnvironment("postgresql://u:secret@[::1]:55439/game", inherited),
+    { PATH: "/test/bin", PGHOST: "::1", PGPORT: "55439", PGDATABASE: "game", PGUSER: "u", PGPASSWORD: "secret" });
+  assert.equal(postgresConnectionEnvironment("postgresql:///game?host=%2Fprivate%2Fsocket", inherited).PGHOST, "/private/socket");
+  const { root } = await fixture(t), destination = join(root, "invalid-target");
+  for (const databaseUrl of ["postgresql://u:secret@localhost/game?service=unexpected", "postgresql://u:secret@localhost/game?port=1&port=2",
+    "postgresql://u:secret@localhost/game?port=70000", "postgresql://u:secret@localhost/game?password=%00", "postgresql://u:secret@localhost", "not-a-uri-secret"]) {
+    await assert.rejects(createBackup({ destination, databaseUrl, checkpointDirectory: join(root, "checkpoints"), quiesced: true }),
+      error => error.message === "Invalid PostgreSQL connection URI or unsupported connection parameter");
+  }
+  assert.ok(!(await readdir(root)).includes("invalid-target"));
 });

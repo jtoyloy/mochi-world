@@ -38,8 +38,15 @@ replaces parent directories during a run.
 
 A failed creation leaves an incomplete private directory without a manifest;
 inspect it and choose a new empty destination for a retry. No automatic cleanup
-deletes potentially useful evidence. The database URL is passed to `pg_dump`
-through its environment rather than its command-line arguments. Protect the
+deletes potentially useful evidence. The PostgreSQL URI is parsed into explicit
+libpq environment settings (`PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`,
+`PGPASSWORD`), never placed in command-line arguments. Inherited `PG*` settings
+are cleared to prevent another service or host from overriding the URI. The URI
+must name a host and database (a socket path may be supplied with `host=`).
+Supported query parameters are `host`, `hostaddr`, `port`, `dbname`, `user`,
+`password`, `options`, `application_name`, `connect_timeout`, `sslmode`,
+`sslrootcert`, `sslcert`, and `sslkey`; unsupported or duplicate parameters fail
+before creating the destination. Protect the
 host and process environment, and encrypt backups at rest/offsite according to
 the deployment's policy; filesystem modes do not provide encryption.
 

@@ -57,10 +57,45 @@ const command = (file, args, env) => new Promise((resolveCommand, reject) => {
   child.on("error", reject);
   child.on("close", code => code === 0 ? resolveCommand() : reject(new Error(file + " exited " + code + ": " + stderr.trim())));
 });
+// PGDATABASE is a database name, not a connection URI. Explicit libpq settings
+// keep credentials out of argv and prevent inherited service/host configuration
+// from silently routing a backup to another server.
+export function postgresConnectionEnvironment(databaseUrl, baseEnv = process.env) {
+  const parameters = {
+    host: "PGHOST", hostaddr: "PGHOSTADDR", port: "PGPORT", dbname: "PGDATABASE",
+    user: "PGUSER", password: "PGPASSWORD", options: "PGOPTIONS",
+    application_name: "PGAPPNAME", connect_timeout: "PGCONNECT_TIMEOUT",
+    sslmode: "PGSSLMODE", sslrootcert: "PGSSLROOTCERT", sslcert: "PGSSLCERT", sslkey: "PGSSLKEY",
+  };
+  try {
+    const url = new URL(databaseUrl);
+    if (!["postgres:", "postgresql:"].includes(url.protocol) || url.hash) throw new Error();
+    const env = Object.fromEntries(Object.entries(baseEnv).filter(([key]) => !key.startsWith("PG")));
+    env.PGHOST = decodeURIComponent(url.hostname.replace(/^\[|\]$/g, ""));
+    env.PGPORT = url.port || "5432";
+    env.PGDATABASE = decodeURIComponent(url.pathname.slice(1));
+    if (url.username) env.PGUSER = decodeURIComponent(url.username);
+    if (url.password) env.PGPASSWORD = decodeURIComponent(url.password);
+    const seen = new Set();
+    for (const [key, value] of url.searchParams) {
+      if (!Object.hasOwn(parameters, key) || seen.has(key)) throw new Error();
+      seen.add(key); env[parameters[key]] = value;
+    }
+    if (!env.PGHOST || !env.PGDATABASE || !/^\d+$/.test(env.PGPORT)
+      || Number(env.PGPORT) < 1 || Number(env.PGPORT) > 65535
+      || Object.entries(env).some(([key, value]) => key.startsWith("PG") && String(value).includes("\0"))) throw new Error();
+    return env;
+  } catch {
+    // URL parser errors can contain the original credential-bearing input.
+    throw new Error("Invalid PostgreSQL connection URI or unsupported connection parameter");
+  }
+}
 export async function createBackup({ destination, databaseUrl = process.env.DATABASE_URL,
-  checkpointDirectory = process.env.CHECKPOINT_DIRECTORY ?? resolve("data/checkpoints"), quiesced = false }) {
+  checkpointDirectory = process.env.CHECKPOINT_DIRECTORY ?? resolve("data/checkpoints"), quiesced = false,
+  pgDumpCommand = "pg_dump" }) {
   if (quiesced !== true) throw new Error("Backup requires explicit quiesced acknowledgement; stop application writers and checkpoint GC first");
   if (!destination || !databaseUrl) throw new Error("destination and DATABASE_URL are required");
+  const connectionEnv = postgresConnectionEnvironment(databaseUrl);
   const configuredSource = resolve(checkpointDirectory);
   // Reject every non-regular source entry before copying any data.
   const sourceInventory = await inventory(configuredSource);
@@ -87,7 +122,7 @@ export async function createBackup({ destination, databaseUrl = process.env.DATA
   const dump = join(target, "database.dump");
   // Private from its first byte; pg_dump truncates this existing private file.
   await (await open(dump, "wx", 0o600)).close();
-  await command("pg_dump", ["--format=custom", "--no-owner", "--file", dump], { ...process.env, PGDATABASE: databaseUrl });
+  await command(pgDumpCommand, ["--format=custom", "--no-owner", "--file", dump], connectionEnv);
   const checkpointFiles = [];
   for (const path of sourceInventory.files) checkpointFiles.push({ path: "checkpoints/" + path, ...await fingerprint(join(checkpointTarget, path)) });
   const manifest = { format: 1, createdAt: new Date().toISOString(), consistency: "operator-confirmed-quiescent",
