@@ -126,6 +126,7 @@ export async function createBackup({ destination, databaseUrl = process.env.DATA
   const checkpointFiles = [];
   for (const path of sourceInventory.files) checkpointFiles.push({ path: "checkpoints/" + path, ...await fingerprint(join(checkpointTarget, path)) });
   const manifest = { format: 1, createdAt: new Date().toISOString(), consistency: "operator-confirmed-quiescent",
+    sourceDatabase: connectionEnv.PGDATABASE,
     databaseDump: { path: "database.dump", ...await fingerprint(dump) }, checkpointFiles,
     checkpointDirectories: sourceInventory.directories.map(path => "checkpoints/" + path) };
   await writeFile(join(target, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n", { flag: "wx", mode: 0o600 });

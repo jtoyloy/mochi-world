@@ -130,6 +130,7 @@ fs.writeFileSync(dump, 'fake database dump');\n`, { mode: 0o700 });
   for (const path of ["database.dump", "manifest.json", "checkpoints/one.life"])
     assert.equal((await stat(join(destination, path))).mode & 0o777, 0o600);
   assert.deepEqual(await verifyBackup(destination), { format: 1, checkpoints: 1, databaseBytes: 18 });
+  assert.equal(JSON.parse(await readFile(join(destination, "manifest.json"), "utf8")).sourceDatabase, "game backup");
   assert.ok(!(await readFile(join(destination, "manifest.json"), "utf8")).includes("p@ss"));
 });
 

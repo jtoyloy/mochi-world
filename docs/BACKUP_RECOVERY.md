@@ -56,3 +56,42 @@ worker and exercise account login, Mochi load/save, ordinary Coins receipt repla
 and a graceful restart. Do not use a production database or checkpoint volume as
 the restore target. The restore drill remains an open release gate until it is
 performed on owned staging infrastructure and its exact candidate SHA is recorded.
+
+## Guarded local or staging restore
+
+Provision a separate, empty database first and an empty checkpoint directory with
+mode 0700. Stop all writers to both targets. Use an operator-owned, trusted local
+backup: a SQL dump can execute arbitrary SQL even when every checksum passes.
+The manifest is unsigned and verification does not authenticate it.
+
+```sh
+RESTORE_DATABASE_URL=... RESTORE_CHECKPOINT_DIRECTORY=/srv/mochi/restored-checkpoints \
+  node tools/checkpoints/restore.mjs --quiesced --trusted-local-backup /srv/mochi/backups/2026-10-10
+```
+
+The tool verifies the backup before connecting, requires a different database
+name, checks the connected identity and absence of user database objects, and
+claims a per-database advisory lock. It refuses nonempty, symlink, nonprivate or
+overlapping checkpoint destinations. It never creates a database or drops,
+cleans or overwrites existing target data. `pg_restore` uses `--no-owner`,
+`--no-privileges`, `--single-transaction` and `--exit-on-error`; credentials stay
+in explicit connection environment settings. Inspection supports explicit host
+connections and sslmode disable/require/verify-ca/verify-full; hostaddr is refused.
+Database names must be 1–63 ASCII letters, digits, underscores, spaces or hyphens,
+starting with a letter, digit or underscore. New backups record the non-secret
+source database name, allowing fresh zero-checkpoint restores. Older backups
+require a consistent copied ownership marker to establish their source identity.
+
+After restoring, the tool checks every checkpoint catalog byte count, SHA-256,
+filename identity/version and storage scope, plus each current and leased Mochi
+checkpoint pointer. Deduplicated older checkpoint versions are allowed. Only the
+copied namespace matching the restored database's `checkpoint_storage_scope` has
+its `.owner.json` rebound to the connected target identity; the backup remains
+unchanged. Fresh backups without files require no ownership rewrite. Completion
+is recorded in the target directory only after validation and durable writes.
+Failures retain the target and `.restore-in-progress.json` for inspection; do
+not start a worker or retry there. Provision new empty targets for a retry.
+These guards require exclusive operator control of targets and backup paths;
+the advisory lock only coordinates this tool, not unrelated database writers.
+Then perform the staging worker load/save, receipt replay and restart checks
+above before recording the restore release gate as passed.
