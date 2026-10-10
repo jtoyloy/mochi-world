@@ -88,6 +88,13 @@ export const ANIMATION_SETS = [
     idleSeconds: 6,
   },
 ];
+// Optional painted mob sheets. Missing/malformed art retains the static body.
+// These registrations do not certify authored direction or planted-foot quality.
+export const MOB_ACTION_SHEETS = {
+  slime: "slime-actions-v1.json",
+  boar: "boar-actions-v1.json",
+  thornling: "thornling-actions-v2.json",
+};
 export const LOCOMOTION_TYPES = [
   "biped",
   "quadruped",

@@ -7,6 +7,7 @@ import {
 } from "../game/locomotion/core.js";
 import {
   ANIMATION_SETS,
+  MOB_ACTION_SHEETS,
   AnimationPlayback,
   directionIndex,
 } from "./animation/registry.js";
@@ -188,11 +189,11 @@ export class IsometricWorld {
     );
     this.mobAnimationAtlases = {};
     await Promise.all(
-      ["slime", "boar"].map(async (id) => {
+      Object.entries(MOB_ACTION_SHEETS).map(async ([id, metadataFile]) => {
         try {
-          const m = await (
-            await fetch(`/assets/isoworld/${id}-actions-v1.json`)
-          ).json();
+          const response = await fetch(`/assets/isoworld/${metadataFile}`);
+          if (!response.ok) throw Error(`Missing optional atlas: ${response.status}`);
+          const m = await response.json();
           const texture = await Assets.load("/assets/isoworld/" + m.image);
           this.textureOwnership.shared(texture);
           actionTextures.add(texture);

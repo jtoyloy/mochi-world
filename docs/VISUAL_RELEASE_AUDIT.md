@@ -26,7 +26,8 @@ Fixed the room heading blending into tree/building artwork using a bounded cream
 | Deer idle / walk / attack / defend / hurt / lying exhaustion | USABLE_PROVISIONAL | Cleanup complete silhouettes/recoil; gait source edges, mirrored/reused directions and contact remain. |
 | Deer special / run | PLACEHOLDER | Attack/walk aliases; independent sequences missing. |
 | Slime / boar idle-walk-attack-hurt-defeat | USABLE_PROVISIONAL | Single-view/mirrored atlas; contact and directional refinement required. |
-| Dummy / Thornling / Rippleback / Scavenger / Guardian action states | PLACEHOLDER | Compatible static painted body; independent locomotion/attack/hurt/defeat missing. |
+| Thornling action states | USABLE_PROVISIONAL | Optional 40-cell painted idle/walk/attack/hurt/defeat atlas; only SE authored, other views reused/mirrored. Live planting, loop and full direction acceptance open. |
+| Dummy / Rippleback / Scavenger / Guardian action states | PLACEHOLDER | Compatible static painted body; independent locomotion/attack/hurt/defeat missing. |
 | NPC idle / walk / talk / gesture / sit | USABLE_PROVISIONAL | Shared human profiles, rear fallbacks and seated original pose; role-specific art and cosmetic alignment needed. |
 | Town scenery / vendors / signs | USABLE_PROVISIONAL | Repeated stall silhouettes; tree source rectangles visibly meet background; overlapping Trading Hall place/landmark labels. |
 | Forest / Lake / Yard scenery | USABLE_PROVISIONAL | Sparse repeated tree arrangement, abrupt water shape, limited region identity. Live purpose/content is a separate gameplay gate. |
