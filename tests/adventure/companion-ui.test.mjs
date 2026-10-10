@@ -11,17 +11,29 @@ function fixture() {
     request: async (path, data) => calls.push({ path, data }),
     element: (tag, text) => ({ tag, text }),
     btn: (text, click) => ({ text, click }),
-    dialog: () => {
-      const d = { children: [], append(...items) { this.children.push(...items); }, close() { this.closed = true; } };
+    dialog: (title, invoker) => {
+      const d = { invoker, children: [], append(...items) { this.children.push(...items); }, close() { this.closed = true; } };
       dialogs.push(d); return d;
     },
-    panel: () => adoption,
+    panel: (title, url, invoker) => { adoption.invoker = invoker; return adoption; },
     isClosed: () => closed,
     notice: message => notices.push(message),
   });
   return { open, adoption, dialogs, calls, notices, setWorld(value) { world = value; }, setRefresh(fn) { refresh = fn; }, teardown() { closed = true; } };
 }
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
+
+test("companion adoption replacement retains its original launcher through both refreshes", async () => {
+  const f = fixture(), launcher = { disabled: true };
+  await f.open(launcher);
+  assert.equal(f.dialogs[0].invoker, launcher);
+  f.dialogs[0].children.find(item => item.text === "Adopt a Mochi").click();
+  assert.equal(f.adoption.invoker, launcher);
+  f.setWorld({ mochis: [{ id: "pet", name: "Birch" }] });
+  f.adoption.dispatchEvent(new Event("close"));
+  await flush();
+  assert.equal(f.dialogs[1].invoker, launcher);
+});
 
 test("adoption return closes stale picker and displays the newly adopted companion once", async () => {
   const f = fixture();

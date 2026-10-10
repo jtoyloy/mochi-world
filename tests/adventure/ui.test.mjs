@@ -41,12 +41,12 @@ function fixture(t, changes = {}, { wrapButtons = false } = {}) {
       requests.push({ path, data });
       return data ? respond(data) : path === "/api/adventure/commerce" ? commerceState : state;
     },
-    dialog: () => { const d = new Element("dialog"); dialogs.push(d); return d; },
+    dialog: (title, invoker) => { const d = new Element("dialog"); d.invoker = invoker; dialogs.push(d); return d; },
     btn: (text, onclick) => {
       const control = new Element("button", text);
       control.onclick = wrapButtons ? async () => {
         control.disabled = true;
-        try { await onclick(); }
+        try { await onclick(control); }
         catch (error) { notices.push(error.message); }
         finally { control.disabled = false; }
       } : onclick;
@@ -84,6 +84,24 @@ test("learning a spell confirms once and refreshes consumed inventory and learne
   assert.equal(button(f.dialogs[1], "Learn Ice Shard"), undefined);
   assert.ok(!f.dialogs[1].children.some(e => e.textContent === "ice shard ×1"));
   assert.deepEqual(f.notices, ["Learned Ice Shard."]);
+});
+
+test("Adventure launcher survives asynchronous creation and successful spell/item replacement", async t => {
+  const f = fixture(t, {}, { wrapButtons: true });
+  f.state.inventory.push({ item_id: "ice-shard", quantity: 1 });
+  const hotbar = f.shell.children[0].children.find(e => e.children.some(b => b.textContent === "Adventure"));
+  const launcher = button(hotbar, "Adventure");
+  await launcher.onclick();
+  assert.equal(f.dialogs[0].invoker, launcher);
+  f.setRespond(async input => {
+    if (input.action === "learnSpell") f.state.player.spells.push("ice-shard");
+    return {};
+  });
+  await button(f.dialogs[0], "Learn Ice Shard").onclick();
+  assert.equal(f.dialogs[1].invoker, launcher);
+  await button(f.dialogs[1], "Use mana potion").onclick();
+  assert.equal(f.dialogs[2].invoker, launcher);
+  assert.equal(launcher.disabled, false);
 });
 
 test("rejected spell learning retains its scroll and leaves the control retryable", async t => {

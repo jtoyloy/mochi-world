@@ -1,16 +1,16 @@
 // Reload server-owned companions when an adoption panel returns to the game.
 export function companionPicker({ refresh, request, dialog, element, btn, panel, isClosed, notice }) {
-  async function open() {
+  async function open(invoker = globalThis.document?.activeElement) {
     const world = await refresh();
     if (isClosed()) return;
-    const d = dialog("Your Mochis");
+    const d = dialog("Your Mochis", invoker);
     if (!world.mochis.length) d.append(
       element("p", "Your first companion is waiting."),
       btn("Adopt a Mochi", () => {
         d.close();
-        const adoption = panel("Adopt", "/pets");
+        const adoption = panel("Adopt", "/pets", invoker);
         adoption.addEventListener("close", () => {
-          if (!isClosed()) open().catch(error => {
+          if (!isClosed()) open(invoker).catch(error => {
             if (!isClosed()) notice(error.message);
           });
         }, { once: true });

@@ -74,9 +74,9 @@ function dialog(title, invoker = document.activeElement) {
   return d;
 }
 let domainPanel;
-function panel(title, url) {
-  if (domainPanel) return domainPanel(title, url);
-  const d = dialog(title),
+function panel(title, url, invoker = document.activeElement) {
+  if (domainPanel) return domainPanel(title, url, invoker);
+  const d = dialog(title, invoker),
     frame = element("iframe");
   frame.title = title;
   frame.src = url + (url.includes("?") ? "&" : "?") + "panel=1";
@@ -112,7 +112,7 @@ export async function mountWorld(
   const top = element("div", null, "world-topbar");
   const roomLabel = element("div", "TOWN SQUARE", "room-label"),
     status = element("span", "Connecting…", "socket-status");
-  const balance = btn("Balance", () => panel("Wallet & currency", "/wallet"));
+  const balance = btn("Balance", invoker => panel("Wallet & currency", "/wallet", invoker));
   const map = btn("Map", (invoker) => {
     const d = dialog("Where shall we go?", invoker),
       grid = element("div", null, "world-map-grid");
@@ -138,20 +138,21 @@ export async function mountWorld(
   const bottom = element("div", null, "world-dock");
   bottom.append(
     map,
-    btn("Items", async () => {
+    btn("Items", async invoker => {
       await refresh();
       openBackpack({
+        invoker,
         world,
         refresh,
         notice: showNotice,
-        openLegacy: (path) => panel("Your treasures", path),
+        openLegacy: (path, invoker) => panel("Your treasures", path, invoker),
       });
     }),
-    btn("Mochis", () => chooseCompanion()),
-    btn("Friends", () => panel("Friends", "/friends")),
+    btn("Mochis", invoker => chooseCompanion(invoker)),
+    btn("Friends", invoker => panel("Friends", "/friends", invoker)),
     btn("Wardrobe", (invoker) => customizeAvatar(invoker)),
-    btn("Talk", () => talkPanel()),
-    btn("Wallet", () => panel("Wallet & currency", "/wallet")),
+    btn("Talk", invoker => talkPanel(invoker)),
+    btn("Wallet", invoker => panel("Wallet & currency", "/wallet", invoker)),
   );
   const emotes = element("div", null, "world-emotes");
   const emoteActions = element("div", null, "world-emote-actions");
@@ -352,7 +353,8 @@ export async function mountWorld(
           bridge.scene.audio.cue("pet");
         }
         if (type === "npcDialogue") {
-          const d = dialog(data.name + " · Town resident"),
+          const invoker = document.activeElement;
+          const d = dialog(data.name + " · Town resident", invoker),
             portrait = element("div", "✦", "npc-portrait");
           portrait.style.background =
             TOWN_RESIDENTS.find((n) => n.id === data.id)?.color ?? "#9db7ad";
@@ -364,14 +366,14 @@ export async function mountWorld(
               btn("Browse shop", () => {
                 d.close();
                 bridge.scene.audio.cue("bell");
-                openInteraction("shop:" + data.shop);
+                openInteraction("shop:" + data.shop, invoker);
               }),
             );
           if (data.vendor)
             d.append(
               btn("Sell resources", () => {
                 d.close();
-                return adventure.vendor(data.vendor);
+                return adventure.vendor(data.vendor, invoker);
               }),
             );
           if (data.id === "pip")
@@ -519,7 +521,7 @@ export async function mountWorld(
       }
       const d = dialog(p.avatar.display_name);
       d.append(
-        btn("Profile", () => panel("Player profile", "/user/" + p.username)),
+        btn("Profile", invoker => panel("Player profile", "/user/" + p.username, invoker)),
         btn("Wave", () => bridge.send("emote", { emote: "wave" })),
       );
       const friend = world.friends.friends.find((f) => f.id === id);
@@ -536,18 +538,18 @@ export async function mountWorld(
       );
       if (friend) {
         d.append(
-          btn("Gift", () => panel("Gift an item", "/items/inventory")),
+          btn("Gift", invoker => panel("Gift an item", "/items/inventory", invoker)),
           btn("Visit home", () => {
             bridge.join("home:" + p.username);
             d.close();
           }),
         );
       }
-      d.append(btn("Shop", () => panel("Player shop", "/shop/" + p.username)));
+      d.append(btn("Shop", invoker => panel("Player shop", "/shop/" + p.username, invoker)));
       if (p.companion)
         d.append(
-          btn("Inspect Mochi", () =>
-            panel("Mochi profile", "/mochi/" + p.companion.id),
+          btn("Inspect Mochi", invoker =>
+            panel("Mochi profile", "/mochi/" + p.companion.id, invoker),
           ),
         );
     },
@@ -559,7 +561,8 @@ export async function mountWorld(
         panel("Mochi profile", "/mochi/" + id);
         return;
       }
-      const d = dialog(players.get(owner)?.companion?.name ?? "Your Mochi");
+      const invoker = document.activeElement;
+      const d = dialog(players.get(owner)?.companion?.name ?? "Your Mochi", invoker);
       for (const [kind, label] of [
         ["pet", "Pet"],
         ["feed", "Feed"],
@@ -570,9 +573,9 @@ export async function mountWorld(
         d.append(
           btn(label, () => {
             d.close();
-            if (kind === "talk") talkPanel();
-            else if (kind === "profile") panel("Mochi profile", "/mochi/" + id);
-            else care(kind);
+            if (kind === "talk") return talkPanel(invoker);
+            else if (kind === "profile") return panel("Mochi profile", "/mochi/" + id, invoker);
+            else return care(kind, invoker);
           }),
         );
     },
@@ -585,15 +588,15 @@ export async function mountWorld(
       : world.currency.network;
     return world;
   }
-  function openInteraction(id) {
+  function openInteraction(id, invoker = document.activeElement) {
     if (id.startsWith("vendor:")) {
-      adventure.vendor(id.slice(7)).catch((e) => showNotice(e.message));
+      adventure.vendor(id.slice(7), invoker).catch((e) => showNotice(e.message));
       return;
     }
     if (id.startsWith("shop:")) {
       const vendorId = id.slice(5);
       if (["blacksmith", "mage", "apothecary", "charms"].includes(vendorId)) {
-        adventure.shop(vendorId).catch((e) => showNotice(e.message));
+        adventure.shop(vendorId, invoker).catch((e) => showNotice(e.message));
         return;
       }
       const shops = {
@@ -608,7 +611,7 @@ export async function mountWorld(
         apothecary: "apothecary",
         charms: "charms",
       };
-      panel("Market stall", "/explore/market/" + shops[id.slice(5)]);
+      panel("Market stall", "/explore/market/" + shops[id.slice(5)], invoker);
       return;
     }
     const paths = {
@@ -625,8 +628,8 @@ export async function mountWorld(
       rest: null,
       play: null,
     };
-    if (id === "rest") care("sleep");
-    else if (id === "play") care("play");
+    if (id === "rest") care("sleep", invoker);
+    else if (id === "play") care("play", invoker);
     else if (id === "sit" || id.startsWith("sit:")) {
       bridge.send("emote", { emote: "sit" });
       const self = players.get(bridge.selfId);
@@ -635,9 +638,9 @@ export async function mountWorld(
         bridge.scene.players.get(bridge.selfId)?.root,
         "Taking a little break.",
       );
-    } else if (paths[id]) panel("Explore", paths[id]);
+    } else if (paths[id]) panel("Explore", paths[id], invoker);
   }
-  async function care(kind) {
+  async function care(kind, invoker = document.activeElement) {
     await refresh();
     const id = world.activeMochi?.id;
     if (!id) {
@@ -659,7 +662,7 @@ export async function mountWorld(
         );
         return;
       }
-      const d = dialog(kind === "feed" ? "Choose a snack" : "Choose a toy");
+      const d = dialog(kind === "feed" ? "Choose a snack" : "Choose a toy", invoker);
       for (const i of choices)
         d.append(
           btn(`${i.item.name} · ${i.quantity}`, async () => {
@@ -787,21 +790,21 @@ export async function mountWorld(
       );
     }
     d.append(
-      btn("Original pet home", () => panel("Mochi home", "/room")),
-      btn("Treasury transparency", () => panel("Treasury", "/treasury")),
+      btn("Original pet home", invoker => panel("Mochi home", "/room", invoker)),
+      btn("Treasury transparency", invoker => panel("Treasury", "/treasury", invoker)),
     );
   }
-  async function talkPanel() {
+  async function talkPanel(invoker = document.activeElement) {
     await refresh();
     if (!world.activeMochi) {
       showNotice("Choose a companion first.");
       return;
     }
-    openConversation({ pet: world.activeMochi, bridge, refresh });
+    openConversation({ pet: world.activeMochi, bridge, refresh, invoker });
   }
   adventure = adventureUI({
     chooseCompanion,
-    openTokenShop: (id) => panel("Optional token market", "/explore/market/" + id),
+    openTokenShop: (id, invoker) => panel("Optional token market", "/explore/market/" + id, invoker),
     shell,
     bridge,
     request,

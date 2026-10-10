@@ -24,7 +24,7 @@ function fixture(savedStorage) {
       mutations++;
       return { message: "Recorded Coins transaction" };
     },
-    dialog: () => { const d = new Element("dialog"); dialogs.push(d); return d; },
+    dialog: (title, invoker) => { const d = new Element("dialog"); d.invoker = invoker; dialogs.push(d); return d; },
     element: (tag, text) => new Element(tag, text),
     btn: (text, onclick) => Object.assign(new Element("button", text), { onclick }),
     bridge: { scene: { audio: { cue() {} }, adventure: { roomId: "town" } }, join() {} },
@@ -36,6 +36,16 @@ function fixture(savedStorage) {
   return { ui, catalog, storage, dialogs, requests, notices, get mutations() { return mutations; }, setServerOwner(value) { serverOwner = value; }, setFailure(value) { failure = value; } };
 }
 const button = (d, label) => d.children.find((e) => e.tagName === "button" && e.textContent === label);
+
+test("Coins directory and post-purchase replacement retain the outer launcher", async () => {
+  const f = fixture(), launcher = { disabled: true };
+  await f.ui.shops(launcher);
+  assert.equal(f.dialogs[0].invoker, launcher);
+  await button(f.dialogs[0], "Sage").onclick();
+  assert.equal(f.dialogs[1].invoker, launcher);
+  await button(f.dialogs[1], "Buy Small Potion for Coins").onclick();
+  assert.equal(f.dialogs[2].invoker, launcher);
+});
 
 test("Coins supplies dispatch separate gameplay checkout and reuse receipt on response retry", async () => {
   const f = fixture();

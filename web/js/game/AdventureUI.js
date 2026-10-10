@@ -43,8 +43,8 @@ export function adventureUI({
     ["4 · Potion", () => send({ action: "item", itemId: "small-potion" })],
   ];
   for (const [name, fn] of actions) hotbar.append(btn(name, fn));
-  hotbar.append(btn("Adventure", () => pack()));
-  const guidance = btn("First adventures", () => pack());
+  hotbar.append(btn("Adventure", invoker => pack(invoker)));
+  const guidance = btn("First adventures", invoker => pack(invoker));
   guidance.className = "adventure-guidance";
   hud.append(vitals, target, hotbar, guidance);
   shell.append(hud);
@@ -79,14 +79,14 @@ export function adventureUI({
       .finally(() => { guidanceRequest = null; });
     return guidanceRequest;
   }
-  async function pack() {
+  async function pack(invoker = document.activeElement) {
     const [s, catalog] = await Promise.all([request("/api/adventure"), request("/api/adventure/commerce")]);
     coinWoodSales = catalog.woodSales ?? 0;
     guidanceLoaded = true;
     update(s);
     if (s.harvest && gather?.id !== s.harvest.id)
       trackGather({ id: s.harvest.id }, Math.max(0, Number(s.harvest.ready_at) - s.serverTime));
-    const d = dialog("Adventure pack");
+    const d = dialog("Adventure pack", invoker);
     d.append(
       element(
         "p",
@@ -150,7 +150,7 @@ export function adventureUI({
       const next = journey.next;
       d.append(element("p", next.detail));
       if (next.action === "companion" && chooseCompanion)
-        d.append(btn("Choose a Mochi", () => { d.close(); return chooseCompanion(); }));
+        d.append(btn("Choose a Mochi", () => { d.close(); return chooseCompanion(invoker); }));
       if (next.room)
         d.append(btn("Travel to " + ({ yard: "Training Yard", forest: "Whispering Forest", town: "Town", exchange: "Trading Hall" }[next.room]), () => {
           d.close();
@@ -159,7 +159,7 @@ export function adventureUI({
     }
     const paused = journey.steps.find((step) => step.blocked && !step.done);
     if (paused) d.append(element("p", paused.detail));
-    d.append(btn("Adventure shops · Coins", () => { d.close(); return commerce.shops(); }));
+    d.append(btn("Adventure shops · Coins", () => { d.close(); return commerce.shops(invoker); }));
     d.append(element("h3", "Spells"));
     for (const id of s.player.spells)
       d.append(
@@ -175,7 +175,7 @@ export function adventureUI({
             await send({ action: "learnSpell", spellId: i.item_id });
             notice("Learned " + SPELLS[i.item_id].name + ".");
             d.close();
-            await pack();
+            await pack(invoker);
           } catch (error) { notice(error.message); }
           finally { learning = false; }
         });
@@ -193,7 +193,7 @@ export function adventureUI({
         const use = btn("Use " + i.item_id.replaceAll("-", " "), async () => {
           await send({ action: "item", itemId: i.item_id });
           d.close();
-          await pack();
+          await pack(invoker);
         });
         d.append(use);
       }
@@ -224,7 +224,7 @@ export function adventureUI({
     d.append(
       btn("Game rewards", () => {
         d.close();
-        rewards();
+        return rewards(invoker);
       }),
       btn("Stop targeting", () => send({ action: "stop" })),
     );
@@ -240,10 +240,10 @@ export function adventureUI({
       (n / scale).toString() + fraction + (mock ? " TEST $MOCHI" : " $MOCHI")
     );
   }
-  async function rewards() {
+  async function rewards(invoker = document.activeElement) {
     const s = await request("/api/adventure"),
       r = s.rewards,
-      d = dialog("Game rewards");
+      d = dialog("Game rewards", invoker);
     update(s);
     d.append(
       element("p", "Claimable: " + tokenText(r.amountRaw, r.mock)),
@@ -274,10 +274,10 @@ export function adventureUI({
       ),
     );
   }
-  async function tokenVendor(id) {
+  async function tokenVendor(id, invoker = document.activeElement) {
     const s = await request("/api/adventure"),
       v = VENDORS[id],
-      d = dialog(v.name + " · optional token rewards"),
+      d = dialog(v.name + " · optional token rewards", invoker),
       selected = {};
     update(s);
     d.append(
@@ -351,7 +351,7 @@ export function adventureUI({
       }),
       btn("Game rewards", () => {
         d.close();
-        rewards();
+        return rewards(invoker);
       }),
     );
     bridge.scene.audio.cue("vendor");
