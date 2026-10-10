@@ -87,3 +87,21 @@ test("wrong-account rejection leaves sign-in available and does not offer a save
   assert.equal(form.children.find(child => child.textContent === "Sign in").disabled, false);
   assert.equal(form.children.find(child => child.textContent === "Retry saving and continue").hidden, true);
 });
+
+test("retained export remains available without authenticating, saving or dismissing the gate", async t => {
+  const host = documentFixture(t);
+  let exports = 0;
+  accountGate(host, { recovering: true,
+    request: async () => assert.fail("export does not sign in"),
+    ready: async () => assert.fail("export does not close the room"),
+    exportRetained: async () => { exports++; if (exports === 1) throw new Error("Brain is still initializing"); },
+  });
+  const form = host.children[0].children[2];
+  const button = form.children.find(child => child.textContent === "Export retained brain");
+  await button.onclick();
+  assert.equal(button.disabled, false);
+  assert.equal(form.children.find(child => child.tag === "p" && !child.id).textContent, "Brain is still initializing");
+  await button.onclick();
+  assert.equal(exports, 2);
+  assert.equal(host.children.length, 1);
+});

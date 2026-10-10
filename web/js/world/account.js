@@ -1,4 +1,4 @@
-export function accountGate(host, { request, ready, recovering = false }) {
+export function accountGate(host, { request, ready, recovering = false, exportRetained }) {
   let register = false;
   function render() {
     const panel = document.createElement("section");
@@ -79,6 +79,19 @@ export function accountGate(host, { request, ready, recovering = false }) {
       } finally { submit.disabled = toggle.disabled = retry.disabled = false; }
     };
     form.append(hint, error, submit, toggle, retry);
+    if (recovering && exportRetained) {
+      const exportButton = document.createElement("button");
+      exportButton.type = "button";
+      exportButton.textContent = "Export retained brain";
+      exportButton.onclick = async () => {
+        exportButton.disabled = true;
+        error.textContent = "";
+        try { await exportRetained(); }
+        catch (failure) { error.textContent = failure.message; }
+        finally { exportButton.disabled = false; }
+      };
+      form.append(exportButton);
+    }
     panel.append(title, copy, form);
     host.replaceChildren(panel);
     fields.username.focus();

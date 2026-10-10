@@ -21,4 +21,20 @@ mechanism. Five bounded handler tests cover refused-save retry, changed account,
 failed identity refresh, concurrent recovery and login-gate retry. Browser expiry
 with a live brain panel remains an integrated validation gate.
 
+Brain persistence reports authentication expiry to the outermost accessible
+same-origin world, so nested panels do not stack login gates. Lease failure
+pauses decisions while preserving the initialized worker; unavailable or failed
+Save returns `false` and cannot authorize panel teardown. Same-account Save can
+renew its lease or reacquire an expired lease only while the retained cloud
+version matches. An intervening save, changed owner or ambiguous committed save
+response refuses overwrite and keeps the local brain exportable. Failed release
+also retains the room token and refuses teardown. Heartbeats restart only after
+validated recovery; late results from older leases cannot pause or reopen the
+recovered room. Snapshot/export holds the room still until an in-flight decision
+and worker save finish, without changing decision or reward ownership.
+Fifteen bounded persistence/save/snapshot tests exercise these contracts,
+including a heartbeat pause arriving during confirmed save/cache completion;
+that newer pause remains until validated recovery. No
+native brain worker or database is spawned by those tests.
+
 Hash API: [Node crypto.scrypt](https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback). Account mechanism is deterministic game infrastructure and changes no Cadence pack or neural mechanism.

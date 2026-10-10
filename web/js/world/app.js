@@ -1,6 +1,7 @@
 import { mountWorld } from "../game/Game.js";
 import { accountGate } from "./account.js";
 import { accountRecovery } from "./account-recovery.js";
+import { lifeToBlob } from "../storage.js";
 import { tokenCheckout, walletPage, treasuryPage } from "../game/ui/TokenUI.js";
 import { ITEMS, SHOPS, LOCATIONS, DAILY_ACTIVITIES } from "./catalog.js";
 import { portfolioValue } from "../traders/trading.js";
@@ -2087,7 +2088,25 @@ async function showAccountGate() {
     },
   });
   try {
-    accountGate(gate, { request: api, recovering: !!currentCleanup, ready: recover });
+    accountGate(gate, { request: api, recovering: !!currentCleanup, ready: recover,
+      exportRetained: async () => {
+        const rooms = [];
+        function findRooms(frame) {
+          try {
+            if (typeof frame.mochi?.snapshot === "function") rooms.push(frame.mochi);
+            for (let i = 0; i < frame.frames.length; i++) findRooms(frame.frames[i]);
+          } catch { /* A foreign frame cannot hold this same-origin room. */ }
+        }
+        findRooms(window);
+        if (rooms.length !== 1) throw new Error("No single initialized room is available to export. Keep this page open and retry saving.");
+        const life = await rooms[0].snapshot();
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(lifeToBlob(life));
+        link.download = "retained-mochi.mochi";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 4000);
+      },
+    });
     document.body.append(gate);
     gate.showModal();
   } catch (error) {
