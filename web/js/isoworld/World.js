@@ -8,6 +8,7 @@ import {
 import {
   ANIMATION_SETS,
   MOB_ACTION_SHEETS,
+  mobAnimationSet,
   AnimationPlayback,
   directionIndex,
 } from "./animation/registry.js";
@@ -197,7 +198,7 @@ export class IsometricWorld {
           const texture = await Assets.load("/assets/isoworld/" + m.image);
           this.textureOwnership.shared(texture);
           actionTextures.add(texture);
-          const set = { ...ANIMATION_SETS[2], id, strideDistance: 90 };
+          const set = mobAnimationSet(id, m);
           const base = {
             rows: set.directions.map(() => ({})),
             metadata: { heights: { idle: m.height, walk: m.height } },
@@ -1176,6 +1177,7 @@ export class IsometricWorld {
             walk: Array(8).fill(g.texture),
           })),
         };
+        const art = this.mobAnimationAtlases?.[m.type] ?? fallback;
         e = {
           g,
           bar,
@@ -1185,8 +1187,8 @@ export class IsometricWorld {
           label,
           m,
           gait: new Gait(90),
-          playback: new AnimationPlayback(set),
-          art: this.mobAnimationAtlases?.[m.type] ?? fallback,
+          playback: new AnimationPlayback(art.set),
+          art,
         };
         e.sourceHeight = e.art.metadata.heights.idle;
         this.mobEntities.set(m.id, e);

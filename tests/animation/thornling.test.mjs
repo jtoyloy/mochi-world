@@ -3,14 +3,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { PNG } from "pngjs";
 import { Texture, TextureSource } from "pixi.js";
-import { ANIMATION_SETS, MOB_ACTION_SHEETS } from "../../web/js/isoworld/animation/registry.js";
+import { AnimationPlayback, MOB_ACTION_SHEETS, mobAnimationSet } from "../../web/js/isoworld/animation/registry.js";
 import { loadActionAtlas, selectTexture, stateMirrored, validateActionAtlas } from "../../web/js/isoworld/animation/atlas.js";
 import { auditPixels } from "../../web/js/isoworld/animation/pixel-audit.js";
 import { WorldTextures } from "../../web/js/isoworld/animation/texture-lifecycle.js";
 
 const root = "web/assets/isoworld/";
 const metadata = JSON.parse(readFileSync(root + MOB_ACTION_SHEETS.thornling));
-const set = { ...ANIMATION_SETS[2], id: "thornling", strideDistance: 90 };
+const set = mobAnimationSet("thornling", metadata);
 const base = () => ({ rows: set.directions.map(() => ({})), metadata: { heights: { idle: metadata.height, walk: metadata.height } } });
 
 test("optional Thornling registration contains all five painted states and rejects clipped padded frames", () => {
@@ -53,4 +53,43 @@ test("Thornling Pixi frame selections and repeated World teardown retain the sha
     assert.ok(art.ownedTextures.every(texture => texture.destroyed));
   }
   sheet.destroy(true);
+});
+
+test("reviewed lying contacts meet the ground without changing scale or walking registration", () => {
+  const png = PNG.sync.read(readFileSync(root + metadata.image));
+  for (const index of metadata.states.defeat[0]) {
+    const f = metadata.frames[index];
+    let bottom = -1;
+    for (let y = f.frame.y; y < f.frame.y + f.frame.h; y++) for (let x = f.frame.x; x < f.frame.x + f.frame.w; x++)
+      if (png.data[(y * png.width + x) * 4 + 3] >= 96) bottom = Math.max(bottom, y);
+    const logicalContact = f.spriteSourceSize.y + bottom - f.frame.y;
+    assert.ok(Math.abs(logicalContact - 224 * .88) < 1, `defeat pose ${index} contact`);
+    assert.deepEqual(f.sourceSize, { w: 224, h: 224 });
+    assert.deepEqual(f.pivot, { x: .5, y: .88 });
+  }
+  assert.ok(metadata.sourceAudit.groundBaselines[1].every(y => y === 401), "failed walk planting was not relabeled through per-frame recentering");
+  assert.equal(metadata.height, 174);
+});
+
+test("weighted idle retains every drawing with brief closed-eye holds and validated contact metadata", () => {
+  const durations = set.idleFrameDurations;
+  assert.ok(Math.abs(set.idleSeconds - 4.8) < 1e-8);
+  assert.ok(Math.abs(durations[2] + durations[5] + durations[6] - .24) < 1e-8);
+  let elapsed = 0;
+  for (let frame = 0; frame < 8; frame++) {
+    const playback = new AnimationPlayback(set);
+    playback.update({ distance: 0 }, 0, elapsed + durations[frame] / 2);
+    assert.equal(playback.frame, frame);
+    elapsed += durations[frame];
+  }
+  const playback = new AnimationPlayback(set);
+  playback.update({ distance: 0 }, 0, elapsed + .01);
+  assert.equal(playback.frame, 0, "weighted loop wraps");
+  assert.equal(mobAnimationSet("boar").idleFrameDurations, undefined, "simpler profile remains control");
+  assert.equal(metadata.contactFrames.attack, 4);
+  for (const durations of [[], [1], Array(8).fill(0), Array(8).fill(NaN)])
+    assert.throws(() => mobAnimationSet("thornling", { idleFrameDurations: durations }), /Invalid idle frame durations/);
+  const badContact = structuredClone(metadata);
+  badContact.contactFrames.attack = 8;
+  assert.throws(() => validateActionAtlas(badContact, set), /Invalid painted contact frame/);
 });

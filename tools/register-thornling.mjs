@@ -3,7 +3,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { PNG } from "pngjs";
 import { createHash } from "node:crypto";
-import { ANIMATION_SETS } from "../web/js/isoworld/animation/registry.js";
+import { mobAnimationSet } from "../web/js/isoworld/animation/registry.js";
 import { validateActionAtlas } from "../web/js/isoworld/animation/atlas.js";
 import { auditPixels } from "../web/js/isoworld/animation/pixel-audit.js";
 
@@ -30,6 +30,10 @@ const bodyCenters = [
   [104, 296, 488, 681, 875, 1064, 1255, 1445],
 ];
 const baselines = [203, 401, 604, 805, 995];
+// Reviewed resting ground contacts: last lying drawings previously hovered
+// above the shared row baseline. Keep scale/pivot fixed; move trim by contact.
+const groundBaselines = baselines.map(y => Array(8).fill(y));
+groundBaselines[4] = [997, 995, 995, 994, 991, 990, 985, 986];
 const frames = [];
 const evidence = [];
 for (let row = 0; row < 5; row++) for (let col = 0; col < 8; col++) {
@@ -49,7 +53,7 @@ for (let row = 0; row < 5; row++) for (let col = 0; col < 8; col++) {
   if (x < x0 || y < y0 || x + w > x1 || y + h > y1) throw Error(`Insufficient source gutter ${row}:${col}`);
   frames.push({
     frame: { x, y, w, h }, sourceSize: { w: 224, h: 224 },
-    spriteSourceSize: { x: Math.round(112 - bodyCenters[row][col] + x), y: Math.round(224 * .88 - baselines[row] + y), w, h },
+    spriteSourceSize: { x: Math.round(112 - bodyCenters[row][col] + x), y: Math.round(224 * .88 - groundBaselines[row][col] + y), w, h },
     pivot: { x: .5, y: .88 },
   });
   evidence.push({ row, col, region: [x0, y0, x1, y1], silhouettePixels: pixels, edgePixels });
@@ -59,15 +63,17 @@ const metadata = {
   format: "mochi-action-atlas/1", image, size: [png.width, png.height], frames,
   states, requiredStates: Object.keys(states), height: 174,
   mirrors: [false, true, true, false], authoredFrameCount: 40,
+  idleFrameDurations: [.9, .9, .08, .9, .9, .08, .08, .96],
+  contactFrames: { attack: 4 },
   directions: "One separately painted SE sequence per state. SW/NW mirror SE; NE reuses SE. Four/eight authored directions remain missing.",
   provenance: "Original built-in imagegen, 2026-10-10; project-owned adventure-v1.png character/style reference only. Padding revision generated through built-in edit tool. PNG alpha/pixels unchanged; explicit unequal source rectangles and logical body pivots only.",
   classification: "USABLE_PROVISIONAL",
   paddedCells: true,
   sourceSha256: createHash("sha256").update(sourceBytes).digest("hex"),
   limitations: "Single view. Idle contains blinks; walking foot contact and loop continuity, body proportions, action anticipation/contact timing and directional/equipment acceptance remain unverified. Defeat lowers the body intentionally. Animation never controls damage or movement.",
-  sourceAudit: { threshold: 96, rowEdges, xEdges, bodyCenters, baselines, poses: evidence },
+  sourceAudit: { threshold: 96, rowEdges, xEdges, bodyCenters, baselines, groundBaselines, poses: evidence },
 };
-validateActionAtlas(metadata, { ...ANIMATION_SETS[2], id: "thornling", strideDistance: 90 });
+validateActionAtlas(metadata, mobAnimationSet("thornling", metadata));
 const warnings = auditPixels(png, metadata);
 if (warnings.length) throw Error(`Thornling pixel warnings: ${JSON.stringify(warnings)}`);
 if (process.argv.includes("--check")) {

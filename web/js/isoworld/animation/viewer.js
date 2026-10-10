@@ -164,7 +164,7 @@ export function openAnimationViewer(
         ctx.fillText(`${DIRECTIONS8[logicalDirection]} → ${set.directions[index]}${stateMirrored(active, playback.state, index) ? " mirror" : ""}`, gx - 55, gy + 18);
       }
     }
-    const contact = contacts[playback.state];
+    const contact = active.metadata.contactFrames?.[playback.state] ?? contacts[playback.state];
     if (guides.value === "yes" && contact !== undefined) {
       for (let i = 0; i < 8; i++) {
         ctx.fillStyle = i === playback.frame ? "#29814b" : i === contact ? "#bb4935" : "#ab9980";

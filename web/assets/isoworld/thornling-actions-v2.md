@@ -43,19 +43,70 @@ Only the SE view is painted. SW/NW mirror it and NE reuses it, explicitly record
 in metadata. Four/eight authored directions remain missing. Walking loop
 continuity, planted-root contact, modest shape/proportion drift, idle blink
 frequency and source body-centre/ground placement require moving viewer and live
-Forest inspection. Fixed row baselines intentionally preserve recoil/collapse
-height changes; they are not evidence of perfect planting. No action sockets or
+Forest inspection. Upright row baselines preserve motion; reviewed per-frame
+resting contacts ground the defeat drawings without changing scale. These are
+not evidence of perfect walking-foot planting. No action sockets or
 cosmetic/equipment certification. Contact slot is a visual convention only:
 animation never owns damage, movement, rewards or Cadence decisions.
 
 Playback preserves the existing generic attack 600ms, hurt 300ms and defeat
 800ms with a held final pose. Mob defeat remains visible for the existing
 1100ms renderer interval. Walking consumes actual traveled distance with the
-existing 90-unit stride; idle uses the inherited 4.8-second profile.
-No server cooldowns or event sequencing change. Painted attack contact is source
-column 4 (zero-based); the generic viewer attack marker is currently column 3,
-so that marker is not certification of this candidate's contact. The server's
-authoritative event selects the reaction after its outcome arrives.
+existing 90-unit stride. Optional idle frame durations keep the eight original
+drawings in a 4.8-second loop: `[.9,.9,.08,.9,.9,.08,.08,.96]` seconds. Closed-eye
+drawings 2/5/6 now hold 80ms each (240ms total), rather than the original equal
+600ms slots. Other mob profiles retain uniform idle timing. No server cooldowns
+or event sequencing change. `contactFrames.attack=4` labels source column 4
+(zero-based) in the viewer; legacy sheets retain their generic marker. This
+metadata is a painted contact convention only. The server's authoritative event
+selects the reaction after its outcome arrives.
+
+## Independent moving viewer review and measured repair
+
+The actual bundled offline renderer/viewer was inspected at source `4eb699f` in
+a separate Chrome tab. All 40 state/frame indices were observed in visible
+diagnostic text at 50% playback, and five states × eight logical direction
+selections were checked. Screenshots and diagnostic samples are retained locally
+under `runs/thornling-viewer-2026-10-10/`; sample filenames reflect the diagnostic
+at sampling time, and a running animation can advance before capture. The
+screenshots themselves show their actual frame diagnostics.
+
+Clean cutout edges and distinct reach/recoil/collapse were visible. Walking root
+feet and torso drift between drawings, so planted-foot/loop acceptance failed.
+Held defeat frame 7 floated approximately nine source pixels above the logical
+ground (source bottom 986 versus original row baseline 995). The original idle
+had eyes closed for three equal slots, including a long two-slot consecutive
+hold. These failed observations remain evidence; they were not converted to a
+full art pass.
+
+Metadata repair grounds each reviewed defeat pose at its actual resting contact
+`[997,995,995,994,991,990,985,986]`, retaining the common pivot, source canvas and
+174px scale. Walking registration and PNG pixels remain unchanged. The optional
+idle durations and contact metadata above address their measured presentation
+issues. Focused tests verify lying contact within one logical pixel, all idle
+drawings/brief closed holds, malformed timing/contact rejection and retained
+uniform control profiles.
+
+Post-repair inspection used a fresh tab with the rebuilt bundle, then continued
+only in its already-loaded offline canvas when the host fell below the 3GiB
+safety floor and the owned server was stopped. No reload, build, generation or
+native/gameplay work followed that warning. Held defeat frame 7 now visibly
+meets the green ground marker (trim Y 98, versus original Y 89), and the attack
+viewer marks painted slot 4. At 50% viewer speed, lightweight visible-text
+transition reads measured closed-frame holds of approximately 166ms (frame 2),
+140ms (frame 5) and 167ms (frame 6), consistent with 160ms expected after speed
+scaling and observation quantization. The consecutive 5/6 hold was approximately
+307ms versus 320ms expected; frame 2 recurred after 9620ms versus the 9600ms loop.
+Three screenshots and `idle-after-repair-transitions.json` preserve this evidence
+in the same local runs folder. This verifies the scoped presentation repairs;
+walking contact, looping art quality and authored direction acceptance remain
+open, and no sustained performance or complete production-art pass follows.
+
+Two pre-repair renderer remounts reused valid shared sources, released previous
+ownership and held `ownedFrames=1150`, `ownedCanvasSources=4`, `hostCanvases=2`.
+Chrome extension warnings were unrelated to the renderer. The historic failed
+bare-module fixture load predates the repaired bundle and is retained separately;
+no new application warning/error appeared during the completed moving review.
 
 ## Registration and focused validation
 

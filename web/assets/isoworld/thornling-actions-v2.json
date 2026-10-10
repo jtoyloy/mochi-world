@@ -723,7 +723,7 @@
       },
       "spriteSourceSize": {
         "x": 43,
-        "y": 19,
+        "y": 17,
         "w": 123,
         "h": 184
       },
@@ -789,7 +789,7 @@
       },
       "spriteSourceSize": {
         "x": 33,
-        "y": 47,
+        "y": 48,
         "w": 140,
         "h": 153
       },
@@ -811,7 +811,7 @@
       },
       "spriteSourceSize": {
         "x": 6,
-        "y": 62,
+        "y": 66,
         "w": 171,
         "h": 135
       },
@@ -833,7 +833,7 @@
       },
       "spriteSourceSize": {
         "x": 5,
-        "y": 77,
+        "y": 82,
         "w": 176,
         "h": 119
       },
@@ -855,7 +855,7 @@
       },
       "spriteSourceSize": {
         "x": 8,
-        "y": 87,
+        "y": 97,
         "w": 182,
         "h": 104
       },
@@ -877,7 +877,7 @@
       },
       "spriteSourceSize": {
         "x": 14,
-        "y": 89,
+        "y": 98,
         "w": 175,
         "h": 103
       },
@@ -1114,6 +1114,19 @@
     false
   ],
   "authoredFrameCount": 40,
+  "idleFrameDurations": [
+    0.9,
+    0.9,
+    0.08,
+    0.9,
+    0.9,
+    0.08,
+    0.08,
+    0.96
+  ],
+  "contactFrames": {
+    "attack": 4
+  },
   "directions": "One separately painted SE sequence per state. SW/NW mirror SE; NE reuses SE. Four/eight authored directions remain missing.",
   "provenance": "Original built-in imagegen, 2026-10-10; project-owned adventure-v1.png character/style reference only. Padding revision generated through built-in edit tool. PNG alpha/pixels unchanged; explicit unequal source rectangles and logical body pivots only.",
   "classification": "USABLE_PROVISIONAL",
@@ -1245,6 +1258,58 @@
       604,
       805,
       995
+    ],
+    "groundBaselines": [
+      [
+        203,
+        203,
+        203,
+        203,
+        203,
+        203,
+        203,
+        203
+      ],
+      [
+        401,
+        401,
+        401,
+        401,
+        401,
+        401,
+        401,
+        401
+      ],
+      [
+        604,
+        604,
+        604,
+        604,
+        604,
+        604,
+        604,
+        604
+      ],
+      [
+        805,
+        805,
+        805,
+        805,
+        805,
+        805,
+        805,
+        805
+      ],
+      [
+        997,
+        995,
+        995,
+        994,
+        991,
+        990,
+        985,
+        986
+      ]
     ],
     "poses": [
       {

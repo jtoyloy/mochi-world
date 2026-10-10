@@ -95,6 +95,16 @@ export const MOB_ACTION_SHEETS = {
   boar: "boar-actions-v1.json",
   thornling: "thornling-actions-v2.json",
 };
+export function mobAnimationSet(id, metadata = {}) {
+  const set = { ...ANIMATION_SETS[2], id, strideDistance: 90 };
+  if (metadata.idleFrameDurations !== undefined) {
+    set.idleFrameDurations = metadata.idleFrameDurations;
+    set.idleSeconds = Array.isArray(set.idleFrameDurations)
+      ? set.idleFrameDurations.reduce((sum, duration) => sum + duration, 0)
+      : NaN;
+  }
+  return validateSet(set);
+}
 export const LOCOMOTION_TYPES = [
   "biped",
   "quadruped",
@@ -142,7 +152,20 @@ export function validateSet(s) {
   for (const p of [s.footAnchor, s.headAnchor])
     if (!p || [p.x, p.y].some((v) => !Number.isFinite(v) || v < 0 || v > 1))
       throw Error("Invalid pivot");
+  if (s.idleFrameDurations !== undefined && (
+    !Array.isArray(s.idleFrameDurations) || s.idleFrameDurations.length !== s.idleFrameCount ||
+    s.idleFrameDurations.some(duration => !Number.isFinite(duration) || duration <= 0 || duration > 30) ||
+    Math.abs(s.idleFrameDurations.reduce((sum, duration) => sum + duration, 0) - s.idleSeconds) > 1e-8
+  )) throw Error("Invalid idle frame durations");
   return s;
+}
+function idleFrameAtTime(time, set) {
+  let remaining = time % set.idleSeconds;
+  for (let frame = 0; frame < set.idleFrameDurations.length; frame++) {
+    if (remaining < set.idleFrameDurations[frame]) return frame;
+    remaining -= set.idleFrameDurations[frame];
+  }
+  return set.idleFrameCount - 1;
 }
 // Presentation-only state: gait phase is retained on turns/stops; basic idle is time-driven.
 export class AnimationPlayback {
@@ -205,10 +228,9 @@ export class AnimationPlayback {
             ? requested
             : "idle";
         this.idleTime += dt;
-        this.frame = frameFromPhase(
-          this.idleTime / s.idleSeconds,
-          s.idleFrameCount,
-        );
+        this.frame = this.state === "idle" && s.idleFrameDurations
+          ? idleFrameAtTime(this.idleTime, s)
+          : frameFromPhase(this.idleTime / s.idleSeconds, s.idleFrameCount);
       }
     }
     this.lastDistance = gait.distance;
