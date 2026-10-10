@@ -3,6 +3,8 @@ import { NavigationService } from "../game/NavigationService.js";
 import { plainText } from "../game/model.js";
 import { WorldAudio } from "../world3d/audio.js";
 import { IsometricWorld } from "./World.js";
+// Offline review fixtures use the same bundled renderer as the game server.
+export { IsometricWorld };
 export async function mountIsometric(container, bridge, config) {
   const listeners = new Set(),
     data = new Map(),
