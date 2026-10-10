@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { overlayOffsets, observeOverlayLayout } from "../../web/js/game/overlay-layout.js";
+import { overlayOffsets, observeOverlayLayout, compactOverlayViewport, bindOverlayDisclosure } from "../../web/js/game/overlay-layout.js";
 
 test("wrapped phone panels reserve a gap above the preceding panel's full height", () => {
   for (const sizes of [{ dock: 84, emotes: 95, hud: 107 }, { dock: 128, emotes: 140, hud: 160 }]) {
@@ -9,6 +9,34 @@ test("wrapped phone panels reserve a gap above the preceding panel's full height
     assert.equal(result.hud - (result.emotes + sizes.emotes), 8);
     assert.equal(result.controls - (result.hud + sizes.hud), 8);
   }
+});
+
+test("disclosure preserves live action nodes and delayed close cannot steal them from a replacement", () => {
+  const parent = { appends: 0, append(node) { this.appends++; node.parentNode = this; } };
+  const content = [{ parentNode: parent }, { parentNode: parent }];
+  const invoker = { setAttribute(key, value) { this[key] = value; } };
+  const makeDialog = () => ({ append(...nodes) { for (const node of nodes) node.parentNode = this; },
+    addEventListener(type, fn) { this.delayedClose = fn; }, close() { this.closed = true; } });
+  let restorations = 0;
+  const first = makeDialog();
+  const disclosure = bindOverlayDisclosure({ dialog: first, invoker, content, restored: () => restorations++ });
+  assert.equal(content[0].parentNode, first); assert.equal(invoker["aria-expanded"], "true");
+  disclosure.close(); assert.equal(content[0].parentNode, parent); assert.equal(restorations, 1);
+  const second = makeDialog();
+  const replacement = bindOverlayDisclosure({ dialog: second, invoker, content, restored: () => restorations++ });
+  first.delayedClose();
+  assert.equal(content[0].parentNode, second); assert.equal(content[1].parentNode, second);
+  assert.equal(invoker["aria-expanded"], "true"); assert.equal(restorations, 1);
+  replacement.close(); second.delayedClose();
+  assert.equal(content[0].parentNode, parent); assert.equal(restorations, 2); assert.equal(parent.appends, 4);
+});
+
+test("phone, short landscape and measured tablet collisions use compact controls while wide desktop stays unchanged", () => {
+  const sizes = { hudWidth: 359, cameraWidth: 238, mapWidth: 150 };
+  for (const viewport of [{ width: 320, height: 740 }, { width: 375, height: 812 }, { width: 844, height: 390 }, { width: 768, height: 1024 }])
+    assert.equal(compactOverlayViewport({ ...sizes, ...viewport }), true);
+  assert.equal(compactOverlayViewport({ ...sizes, width: 1280, height: 800 }), false);
+  assert.equal(compactOverlayViewport({ ...sizes, width: 900, height: 700 }), false);
 });
 
 test("actual panel resize updates phone offsets and desktop/teardown restore CSS defaults", () => {

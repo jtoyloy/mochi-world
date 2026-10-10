@@ -59,7 +59,7 @@
   aspect-ratio: 5/3;
   background: #f4dba8;
 }
-.world-canvas canvas {
+.world-canvas canvas:not(.iso-minimap) {
   display: block !important;
   max-width: 100%;
   margin: auto;
@@ -731,9 +731,16 @@ div.iso-landmark-label {
 
 /* Beginner guidance stays readable on narrow adventure HUDs. */
 .adventure-guidance {display:block;width:100%;max-width:100%;margin-top:5px;padding:5px 9px;border:1px solid #c7b895;border-radius:8px;background:#f4ecd7;color:#5b513f;font-size:11px;white-space:normal;overflow-wrap:anywhere}
-@media(max-width:700px){
-  .world-emotes{bottom:var(--world-emotes-bottom,100px)}
-  .adventure-hud{bottom:var(--world-hud-bottom,185px)}
-  .adventure-hotbar{flex-wrap:wrap;justify-content:center}
-  .iso-controls,.iso-minimap{bottom:var(--world-controls-bottom,263px)}
-}
+.world-emote-actions{display:flex;justify-content:center;align-items:center;gap:inherit;flex-wrap:inherit}
+.world-emote-disclosure,.world-camera-disclosure{display:none}
+.compact-overlays .world-dock{bottom:10px;width:95%;white-space:normal;gap:4px;flex-wrap:wrap}
+.compact-overlays .world-emotes{bottom:var(--world-emotes-bottom,100px);width:max-content;max-width:96%;padding:5px}
+.compact-overlays .world-emote-actions,.compact-overlays .iso-controls,.compact-overlays .iso-minimap{display:none}
+.compact-overlays .world-emote-disclosure,.compact-overlays .world-camera-disclosure{display:block}
+.compact-overlays .adventure-hud{bottom:var(--world-hud-bottom,185px)}
+.compact-overlays .adventure-hotbar{flex-wrap:wrap;justify-content:center}
+.world-camera-disclosure{position:absolute;right:10px;bottom:var(--world-controls-bottom,263px);z-index:60;border:1px solid #d4bc9180;border-radius:12px;padding:7px 10px;background:#fff8e9eb;color:#504a38}
+.world-camera-dialog .iso-controls{position:static;display:flex;flex-wrap:wrap;justify-content:center;margin:12px 0;width:100%}
+.world-camera-dialog .iso-minimap{position:static;display:block;width:180px;height:130px;max-width:100%;margin:12px auto}
+.world-emote-dialog .world-emote-actions{display:flex;flex-wrap:wrap;gap:8px}
+.world-emote-dialog .world-emote-actions select{max-width:100%}

@@ -5,7 +5,8 @@ import { TOWN_RESIDENTS } from "./town.js";
 import { ROOMS, EMOTES, PHRASES, plainText, validSegment } from "./model.js";
 import { NavigationService } from "./NavigationService.js";
 import { companionPicker } from "./CompanionUI.js";
-import { observeOverlayLayout } from "./overlay-layout.js";
+import { observeOverlayLayout, bindOverlayDisclosure } from "./overlay-layout.js";
+import { restoreDialogInvoker } from "./dialog-focus.js";
 const element = (tag, text, cls) => {
   const e = document.createElement(tag);
   if (text) e.textContent = text;
@@ -38,7 +39,7 @@ const btn = (text, fn) => {
   b.onclick = async () => {
     b.disabled = true;
     try {
-      await fn();
+      await fn(b);
     } catch (e) {
       showNotice(e.message);
     } finally {
@@ -56,7 +57,7 @@ function showNotice(text) {
     toast.className = "";
   }, 5000);
 }
-function dialog(title) {
+function dialog(title, invoker = document.activeElement) {
   const d = element("dialog", "", "world-dialog");
   d.requestClose = async () => d.close();
   d.oncancel = (e) => {
@@ -69,6 +70,7 @@ function dialog(title) {
   document.body.append(d);
   d.showModal();
   d.onclose = () => d.remove();
+  restoreDialogInvoker(d, invoker);
   return d;
 }
 let domainPanel;
@@ -111,8 +113,8 @@ export async function mountWorld(
   const roomLabel = element("div", "TOWN SQUARE", "room-label"),
     status = element("span", "Connecting…", "socket-status");
   const balance = btn("Balance", () => panel("Wallet & currency", "/wallet"));
-  const map = btn("Map", () => {
-    const d = dialog("Where shall we go?"),
+  const map = btn("Map", (invoker) => {
+    const d = dialog("Where shall we go?", invoker),
       grid = element("div", null, "world-map-grid");
     for (const room of ROOMS)
       grid.append(
@@ -125,13 +127,13 @@ export async function mountWorld(
       );
     d.append(grid);
   });
-  const customize = btn("My villager", () => customizeAvatar());
+  const customize = btn("My villager", (invoker) => customizeAvatar(invoker));
   top.append(
     element("a", "mochi WORLD", "world-wordmark"),
     roomLabel,
     status,
     balance,
-    btn("⚙ Settings", () => customizeAvatar()),
+    btn("⚙ Settings", (invoker) => customizeAvatar(invoker)),
   );
   const bottom = element("div", null, "world-dock");
   bottom.append(
@@ -147,15 +149,29 @@ export async function mountWorld(
     }),
     btn("Mochis", () => chooseCompanion()),
     btn("Friends", () => panel("Friends", "/friends")),
-    btn("Wardrobe", () => customizeAvatar()),
+    btn("Wardrobe", (invoker) => customizeAvatar(invoker)),
     btn("Talk", () => talkPanel()),
     btn("Wallet", () => panel("Wallet & currency", "/wallet")),
   );
   const emotes = element("div", null, "world-emotes");
+  const emoteActions = element("div", null, "world-emote-actions");
+  let emoteDialog = null, cameraDialog = null;
+  function disclose(title, invoker, content, cls, restored) {
+    const d = dialog(title, invoker);
+    d.classList.add(cls);
+    return bindOverlayDisclosure({ dialog: d, invoker, content, restored });
+  }
+  const emoteDisclosure = btn("Emotes & phrases", invoker => {
+    if (!emoteDialog) emoteDialog = disclose("Emotes & phrases", invoker, [emoteActions], "world-emote-dialog", () => { emoteDialog = null; });
+  });
+  emoteDisclosure.className = "world-emote-disclosure";
+  emoteDisclosure.setAttribute("aria-haspopup", "dialog");
+  emoteDisclosure.setAttribute("aria-expanded", "false");
+  emotes.append(emoteDisclosure, emoteActions);
   for (const [key, text] of Object.entries(EMOTES)) {
     const b = btn(text, () => bridge.send("emote", { emote: key }));
     b.setAttribute("aria-label", key + " emote");
-    emotes.append(b);
+    emoteActions.append(b);
   }
   const phrase = element("select");
   phrase.setAttribute("aria-label", "Predefined public phrase");
@@ -165,13 +181,20 @@ export async function mountWorld(
     if (phrase.value) bridge.send("phrase", { phrase: phrase.value });
     phrase.value = "";
   };
-  emotes.append(phrase);
+  emoteActions.append(phrase);
+  const cameraDisclosure = btn("Camera & map", invoker => {
+    const content = [shell.querySelector(".iso-controls"), shell.querySelector(".iso-minimap")].filter(Boolean);
+    if (!cameraDialog && content.length) cameraDialog = disclose("Camera & map", invoker, content, "world-camera-dialog", () => { cameraDialog = null; });
+  });
+  cameraDisclosure.className = "world-camera-disclosure";
+  cameraDisclosure.setAttribute("aria-haspopup", "dialog");
+  cameraDisclosure.setAttribute("aria-expanded", "false");
   const hint = element(
     "div",
     "Click a path to wander. Your companion will come along.",
     "world-hint",
   );
-  shell.append(top, canvas, hint, emotes, bottom);
+  shell.append(top, canvas, hint, emotes, bottom, cameraDisclosure);
   container.append(shell);
   let socket,
     reconnectTimer,
@@ -656,10 +679,10 @@ export async function mountWorld(
   }
   const chooseCompanion = companionPicker({ refresh, request, dialog, element, btn, panel,
     isClosed: () => closed || tearingDown, notice: showNotice });
-  async function customizeAvatar() {
+  async function customizeAvatar(invoker) {
     const avatar = await request("/api/avatar");
     await refresh();
-    const d = dialog("Your adventurer"),
+    const d = dialog("Your adventurer", invoker),
       form = element("form");
     const name = element("input");
     name.value = avatar.display_name;
@@ -807,7 +830,12 @@ export async function mountWorld(
     bridge.send("presence", { status: document.hidden ? "away" : "online" });
   document.addEventListener("visibilitychange", activity);
   await refresh();
-  const stopOverlayLayout = observeOverlayLayout(shell);
+  const stopOverlayLayout = observeOverlayLayout(shell, globalThis.ResizeObserver, {
+    onCompactChange(compact) {
+      if (!compact) { emoteDialog?.close(); cameraDialog?.close(); }
+      shell.classList.toggle("compact-overlays", compact);
+    },
+  });
   const refreshTimer = setInterval(() => refresh().catch(() => {}), 30000);
   return async () => {
     tearingDown = true;
