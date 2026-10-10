@@ -32,8 +32,9 @@ function fixture(t, changes = {}) {
   let respond = async (data) => data.action === "gather"
     ? { id: "harvest", durationMs: 1000 }
     : { itemId: "softwood", xp: 12, kind: "woodcutting" };
+  const shell = new Element("section");
   const ui = adventureUI({
-    shell: new Element("section"),
+    shell,
     chooseCompanion: async () => notices.push("choose companion"),
     bridge: { join: (room) => notices.push("travel:" + room), selfId: "player", scene: { data: new Map([["player", { x: 0, y: 0 }]]), audio: { cue: (cue) => cues.push(cue) } } },
     request: async (path, data) => {
@@ -46,7 +47,7 @@ function fixture(t, changes = {}) {
     notice: (text) => notices.push(text), refresh: async () => {},
   });
   t.after(() => { ui.destroy(); Object.assign(globalThis, originals); });
-  return { ui, state, commerceState, dialogs, requests, notices, cues, setRespond(fn) { respond = fn; } };
+  return { ui, shell, state, commerceState, dialogs, requests, notices, cues, setRespond(fn) { respond = fn; } };
 }
 const button = (d, text) => d.children.find((e) => e.tagName === "BUTTON" && e.textContent === text);
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
@@ -152,4 +153,42 @@ test("persisted Coins wood sale advances guide even when optional token treasury
   assert.ok(button(f.dialogs[0], "Travel to Trading Hall"));
   assert.ok(!f.dialogs[0].children.some((e) => e.textContent?.includes("sale remains unfinished")));
   assert.equal(f.requests.filter((r) => r.data).length, 0);
+});
+
+test("partial live progress hydrates full journey facts once and remains complete after dialog closure", async t => {
+  const f = fixture(t, { rewards: { enabled: false, woodSales: 0 } });
+  Object.assign(f.state.player, { starter: true, activePet: "owned" });
+  Object.assign(f.state.player.progress, { trainingDummy: 1, kills: 1, woodcutting: 1, tradingHall: 1 });
+  f.commerceState.woodSales = 1;
+  const guidance = f.shell.children[0].children.at(-1);
+  const live = { player: { hp: 100, mp: 60, petHp: 80, stats: f.state.player.stats,
+    progress: { ...f.state.player.progress } }, serverTime: 11000 };
+  // Exact live-frame shape omits starter, activePet, inventory and sale history.
+  f.ui.event("adventureState", live);
+  f.ui.event("adventureState", live);
+  assert.equal(guidance.textContent, "First adventures");
+  await flush();
+  assert.equal(guidance.textContent, "First adventures complete");
+  assert.deepEqual(f.requests.map(r => r.path), ["/api/adventure", "/api/adventure/commerce"]);
+  await f.ui.pack();
+  f.dialogs[0].close();
+  const requests = f.requests.length;
+  f.ui.event("adventureState", live);
+  assert.equal(guidance.textContent, "First adventures complete");
+  assert.equal(f.requests.length, requests);
+});
+
+test("hydrated guide applies live Trading Hall progress while preserving starter companion and sale facts", async t => {
+  const f = fixture(t);
+  Object.assign(f.state.player, { starter: true, activePet: "owned" });
+  Object.assign(f.state.player.progress, { kills: 1, woodcutting: 1 });
+  f.commerceState.woodSales = 1;
+  await f.ui.pack();
+  const guidance = f.shell.children[0].children.at(-1), requests = f.requests.length;
+  assert.equal(guidance.textContent, "Next: Discover the Trading Hall");
+  f.dialogs[0].close();
+  f.ui.event("adventureState", { player: { hp: 100, mp: 60, petHp: 80, stats: f.state.player.stats,
+    progress: { kills: 1, woodcutting: 1, tradingHall: 1 } }, serverTime: 11000 });
+  assert.equal(guidance.textContent, "First adventures complete");
+  assert.equal(f.requests.length, requests);
 });

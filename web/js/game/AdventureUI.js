@@ -29,6 +29,7 @@ export function adventureUI({
     gatherCompletion = null,
     disposed = false,
     guidanceRequest = null,
+    guidanceLoaded = false,
     coinWoodSales = 0;
   const hud = element("div", null, "adventure-hud"),
     vitals = element("div", "Preparing adventure…", "adventure-vitals"),
@@ -49,7 +50,10 @@ export function adventureUI({
   shell.append(hud);
   function update(data) {
     state = { ...state, ...data, player: { ...state?.player, ...data.player } };
-    if (state.player?.progress) {
+    // Live frames contain progress, but starter/companion and sale history are
+    // supplied by the full overview and commerce snapshot. Hydrate those once
+    // before interpreting absent fields as unfinished journey steps.
+    if (guidanceLoaded && state.player?.progress) {
       const journey = journeyFor(state);
       guidance.textContent = journey.next ? "Next: " + journey.next.title : journey.complete ? "First adventures complete" : "Resource sale paused · explore freely";
     } else reloadGuidance();
@@ -70,7 +74,7 @@ export function adventureUI({
   function reloadGuidance() {
     if (guidanceRequest || disposed) return guidanceRequest;
     guidanceRequest = Promise.all([request("/api/adventure"), request("/api/adventure/commerce")])
-      .then(([data, catalog]) => { if (!disposed) { coinWoodSales = catalog.woodSales ?? 0; update(data); } })
+      .then(([data, catalog]) => { if (!disposed) { coinWoodSales = catalog.woodSales ?? 0; guidanceLoaded = true; update(data); } })
       .catch(() => {})
       .finally(() => { guidanceRequest = null; });
     return guidanceRequest;
@@ -78,6 +82,7 @@ export function adventureUI({
   async function pack() {
     const [s, catalog] = await Promise.all([request("/api/adventure"), request("/api/adventure/commerce")]);
     coinWoodSales = catalog.woodSales ?? 0;
+    guidanceLoaded = true;
     update(s);
     if (s.harvest && gather?.id !== s.harvest.id)
       trackGather({ id: s.harvest.id }, Math.max(0, Number(s.harvest.ready_at) - s.serverTime));
