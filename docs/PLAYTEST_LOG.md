@@ -45,5 +45,48 @@ the handoff and late refresh completion/rejection; the build passed.
 
 The complete new-player journey remains open. The first Training Yard arrival
 lacked an interactive dummy label; reconnecting and traveling again exposed it.
-Targeting moved the body toward the dummy, but combat progression has not yet
-been verified. These observations remain under investigation, not acceptance.
+Targeting moved the body toward the dummy, but the original spawn ownership
+check cancelled battle decisions and cleared the selected target. Fix `6a6e269`
+looks up the spawn slot and checks the exact mob identity, so replacement mobs
+cannot inherit an old encounter. Four actual-spawn tests and nine room-lane
+tests pass. After restarting the owned local server, targeting the dummy reduced
+its health and completed the practice step. The journey panel showed the first
+three steps checked and advanced to the first forest fight. Initial delayed
+labels remain unconfirmed; complete journey acceptance is still open.
+
+The supervisor then followed the visible journey instructions through a forest
+Slime fight (`+18 combat XP`, Slime Resin), Softwood approach and chop (`+12 XP`,
+one Softwood), Alder's Coins buyer (`500 → 510 Coins`, wood removed), and Trading
+Hall arrival. All seven journey steps were checked in the pack. Reload preserved
+the completed guide, companion, loot and starter/progression inventory. No wallet
+was connected. The Trading Hall HUD prompt initially stayed stale until opening
+the pack; live progress publication was corrected in `536fcfb`. This completes the
+supervisor's guided path, but BK's independent first-account acceptance remains
+open. A local screenshot is retained in the session evidence, not as an art or
+responsive certification.
+
+### Resumed local recovery and guide acceptance — 2026-10-10
+
+The restored fixture's guide initially reset to the starter step on a fresh live
+frame because progress was published without starter/companion/sale history.
+Fix `abda789` hydrates full guidance once; 15 focused UI/guide/live-progress checks
+pass, and actual reload and room closure retain `First adventures complete`.
+
+Recovery source `654aeee` passed independent concurrency review and 21 focused
+gate/persistence/snapshot checks. A real initialized room retained the visible
+`Expiry retained` change after the owned synthetic session and lease were expired
+in the dedicated restore database. The top-level gate appeared without removing
+the nested room. DOM inspection confirmed the retained name and paused status.
+Export downloaded the original pack's 9,461,945 brain bytes and matching life
+header while leaving the gate open. Original-account sign-in saved and returned
+to Town; the database confirmed version 13, matching name and released lease.
+Production HTTPS and independent full failure acceptance remain open.
+
+At `de54734`, Forest visibly loaded Thornling's provisional painted action
+body without a rectangular background. A live selected encounter completed
+with `+50 combat XP`; the player reached 30/105 HP and Heal restored 64/105
+while mana fell 60 → 42. This was not a continuous frame-by-frame attack/defeat
+review: planted feet, loop quality and authored directions remain unaccepted.
+Independent complete new-player and moving-art browser review agents were
+assigned but stopped at an account usage limit before completing their reviews.
+Neither acceptance is counted as passed.

@@ -17,9 +17,8 @@ different account leaves the retained state intact and cannot continue it. Save
 failures remain visible with a retry action that does not repeat password login;
 navigation stays blocked while recovery is open. Keep the page open until saving
 succeeds: this retains live DOM/runtime state, not a new offline persistence
-mechanism. Five bounded handler tests cover refused-save retry, changed account,
-failed identity refresh, concurrent recovery and login-gate retry. Browser expiry
-with a live brain panel remains an integrated validation gate.
+mechanism. Six bounded gate tests cover refused-save retry, changed account,
+failed identity refresh, concurrent recovery, login-gate retry and retained export.
 
 Brain persistence reports authentication expiry to the outermost accessible
 same-origin world, so nested panels do not stack login gates. Lease failure
@@ -36,5 +35,16 @@ Fifteen bounded persistence/save/snapshot tests exercise these contracts,
 including a heartbeat pause arriving during confirmed save/cache completion;
 that newer pause remains until validated recovery. No
 native brain worker or database is spawned by those tests.
+
+Owned local browser expiry drill at `654aeee`, 2026-10-10: initialized the restored
+synthetic pet's real room, changed its name to `Expiry retained`, then expired only
+that fixture's session and lease in the dedicated restore database. The outer
+recovery gate appeared; DOM inspection confirmed the retained name and paused
+brain. Export downloaded a life header with that name, the original
+`traders-0.74.0-v1` pack and 9,461,945 brain bytes without dismissing the gate.
+Signing back into the original synthetic account reacquired the same-version
+lease, saved and returned to Town. The database confirmed version 13, retained
+name and released lease. This is local supervisor acceptance; independent full
+failure journey, production HTTPS and operational recovery gates remain open.
 
 Hash API: [Node crypto.scrypt](https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback). Account mechanism is deterministic game infrastructure and changes no Cadence pack or neural mechanism.

@@ -95,3 +95,28 @@ These guards require exclusive operator control of targets and backup paths;
 the advisory lock only coordinates this tool, not unrelated database writers.
 Then perform the staging worker load/save, receipt replay and restart checks
 above before recording the restore release gate as passed.
+
+## Owned local restore drill — 2026-10-10
+
+Restore tool `de69d4e`, server/API smoke at
+`7fd483878ad89a68c7718730bea913483e113e27`. Source and targets were dedicated
+local fixtures in mock token mode on a loopback PostgreSQL listener. All source
+application writers were stopped, and database activity confirmed no other source
+clients before backup. The first attempt failed because PGDATABASE did not parse
+a URI; the incomplete private copy was retained. Correction `917ad1b` produced a
+verified custom dump (257097 bytes) and seven checkpoint files including the
+namespace owner marker. No backup manifest was hand-edited.
+
+The guarded tool restored into a separately created empty database and a new
+private checkpoint directory. Six catalog records and current/lease pointers
+validated, and only the copied current scope's owner marker was rebound. Normal
+migration passed. One-worker local server smoke then verified synthetic account
+login, the same active companion, a brain load/save/reload (version 4 → 5 with
+unchanged brain bytes), and an offline exact receipt replay. Coins stayed 510,
+wood sales stayed one, and no duplicate resource sale occurred. A graceful stop
+and restart preserved brain version 5, Coins, receipt count, dummy practice and
+Trading Hall progress. The source backup verified again after the drill.
+
+This is a passed owned local recovery drill, not production staging, offsite
+restore, encryption, disaster timing or public deployment certification. Session
+expiry with an unsaved live browser brain remains a separate acceptance gate.

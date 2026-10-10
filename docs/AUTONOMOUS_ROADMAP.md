@@ -19,3 +19,15 @@ Base: main/origin/main 99f31e15ab10a23e1985280d3508af3063f96b1a, clean and Wave 
 | P2 | Four independent final reviews and RC smoke | All earlier gates | Critical/high fixed and re-reviewed; candidate recorded |
 
 Completed items remain recorded with source/evidence. A failure selects the next corrective task; it never weakens the acceptance contract.
+
+2026-10-10 continuation: adoption handoff and real-spawn battle ownership repaired
+and reviewed; supervisor completed the seven-step guided browser journey with
+persisted Coins sale and reload. Independent first-account acceptance remains.
+Live journey progress now publishes each tick; the resumed audit found that its
+partial player record can bypass full guide hydration, so that regression is being
+repaired. The first actual pg_dump failed; the corrected private backup and guarded
+owned restore passed, including brain load/save, Coins replay and graceful restart.
+Retained-room session expiry exposed a paused-save contract requiring owner/version
+checked lease recovery and export access. Complete its browser acceptance before
+independent new-player acceptance and remaining audits. No art, capacity or Cadence
+gate changed.
