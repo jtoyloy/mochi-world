@@ -90,6 +90,32 @@ The restarted independent new-player browser review completed all seven guide
 steps on that source and is extending purchase, fishing and persistence checks.
 Physical-device/full responsive and final release acceptance remain open.
 
+Independent Chrome acceptance completed the focused seven-step new-player loop,
+Coins sale/potion purchase, learned Ice Shard, staff/ring equip, minnow fishing,
+reload and actual logout/sign-in persistence on `4565e40`; see
+GAMEPLAY_RELEASE_AUDIT.md. Compact repair `1bae014` passed independent source
+review and 19 focused checks. Root actual 320px camera/emote dialogs retained their
+actions, Escape returned focus to Camera/Settings, 768px tablet and 844×390
+landscape bands separated, and resizing an open camera dialog to desktop restored
+the original nodes. An old forced canvas display rule initially defeated minimap
+hiding; narrowed selector passed independent review and actual hidden/visible
+dialog map checks. General legacy-modal focus and physical-device acceptance remain.
+
+During the coordinated owned-server reconnect extension, free disk fell to 2.8GiB,
+below the 3GiB floor. Owned 8788 server and root test browser were stopped; no
+unrelated files or system swap were deleted. The independent browser observed
+Online/Town and its existing 490 Coins panel after restart without reload, but
+fresh catalog/gear verification was incomplete when safety stopped the drill.
+This is partial BM evidence, not full reconnect acceptance. Heavy local runs stay
+paused pending safe headroom; source review and hosted gates may continue.
+
+Thornling presentation repair `d97ebe9` passed independent source review, 25
+focused animation/Pixi checks and build before the safety stop. Another 900
+playback comparisons preserved Slime/Boar/Guardian controls. Independent loaded
+viewer checks confirmed the defeat ground anchor, contact-slot annotation and
+brief blink timing. The PNG is unchanged; walking drift and missing authored
+directions still block art approval. These repairs do not change server combat.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.

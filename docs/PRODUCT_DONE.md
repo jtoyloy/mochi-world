@@ -378,19 +378,27 @@ Status: OPEN. Evidence: pending release verification.
 
 Independent recorded first-account journey completes all onboarding steps without developer guidance.
 
-Status: OPEN. Evidence: pending release verification.
+Status: OPEN. Evidence: independent local Chrome seven-step onboarding, Coins
+buy/sell, fishing, equipment/spell and reload/sign-in continuation passed on
+`4565e40837a2f416b97dc21fc5212bcfa04adda1`; see GAMEPLAY_RELEASE_AUDIT.md.
+Exact release-candidate/staging acceptance remains pending.
 
 ## BL. COMPLETE RETURNING-PLAYER PLAYTEST
 
 Login/appearance/equipment/inventory/Mochi/progression restored; no duplicate starter grants.
 
-Status: OPEN. Evidence: pending release verification.
+Status: OPEN. Evidence: independent local logout/sign-in preserved Coins,
+inventory, equipment, spell and companion/guide state; see GAMEPLAY_RELEASE_AUDIT.md.
+Modified appearance, full brain continuation and exact candidate acceptance remain.
 
 ## BM. COMPLETE FAILURE / RECONNECT PLAYTEST
 
 Network/server/worker interruptions, stale target/room/death and full inventory exercised end-to-end.
 
-Status: OPEN. Evidence: pending release verification.
+Status: OPEN. Evidence: supervisor owned initialized-room expiry/export/sign-in/save
+passed; independent graceful-server restart observation was safety-interrupted at
+2.8GiB before fresh catalog/gear verification. See PLAYTEST_LOG.md and
+GAMEPLAY_RELEASE_AUDIT.md. Other interruption/death/inventory cases remain pending.
 
 ## BN. REPOSITORY HYGIENE
 

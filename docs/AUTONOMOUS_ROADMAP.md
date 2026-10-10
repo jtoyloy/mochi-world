@@ -40,3 +40,12 @@ extensions underway. Independent UI review approved the learning/label/lifecycle
 fixes and selected compact landscape, narrow camera/map and Escape focus repair
 as the next measured failures. Thornling moving-art review resumed through the
 fixed bundled viewer; its directions and production art acceptance remain provisional.
+
+The independent local Coins/gear/spell/fishing and logout/sign-in extension
+completed. Compact controls and focused Escape restoration were implemented,
+reviewed and browser checked in `1bae014`; broader modal focus propagation is the
+next source-only repair. Thornling defeat/blink/contact metadata repair `d97ebe9`
+passed focused review, build and scoped viewer checks; failed walk/directions
+remain open. Local headroom fell to 2.8GiB during the partial restart extension;
+owned server/root browser stopped at the unchanged 3GiB floor. Complete lightweight
+source work and hosted gates; resume heavy playtests only with safe headroom.
