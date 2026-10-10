@@ -94,7 +94,7 @@ export class AdventureService {
       this.multiplayer.store.players.get(e.player.userId) === e.player &&
       e.player.room === e.room && e.player.companion?.id === e.petId &&
       e.state.target === e.mob.id && e.state.hp > 0 && e.state.petHp > 0 &&
-      this.instances.get(e.room)?.mobs.get(e.mob.id) === e.mob && e.mob.hp > 0;
+      this.instances.get(e.room)?.mobs.get(e.mob.spawnKey ?? e.mob.id) === e.mob && e.mob.hp > 0;
   }
   async completeExecution(userId, s) {
     if (!s.battleExecution) return true;
