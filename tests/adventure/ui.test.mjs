@@ -52,6 +52,45 @@ function fixture(t, changes = {}) {
 const button = (d, text) => d.children.find((e) => e.tagName === "BUTTON" && e.textContent === text);
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
+test("learning a spell confirms once and refreshes consumed inventory and learned controls", async t => {
+  const f = fixture(t);
+  f.state.inventory.push({ item_id: "ice-shard", quantity: 1 });
+  await f.ui.pack();
+  const learn = button(f.dialogs[0], "Learn Ice Shard");
+  let finish;
+  f.setRespond(async input => {
+    assert.deepEqual(input, { action: "learnSpell", spellId: "ice-shard" });
+    await new Promise(resolve => { finish = resolve; });
+    f.state.player.spells.push("ice-shard");
+    f.state.inventory = f.state.inventory.filter(i => i.item_id !== "ice-shard");
+    return { learned: true };
+  });
+  const pending = learn.onclick();
+  assert.equal(learn.disabled, true);
+  await learn.onclick();
+  assert.equal(f.requests.filter(r => r.data).length, 1);
+  finish(); await pending;
+  assert.equal(f.dialogs[0].closed, true);
+  assert.ok(button(f.dialogs[1], "Ice Shard"));
+  assert.equal(button(f.dialogs[1], "Learn Ice Shard"), undefined);
+  assert.ok(!f.dialogs[1].children.some(e => e.textContent === "ice shard ×1"));
+  assert.deepEqual(f.notices, ["Learned Ice Shard."]);
+});
+
+test("rejected spell learning retains its scroll and leaves the control retryable", async t => {
+  const f = fixture(t);
+  f.state.inventory.push({ item_id: "ice-shard", quantity: 1 });
+  await f.ui.pack();
+  f.setRespond(async () => { throw new Error("Session expired"); });
+  const learn = button(f.dialogs[0], "Learn Ice Shard");
+  await learn.onclick();
+  assert.equal(learn.disabled, false);
+  assert.equal(f.dialogs[0].closed, undefined);
+  assert.equal(f.dialogs.length, 1);
+  assert.equal(f.state.inventory.at(-1).quantity, 1);
+  assert.deepEqual(f.notices, ["Session expired"]);
+});
+
 test("equipment selects show only matching armor slots and restore rejected equipment", async (t) => {
   const f = fixture(t);
   await f.ui.pack();

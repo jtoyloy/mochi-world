@@ -90,3 +90,26 @@ review: planted feet, loop quality and authored directions remain unaccepted.
 Independent complete new-player and moving-art browser review agents were
 assigned but stopped at an account usage limit before completing their reviews.
 Neither acceptance is counted as passed.
+
+### Fishing extension and offline review fixture — 2026-10-10
+
+At `4eb699f`, the supervisor traveled through Map → Moonwater Lake, clicked
+Moonwater Dock to approach, then clicked again to fish. The live HUD displayed
+the fishing wait, followed by `Gathered Silver Carp · +20 XP`. The pack confirmed
+one Silver Carp and fishing progress 1/5. Returning to Town and approaching Neri
+opened the Coins buyer; selling the single carp raised Coins 510 → 535 and
+removed accepted fish from the buyer inventory. No wallet was connected.
+
+While the separate offline art viewer was open, the unattended Forest character
+had died to live mobs: the returning game displayed the Town recovery notice
+and full HP. Subsequent pack inspection retained the earlier Slime Resin, two
+Thorn Fiber, equipment and supplies. This is an observed death/recovery sample,
+not controlled acceptance of all death/reconnect edges.
+
+The repaired offline fixture opened the real renderer and animation viewer.
+Thornling walk and terminal defeat frame 7 rendered; all directions visibly reuse
+or mirror the one authored view. Renderer remount reported previous resources
+released, shared sheets reused, shared sources valid and two host canvases.
+These are supervisor samples; independent visual and complete-player reviews
+remain open. Hosted workflow 46 at exact `4eb699fa9911a9cbcaed5239c8db3aa60be9f769`
+passed 377 JavaScript and 49 Python tests, zero skips, build/audit/diff checks.

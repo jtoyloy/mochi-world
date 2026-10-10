@@ -56,6 +56,14 @@ account usage limit before completing acceptance; neither is counted as passed.
 Production operations gates remain open.
 Main has not advanced.
 
+Subsequent code gate: workflow 46 passed exact
+`4eb699fa9911a9cbcaed5239c8db3aa60be9f769` (377 JavaScript, 49 Python, zero skips,
+build/audit/diff). That fix makes offline visual/benchmark fixtures use the shipped
+renderer bundle. Actual viewer opening and remount passed; direction reuse remains
+provisional. Supervisor fishing extended the local journey through Silver Carp
+reward and Neri's wallet-free sale (510 → 535 Coins). See PLAYTEST_LOG for scope;
+none of these samples closes independent full-player or production acceptance.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.

@@ -37,6 +37,14 @@ with distinct SE/SW/NW/NE drawings. It does not add eight authored views.
 | Thornling | Provisional 40 painted idle/walk/attack/hurt/defeat cells; SE authored, other views reused/mirrored | Explicit unequal source regions and logical ground pivots; live feet/loop/contact acceptance open | Optional atlas integrated; static body remains on load failure. See source provenance in `web/assets/isoworld/thornling-actions-v2.md` |
 | Dummy / Rippleback / Scavenger / Guardian | Static compatible painted fallback, no dedicated action frames | Original foot anchor; animated contact cannot be certified | No independent attack/hurt/defeat animation; fallback disclosed |
 
+2026-10-10 supervisor viewer sample: Thornling walking rendered without clipped
+branches, and defeat held at frame 7 with its separately drawn lying pose. The
+all-direction view visibly repeats/mirrors that pose, confirming the disclosed
+single authored direction. Samples do not certify walking contact, continuity or
+full direction art. The offline review and benchmark pages failed on ordinary
+server load because their source import could not resolve `pixi.js`; `4eb699f`
+switches them to the game's renderer bundle. Build and actual viewer opening pass.
+
 The old Deer locomotion sheet is retained. Its uneven/cropped source edges are
 still an art task; replacing its gait drawings would require another measured
 locomotion asset pass. No procedural limbs were introduced.

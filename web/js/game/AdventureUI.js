@@ -166,12 +166,20 @@ export function adventureUI({
         btn(SPELLS[id].name, () => send({ action: "spell", spellId: id })),
       );
     for (const i of s.inventory)
-      if (SPELLS[i.item_id] && !s.player.spells.includes(i.item_id))
-        d.append(
-          btn("Learn " + SPELLS[i.item_id].name, () =>
-            send({ action: "learnSpell", spellId: i.item_id }),
-          ),
-        );
+      if (SPELLS[i.item_id] && !s.player.spells.includes(i.item_id)) {
+        const learn = btn("Learn " + SPELLS[i.item_id].name, async () => {
+          if (learn.disabled) return;
+          learn.disabled = true;
+          try {
+            await send({ action: "learnSpell", spellId: i.item_id });
+            notice("Learned " + SPELLS[i.item_id].name + ".");
+            d.close();
+            await pack();
+          } catch (error) { notice(error.message); }
+          finally { learn.disabled = false; }
+        });
+        d.append(learn);
+      }
     d.append(element("h3", "Resources & supplies"));
     for (const i of s.inventory) {
       d.append(
