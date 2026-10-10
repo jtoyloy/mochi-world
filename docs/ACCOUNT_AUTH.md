@@ -10,4 +10,15 @@ Run `npm run db:migrate` before enabling the account flow. Migrating hashed bear
 
 Validation: native PostgreSQL credential/race/replay/expiry tests, actual required-auth HTTP APIs and WebSockets, deterministic delayed-revocation/late-connect tests. Independent visual/gameplay reviewers found and re-reviewed pending-connect/expiry and malformed-JSON logging defects before acceptance. The actual local browser registered a disposable new account and entered Town; returning-player/logout journey continues in integrated playtest.
 
+Session expiry opens a separate modal sign-in gate without closing or replacing
+an open brain panel. The original account must authenticate again, and a fresh
+world identity check must match before the ordinary save/cleanup can run. A
+different account leaves the retained state intact and cannot continue it. Save
+failures remain visible with a retry action that does not repeat password login;
+navigation stays blocked while recovery is open. Keep the page open until saving
+succeeds: this retains live DOM/runtime state, not a new offline persistence
+mechanism. Five bounded handler tests cover refused-save retry, changed account,
+failed identity refresh, concurrent recovery and login-gate retry. Browser expiry
+with a live brain panel remains an integrated validation gate.
+
 Hash API: [Node crypto.scrypt](https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback). Account mechanism is deterministic game infrastructure and changes no Cadence pack or neural mechanism.

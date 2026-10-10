@@ -1,12 +1,14 @@
-export function accountGate(host, { request, ready }) {
+export function accountGate(host, { request, ready, recovering = false }) {
   let register = false;
   function render() {
     const panel = document.createElement("section");
     panel.className = "card account-gate";
     const title = document.createElement("h1");
-    title.textContent = register ? "Begin your adventure" : "Welcome to Mochi World";
+    title.textContent = recovering ? "Sign in to recover your room" : register ? "Begin your adventure" : "Welcome to Mochi World";
     const copy = document.createElement("p");
-    copy.textContent = "Explore, gather and meet your Mochi. No wallet is needed to play.";
+    copy.textContent = recovering
+      ? "Your open room and unsaved brain are retained. Sign in to the same account, then retry saving before continuing. Keep this page open."
+      : "Explore, gather and meet your Mochi. No wallet is needed to play.";
     const form = document.createElement("form");
     const fields = {};
     for (const [name, label, type, autocomplete] of [
@@ -40,24 +42,43 @@ export function accountGate(host, { request, ready }) {
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.textContent = register ? "Already have an account? Sign in" : "New here? Create an account";
+    toggle.hidden = recovering;
     toggle.onclick = () => { register = !register; render(); };
+    let authenticated;
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.textContent = "Retry saving and continue";
+    retry.hidden = true;
+    async function resume() {
+      await ready(authenticated);
+    }
+    retry.onclick = async () => {
+      submit.disabled = toggle.disabled = retry.disabled = true;
+      error.textContent = "";
+      try { await resume(); }
+      catch (failure) { error.textContent = failure.message; retry.hidden = !!failure.accountMismatch; }
+      finally { submit.disabled = toggle.disabled = retry.disabled = false; }
+    };
     form.onsubmit = async (event) => {
       event.preventDefault();
-      submit.disabled = toggle.disabled = true;
+      submit.disabled = toggle.disabled = retry.disabled = true;
+      retry.hidden = true;
+      authenticated = null;
       error.textContent = "";
       try {
-        await request(register ? "/api/auth/register" : "/api/auth/login", {
+        authenticated = await request(register ? "/api/auth/register" : "/api/auth/login", {
           username: fields.username.value, password: fields.password.value,
         });
         fields.password.value = "";
-        await ready();
+        await resume();
       } catch (failure) {
         error.textContent = failure.message;
+        retry.hidden = !authenticated || !!failure.accountMismatch;
         fields.password.value = "";
         fields.password.focus();
-      } finally { submit.disabled = toggle.disabled = false; }
+      } finally { submit.disabled = toggle.disabled = retry.disabled = false; }
     };
-    form.append(hint, error, submit, toggle);
+    form.append(hint, error, submit, toggle, retry);
     panel.append(title, copy, form);
     host.replaceChildren(panel);
     fields.username.focus();

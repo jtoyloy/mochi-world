@@ -1,5 +1,6 @@
 import { mountWorld } from "../game/Game.js";
 import { accountGate } from "./account.js";
+import { accountRecovery } from "./account-recovery.js";
 import { tokenCheckout, walletPage, treasuryPage } from "../game/ui/TokenUI.js";
 import { ITEMS, SHOPS, LOCATIONS, DAILY_ACTIVITIES } from "./catalog.js";
 import { portfolioValue } from "../traders/trading.js";
@@ -1948,6 +1949,7 @@ async function render() {
   );
 }
 async function performNavigation(path, replace = false) {
+  if (accountGateVisible) return;
   if (currentCleanup) {
     const cleanup = currentCleanup;
     await cleanup();
@@ -2070,13 +2072,28 @@ async function enterWorld() {
 async function showAccountGate() {
   if (accountGateVisible) return;
   accountGateVisible = true;
-  if (currentCleanup) { await currentCleanup(); currentCleanup = null; }
-  document.querySelector("#navigation").hidden = true;
-  document.querySelector(".account").hidden = true;
-  accountGate(app, { request: api, ready: async () => {
-    accountGateVisible = false;
-    await enterWorld();
-  } });
+  // A separate top-layer dialog preserves both React and iframe room panels.
+  // In particular, do not force cleanup while their save cannot authenticate.
+  const gate = node("dialog", "", "account-recovery-dialog");
+  gate.oncancel = (event) => event.preventDefault();
+  const recover = accountRecovery({ ownerId: world?.user?.id,
+    identify: async () => (await api("/api/world")).user.id,
+    cleanup: async () => {
+      if (currentCleanup) { await currentCleanup(); currentCleanup = null; }
+    },
+    enter: async () => {
+      await enterWorld();
+      gate.close(); gate.remove(); accountGateVisible = false;
+    },
+  });
+  try {
+    accountGate(gate, { request: api, recovering: !!currentCleanup, ready: recover });
+    document.body.append(gate);
+    gate.showModal();
+  } catch (error) {
+    gate.remove(); accountGateVisible = false;
+    throw error;
+  }
 }
 window.addEventListener("mochi:session-expired", () => { showAccountGate().catch((e) => notice(e.message)); });
 try {
