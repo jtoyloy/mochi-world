@@ -167,16 +167,17 @@ export function adventureUI({
       );
     for (const i of s.inventory)
       if (SPELLS[i.item_id] && !s.player.spells.includes(i.item_id)) {
+        let learning = false;
         const learn = btn("Learn " + SPELLS[i.item_id].name, async () => {
-          if (learn.disabled) return;
-          learn.disabled = true;
+          if (learning) return;
+          learning = true;
           try {
             await send({ action: "learnSpell", spellId: i.item_id });
             notice("Learned " + SPELLS[i.item_id].name + ".");
             d.close();
             await pack();
           } catch (error) { notice(error.message); }
-          finally { learn.disabled = false; }
+          finally { learning = false; }
         });
         d.append(learn);
       }

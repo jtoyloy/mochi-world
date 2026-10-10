@@ -64,6 +64,17 @@ provisional. Supervisor fishing extended the local journey through Silver Carp
 reward and Neri's wallet-free sale (510 → 535 Coins). See PLAYTEST_LOG for scope;
 none of these samples closes independent full-player or production acceptance.
 
+Latest gameplay fix `6039947`: confirmed spell learning now refreshes consumed
+scroll inventory and learned controls. Seventeen focused UI/guide/progress checks
+pass. Original learned Ice Shard and single-slot ring state persisted on actual
+reload. Live learning found a disable-before-handler wrapper conflict in
+`6039947` despite green workflow 48 (379 JavaScript, 49 Python). The corrected
+pending-state guard passed 17 focused checks and actual purchased Shield
+learning/pack refresh; the correction's hosted gate and independent review remain
+pending. World label hit testing also found the companion name intercepting Mage
+Atelier mouse clicks; R12 records the focused pointer-priority repair and broader
+layout gap.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.

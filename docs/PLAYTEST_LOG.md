@@ -113,3 +113,33 @@ released, shared sheets reused, shared sources valid and two host canvases.
 These are supervisor samples; independent visual and complete-player reviews
 remain open. Hosted workflow 46 at exact `4eb699fa9911a9cbcaed5239c8db3aa60be9f769`
 passed 377 JavaScript and 49 Python tests, zero skips, build/audit/diff checks.
+
+Reload retained fishing progress 1/5, removed the sold Carp, preserved all seven
+guide steps and showed 535 Coins in the shops. The earned iron ring equipped in
+accessory1; attempting it in accessory2 was rejected and restored the empty slot.
+Reload preserved that equipment. Learning the earned Ice Shard consumed its scroll
+and persisted the spell, but the original pack left its old Learn button visible.
+Fix `6039947` refreshes the pack after confirmed learning, guards duplicate clicks
+and preserves a rejected scroll/control. Seventeen focused UI/guide/progress checks
+pass; independent review and latest exact-SHA hosted validation remain pending.
+
+The first learning-refresh patch `6039947` passed workflow 48 (379 JavaScript,
+49 Python, zero skips) but failed live learning: its guard checked the button's
+disabled property after the shared wrapper disabled it. No Shield scroll was
+consumed. The correction uses a separate pending flag; the two spell tests now
+exercise the wrapper's real disable-before-handler contract. Seventeen focused
+checks pass. Actual purchased Shield (220 Coins, 535 → 315) then learned through
+the corrected handler, refreshed immediately to a usable Shield button and
+removed the scroll. The earlier passing CI is not acceptance of the faulty patch.
+
+Mouse activation of Mage Atelier opened the companion panel twice. DOM hit testing
+at the building button's center confirmed the overlapping `iso-character-name`
+for `Expiry retained`. Keyboard activation opened Iris's Town resident panel and
+its shop correctly. A focused CSS priority change for interactive place/road
+buttons is being checked; decorative road captions no longer capture pointer
+events. General label spacing and crowded-world readability remain open.
+
+After reloading the CSS fix, the same Mage Atelier button's center hit itself
+(`z-index: 2`), and an ordinary mouse click opened Iris's Town resident panel.
+The focused obstruction is repaired locally; crowded-label and independent
+acceptance remain open.

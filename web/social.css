@@ -700,6 +700,9 @@
 .iso-label-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .iso-place-label,.iso-road-label,.iso-landmark-label,.iso-character-name,.iso-npc-name,.iso-speech{position:absolute;transform:translate(-50%,-100%);font-family:inherit;white-space:nowrap;pointer-events:auto;border:0;box-shadow:0 3px 9px #51463113;color:#504a38;background:#fff6dfdb;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:750;cursor:pointer;max-width:220px}
 .iso-place-label{font-size:12px;letter-spacing:.02em;border:1px solid #d1b98a80}
+/* A nearby companion name must not intercept a doorway or resource button. */
+.iso-label-layer>button.iso-place-label,.iso-label-layer>button.iso-road-label{z-index:2}
+.iso-label-layer>div.iso-road-label{pointer-events:none}
 .iso-landmark-label{font-size:10px;letter-spacing:.1em;background:transparent;color:#776442;pointer-events:none;text-transform:uppercase}
 .iso-road-label{background:#e6eedbde;color:#526b4f}
 .iso-npc-name{font-size:10px;background:#f8efdabd;color:#797059;padding:2px 7px}

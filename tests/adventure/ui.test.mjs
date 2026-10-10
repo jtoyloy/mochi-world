@@ -14,7 +14,7 @@ class Element {
   close() { this.closed = true; }
   classList = { toggle() {} };
 }
-function fixture(t, changes = {}) {
+function fixture(t, changes = {}, { wrapButtons = false } = {}) {
   const originals = { window: globalThis.window, document: globalThis.document, Option: globalThis.Option };
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
   globalThis.document = { querySelector() { return null; } };
@@ -42,7 +42,16 @@ function fixture(t, changes = {}) {
       return data ? respond(data) : path === "/api/adventure/commerce" ? commerceState : state;
     },
     dialog: () => { const d = new Element("dialog"); dialogs.push(d); return d; },
-    btn: (text, onclick) => Object.assign(new Element("button", text), { onclick }),
+    btn: (text, onclick) => {
+      const control = new Element("button", text);
+      control.onclick = wrapButtons ? async () => {
+        control.disabled = true;
+        try { await onclick(); }
+        catch (error) { notices.push(error.message); }
+        finally { control.disabled = false; }
+      } : onclick;
+      return control;
+    },
     element: (tag, text) => new Element(tag, text),
     notice: (text) => notices.push(text), refresh: async () => {},
   });
@@ -53,7 +62,7 @@ const button = (d, text) => d.children.find((e) => e.tagName === "BUTTON" && e.t
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
 test("learning a spell confirms once and refreshes consumed inventory and learned controls", async t => {
-  const f = fixture(t);
+  const f = fixture(t, {}, { wrapButtons: true });
   f.state.inventory.push({ item_id: "ice-shard", quantity: 1 });
   await f.ui.pack();
   const learn = button(f.dialogs[0], "Learn Ice Shard");
@@ -78,7 +87,7 @@ test("learning a spell confirms once and refreshes consumed inventory and learne
 });
 
 test("rejected spell learning retains its scroll and leaves the control retryable", async t => {
-  const f = fixture(t);
+  const f = fixture(t, {}, { wrapButtons: true });
   f.state.inventory.push({ item_id: "ice-shard", quantity: 1 });
   await f.ui.pack();
   f.setRespond(async () => { throw new Error("Session expired"); });
