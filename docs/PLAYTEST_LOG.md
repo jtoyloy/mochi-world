@@ -156,3 +156,22 @@ passes. Actual 375×812 and 320×740 guide centers hit the guide itself, and a n
 phone mouse click opened the pack. At 320px document width stayed 320px. Viewport
 override was reset. These local checks do not certify physical phones, short
 landscape layouts, every panel or full accessibility.
+
+### Independent continuation and settings samples — 2026-10-10
+
+Independent Chrome review resumed using the existing synthetic `bk_accept_1010`
+and Birch BK after its preserved usage interruption. On `4565e40`, the reviewer
+completed all seven guide checkmarks: starter, companion, dummy, Forest victory
+(18 XP), Softwood, Alder sale and Trading Hall. The sale showed 510 Coins while
+the separate fake token header remained 500. Purchase/fishing/persistence
+extensions are still in progress; this is not complete BK/BL/BM acceptance.
+
+Root's 844×390 sample exposed a HUD/camera corner overlap. Independent source
+review also identified the 320px camera/minimap band exceeding available width.
+Both require compact-layout repair; the earlier guide fix did not resolve them.
+At390×844, Settings opened by keyboard, had labeled fields and scrollable final
+buttons with no horizontal page overflow. Escape closed it but returned focus
+to body, an accessibility defect under repair. Sound volume set to zero through
+the slider and decorative motion switched on both persisted through actual reload
+(slider zero, motion pressed/on). These preference samples do not validate every
+audio cue or full accessibility.

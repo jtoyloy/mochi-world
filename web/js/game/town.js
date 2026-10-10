@@ -197,7 +197,7 @@ export const TOWN_INTERACTIONS = [
     id: "vendor:" + id,
     x: v.x,
     y: v.y,
-    line: "Sell owned resources for funded, capped rewards.",
+    line: "Sell your gathered resources for Coins. No wallet needed.",
   })),
   {
     id: "sit:west",

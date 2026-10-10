@@ -31,3 +31,12 @@ Retained-room session expiry exposed a paused-save contract requiring owner/vers
 checked lease recovery and export access. Complete its browser acceptance before
 independent new-player acceptance and remaining audits. No art, capacity or Cadence
 gate changed.
+
+Later continuation: guide hydration and retained-room expiry/export/recovery passed
+focused review and actual local browser acceptance. Hosted workflow52 at `4565e40`
+passes381 JavaScript/49 Python with zero skips. Independent first-player review
+resumed and completed all seven guide steps, with purchase/fishing/persistence
+extensions underway. Independent UI review approved the learning/label/lifecycle
+fixes and selected compact landscape, narrow camera/map and Escape focus repair
+as the next measured failures. Thornling moving-art review resumed through the
+fixed bundled viewer; its directions and production art acceptance remain provisional.

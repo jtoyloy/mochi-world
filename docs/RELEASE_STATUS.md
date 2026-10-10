@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow 42 passed: 377 JavaScript, 49 Python, zero skips, build/audit/diff checks. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow 52 passed: 381 JavaScript, 49 Python, zero skips, build/audit/diff checks. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -80,8 +80,15 @@ Corrected wrapped learning/pointer priority code `9230403` passed hosted workflo
 audit found the emote panel covering guide controls at 375×812. Measured overlay
 height stacking passed 14 focused geometry/UI checks, build, actual clear guide
 hit targets at 375×812 and 320×740, and narrow-phone guide activation. Phone
-viewport override was reset. New phone source still needs its exact-SHA hosted
-gate and independent review; physical-device/full responsive acceptance remains.
+viewport override was reset. Hosted workflow 52 passed exact
+`4565e40837a2f416b97dc21fc5212bcfa04adda1`: 381 JavaScript, 49 Python, zero skips,
+build, audit (zero reported vulnerabilities) and diff checks. Independent source
+review passed the learning guard, pointer priority and observer lifecycle with 19
+focused checks. It found remaining camera/minimap overlap at 320px and the
+width-only layout skipping short landscape screens; those repairs are in progress.
+The restarted independent new-player browser review completed all seven guide
+steps on that source and is extending purchase, fishing and persistence checks.
+Physical-device/full responsive and final release acceptance remain open.
 
 ## Current integration evidence and limitations
 
