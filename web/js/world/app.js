@@ -1,4 +1,7 @@
 import { mountWorld } from "../game/Game.js";
+import { accountGate } from "./account.js";
+import { accountRecovery } from "./account-recovery.js";
+import { lifeToBlob } from "../storage.js";
 import { tokenCheckout, walletPage, treasuryPage } from "../game/ui/TokenUI.js";
 import { ITEMS, SHOPS, LOCATIONS, DAILY_ACTIVITIES } from "./catalog.js";
 import { portfolioValue } from "../traders/trading.js";
@@ -7,6 +10,7 @@ const app = document.querySelector("#app"),
 let world,
   config,
   currentCleanup = null,
+  accountGateVisible = false,
   routeSerial = Promise.resolve(),
   toastTimer;
 const money = (n) =>
@@ -70,7 +74,12 @@ async function api(path, data) {
       : {},
   );
   const b = await r.json();
-  if (!r.ok) throw new Error(b.error ?? "Unable to open this page");
+  if (!r.ok) {
+    const error = new Error(b.error ?? "Unable to open this page");
+    error.status = r.status;
+    if (r.status === 401) window.dispatchEvent(new Event("mochi:session-expired"));
+    throw error;
+  }
   return b;
 }
 function notice(text) {
@@ -1941,6 +1950,7 @@ async function render() {
   );
 }
 async function performNavigation(path, replace = false) {
+  if (accountGateVisible) return;
   if (currentCleanup) {
     const cleanup = currentCleanup;
     await cleanup();
@@ -2010,9 +2020,22 @@ for (const [title, path] of [
     };
   document.querySelector("#navigation").append(a);
 }
-try {
+async function enterWorld() {
   config = await api("/api/config");
   await refresh();
+  document.querySelector("#navigation").hidden = false;
+  document.querySelector(".account").hidden = false;
+  document.querySelector("#signOut").hidden = !config.authentication;
+  document.querySelector("#signOut").onclick = async () => {
+    const button = document.querySelector("#signOut");
+    button.disabled = true;
+    try {
+      if (currentCleanup) { await currentCleanup(); currentCleanup = null; }
+      await api("/api/auth/logout", {});
+      location.assign("/home");
+    } catch (e) { notice(e.message); }
+    finally { button.disabled = false; }
+  };
   document.querySelector("#devLogin").hidden = !config.development;
   document.querySelector("#devLogin").onclick = () =>
     modal(
@@ -2046,7 +2069,58 @@ try {
     );
   if (location.pathname === "/") history.replaceState({}, "", "/home");
   await render();
+}
+async function showAccountGate() {
+  if (accountGateVisible) return;
+  accountGateVisible = true;
+  // A separate top-layer dialog preserves both React and iframe room panels.
+  // In particular, do not force cleanup while their save cannot authenticate.
+  const gate = node("dialog", "", "account-recovery-dialog");
+  gate.oncancel = (event) => event.preventDefault();
+  const recover = accountRecovery({ ownerId: world?.user?.id,
+    identify: async () => (await api("/api/world")).user.id,
+    cleanup: async () => {
+      if (currentCleanup) { await currentCleanup(); currentCleanup = null; }
+    },
+    enter: async () => {
+      await enterWorld();
+      gate.close(); gate.remove(); accountGateVisible = false;
+    },
+  });
+  try {
+    accountGate(gate, { request: api, recovering: !!currentCleanup, ready: recover,
+      exportRetained: async () => {
+        const rooms = [];
+        function findRooms(frame) {
+          try {
+            if (typeof frame.mochi?.snapshot === "function") rooms.push(frame.mochi);
+            for (let i = 0; i < frame.frames.length; i++) findRooms(frame.frames[i]);
+          } catch { /* A foreign frame cannot hold this same-origin room. */ }
+        }
+        findRooms(window);
+        if (rooms.length !== 1) throw new Error("No single initialized room is available to export. Keep this page open and retry saving.");
+        const life = await rooms[0].snapshot();
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(lifeToBlob(life));
+        link.download = "retained-mochi.mochi";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 4000);
+      },
+    });
+    document.body.append(gate);
+    gate.showModal();
+  } catch (error) {
+    gate.remove(); accountGateVisible = false;
+    throw error;
+  }
+}
+window.addEventListener("mochi:session-expired", () => { showAccountGate().catch((e) => notice(e.message)); });
+try {
+  await enterWorld();
 } catch (e) {
+  if (e.status === 401) {
+    await showAccountGate();
+  } else {
   app.replaceChildren(
     head("The city gates are resting.", e.message),
     node(
@@ -2055,4 +2129,5 @@ try {
       "muted",
     ),
   );
+  }
 }

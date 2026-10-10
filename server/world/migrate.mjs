@@ -21,6 +21,7 @@ try {
     await readFile(new URL("../social/schema.sql", import.meta.url), "utf8"),
   );
   await pool.query(await readFile(new URL("../adventure/schema.sql", import.meta.url), "utf8"));
+  await pool.query(await readFile(new URL("../adventure/commerce-schema.sql", import.meta.url), "utf8"));
   for (const room of ROOMS)
     await pool.query(
       "INSERT INTO world_rooms(id,name,data) VALUES($1,$2,$3) ON CONFLICT(id) DO UPDATE SET name=$2,data=$3",

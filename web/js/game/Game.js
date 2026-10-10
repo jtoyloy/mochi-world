@@ -4,6 +4,9 @@ import { interactionArrived } from "./arrival.js";
 import { TOWN_RESIDENTS } from "./town.js";
 import { ROOMS, EMOTES, PHRASES, plainText, validSegment } from "./model.js";
 import { NavigationService } from "./NavigationService.js";
+import { companionPicker } from "./CompanionUI.js";
+import { observeOverlayLayout, bindOverlayDisclosure } from "./overlay-layout.js";
+import { restoreDialogInvoker } from "./dialog-focus.js";
 const element = (tag, text, cls) => {
   const e = document.createElement(tag);
   if (text) e.textContent = text;
@@ -22,7 +25,12 @@ async function request(path, data) {
       : {},
   );
   const b = await r.json();
-  if (!r.ok) throw new Error(b.error ?? "Please try again");
+  if (!r.ok) {
+    const error = new Error(b.error ?? "Please try again");
+    error.status = r.status;
+    if (r.status === 401) window.dispatchEvent(new Event("mochi:session-expired"));
+    throw error;
+  }
   return b;
 }
 const btn = (text, fn) => {
@@ -31,7 +39,7 @@ const btn = (text, fn) => {
   b.onclick = async () => {
     b.disabled = true;
     try {
-      await fn();
+      await fn(b);
     } catch (e) {
       showNotice(e.message);
     } finally {
@@ -49,7 +57,7 @@ function showNotice(text) {
     toast.className = "";
   }, 5000);
 }
-function dialog(title) {
+function dialog(title, invoker = document.activeElement) {
   const d = element("dialog", "", "world-dialog");
   d.requestClose = async () => d.close();
   d.oncancel = (e) => {
@@ -62,12 +70,13 @@ function dialog(title) {
   document.body.append(d);
   d.showModal();
   d.onclose = () => d.remove();
+  restoreDialogInvoker(d, invoker);
   return d;
 }
 let domainPanel;
-function panel(title, url) {
-  if (domainPanel) return domainPanel(title, url);
-  const d = dialog(title),
+function panel(title, url, invoker = document.activeElement) {
+  if (domainPanel) return domainPanel(title, url, invoker);
+  const d = dialog(title, invoker),
     frame = element("iframe");
   frame.title = title;
   frame.src = url + (url.includes("?") ? "&" : "?") + "panel=1";
@@ -87,6 +96,7 @@ function panel(title, url) {
     }
     d.close();
   };
+  return d;
 }
 export async function mountWorld(
   container,
@@ -102,9 +112,9 @@ export async function mountWorld(
   const top = element("div", null, "world-topbar");
   const roomLabel = element("div", "TOWN SQUARE", "room-label"),
     status = element("span", "Connecting…", "socket-status");
-  const balance = btn("Balance", () => panel("Wallet & currency", "/wallet"));
-  const map = btn("Map", () => {
-    const d = dialog("Where shall we go?"),
+  const balance = btn("Balance", invoker => panel("Wallet & currency", "/wallet", invoker));
+  const map = btn("Map", (invoker) => {
+    const d = dialog("Where shall we go?", invoker),
       grid = element("div", null, "world-map-grid");
     for (const room of ROOMS)
       grid.append(
@@ -117,37 +127,52 @@ export async function mountWorld(
       );
     d.append(grid);
   });
-  const customize = btn("My villager", () => customizeAvatar());
+  const customize = btn("My villager", (invoker) => customizeAvatar(invoker));
   top.append(
     element("a", "mochi WORLD", "world-wordmark"),
     roomLabel,
     status,
     balance,
-    btn("⚙ Settings", () => customizeAvatar()),
+    btn("⚙ Settings", (invoker) => customizeAvatar(invoker)),
   );
   const bottom = element("div", null, "world-dock");
   bottom.append(
     map,
-    btn("Items", async () => {
+    btn("Items", async invoker => {
       await refresh();
       openBackpack({
+        invoker,
         world,
         refresh,
         notice: showNotice,
-        openLegacy: (path) => panel("Your treasures", path),
+        openLegacy: (path, invoker) => panel("Your treasures", path, invoker),
       });
     }),
-    btn("Mochis", () => chooseCompanion()),
-    btn("Friends", () => panel("Friends", "/friends")),
-    btn("Wardrobe", () => customizeAvatar()),
-    btn("Talk", () => talkPanel()),
-    btn("Wallet", () => panel("Wallet & currency", "/wallet")),
+    btn("Mochis", invoker => chooseCompanion(invoker)),
+    btn("Friends", invoker => panel("Friends", "/friends", invoker)),
+    btn("Wardrobe", (invoker) => customizeAvatar(invoker)),
+    btn("Talk", invoker => talkPanel(invoker)),
+    btn("Wallet", invoker => panel("Wallet & currency", "/wallet", invoker)),
   );
   const emotes = element("div", null, "world-emotes");
+  const emoteActions = element("div", null, "world-emote-actions");
+  let emoteDialog = null, cameraDialog = null;
+  function disclose(title, invoker, content, cls, restored) {
+    const d = dialog(title, invoker);
+    d.classList.add(cls);
+    return bindOverlayDisclosure({ dialog: d, invoker, content, restored });
+  }
+  const emoteDisclosure = btn("Emotes & phrases", invoker => {
+    if (!emoteDialog) emoteDialog = disclose("Emotes & phrases", invoker, [emoteActions], "world-emote-dialog", () => { emoteDialog = null; });
+  });
+  emoteDisclosure.className = "world-emote-disclosure";
+  emoteDisclosure.setAttribute("aria-haspopup", "dialog");
+  emoteDisclosure.setAttribute("aria-expanded", "false");
+  emotes.append(emoteDisclosure, emoteActions);
   for (const [key, text] of Object.entries(EMOTES)) {
     const b = btn(text, () => bridge.send("emote", { emote: key }));
     b.setAttribute("aria-label", key + " emote");
-    emotes.append(b);
+    emoteActions.append(b);
   }
   const phrase = element("select");
   phrase.setAttribute("aria-label", "Predefined public phrase");
@@ -157,17 +182,25 @@ export async function mountWorld(
     if (phrase.value) bridge.send("phrase", { phrase: phrase.value });
     phrase.value = "";
   };
-  emotes.append(phrase);
+  emoteActions.append(phrase);
+  const cameraDisclosure = btn("Camera & map", invoker => {
+    const content = [shell.querySelector(".iso-controls"), shell.querySelector(".iso-minimap")].filter(Boolean);
+    if (!cameraDialog && content.length) cameraDialog = disclose("Camera & map", invoker, content, "world-camera-dialog", () => { cameraDialog = null; });
+  });
+  cameraDisclosure.className = "world-camera-disclosure";
+  cameraDisclosure.setAttribute("aria-haspopup", "dialog");
+  cameraDisclosure.setAttribute("aria-expanded", "false");
   const hint = element(
     "div",
     "Click a path to wander. Your companion will come along.",
     "world-hint",
   );
-  shell.append(top, canvas, hint, emotes, bottom);
+  shell.append(top, canvas, hint, emotes, bottom, cameraDisclosure);
   container.append(shell);
   let socket,
     reconnectTimer,
     closed = false,
+    tearingDown = false,
     conversation = null,
     currentRoom = startRoom,
     players = new Map(),
@@ -320,7 +353,8 @@ export async function mountWorld(
           bridge.scene.audio.cue("pet");
         }
         if (type === "npcDialogue") {
-          const d = dialog(data.name + " · Town resident"),
+          const invoker = document.activeElement;
+          const d = dialog(data.name + " · Town resident", invoker),
             portrait = element("div", "✦", "npc-portrait");
           portrait.style.background =
             TOWN_RESIDENTS.find((n) => n.id === data.id)?.color ?? "#9db7ad";
@@ -332,14 +366,14 @@ export async function mountWorld(
               btn("Browse shop", () => {
                 d.close();
                 bridge.scene.audio.cue("bell");
-                openInteraction("shop:" + data.shop);
+                openInteraction("shop:" + data.shop, invoker);
               }),
             );
           if (data.vendor)
             d.append(
               btn("Sell resources", () => {
                 d.close();
-                return adventure.vendor(data.vendor);
+                return adventure.vendor(data.vendor, invoker);
               }),
             );
           if (data.id === "pip")
@@ -487,7 +521,7 @@ export async function mountWorld(
       }
       const d = dialog(p.avatar.display_name);
       d.append(
-        btn("Profile", () => panel("Player profile", "/user/" + p.username)),
+        btn("Profile", invoker => panel("Player profile", "/user/" + p.username, invoker)),
         btn("Wave", () => bridge.send("emote", { emote: "wave" })),
       );
       const friend = world.friends.friends.find((f) => f.id === id);
@@ -504,18 +538,18 @@ export async function mountWorld(
       );
       if (friend) {
         d.append(
-          btn("Gift", () => panel("Gift an item", "/items/inventory")),
+          btn("Gift", invoker => panel("Gift an item", "/items/inventory", invoker)),
           btn("Visit home", () => {
             bridge.join("home:" + p.username);
             d.close();
           }),
         );
       }
-      d.append(btn("Shop", () => panel("Player shop", "/shop/" + p.username)));
+      d.append(btn("Shop", invoker => panel("Player shop", "/shop/" + p.username, invoker)));
       if (p.companion)
         d.append(
-          btn("Inspect Mochi", () =>
-            panel("Mochi profile", "/mochi/" + p.companion.id),
+          btn("Inspect Mochi", invoker =>
+            panel("Mochi profile", "/mochi/" + p.companion.id, invoker),
           ),
         );
     },
@@ -527,7 +561,8 @@ export async function mountWorld(
         panel("Mochi profile", "/mochi/" + id);
         return;
       }
-      const d = dialog(players.get(owner)?.companion?.name ?? "Your Mochi");
+      const invoker = document.activeElement;
+      const d = dialog(players.get(owner)?.companion?.name ?? "Your Mochi", invoker);
       for (const [kind, label] of [
         ["pet", "Pet"],
         ["feed", "Feed"],
@@ -538,9 +573,9 @@ export async function mountWorld(
         d.append(
           btn(label, () => {
             d.close();
-            if (kind === "talk") talkPanel();
-            else if (kind === "profile") panel("Mochi profile", "/mochi/" + id);
-            else care(kind);
+            if (kind === "talk") return talkPanel(invoker);
+            else if (kind === "profile") return panel("Mochi profile", "/mochi/" + id, invoker);
+            else return care(kind, invoker);
           }),
         );
     },
@@ -553,12 +588,17 @@ export async function mountWorld(
       : world.currency.network;
     return world;
   }
-  function openInteraction(id) {
+  function openInteraction(id, invoker = document.activeElement) {
     if (id.startsWith("vendor:")) {
-      adventure.vendor(id.slice(7)).catch((e) => showNotice(e.message));
+      adventure.vendor(id.slice(7), invoker).catch((e) => showNotice(e.message));
       return;
     }
     if (id.startsWith("shop:")) {
+      const vendorId = id.slice(5);
+      if (["blacksmith", "mage", "apothecary", "charms"].includes(vendorId)) {
+        adventure.shop(vendorId, invoker).catch((e) => showNotice(e.message));
+        return;
+      }
       const shops = {
         foods: "mochi-foods",
         toys: "toy-box",
@@ -571,7 +611,7 @@ export async function mountWorld(
         apothecary: "apothecary",
         charms: "charms",
       };
-      panel("Market stall", "/explore/market/" + shops[id.slice(5)]);
+      panel("Market stall", "/explore/market/" + shops[id.slice(5)], invoker);
       return;
     }
     const paths = {
@@ -588,8 +628,8 @@ export async function mountWorld(
       rest: null,
       play: null,
     };
-    if (id === "rest") care("sleep");
-    else if (id === "play") care("play");
+    if (id === "rest") care("sleep", invoker);
+    else if (id === "play") care("play", invoker);
     else if (id === "sit" || id.startsWith("sit:")) {
       bridge.send("emote", { emote: "sit" });
       const self = players.get(bridge.selfId);
@@ -598,9 +638,9 @@ export async function mountWorld(
         bridge.scene.players.get(bridge.selfId)?.root,
         "Taking a little break.",
       );
-    } else if (paths[id]) panel("Explore", paths[id]);
+    } else if (paths[id]) panel("Explore", paths[id], invoker);
   }
-  async function care(kind) {
+  async function care(kind, invoker = document.activeElement) {
     await refresh();
     const id = world.activeMochi?.id;
     if (!id) {
@@ -622,7 +662,7 @@ export async function mountWorld(
         );
         return;
       }
-      const d = dialog(kind === "feed" ? "Choose a snack" : "Choose a toy");
+      const d = dialog(kind === "feed" ? "Choose a snack" : "Choose a toy", invoker);
       for (const i of choices)
         d.append(
           btn(`${i.item.name} · ${i.quantity}`, async () => {
@@ -640,30 +680,12 @@ export async function mountWorld(
     await request("/api/care", { mochiId: id, kind, itemId });
     await refresh();
   }
-  async function chooseCompanion() {
-    await refresh();
-    const d = dialog("Your Mochis");
-    if (!world.mochis.length)
-      d.append(
-        element("p", "Your first companion is waiting."),
-        btn("Adopt a Mochi", () => panel("Adopt", "/pets")),
-      );
-    for (const pet of world.mochis)
-      d.append(
-        btn(
-          `${pet.name}${pet.id === world.activeMochi?.id ? " · with you" : " · at home / resting / paper trading"}`,
-          async () => {
-            await request("/api/active", { mochiId: pet.id });
-            await refresh();
-            d.close();
-          },
-        ),
-      );
-  }
-  async function customizeAvatar() {
+  const chooseCompanion = companionPicker({ refresh, request, dialog, element, btn, panel,
+    isClosed: () => closed || tearingDown, notice: showNotice });
+  async function customizeAvatar(invoker) {
     const avatar = await request("/api/avatar");
     await refresh();
-    const d = dialog("Your adventurer"),
+    const d = dialog("Your adventurer", invoker),
       form = element("form");
     const name = element("input");
     name.value = avatar.display_name;
@@ -750,6 +772,11 @@ export async function mountWorld(
       const pre = element("pre", JSON.stringify(diagnostic, null, 2));
       info.append(pre);
     }
+    if (config.authentication)
+      d.append(btn("Sign out on all devices", async () => {
+        await request("/api/auth/logout", {});
+        location.assign("/home");
+      }));
     if (config.development) {
       const loginInput = element("input");
       loginInput.placeholder = "Development username";
@@ -763,19 +790,21 @@ export async function mountWorld(
       );
     }
     d.append(
-      btn("Original pet home", () => panel("Mochi home", "/room")),
-      btn("Treasury transparency", () => panel("Treasury", "/treasury")),
+      btn("Original pet home", invoker => panel("Mochi home", "/room", invoker)),
+      btn("Treasury transparency", invoker => panel("Treasury", "/treasury", invoker)),
     );
   }
-  async function talkPanel() {
+  async function talkPanel(invoker = document.activeElement) {
     await refresh();
     if (!world.activeMochi) {
       showNotice("Choose a companion first.");
       return;
     }
-    openConversation({ pet: world.activeMochi, bridge, refresh });
+    openConversation({ pet: world.activeMochi, bridge, refresh, invoker });
   }
   adventure = adventureUI({
+    chooseCompanion,
+    openTokenShop: (id, invoker) => panel("Optional token market", "/explore/market/" + id, invoker),
     shell,
     bridge,
     request,
@@ -804,10 +833,22 @@ export async function mountWorld(
     bridge.send("presence", { status: document.hidden ? "away" : "online" });
   document.addEventListener("visibilitychange", activity);
   await refresh();
+  const stopOverlayLayout = observeOverlayLayout(shell, globalThis.ResizeObserver, {
+    onCompactChange(compact) {
+      if (!compact) { emoteDialog?.close(); cameraDialog?.close(); }
+      shell.classList.toggle("compact-overlays", compact);
+    },
+  });
   const refreshTimer = setInterval(() => refresh().catch(() => {}), 30000);
   return async () => {
-    for (const d of document.querySelectorAll(".world-dialog"))
-      await d.requestClose?.();
+    tearingDown = true;
+    try {
+      for (const d of document.querySelectorAll(".world-dialog"))
+        await d.requestClose?.();
+    } catch (error) {
+      tearingDown = false;
+      throw error;
+    }
     closed = true;
     clearInterval(refreshTimer);
     clearTimeout(reconnectTimer);
@@ -815,6 +856,7 @@ export async function mountWorld(
     window.removeEventListener("message", panelMessage);
     socket?.close();
     adventure.destroy();
+    stopOverlayLayout();
     game.destroy(true);
     document.body.classList.remove("playing-world");
     for (const d of document.querySelectorAll(".world-dialog")) d.close();

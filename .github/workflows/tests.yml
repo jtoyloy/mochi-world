@@ -20,6 +20,8 @@ jobs:
       TEST_DATABASE_URL: postgresql://mochi:mochi_test@127.0.0.1:5432/mochi_test
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -30,6 +32,12 @@ jobs:
       - run: npm ci
       - run: python -m venv .venv
       - run: .venv/bin/python -m pip install numpy pytest web/brains/traders-0.74.0-v1/cadence_net-0.74.0-py3-none-any.whl
+      - name: Initialize dedicated test database and catalog
+        run: node server/world/migrate.mjs
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
       - run: npm run build
       - run: npm test
       - run: npm run test:brain
+      - run: npm audit --omit=dev
+      - run: git diff --check

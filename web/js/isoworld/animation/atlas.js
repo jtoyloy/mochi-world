@@ -69,7 +69,7 @@ export function loadAnimationAtlas(texture, set, metadata) {
       );
     return { walk: frames("walk"), idle: frames("idle") };
   });
-  return { set, texture, metadata, rows };
+  return { set, texture, metadata, rows, ownedTextures: rows.flatMap(row => [...row.walk, ...row.idle]) };
 }
 // Action art is optional: follow explicit aliases then a compatible idle pose.
 export function stateFrames(art, state, direction) {
@@ -106,6 +106,15 @@ export function validateActionAtlas(m, set) {
     throw Error("Missing required action state");
   if (!Number.isFinite(m.height) || m.height <= 0)
     throw Error("Invalid action scale");
+  if (m.idleFrameDurations !== undefined) {
+    if (!Array.isArray(m.idleFrameDurations)) throw Error("Invalid idle frame durations");
+    validateSet({ ...set, idleFrameDurations: m.idleFrameDurations,
+      idleSeconds: m.idleFrameDurations.reduce((sum, duration) => sum + duration, 0) });
+  }
+  if (m.contactFrames !== undefined && (
+    !m.contactFrames || typeof m.contactFrames !== "object" || Array.isArray(m.contactFrames) ||
+    Object.entries(m.contactFrames).some(([state, frame]) => !m.states[state] || !Number.isInteger(frame) || frame < 0 || frame > 7)
+  )) throw Error("Invalid painted contact frame");
   // Reuse the locomotion trim/pivot contract for every frame.
   for (const f of m.frames)
     validateAtlas(
@@ -153,6 +162,7 @@ export function loadActionAtlas(texture, set, m, baseArt) {
   return {
     ...baseArt,
     texture,
+    ownedTextures: frames,
     set,
     metadata: {
       ...baseArt.metadata,

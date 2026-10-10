@@ -70,3 +70,21 @@ Accepted prompt set:
 
 An attempted full 8×8 action-sheet cleanup retained fishing overlap and was
 rejected. Only inspected source siblings and their fixed-scale exports ship.
+
+## Foliage v2 — 2026-10-06
+
+Built-in imagegen; `props-v1.png` used only as a style reference. Saved project
+source: `foliage-v2.png`; source PNG and generated alpha remain unchanged.
+`foliage-v2.json` registers unequal measured source regions through transparent
+columns 892–921, split at 907. Equal half-width slicing would clip leaves.
+
+Final prompt:
+
+> Use case: stylized-concept. Asset type: original painterly isometric browser-game foliage atlas, replacing cropped tree sprites in Mochi World. Reference image 1 is STYLE REFERENCE ONLY: match its warm detailed gouache oak and flowering tree rendering, sage/olive foliage, cream highlights, rich brown twisted trunks, upper-left daylight, elevated orthographic isometric camera. Generate a brand-new transparent atlas with exactly TWO distinct full trees side by side in equal square cells: LEFT a mature broad rounded oak with leafy branches, exposed roots, small natural irregular rocks and a few cream wildflowers at its feet; RIGHT a mature pink-blossom tree with similarly grounded rich trunk, roots, small rocks and a few petals. Both entire crowns, all peripheral leaves, trunk, roots and feet must be completely inside their own cells with generous transparent padding on EVERY side, at least 8% cell padding. No overlapping cells. Bottom root ground plane at same height, trunk ground contact centered in each cell. Natural asymmetrical silhouette edges, individually readable leaves and branches, no rectangular canopy clipping, no opaque background rectangle, no colored matte/halo, no checkerboard painted into the image, no white background, no landscape or turf tile beyond the small irregular root island. These are game sprite cutouts with genuine alpha transparency. Cohesive premium hand-painted look, not photoreal and not vector. No buildings, characters, labels, captions, logos, watermark, border or grid lines. Wide composition, two equal cells, keep both trees equal apparent size and wholly contained.
+
+The output did not meet the requested equal-cell padding. Registration therefore
+uses measured whole silhouettes rather than pretending the requested grid was
+produced. Static validation confirms zero alpha>16 pixels at source-region
+boundaries, no opaque pixels outside the registered trims and complete contained
+crowns. This is a candidate world-art cleanup; final runtime visual acceptance
+and the broader authored animation state inventory remain separate gates.

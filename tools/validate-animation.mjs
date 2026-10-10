@@ -1,12 +1,19 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { PNG } from "pngjs";
-import { ANIMATION_SETS } from "../web/js/isoworld/animation/registry.js";
+import { ANIMATION_SETS, MOB_ACTION_SHEETS } from "../web/js/isoworld/animation/registry.js";
 import {
   validateAtlas,
   validateActionAtlas,
 } from "../web/js/isoworld/animation/atlas.js";
 import { auditPixels } from "../web/js/isoworld/animation/pixel-audit.js";
 let bytes = 0;
+const manifest = JSON.parse(readFileSync("web/assets/isoworld/manifest.json"));
+for (const metadataFile of Object.values(MOB_ACTION_SHEETS)) {
+  const metadata = JSON.parse(readFileSync("web/assets/isoworld/" + metadataFile));
+  const registered = manifest.atlases[metadata.image]?.metadata;
+  if (!(Array.isArray(registered) ? registered : [registered]).includes(metadataFile))
+    throw Error("Mob atlas missing manifest registration: " + metadataFile);
+}
 for (const set of ANIMATION_SETS) {
   const root = "web/assets/isoworld/",
     m = JSON.parse(readFileSync(root + set.texture.replace(".png", ".json"))),
@@ -46,10 +53,10 @@ for (let i = 0; i < 2; i++) {
 }
 
 for (const file of readdirSync("web/assets/isoworld").filter((f) =>
-  /-(actions|reactions)-v1\.json$|-(fishing|cleanup|combat)-v2\.json$/.test(f),
+  /-(actions|reactions)-v[12]\.json$|-(fishing|cleanup|combat)-v2\.json$/.test(f),
 )) {
   const m = JSON.parse(readFileSync("web/assets/isoworld/" + file));
-  const id = file.replace(/-(actions|reactions)-v1\.json$|-(fishing|cleanup|combat)-v2\.json$/, "");
+  const id = file.replace(/-(actions|reactions)-v[12]\.json$|-(fishing|cleanup|combat)-v2\.json$/, "");
   const set = ANIMATION_SETS.find((s) => s.id === id) ?? {
     ...ANIMATION_SETS[2],
     id,

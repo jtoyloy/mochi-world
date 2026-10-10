@@ -94,7 +94,7 @@ export class AdventureService {
       this.multiplayer.store.players.get(e.player.userId) === e.player &&
       e.player.room === e.room && e.player.companion?.id === e.petId &&
       e.state.target === e.mob.id && e.state.hp > 0 && e.state.petHp > 0 &&
-      this.instances.get(e.room)?.mobs.get(e.mob.id) === e.mob && e.mob.hp > 0;
+      this.instances.get(e.room)?.mobs.get(e.mob.spawnKey ?? e.mob.id) === e.mob && e.mob.hp > 0;
   }
   async completeExecution(userId, s) {
     if (!s.battleExecution) return true;
@@ -755,11 +755,12 @@ export class AdventureService {
     }
     if (!inserted) return;
     Object.assign(s, next);
-    await this.progress(p.userId, s, "kills", m.type === "dummy" ? 0 : 1);
+    await this.progress(p.userId, s, m.type === "dummy" ? "trainingDummy" : "kills");
     await this.save(p.userId, s);
     this.effect(p, "victory", { targetId: m.id, loot, xp: m.xp });
   }
-  async petAction(p, s, m, action) {
+  async petAction(p, s, m, action, onExecuted = null) {
+    onExecuted?.();
     if (!BATTLE_ACTIONS.includes(action) || !p.companion || s.petHp <= 0)
       return;
     const now = this.service.now(),
@@ -864,7 +865,6 @@ export class AdventureService {
     const now = this.service.now(),
       dt = Math.min(0.6, Math.max(0, (now - this.tickAt) / 1000));
     this.tickAt = now;
-    const decisions = [], settlements = [], presentations = [], decisionRooms = new Set();
     for (const [key, room] of this.instances)
       if (!this.multiplayer.store.rooms.has(key)) this.instances.delete(key);
     // Persist idle cached state before eviction. Combat settlement retains its owner
@@ -880,25 +880,78 @@ export class AdventureService {
         if (!this.multiplayer.store.players.has(userId)) this.states.delete(userId);
       }
     }
+    // Room-local lanes retain owner -> pet -> next owner ordering. A slow room
+    // must not prevent independent rooms from submitting their native decisions.
+    const rooms = new Map();
     for (const p of this.multiplayer.store.players.values()) {
       if (!p.room) continue;
-      // Shared room combat keeps its previous ordering; independent rooms can batch.
-      if (decisionRooms.has(p.room)) {
-        for (const apply of decisions.splice(0)) await apply();
-        decisionRooms.clear();
-      }
-      decisionRooms.add(p.room);
-      const s = await this.state(p.userId);
-      if (s.pendingBattleRequest || s.battleExecution) continue;
-      await this.advancePoison(p, s, now);
-      if (s.activePet !== (p.companion?.id ?? null)) {
-        s.petVitals ??= {};
-        if (s.activePet) {
-          if (s.inBattle)
-            await this.battleDecision(
-              s.activePet,
-              p.userId,
-              [
+      if (!rooms.has(p.room)) rooms.set(p.room, []);
+      rooms.get(p.room).push(p);
+    }
+    const lanes = await Promise.allSettled([...rooms].map(async ([roomKey, players]) => {
+      const settlements = [], presentations = [];
+      try {
+        for (const p of players) {
+          // Departure can occur while another actor in this room is settling.
+          if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
+          const s = await this.state(p.userId);
+          if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
+          if (s.pendingBattleRequest || s.battleExecution) continue;
+          await this.advancePoison(p, s, now);
+          if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
+          if (s.activePet !== (p.companion?.id ?? null)) {
+            s.petVitals ??= {};
+            if (s.activePet) {
+              if (s.inBattle)
+                await this.battleDecision(
+                  s.activePet,
+                  p.userId,
+                  [
+                    s.hp / s.stats.maxHp,
+                    s.petHp / 80,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    Number(s.petHp <= 0),
+                    0,
+                    1,
+                  ],
+                  battleReward(s.outcome ?? {}),
+                  { finish: true, outcome: s.outcome ?? {} },
+                );
+              s.petVitals[s.activePet] = {
+                hp: s.petHp,
+                specialAt: s.petSpecialAt ?? 0,
+              };
+            }
+            s.activePet = p.companion?.id ?? null;
+            s.petHp = s.petVitals[s.activePet]?.hp ?? 80;
+            s.petSpecialAt = s.petVitals[s.activePet]?.specialAt ?? 0;
+            s.outcome = {};
+            s.petDecisionAt = 0;
+            s.inBattle = false;
+            this.encounters.delete(p.userId);
+            await this.save(p.userId, s);
+          }
+          if (p.roomId === "exchange" && !s.progress.tradingHall) {
+            await this.progress(p.userId, s, "tradingHall");
+            await this.save(p.userId, s);
+          }
+          if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
+          const room = this.instance(p);
+          let m = this.mob(p, s.target);
+          if (!m) {
+            s.target = null;
+            if (s.inBattle && p.companion) {
+              const obs = [
                 s.hp / s.stats.maxHp,
                 s.petHp / 80,
                 0,
@@ -915,157 +968,132 @@ export class AdventureService {
                 Number(s.petHp <= 0),
                 0,
                 1,
-              ],
-              battleReward(s.outcome ?? {}),
-              { finish: true, outcome: s.outcome ?? {} },
-            );
-          s.petVitals[s.activePet] = {
-            hp: s.petHp,
-            specialAt: s.petSpecialAt ?? 0,
-          };
-        }
-        s.activePet = p.companion?.id ?? null;
-        s.petHp = s.petVitals[s.activePet]?.hp ?? 80;
-        s.petSpecialAt = s.petVitals[s.activePet]?.specialAt ?? 0;
-        s.outcome = {};
-        s.petDecisionAt = 0;
-        s.inBattle = false;
-        this.encounters.delete(p.userId);
-        await this.save(p.userId, s);
-      }
-      if (p.roomId === "exchange" && !s.progress.tradingHall) {
-        await this.progress(p.userId, s, "tradingHall");
-        await this.save(p.userId, s);
-      }
-      const room = this.instance(p);
-      let m = this.mob(p, s.target);
-      if (!m) {
-        s.target = null;
-        if (s.inBattle && p.companion) {
-          const obs = [
-            s.hp / s.stats.maxHp,
-            s.petHp / 80,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            Number(s.petHp <= 0),
-            0,
-            1,
-          ];
-          const closed = await this.battleDecision(
-            p.companion.id,
-            p.userId,
-            obs,
-            battleReward(s.outcome),
-            { finish: true, outcome: s.outcome },
-          );
-          if (!closed.unavailable) {
-            s.outcome = {};
-            s.inBattle = false;
-            this.encounters.delete(p.userId);
+              ];
+              const closed = await this.battleDecision(
+                p.companion.id,
+                p.userId,
+                obs,
+                battleReward(s.outcome),
+                { finish: true, outcome: s.outcome },
+              );
+              if (!closed.unavailable) {
+                s.outcome = {};
+                s.inBattle = false;
+                this.encounters.delete(p.userId);
+              }
+              await this.save(p.userId, s);
+            }
+            if (p.roomId === "town" || p.roomId === "yard") {
+              s.hp = clampHealth(s.hp + dt * 4, s.stats.maxHp);
+              s.mp = clampHealth(s.mp + dt * 3, s.stats.maxMp);
+              s.petHp = clampHealth(s.petHp + dt * 6, 80);
+            }
           }
-          await this.save(p.userId, s);
-        }
-        if (p.roomId === "town" || p.roomId === "yard") {
-          s.hp = clampHealth(s.hp + dt * 4, s.stats.maxHp);
-          s.mp = clampHealth(s.mp + dt * 3, s.stats.maxMp);
-          s.petHp = clampHealth(s.petHp + dt * 6, 80);
-        }
-      }
-      if (m && s.hp > 0) {
-        await this.ownerAttack(p, s, m, now);
-        if (
-          m.hp > 0 &&
-          p.companion &&
-          s.petHp > 0 &&
-          (s.petDecisionAt ?? 0) <= now
-        ) {
-          s.petDecisionAt = now + 1400;
-          s.inBattle = true;
-          s.now = now;
-          s.nearbyAllies = [
-            ...(this.multiplayer.store.rooms.get(p.room)?.players.values() ??
-              []),
-          ].filter((other) => other !== p && dist(p, other) < 300).length;
-          s.enemyCount = [...room.mobs.values()].filter(
-            (x) => x.hp > 0 && dist(p, x) < 350,
-          ).length;
-          const encounter = this.executionContext(p, s, m);
-          const requestId = encounter.id + ":" + (++encounter.sequence);
-          const outcome = structuredClone(s.outcome ?? {});
-          s.outcome = {};
-          const observation = battleObservation(s, p, m, p.companion);
-          const options = {outcome, requestId, executionRequired:true,
-            ability:s.favoriteAbility ?? null, deadlineAt:Date.now()+1400};
-          s.pendingBattleRequest = {petId:encounter.petId, observation,
-            reward:battleReward(outcome), options};
-          await this.save(p.userId,s);
-          const pending = this.battleDecision(encounter.petId, p.userId,
-            observation, battleReward(outcome), options);
-          pending.catch(() => {}); // Awaited during application; attach rejection handling now.
-          decisions.push(async () => {
-            const answer = await pending;
-            s.ownerDamage = 0;
-            s.petDamage = 0;
-            s.damageDealt = 0;
-            if (!answer.unavailable) {
-              s.pendingBattleRequest = null;
-              const live = this.executionLive(encounter);
-              // The body executes synchronously up to its first await. Its resulting
-              // feedback belongs to this motor even if departure occurs during a hit save.
-              if (live) await this.petAction(p, s, m, answer.action);
-              s.battleExecution = {petId:encounter.petId, execution:live ? "ack" : "cancel",
-                requestId:requestId + ":execution", expectedVersion:answer.version};
-              const acknowledged = this.completeExecution(p.userId, s);
-              acknowledged.catch(() => {});
-              settlements.push(async () => {
-                await acknowledged;
-                if (!this.executionLive(encounter))
-                  await this.closeEncounter(p.userId, s, encounter.invalid ?? "stale-response");
-                await this.save(p.userId, s);
-              });
-            } else await this.save(p.userId,s);
-            this.multiplayer.send(p, "battleDecision", {
-              mochiId: encounter.petId,
-              ...answer,
+          if (m && s.hp > 0) {
+            await this.ownerAttack(p, s, m, now);
+            if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
+            if (
+              m.hp > 0 &&
+              p.companion &&
+              s.petHp > 0 &&
+              (s.petDecisionAt ?? 0) <= now
+            ) {
+              s.petDecisionAt = now + 1400;
+              s.inBattle = true;
+              s.now = now;
+              s.nearbyAllies = [
+                ...(this.multiplayer.store.rooms.get(p.room)?.players.values() ??
+                  []),
+              ].filter((other) => other !== p && dist(p, other) < 300).length;
+              s.enemyCount = [...room.mobs.values()].filter(
+                (x) => x.hp > 0 && dist(p, x) < 350,
+              ).length;
+              const encounter = this.executionContext(p, s, m);
+              const requestId = encounter.id + ":" + (++encounter.sequence);
+              const outcome = structuredClone(s.outcome ?? {});
+              s.outcome = {};
+              const observation = battleObservation(s, p, m, p.companion);
+              const options = {outcome, requestId, executionRequired:true,
+                ability:s.favoriteAbility ?? null, deadlineAt:Date.now()+1400};
+              s.pendingBattleRequest = {petId:encounter.petId, observation,
+                reward:battleReward(outcome), options};
+              await this.save(p.userId,s);
+              const pending = this.battleDecision(encounter.petId, p.userId,
+                observation, battleReward(outcome), options);
+              pending.catch(() => {}); // Awaited during application; attach rejection handling now.
+              await (async () => {
+                const answer = await pending;
+                s.ownerDamage = 0;
+                s.petDamage = 0;
+                s.damageDealt = 0;
+                if (!answer.unavailable) {
+                  s.pendingBattleRequest = null;
+                  const live = this.executionLive(encounter);
+                  // Own a recoverable cancellation before entering the motor. The
+                  // production motor marks execution before its first body mutation,
+                  // so a failed hit save still credits the action the body executed.
+                  s.battleExecution = {petId:encounter.petId, execution:"cancel",
+                    requestId:requestId + ":execution", expectedVersion:answer.version};
+                  if (live) {
+                    try {
+                      await this.petAction(p, s, m, answer.action, () => {
+                        s.battleExecution.execution = "ack";
+                      });
+                    } catch (error) {
+                      await this.save(p.userId, s);
+                      throw error;
+                    }
+                  }
+                  const acknowledged = this.completeExecution(p.userId, s);
+                  acknowledged.catch(() => {});
+                  settlements.push(async () => {
+                    await acknowledged;
+                    if (!this.executionLive(encounter))
+                      await this.closeEncounter(p.userId, s, encounter.invalid ?? "stale-response");
+                    await this.save(p.userId, s);
+                  });
+                } else await this.save(p.userId,s);
+                this.multiplayer.send(p, "battleDecision", {
+                  mochiId: encounter.petId,
+                  ...answer,
+                });
+              })();
+            }
+          }
+          presentations.push(async () => {
+            this.multiplayer.send(p, "adventureState", {
+              player: {
+                hp: s.hp,
+                mp: s.mp,
+                petHp: s.petHp,
+                stats: s.stats,
+                target: s.target,
+                progress: structuredClone(s.progress),
+                levels: Object.fromEntries(
+                  Object.entries(s.xp).map(([k, v]) => [k, levelFor(v)]),
+                ),
+                cooldowns: s.cooldowns,
+              },
+              serverTime: now,
             });
+            if (now - (s.savedAt ?? 0) > 10000) {
+              s.savedAt = now;
+              await this.save(p.userId, s);
+            }
           });
         }
+      } finally {
+        // Distinct users own these receipts. Drain all started work even when a
+        // motor, another lane or a save fails, before releasing the queue barrier.
+        const receipts = await Promise.allSettled(settlements.map(settle => settle()));
+        const failedReceipt = receipts.find(receipt => receipt.status === "rejected");
+        if (failedReceipt) throw failedReceipt.reason;
       }
-      presentations.push(async () => {
-        this.multiplayer.send(p, "adventureState", {
-          player: {
-            hp: s.hp,
-            mp: s.mp,
-            petHp: s.petHp,
-            stats: s.stats,
-            target: s.target,
-            levels: Object.fromEntries(
-              Object.entries(s.xp).map(([k, v]) => [k, levelFor(v)]),
-            ),
-            cooldowns: s.cooldowns,
-          },
-          serverTime: now,
-        });
-        if (now - (s.savedAt ?? 0) > 10000) {
-          s.savedAt = now;
-          await this.save(p.userId, s);
-        }
-      });
-    }
-    // Submit independent brains together; apply authoritative motors in player order.
-    // Enemies remain paused through the batch, as in the previous awaited tick.
-    for (const apply of decisions) await apply();
-    for (const settle of settlements) await settle();
-    for (const present of presentations) await present();
+      for (const present of presentations) await present();
+    }));
+    const failed = lanes.find(lane => lane.status === "rejected");
+    if (failed) throw failed.reason;
+    // Enemies remain paused until all room motors and durable receipts complete.
     await this.advanceEnemies(now, dt);
   }
   async advancePoison(p, s, now) {

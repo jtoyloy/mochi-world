@@ -7,6 +7,8 @@ import {
 } from "../game/locomotion/core.js";
 import {
   ANIMATION_SETS,
+  MOB_ACTION_SHEETS,
+  mobAnimationSet,
   AnimationPlayback,
   directionIndex,
 } from "./animation/registry.js";
@@ -18,6 +20,8 @@ import {
   stateMirrored,
 } from "./animation/atlas.js";
 import { animationCommands } from "./animation/events.js";
+import { loadFoliage } from "./animation/foliage.js";
+import { WorldTextures } from "./animation/texture-lifecycle.js";
 import { AppearanceCache } from "./animation/appearance.js";
 import { openAnimationViewer } from "./animation/viewer.js";
 import { VENDORS, COMBAT_VENDORS, RESOURCE_NODES } from "../game/adventure.js";
@@ -77,7 +81,8 @@ export class IsometricWorld {
     this.residents = [];
     this.labels = [];
     this.props = [];
-    this.textures = [];
+    this.textureOwnership = new WorldTextures();
+    this.textures = this.textureOwnership.textures;
     this.room = "";
     this.camera = { x: 0, y: 0 };
     this.zoom = 0.7;
@@ -86,8 +91,20 @@ export class IsometricWorld {
     this.frameTimes = [];
     this.elapsed = 0;
     this.dead = false;
+    this.reducedMotion = false;
+    this.motionOverride = null;
   }
   async init() {
+    this.motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const savedMotion = window.localStorage.getItem("mochi-reduced-motion");
+    this.motionOverride = savedMotion === null ? null : savedMotion === "true";
+    this.reducedMotion = this.motionOverride ?? this.motionPreference.matches;
+    this.onMotionPreference = (event) => {
+      if (this.motionOverride !== null) return;
+      this.reducedMotion = event.matches;
+      this.updateMotionControl();
+    };
+    this.motionPreference.addEventListener("change", this.onMotionPreference);
     this.loading = el("div", "iso-loading", "Opening the gates…");
     this.host.append(this.loading);
     this.app = new Application();
@@ -114,6 +131,7 @@ export class IsometricWorld {
           Assets.load("/assets/isoworld/" + n + "-v1.png"),
         ),
       );
+    if (this.dead) return;
     this.terrain = terrain;
     this.atlases = {
       buildings: this.split(buildings, 4, 2),
@@ -121,16 +139,29 @@ export class IsometricWorld {
       adventure: this.split(adventure, 4, 2),
       characters: this.split(characters, 4, 4),
     };
+    try {
+      const response = await fetch("/assets/isoworld/foliage-v2.json");
+      if (response.ok) {
+        const metadata = await response.json();
+        const texture = await Assets.load("/assets/isoworld/" + metadata.image);
+        this.textureOwnership.shared(texture);
+        const foliage = this.textureOwnership.atlas(loadFoliage(texture, metadata));
+        // Explicit source rectangles keep both crowns inside their own cutout.
+        [this.atlases.props[0], this.atlases.props[1]] = foliage.ownedTextures;
+      }
+    } catch (error) {
+      console.warn("Foliage art fallback:", error.message);
+    }
     this.animationAtlases = await Promise.all(
       ANIMATION_SETS.map(async (set) => {
         const texture = await Assets.load("/assets/isoworld/" + set.texture);
-        this.textures.push(texture);
+        this.textureOwnership.shared(texture);
         const metadata = await (
           await fetch(
             "/assets/isoworld/" + set.texture.replace(".png", ".json"),
           )
         ).json();
-        return loadAnimationAtlas(texture, set, metadata);
+        return this.textureOwnership.atlas(loadAnimationAtlas(texture, set, metadata));
       }),
     );
     this.actionAtlases = [];
@@ -147,9 +178,9 @@ export class IsometricWorld {
             if (!response.ok) continue;
             const m = await response.json();
             const texture = await Assets.load("/assets/isoworld/" + m.image);
-            if (!this.textures.includes(texture)) this.textures.push(texture);
+            this.textureOwnership.shared(texture);
             actionTextures.add(texture);
-            art = loadActionAtlas(texture, set, m, art);
+            art = this.textureOwnership.atlas(loadActionAtlas(texture, set, m, art));
             this.actionAtlases[i] = art;
           } catch (error) {
             console.warn(`Action art fallback: ${set.id}`, error.message);
@@ -159,25 +190,27 @@ export class IsometricWorld {
     );
     this.mobAnimationAtlases = {};
     await Promise.all(
-      ["slime", "boar"].map(async (id) => {
+      Object.entries(MOB_ACTION_SHEETS).map(async ([id, metadataFile]) => {
         try {
-          const m = await (
-            await fetch(`/assets/isoworld/${id}-actions-v1.json`)
-          ).json();
+          const response = await fetch(`/assets/isoworld/${metadataFile}`);
+          if (!response.ok) throw Error(`Missing optional atlas: ${response.status}`);
+          const m = await response.json();
           const texture = await Assets.load("/assets/isoworld/" + m.image);
-          if (!this.textures.includes(texture)) this.textures.push(texture);
+          this.textureOwnership.shared(texture);
           actionTextures.add(texture);
-          const set = { ...ANIMATION_SETS[2], id, strideDistance: 90 };
+          const set = mobAnimationSet(id, m);
           const base = {
             rows: set.directions.map(() => ({})),
             metadata: { heights: { idle: m.height, walk: m.height } },
           };
-          this.mobAnimationAtlases[id] = loadActionAtlas(texture, set, m, base);
+          this.mobAnimationAtlases[id] = this.textureOwnership.atlas(loadActionAtlas(texture, set, m, base));
         } catch (error) {
           console.warn(`Mob art fallback: ${id}`, error.message);
         }
       }),
     );
+    // A route may unmount while asynchronous sheets are loading.
+    if (this.dead) return;
     this.actionTextureBytes = [...actionTextures].reduce(
       (n, t) => n + t.width * t.height * 4,
       0,
@@ -197,7 +230,7 @@ export class IsometricWorld {
         source: t.source,
         frame: new Rectangle(f.x, f.y, f.width, f.height * 0.72),
       });
-      this.textures.push(seated);
+      this.textureOwnership.own(seated);
       return seated;
     });
     this.root = new Container();
@@ -302,11 +335,11 @@ export class IsometricWorld {
       }
     ctx.putImageData(pixels, 0, 0);
     const source = Texture.from(canvas);
-    this.textures.push(source);
+    this.textureOwnership.own(source, true);
     for (const frame of frames) {
       const t = new Texture({ source: source.source, frame });
       out.push(t);
-      this.textures.push(t);
+      this.textureOwnership.own(t);
     }
     return out;
   }
@@ -364,6 +397,7 @@ export class IsometricWorld {
     const spec = roomSpec(this.room),
       town = this.room.split(":")[0] === "town";
     this.roomTitle.textContent = spec.name;
+    this.minimap.setAttribute("aria-label", `${spec.name} overview. Click to travel to a path.`);
     this.subtitle.textContent = town
       ? "Wander slowly. Stay a little."
       : spec.subtitle;
@@ -1143,6 +1177,7 @@ export class IsometricWorld {
             walk: Array(8).fill(g.texture),
           })),
         };
+        const art = this.mobAnimationAtlases?.[m.type] ?? fallback;
         e = {
           g,
           bar,
@@ -1152,8 +1187,8 @@ export class IsometricWorld {
           label,
           m,
           gait: new Gait(90),
-          playback: new AnimationPlayback(set),
-          art: this.mobAnimationAtlases?.[m.type] ?? fallback,
+          playback: new AnimationPlayback(art.set),
+          art,
         };
         e.sourceHeight = e.art.metadata.heights.idle;
         this.mobEntities.set(m.id, e);
@@ -1351,7 +1386,7 @@ export class IsometricWorld {
       f.g.position.set(q.x, q.y - 30);
       f.g
         .clear()
-        .circle(0, 0, (1 - left) * 50 + 8)
+        .circle(0, 0, this.reducedMotion ? 12 : (1 - left) * 50 + 8)
         .stroke({
           color: f.kind.includes("spell") ? 0xa09dd0 : 0xe9c57c,
           width: 3,
@@ -1369,6 +1404,12 @@ export class IsometricWorld {
     a.bubble.remove();
     this.actors.delete(key);
   }
+  updateMotionControl() {
+    if (!this.motionControl) return;
+    this.motionControl.setAttribute("aria-pressed", String(this.reducedMotion));
+    this.motionControl.textContent = this.reducedMotion ? "◎" : "◌";
+    this.motionControl.title = `Reduced decorative motion: ${this.reducedMotion ? "on" : "off"}`;
+  }
   makeControls() {
     this.title = el("div", "iso-room-title");
     this.roomTitle = el("strong", "", "Town Square");
@@ -1383,6 +1424,8 @@ export class IsometricWorld {
     const zoom = (text, delta) => {
       const b = el("button", "", text);
       b.type = "button";
+      b.setAttribute("aria-label", delta < 0 ? "Zoom out" : "Zoom in");
+      b.title = delta < 0 ? "Zoom out" : "Zoom in";
       b.onclick = () =>
         (this.zoom = Math.max(0.35, Math.min(1.3, this.zoom + delta)));
       this.controls.append(b);
@@ -1390,6 +1433,7 @@ export class IsometricWorld {
     zoom("−", -0.1);
     zoom("+", 0.1);
     const center = el("button", "", "⌂");
+    center.type = "button";
     center.setAttribute("aria-label", "Recenter on your character");
     center.onclick = () => {
       const a = this.actors.get("player:" + this.bridge.selfId);
@@ -1405,6 +1449,17 @@ export class IsometricWorld {
     sound.setAttribute("aria-label", "Sound volume");
     sound.oninput = () => this.scene.audio.setVolume(Number(sound.value));
     this.controls.append(sound);
+    this.motionControl = el("button", "", "◌");
+    this.motionControl.type = "button";
+    this.motionControl.setAttribute("aria-label", "Reduce decorative motion");
+    this.motionControl.onclick = () => {
+      this.reducedMotion = !this.reducedMotion;
+      this.motionOverride = this.reducedMotion;
+      window.localStorage.setItem("mochi-reduced-motion", String(this.reducedMotion));
+      this.updateMotionControl();
+    };
+    this.updateMotionControl();
+    this.controls.append(this.motionControl);
     this.host.append(this.controls);
     this.minimap = document.createElement("canvas");
     this.minimap.width = 180;
@@ -1513,11 +1568,16 @@ export class IsometricWorld {
           const m = await (
             await fetch("/assets/isoworld/locomotion-v1.json")
           ).json();
+          if (this.dead) return;
+          this.textureOwnership.shared(texture);
           this.legacyWalk = walkFramesFromAtlas(
             this.atlases.characters,
             texture,
             m,
           );
+          for (const row of this.legacyWalk.rows)
+            for (const direction of row)
+              for (const frame of direction.walk) this.textureOwnership.own(frame);
         }
         this.legacyComparison = legacy.value === "Legacy prototype";
         this.frameTimes.length = 0;
@@ -1598,7 +1658,7 @@ export class IsometricWorld {
           )
         ).json();
         const t = await Assets.load("/assets/isoworld/" + m.image);
-        return loadAnimationAtlas(t, set, m);
+        return this.textureOwnership.atlas(loadAnimationAtlas(t, set, m));
       }),
     )
       .then((a) => {
@@ -1741,6 +1801,9 @@ export class IsometricWorld {
       )
         a.playback.clearAction();
       a.playback.update(a.gait, speed, dt, requested);
+      // Keep locomotion and accepted action timing intact; quiet decorative idles.
+      if (this.reducedMotion && !a.playback.action && a.playback.state === "idle")
+        a.playback.frame = 0;
       if (
         a.row < 2 &&
         ["talk", "gesture"].includes(a.playback.state) &&
@@ -1810,12 +1873,12 @@ export class IsometricWorld {
         a.s.alpha = blend;
       }
       // Overlay cosmetics share the body phase/direction; world/UI anchors stay stable.
-      const secondary = moving
+      const secondary = this.reducedMotion ? 0 : moving
         ? Math.sin(a.playback.phase * Math.PI * 2)
         : Math.sin(a.playback.idleTime * 1.3) * 0.2;
       a.cosmetics.rotation = secondary * 0.018;
       a.cosmetics.x = secondary * 1.2;
-      a.cape.rotation =
+      a.cape.rotation = this.reducedMotion ? 0 :
         Math.sin(a.playback.phase * Math.PI * 2 - 0.5) *
         (moving ? 0.025 : 0.004);
       if (
@@ -1845,9 +1908,9 @@ export class IsometricWorld {
       } else if (a.type === "player") this.motionMetrics.remoteSpeed = speed;
       const emote = this.scene.emotes.get(a.data.userId),
         reaction = this.scene.reactions.get(a.data.id);
-      if (emote && now - emote.at < 3500 && emote.kind === "dance")
+      if (!this.reducedMotion && emote && now - emote.at < 3500 && emote.kind === "dance")
         a.s.rotation = Math.sin(this.elapsed * 7) * 0.09;
-      if (reaction && now - reaction.at < 1800)
+      if (!this.reducedMotion && reaction && now - reaction.at < 1800)
         a.s.y -= Math.abs(Math.sin(this.elapsed * 6)) * 5;
       a.transitionSprite.y = a.s.y;
       a.cosmetics.y = a.s.y;
@@ -1980,7 +2043,7 @@ export class IsometricWorld {
         q.x < 0 ||
         q.x > viewportWidth ||
         q.y < 95 ||
-        (q.y < 185 && Math.abs(q.x - viewportWidth * 0.5) < 180) ||
+        (q.y - label.height * this.zoom < 220 && Math.abs(q.x - viewportWidth * 0.5) < 180) ||
         q.y > viewportHeight - (viewportWidth < 650 ? 255 : 145);
     }
     for (const p of this.props) {
@@ -2017,7 +2080,7 @@ export class IsometricWorld {
       }
     }
     if (this.ripple) {
-      const t = this.elapsed % 2.5;
+      const t = this.reducedMotion ? 0 : this.elapsed % 2.5;
       this.ripple
         .clear()
         .ellipse(0, 0, 24 + t * 11, 9 + t * 4)
@@ -2125,7 +2188,9 @@ export class IsometricWorld {
     }
   }
   destroy() {
+    if (this.dead) return;
     this.dead = true;
+    this.motionPreference?.removeEventListener("change", this.onMotionPreference);
     this.appearanceCache?.destroy();
     if (this.renderProbe) {
       this.app.renderer.runners.prerender.remove(this.renderProbe);
@@ -2135,8 +2200,8 @@ export class IsometricWorld {
     }
     this.unsub?.();
     this.app?.ticker.remove(this.tickFn);
-    this.clearMap();
-    this.app?.destroy(true, { children: true });
+    if (this.ground) this.clearMap();
+    if (this.app?.renderer) this.app.destroy(true, { children: true });
     for (const e of [
       this.ui,
       this.title,
@@ -2146,6 +2211,6 @@ export class IsometricWorld {
       this.loading,
     ])
       e?.remove();
-    for (const t of this.textures) t.destroy(false);
+    this.textureOwnership.destroy();
   }
 }

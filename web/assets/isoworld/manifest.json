@@ -136,7 +136,27 @@
     "mob-actions-v1.png": {
       "columns": 8,
       "rows": 8,
+      "metadata": ["slime-actions-v1.json", "boar-actions-v1.json"],
       "provenance": "Original built-in imagegen, 2026-10-06; repository reference art only. Provisional single SE view; registration and reuse in companion action JSON. See docs/ACTION_ANIMATION_DELIVERY.md."
+    },
+    "thornling-actions-v2.png": {
+      "metadata": "thornling-actions-v2.json",
+      "authoredFrames": 40,
+      "states": ["idle", "walk", "attack", "hurt", "defeat"],
+      "sourceRegions": "Explicit unequal rectangles through measured transparent gutters; nominal 8x5 cells are not crop boundaries.",
+      "provenance": "Original built-in imagegen, 2026-10-10; project-owned adventure-v1.png identity/style reference only. Padding revision; source PNG alpha/pixels preserved. See thornling-actions-v2.md.",
+      "classification": "USABLE_PROVISIONAL",
+      "limitations": "Only SE authored; SW/NW mirrored, NE reused. Live motion, foot contact, loop continuity and full direction acceptance remain open."
+    },
+    "foliage-v2.png": {
+      "registration": "foliage-v2.json",
+      "items": [
+        "oak",
+        "blossom-tree"
+      ],
+      "sourceRegions": "Explicit unequal rectangles cut through a measured transparent gutter; no equal-cell slicing.",
+      "provenance": "Original built-in imagegen, 2026-10-06; props-v1.png used only as a project style reference. Source alpha preserved.",
+      "classification": "USABLE_PROVISIONAL"
     }
   },
   "runtime": {

@@ -55,14 +55,27 @@ players spread to nearby valid anchors; declared companion follow spacing is
 ## Optimization and animation handoff
 
 Share atlas sources, cap DPR at2, draw ground once, cull offscreen entities and
-update NPC targets at2–5Hz. Current PNGs total roughly9MB; texture compression,
-versioned HTTP caching and offline atlas packing remain production priorities.
-Ship a compressed format with PNG fallback only after server MIME/cache support
-and target-device QA. Current human sprites have four facing poses with bob/sway;
-there are no full skeletal/walk-frame sets. Cosmetic layers retain owned slot
-contracts; base style currently combines hair and skin rather than independent
-sliders. Future artist atlas should provide separate body/hair/clothing layers,
-8 directions and 6–8 walk frames plus idle/emote/care states.
+update NPC targets at2–5Hz. Atlas allocation and measured client budgets are in
+[PERFORMANCE.md](PERFORMANCE.md); the original small static-sheet budget predates
+full-body/action atlases. Texture compression, versioned HTTP caching and offline
+packing remain production priorities. Ship a compressed format with PNG fallback
+only after server MIME/cache support and target-device QA.
+
+Primary humans and beasts now use full-body painted walk/idle atlases with eight
+frame slots per authored diagonal view; the eight logical facing sectors map to
+four current painted views. Walk consumes actual distance. Trot, several action
+states and rear views still have disclosed reuse/mirrors; current art is provisional,
+not artist-final eight-direction animation. Cosmetic appearance sheets are cached
+and bounded; actions retain compatible attachment fallbacks. See
+[ANIMATION_DELIVERY.md](ANIMATION_DELIVERY.md) and
+[ACTION_ART_AUDIT.md](ACTION_ART_AUDIT.md) for exact remaining art.
+
+Optional `foliage-v2.png` uses explicit source rectangles in `foliage-v2.json`
+rather than equal-cell extraction. Its generated transparency is unchanged.
+`tools/validate-foliage.mjs` checks contained silhouettes and transparent cell
+boundaries; actual world QA remains a separate acceptance gate. Asset ownership
+is document-shared for Assets PNGs and World-local for frame views/generated
+canvases, so remount releases only its own resources.
 
 ## Historical 3D asset pipeline
 

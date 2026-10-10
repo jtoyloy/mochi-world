@@ -86,6 +86,13 @@ export class ResourceRewards {
         [userId, this.id],
       )
     ).rows;
+    // Claimed/paid sales remain onboarding evidence after their balance is cleared.
+    const sales = (
+      await this.pool.query(
+        "SELECT count(*)::integer AS wood_sales FROM game_reward_accruals WHERE user_id=$1 AND source='woodcutting'",
+        [userId],
+      )
+    ).rows[0];
     const claims = (
       await this.pool.query(
         "SELECT id,amount_raw,status,created_at FROM game_reward_claims WHERE user_id=$1 AND treasury_id=$2 ORDER BY created_at DESC LIMIT 10",
@@ -100,6 +107,7 @@ export class ResourceRewards {
     ).rows[0];
     return {
       claims,
+      woodSales: sales?.wood_sales ?? 0,
       mock: this.mock,
       decimals: this.service.tokenConfig?.decimals ?? 6,
       prices: this.prices,
