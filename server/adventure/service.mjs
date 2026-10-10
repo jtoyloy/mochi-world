@@ -1068,6 +1068,7 @@ export class AdventureService {
                 petHp: s.petHp,
                 stats: s.stats,
                 target: s.target,
+                progress: structuredClone(s.progress),
                 levels: Object.fromEntries(
                   Object.entries(s.xp).map(([k, v]) => [k, levelFor(v)]),
                 ),
