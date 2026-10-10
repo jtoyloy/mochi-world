@@ -4,6 +4,7 @@ import { interactionArrived } from "./arrival.js";
 import { TOWN_RESIDENTS } from "./town.js";
 import { ROOMS, EMOTES, PHRASES, plainText, validSegment } from "./model.js";
 import { NavigationService } from "./NavigationService.js";
+import { companionPicker } from "./CompanionUI.js";
 const element = (tag, text, cls) => {
   const e = document.createElement(tag);
   if (text) e.textContent = text;
@@ -92,6 +93,7 @@ function panel(title, url) {
     }
     d.close();
   };
+  return d;
 }
 export async function mountWorld(
   container,
@@ -173,6 +175,7 @@ export async function mountWorld(
   let socket,
     reconnectTimer,
     closed = false,
+    tearingDown = false,
     conversation = null,
     currentRoom = startRoom,
     players = new Map(),
@@ -650,26 +653,8 @@ export async function mountWorld(
     await request("/api/care", { mochiId: id, kind, itemId });
     await refresh();
   }
-  async function chooseCompanion() {
-    await refresh();
-    const d = dialog("Your Mochis");
-    if (!world.mochis.length)
-      d.append(
-        element("p", "Your first companion is waiting."),
-        btn("Adopt a Mochi", () => panel("Adopt", "/pets")),
-      );
-    for (const pet of world.mochis)
-      d.append(
-        btn(
-          `${pet.name}${pet.id === world.activeMochi?.id ? " · with you" : " · at home / resting / paper trading"}`,
-          async () => {
-            await request("/api/active", { mochiId: pet.id });
-            await refresh();
-            d.close();
-          },
-        ),
-      );
-  }
+  const chooseCompanion = companionPicker({ refresh, request, dialog, element, btn, panel,
+    isClosed: () => closed || tearingDown, notice: showNotice });
   async function customizeAvatar() {
     const avatar = await request("/api/avatar");
     await refresh();
@@ -823,8 +808,14 @@ export async function mountWorld(
   await refresh();
   const refreshTimer = setInterval(() => refresh().catch(() => {}), 30000);
   return async () => {
-    for (const d of document.querySelectorAll(".world-dialog"))
-      await d.requestClose?.();
+    tearingDown = true;
+    try {
+      for (const d of document.querySelectorAll(".world-dialog"))
+        await d.requestClose?.();
+    } catch (error) {
+      tearingDown = false;
+      throw error;
+    }
     closed = true;
     clearInterval(refreshTimer);
     clearTimeout(reconnectTimer);

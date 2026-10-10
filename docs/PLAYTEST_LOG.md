@@ -27,3 +27,23 @@ After migrating the dedicated database with `server/world/migrate.mjs`, an
 authenticated request to `/api/adventure/commerce` returned the same account,
 `currency: "Coins"`, 500 starting Coins, inventory, four shops and two buyers.
 The server log remained free of commerce relation errors during that check.
+
+## Adoption handoff — 2026-10-10
+
+Local mock environment as above; synthetic account `adoption_1010`.
+The first new-player run exposed an empty companion picker that remained stale
+after adoption. The repaired handler closes that picker before opening adoption
+and reloads server-owned companions when the adoption panel closes.
+
+Browser verification: opened the empty Mochis picker, selected “Adopt a Mochi,”
+adopted the first available companion, closed adoption and observed a fresh
+picker showing “Mochi · with you.” Selecting that companion closed the picker;
+the first-journey panel recorded both pack and companion steps, then traveled to
+the Training Yard. The handoff passed independent source review, including the
+guard against reopening panels during world teardown. Four handler tests cover
+the handoff and late refresh completion/rejection; the build passed.
+
+The complete new-player journey remains open. The first Training Yard arrival
+lacked an interactive dummy label; reconnecting and traveling again exposed it.
+Targeting moved the body toward the dummy, but combat progression has not yet
+been verified. These observations remain under investigation, not acceptance.
