@@ -14,7 +14,7 @@
 | R08 | Production wallet/reconciliation/legal review | Fixtures exist; actual funded execution/credentials/legal decisions external; no real-funds testing |
 | R09 | Production recovery/deployment/alerts and staging smoke not validated | Private backup/guarded restore pass 20 focused tests; owned local restore, migration, brain load/save, Coins replay and restart passed. Failed first backup remains recorded. Offsite/encryption/disaster timing, staging and alerts remain. Hosted workflow 42 passed at `de54734` (377 JS, 49 Python, zero skips) |
 | R10 | Equipment/supplies/gather timers UX defects | Audit found rejected slot offers, missing consumable controls and obsolete timers; handler fixes integrated and bounded checks pass; full browser acceptance remains |
-| R11 | Audio/settings/accessibility/responsive completeness | Scope and per-control evidence required; reduced motion integrated; persistent settings/audio and broader acceptance open |
+| R11 | Audio/settings/accessibility/responsive completeness | Phone emotes covered the guide; measured panel stacking passed local 375×812/320×740 hit-target and activation checks plus bounded tests. Physical devices, short landscape, full panels/accessibility and independent acceptance remain open |
 | R12 | World label collisions obstruct interactions/readability | At Iris, the Mage Atelier button's center hit the companion name and opened its panel twice. Pointer-priority repair passed actual center-hit and mouse-open checks; broader spacing, crowded labels and independent acceptance remain open |
 
 ## EXTERNAL_DEPENDENCIES

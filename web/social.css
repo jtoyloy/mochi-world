@@ -731,3 +731,9 @@ div.iso-landmark-label {
 
 /* Beginner guidance stays readable on narrow adventure HUDs. */
 .adventure-guidance {display:block;width:100%;max-width:100%;margin-top:5px;padding:5px 9px;border:1px solid #c7b895;border-radius:8px;background:#f4ecd7;color:#5b513f;font-size:11px;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:700px){
+  .world-emotes{bottom:var(--world-emotes-bottom,100px)}
+  .adventure-hud{bottom:var(--world-hud-bottom,185px)}
+  .adventure-hotbar{flex-wrap:wrap;justify-content:center}
+  .iso-controls,.iso-minimap{bottom:var(--world-controls-bottom,263px)}
+}

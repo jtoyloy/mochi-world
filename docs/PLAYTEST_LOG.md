@@ -143,3 +143,16 @@ After reloading the CSS fix, the same Mage Atelier button's center hit itself
 (`z-index: 2`), and an ordinary mouse click opened Iris's Town resident panel.
 The focused obstruction is repaired locally; crowded-label and independent
 acceptance remain open.
+
+### Wrapped phone overlay correction — 2026-10-10
+
+At 375×812 the emote panel covered the journey-guide button: DOM hit testing its
+center returned `world-emotes`. The new local overlay observer measures dock,
+emote and Adventure HUD heights, reserves eight-pixel gaps between them, and
+positions camera/minimap controls above the HUD. Wrapped hotbar controls remain
+inside their panel. Resize and teardown remove the phone offsets on desktop.
+Two bounded geometry/observer checks and twelve Adventure UI checks pass; build
+passes. Actual 375×812 and 320×740 guide centers hit the guide itself, and a narrow
+phone mouse click opened the pack. At 320px document width stayed 320px. Viewport
+override was reset. These local checks do not certify physical phones, short
+landscape layouts, every panel or full accessibility.

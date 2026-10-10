@@ -75,6 +75,14 @@ pending. World label hit testing also found the companion name intercepting Mage
 Atelier mouse clicks; R12 records the focused pointer-priority repair and broader
 layout gap.
 
+Corrected wrapped learning/pointer priority code `9230403` passed hosted workflow
+50; previous faulty learning attempt remains documented. Subsequent local phone
+audit found the emote panel covering guide controls at 375×812. Measured overlay
+height stacking passed 14 focused geometry/UI checks, build, actual clear guide
+hit targets at 375×812 and 320×740, and narrow-phone guide activation. Phone
+viewport override was reset. New phone source still needs its exact-SHA hosted
+gate and independent review; physical-device/full responsive acceptance remains.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.

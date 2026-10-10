@@ -5,6 +5,7 @@ import { TOWN_RESIDENTS } from "./town.js";
 import { ROOMS, EMOTES, PHRASES, plainText, validSegment } from "./model.js";
 import { NavigationService } from "./NavigationService.js";
 import { companionPicker } from "./CompanionUI.js";
+import { observeOverlayLayout } from "./overlay-layout.js";
 const element = (tag, text, cls) => {
   const e = document.createElement(tag);
   if (text) e.textContent = text;
@@ -806,6 +807,7 @@ export async function mountWorld(
     bridge.send("presence", { status: document.hidden ? "away" : "online" });
   document.addEventListener("visibilitychange", activity);
   await refresh();
+  const stopOverlayLayout = observeOverlayLayout(shell);
   const refreshTimer = setInterval(() => refresh().catch(() => {}), 30000);
   return async () => {
     tearingDown = true;
@@ -823,6 +825,7 @@ export async function mountWorld(
     window.removeEventListener("message", panelMessage);
     socket?.close();
     adventure.destroy();
+    stopOverlayLayout();
     game.destroy(true);
     document.body.classList.remove("playing-world");
     for (const d of document.querySelectorAll(".world-dialog")) d.close();
