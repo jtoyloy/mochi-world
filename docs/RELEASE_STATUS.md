@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow 58 passed: 391 JavaScript, 49 Python, zero skips, build/audit/diff checks. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow66 passed:402 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -180,6 +180,19 @@ and a private local ZIP preserve failure evidence. The next harness revision
 keeps all seven cases, time limits, overflow/hit/actionability checks and the DPR2
 preferences test; viewport cases use DPR1 and expose offending dimensions.
 No application layout change is justified until those measurements resolve it.
+
+Diagnostic workflow66 passed exact `7a88cdd7ebc88232903d77184de410ed8eb2f03c`:
+402 JavaScript,49 Python,zero skips and all seven browser tests in2.4minutes,
+with build/audit/diff checks. Its scope is DPR1 functional layouts at the six
+declared viewports plus DPR2 settings/density/persistence/focus. Run64 remains a
+failed DPR2 software-rendering sample, not a client performance pass. Physical
+devices, sustained scenes, React panels and complete failure/social journeys remain.
+
+Source review then found a separate notice-expiry defect: Game.showNotice removes
+the toast class after5seconds but retains its text, unlike the page notice helper.
+That can move expired text into normal document flow. A real Talk-without-companion
+notice expiry regression is being verified before the app fix; no layout gate is
+weakened to accept remaining text.
 
 ## Current integration evidence and limitations
 

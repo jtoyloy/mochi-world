@@ -164,6 +164,12 @@ for (const [width, height, compact] of [
       await page.getByRole("button", { name: "Zoom in", exact: true }).click();
       await page.getByRole("button", { name: "Zoom out", exact: true }).click();
       await page.getByRole("button", { name: "wave emote", exact: true }).click();
+      if (width === 1280) {
+        await page.getByRole("button", { name: "Talk", exact: true }).click();
+        await expect(page.locator("#toast")).toHaveText("Choose a companion first.");
+        await expect(page.locator("#toast")).toBeEmpty({ timeout: 10_000 });
+        await worldTargets(page);
+      }
       return;
     }
     const emotes = page.getByRole("button", { name: "Emotes & phrases", exact: true });
