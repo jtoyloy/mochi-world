@@ -152,6 +152,16 @@ overlay/focus checks pass, including a wider-modal/narrower-world regression;
 independent source review approved the shortcut, nested focus target and layout
 cache guard. Actual nested-modal and WebGL browser verification remains pending.
 
+Hosted workflow 60 passed settings source
+`f2a3e847badcf85e4b07c1244a05a7577adb91ea`: 401 JavaScript, 49 Python, zero skips,
+build, audit (zero vulnerabilities), diff. Workflow 62 passed Settings shortcut
+source `ba791e423a47ef842b6cb1c8c19c713de474f05e`: 402 JavaScript, 49 Python,
+zero skips, build, audit (zero vulnerabilities), diff. A hosted browser smoke is being
+prepared to verify functional controls without restarting unsafe local work.
+It will not replace physical-device, sustained performance, WAN or final staging
+acceptance. Playwright is pinned as a development dependency; browser downloads
+and execution are confined to the hosted runner during this safety interruption.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.
