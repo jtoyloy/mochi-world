@@ -29,7 +29,7 @@ export default defineConfig({
     browserName: "chromium",
     baseURL: "http://127.0.0.1:8789",
     viewport: { width: 1280, height: 720 },
-    deviceScaleFactor: 2,
+    deviceScaleFactor: 1,
     actionTimeout: 10_000,
     navigationTimeout: 20_000,
     screenshot: "only-on-failure",

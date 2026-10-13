@@ -162,6 +162,25 @@ It will not replace physical-device, sustained performance, WAN or final staging
 acceptance. Playwright is pinned as a development dependency; browser downloads
 and execution are confined to the hosted runner during this safety interruption.
 
+Hosted workflow64 at `7e7eb2466396c1d220341749b287043c1c081af4` passed build,
+402 JavaScript/49 Python tests with zero skips, audit and diff checks, then failed
+the new browser gate: one preferences test passed, four viewport tests failed,
+and two did not run before the unchanged five-minute suite timeout. The passing
+test verified real Standard2×→Low1×→reload→Standard2× canvas density, preserved
+logical viewport, motion/mute retention, restored volume and nested Settings focus.
+This is scoped hosted functional evidence, not full AQ/AR acceptance.
+
+All four failed viewport cases reached the post-disclosure resize to1920×1080
+before failing. Independent trace reviews found 3–4× slower trial clicks and
+roughly1–4-second frame intervals at DPR2 software rendering, with no recorded
+pointer interception. The768 overflow predicate recorded only false, so its
+actual failing dimension is unknown. Artifact11859286017/digest
+`a31b1846b055371b36e4e5ef86cd4e9208f77b282609a107ba5cb908d4ee204c`
+and a private local ZIP preserve failure evidence. The next harness revision
+keeps all seven cases, time limits, overflow/hit/actionability checks and the DPR2
+preferences test; viewport cases use DPR1 and expose offending dimensions.
+No application layout change is justified until those measurements resolve it.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.

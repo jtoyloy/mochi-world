@@ -50,62 +50,66 @@ async function density(page, value) {
   }).toBe(true);
 }
 
-test("authenticated preferences restore focus, density, motion and remembered sound", async ({ page }) => {
-  await register(page);
-  const { settings, invoker } = await openPreferences(page);
-  const controls = cameraDialog(page);
-  const quality = controls.getByLabel("Graphics quality", { exact: true });
-  await expect(quality).toHaveValue("standard");
-  await expect(controls.getByRole("status").filter({ hasText: /^Standard · 2× pixel density · display refresh/ })).toBeVisible();
-  await density(page, 2);
-  const standard = await canvasSize(page);
-  await quality.selectOption("low");
-  await expect(controls.getByRole("status").filter({ hasText: /^Low power · 1× pixel density · 30 FPS cap/ })).toBeVisible();
-  await density(page, 1);
-  const low = await canvasSize(page);
-  expect(low.width).toBe(standard.width);
-  expect(low.height).toBe(standard.height);
-  expect(low.backingWidth).toBeLessThan(standard.backingWidth);
-  const motion = controls.getByRole("button", { name: "Reduce decorative motion", exact: true });
-  const originalMotion = await motion.getAttribute("aria-pressed");
-  expect(originalMotion).toMatch(/^(true|false)$/);
-  const rememberedMotion = String(originalMotion !== "true");
-  await motion.click();
-  await expect(motion).toHaveAttribute("aria-pressed", rememberedMotion);
+test.describe("high-density preferences", () => {
+  test.use({ deviceScaleFactor: 2 });
 
-  const volume = controls.getByRole("slider", { name: "Sound volume", exact: true });
-  await volume.focus();
-  await volume.press("Home");
-  await volume.press("ArrowRight");
-  await volume.press("ArrowRight");
-  const rememberedVolume = Number(await volume.inputValue());
-  expect(rememberedVolume).toBeGreaterThan(0);
-  await controls.getByRole("button", { name: "Mute sound", exact: true }).click();
-  await expect(volume).toHaveValue("0");
-  await page.reload();
-  await ready(page);
-  await openPreferences(page);
-  await expect(quality).toHaveValue("low");
-  await expect(controls.getByRole("status").filter({ hasText: /^Low power · 1× pixel density · 30 FPS cap/ })).toBeVisible();
-  await density(page, 1);
-  expect(await canvasSize(page)).toEqual(low);
-  await expect(motion).toHaveAttribute("aria-pressed", rememberedMotion);
-  await quality.selectOption("standard");
-  await expect(controls.getByRole("status").filter({ hasText: /^Standard · 2× pixel density · display refresh/ })).toBeVisible();
-  await density(page, 2);
-  expect(await canvasSize(page)).toEqual(standard);
-  await expect(volume).toHaveValue("0");
-  const unmute = controls.getByRole("button", { name: "Unmute sound", exact: true });
-  await expect(unmute).toHaveAttribute("aria-pressed", "true");
-  await unmute.click();
-  expect(Number(await volume.inputValue())).toBe(rememberedVolume);
-  await expect(controls.getByRole("button", { name: "Mute sound", exact: true })).toHaveAttribute("aria-pressed", "false");
+  test("authenticated preferences restore focus, density, motion and remembered sound", async ({ page }) => {
+    await register(page);
+    const { settings, invoker } = await openPreferences(page);
+    const controls = cameraDialog(page);
+    const quality = controls.getByLabel("Graphics quality", { exact: true });
+    await expect(quality).toHaveValue("standard");
+    await expect(controls.getByRole("status").filter({ hasText: /^Standard · 2× pixel density · display refresh/ })).toBeVisible();
+    await density(page, 2);
+    const standard = await canvasSize(page);
+    await quality.selectOption("low");
+    await expect(controls.getByRole("status").filter({ hasText: /^Low power · 1× pixel density · 30 FPS cap/ })).toBeVisible();
+    await density(page, 1);
+    const low = await canvasSize(page);
+    expect(low.width).toBe(standard.width);
+    expect(low.height).toBe(standard.height);
+    expect(low.backingWidth).toBeLessThan(standard.backingWidth);
+    const motion = controls.getByRole("button", { name: "Reduce decorative motion", exact: true });
+    const originalMotion = await motion.getAttribute("aria-pressed");
+    expect(originalMotion).toMatch(/^(true|false)$/);
+    const rememberedMotion = String(originalMotion !== "true");
+    await motion.click();
+    await expect(motion).toHaveAttribute("aria-pressed", rememberedMotion);
 
-  await controls.getByRole("button", { name: "Close", exact: true }).click();
-  await expect(invoker).toBeFocused();
-  await expect(invoker).toHaveAttribute("aria-expanded", "false");
-  await settings.getByRole("button", { name: "Close", exact: true }).click();
-  await expect(page.getByRole("button", { name: "⚙ Settings", exact: true })).toBeFocused();
+    const volume = controls.getByRole("slider", { name: "Sound volume", exact: true });
+    await volume.focus();
+    await volume.press("Home");
+    await volume.press("ArrowRight");
+    await volume.press("ArrowRight");
+    const rememberedVolume = Number(await volume.inputValue());
+    expect(rememberedVolume).toBeGreaterThan(0);
+    await controls.getByRole("button", { name: "Mute sound", exact: true }).click();
+    await expect(volume).toHaveValue("0");
+    await page.reload();
+    await ready(page);
+    await openPreferences(page);
+    await expect(quality).toHaveValue("low");
+    await expect(controls.getByRole("status").filter({ hasText: /^Low power · 1× pixel density · 30 FPS cap/ })).toBeVisible();
+    await density(page, 1);
+    expect(await canvasSize(page)).toEqual(low);
+    await expect(motion).toHaveAttribute("aria-pressed", rememberedMotion);
+    await quality.selectOption("standard");
+    await expect(controls.getByRole("status").filter({ hasText: /^Standard · 2× pixel density · display refresh/ })).toBeVisible();
+    await density(page, 2);
+    expect(await canvasSize(page)).toEqual(standard);
+    await expect(volume).toHaveValue("0");
+    const unmute = controls.getByRole("button", { name: "Unmute sound", exact: true });
+    await expect(unmute).toHaveAttribute("aria-pressed", "true");
+    await unmute.click();
+    expect(Number(await volume.inputValue())).toBe(rememberedVolume);
+    await expect(controls.getByRole("button", { name: "Mute sound", exact: true })).toHaveAttribute("aria-pressed", "false");
+
+    await controls.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(invoker).toBeFocused();
+    await expect(invoker).toHaveAttribute("aria-expanded", "false");
+    await settings.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(page.getByRole("button", { name: "⚙ Settings", exact: true })).toBeFocused();
+  });
 });
 
 // Read only the public DOM; all state changes above and below use normal UI.
@@ -113,9 +117,19 @@ async function worldTargets(page) {
   await expect.poll(() => page.evaluate(() => {
     const root = document.documentElement;
     const shell = document.querySelector(".social-world");
-    return root.scrollWidth <= innerWidth + 1 && root.scrollHeight <= innerHeight + 1
-      && shell.scrollWidth <= shell.clientWidth + 1;
-  })).toBe(true);
+    const dimensions = {
+      viewport: { width: innerWidth, height: innerHeight },
+      document: { width: root.scrollWidth, height: root.scrollHeight },
+      shell: { width: shell.clientWidth, height: shell.clientHeight,
+        scrollWidth: shell.scrollWidth, scrollHeight: shell.scrollHeight },
+    };
+    return [
+      ["document width", root.scrollWidth, innerWidth + 1],
+      ["document height", root.scrollHeight, innerHeight + 1],
+      ["shell width", shell.scrollWidth, shell.clientWidth + 1],
+    ].filter(([, actual, maximum]) => actual > maximum)
+      .map(([dimension, actual, maximum]) => ({ dimension, actual, maximum, ...dimensions }));
+  })).toEqual([]);
   const targets = page.locator(".world-topbar button, .world-dock button, .adventure-hud button, .world-emotes button, .world-emotes select, .world-camera-disclosure, .iso-controls button, .iso-controls input, .iso-controls select");
   let visible = 0;
   for (const target of await targets.all()) {

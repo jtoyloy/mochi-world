@@ -35,6 +35,22 @@ Coverage includes:
   actionability, compact emote/phrase and camera actions, focus return, and
   restoring the camera/map to the world when resized with its dialog open.
 
+Layout cases use DPR 1; only the preference test uses DPR 2 to verify the live
+backing-density change. Overflow failures report the violating dimension plus
+document, world shell and viewport dimensions, preserving the document width,
+document height and world shell width checks.
+
+Hosted run 64 passed the preference test and failed four layout cases; the two
+remaining cases did not complete. All four compact layouts completed their
+initial hit checks and disclosure actions. After resize to 1920×1080 at DPR 2,
+traces showed slow frame delivery and trial-click waits (median waits increased
+from 289–417 ms to 945–1654 ms in three cases); the 768×1024 case instead failed
+the original boolean overflow predicate without identifying the dimension.
+These findings motivated DPR 1 for layout checks and richer overflow diagnostics.
+The checks, seven cases, time limits and zero retries remain unchanged. This
+harness refinement does not establish that the unexplained overflow is fixed;
+it requires another hosted run before any application change is justified.
+
 Chromium uses SwiftShader for the hosted runner. This is a functional UI gate,
 not physical-device, WAN, performance, accessibility-conformance, or candidate
 certification. It does not establish rendering speed or actual sound output.
