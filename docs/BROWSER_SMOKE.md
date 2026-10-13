@@ -65,3 +65,14 @@ run this suite locally while the workspace is below its disk headroom floor.
 
 The setup follows the official [Playwright CI guide](https://playwright.dev/docs/ci-intro)
 and [web server configuration](https://playwright.dev/docs/test-webserver).
+
+Hosted run 66 at `7a88cdd7ebc88232903d77184de410ed8eb2f03c` passed all seven
+cases in 2.4 minutes. A subsequent expiry regression at
+`4d76a1dc88e84a370942cc73a6fff48885288407` deliberately exposed a real application
+defect: run 68 passed six cases and failed only the 1280×720 case because
+`#toast` retained “Choose a companion first.” after its class was cleared.
+The unchanged ten-second assertion observed both styled and unstyled retained
+text. Artifact 11859469033 preserves the failure (ZIP SHA256
+`5ad620a2a3289503febeb0f164cf832124b38308e26fc52ad1bda0aa1bd44037`).
+The correction clears text in the same five-second callback; independent source
+review approved it. Its exact-source hosted verification remains pending.

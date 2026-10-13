@@ -175,3 +175,36 @@ to body, an accessibility defect under repair. Sound volume set to zero through
 the slider and decorative motion switched on both persisted through actual reload
 (slider zero, motion pressed/on). These preference samples do not validate every
 audio cue or full accessibility.
+
+### Owned server reconnect continuation — 2026-10-13
+
+Disk recovered from767MiB/1.5GiB to3.8GiB. A single current client build passed
+(1.55s Vite stage) before starting one owned test server and one IAB tab; headroom
+remained3.7–3.8GiB. No parallel local soak/build/art campaign was started.
+Source/build was `4d76a1dc88e84a370942cc73a6fff48885288407`, with the new notice
+expiry regression awaiting hosted execution; the application notice fix was not
+yet applied. The same owned restored PostgreSQL/checkpoint fixture was reused.
+
+The existing `adoption_1010` session returned without signing in again. Fresh UI
+pack/catalog requests showed315 Coins, Combat2/Fishing1/Woodcutting1, basic sword,
+Iron Ring in accessory1, Fire Bolt/Heal/Ice Shard/Shield, five Small Potions,
+Slime Resin1/Thorn Fiber2, one rod/axe/staff/ring and all seven beginner checks.
+Active companion was Expiry retained, HP105/105, mana60/60, pet HP80/80.
+
+With no open brain, pending purchase, harvest or combat, the owned8788 process
+received SIGTERM and exited0. The unchanged browser showed Reconnecting…; the
+server restarted with the identical restore DB/checkpoints/auth/mock/one-worker
+configuration. No reload or direct state mutation was used. Online/Town returned,
+with one player and the same companion. Newly opened pack and Coins directory
+made fresh server requests and retained all listed gear/spells/inventory/guide
+facts and315 Coins. The optional TEST token header remained500. Closing the Coins
+replacement returned focus to the Adventure launcher.
+
+Local evidence images: `mochi-recovery-before-pack-20261013.png`,
+`mochi-recovery-before-coins-20261013.png`,
+`mochi-recovery-disconnected-20261013.png`,
+`mochi-recovery-after-pack-20261013.png` and
+`mochi-recovery-after-coins-20261013.png`. This completes the supervisor's graceful
+transport subcase that was safety-interrupted on Oct10. It does not complete
+independent BM acceptance, unsaved-home/native-worker crash, combat/death,
+stale-target, full-inventory, WAN or150-CCU failure certification.

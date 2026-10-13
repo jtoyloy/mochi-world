@@ -199,3 +199,17 @@ weakened to accept remaining text.
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.
 
 The later full integrated JavaScript run was interrupted, not passed: free disk fell through the 3GiB safety floor to ~1GiB while concurrent tests, local game and browser increased swap pressure. Owned test/game/preview processes were stopped and an abandoned schema in the dedicated test database was cleaned up. No unrelated files or operating-system swap were deleted. Hosted workflow run 34 for exact SHA `68c3f83fc1c2614bba1209682aac960abb7b90b8` passed build, full JavaScript/PostgreSQL tests, all 49 brain tests, audit and diff hygiene after the checkout was changed to fetch full history for pack provenance. No 150-player certification, full browser journey, production art approval or Cadence promotion is claimed.
+
+2026-10-13 notice regression: workflow68 failed at exact
+`4d76a1dc88e84a370942cc73a6fff48885288407`, with six browser cases passing and
+only the new1280×720 toast expiry assertion failing. Logs confirm class removal
+while text remains. All402 JavaScript/49 Python tests, build, audit and diff checks
+passed. The one-line text-clear correction has independent source approval;
+exact-source hosted verification is pending. Failed run/artifact are retained in
+BROWSER_SMOKE.md.
+
+Local headroom subsequently recovered to3.8GiB (3.7GiB after one build and one
+owned server/browser). The supervisor completed the interrupted graceful restart
+subcase without page reload: fresh gear/spell/inventory/guide/315Coins requests
+matched before/after, with the same companion. PLAYTEST_LOG records the scope.
+The3GiB floor remains unchanged; no capacity certification or full BM closure.

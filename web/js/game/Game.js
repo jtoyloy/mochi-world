@@ -55,6 +55,7 @@ function showNotice(text) {
   clearTimeout(showNotice.timer);
   showNotice.timer = setTimeout(() => {
     toast.className = "";
+    toast.textContent = "";
   }, 5000);
 }
 function dialog(title, invoker = document.activeElement) {

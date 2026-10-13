@@ -49,3 +49,11 @@ passed focused review, build and scoped viewer checks; failed walk/directions
 remain open. Local headroom fell to 2.8GiB during the partial restart extension;
 owned server/root browser stopped at the unchanged 3GiB floor. Complete lightweight
 source work and hosted gates; resume heavy playtests only with safe headroom.
+
+2026-10-13: guarded live settings and hosted functional smoke now cover actual
+renderer density, remembered mute/motion, nested focus and six layout sizes.
+Run66 passed seven browser cases; run68 reproduced expired notice text with six
+other cases passing. Integrate the independently reviewed expiry fix and require
+its exact-source hosted gate. Recovered3.7GiB headroom permitted the supervisor's
+fresh-state graceful restart continuation; independent complete BM and remaining
+combat/failure/art/security acceptance remain open.

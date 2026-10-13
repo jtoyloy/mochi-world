@@ -9,7 +9,7 @@
 | R03 | Production account acceptance incomplete | Salted scrypt and revocable sessions implemented/reviewed; full returning/expiry journey, recovery and deployment review remain |
 | R04 | Provisional action/directional art and static fallback mobs | ACTION_ART_AUDIT; full per-state audit in progress |
 | R05 | Battle strategic usefulness unproven | NO PROMOTION: curriculum 219/432 vs random 211; CI crosses zero, damage share 4.18% vs14.96% |
-| R06 | Complete failure and release-wide player acceptance incomplete | Independent actual Chrome review completed seven guide steps, Coins buy/sell, fishing, gear/spell and logout/sign-in persistence at `4565e40`. Coordinated server restart observed Online/Town without reload but fresh catalog/gear verification was safety-interrupted at2.8GiB. Supervisor initialized-room expiry/export/sign-in/save passed separately. Full BM/release candidate acceptance remains |
+| R06 | Complete failure and release-wide player acceptance incomplete | Independent actual Chrome review completed seven guide steps, Coins buy/sell, fishing, gear/spell and logout/sign-in persistence at `4565e40`. Coordinated server restart observed Online/Town without reload but fresh catalog/gear verification was safety-interrupted at2.8GiB. Supervisor subsequently completed the graceful restart with fresh gear/spell/inventory/guide/315Coins verification on Oct13; initialized-room expiry/export/sign-in/save passed separately. Full BM/release candidate acceptance remains |
 | R07 | Sustained client/crowd/physical-device evidence absent | Short offline fixture ≠ live/WAN/phone certification |
 | R08 | Production wallet/reconciliation/legal review | Fixtures exist; actual funded execution/credentials/legal decisions external; no real-funds testing |
 | R09 | Production recovery/deployment/alerts and staging smoke not validated | Private backup/guarded restore pass 20 focused tests; owned local restore, migration, brain load/save, Coins replay and restart passed. Failed first backup remains recorded. Offsite/encryption/disaster timing, staging and alerts remain. Hosted workflow 42 passed at `de54734` (377 JS, 49 Python, zero skips) |
@@ -19,11 +19,11 @@
 
 ## EXTERNAL_DEPENDENCIES
 
-2026-10-13: free disk measured 767MiB on resume, later 1.5GiB; still below the
-unchanged 3GiB floor. Owned 8788 server is stopped. Local heavy builds, native runs,
-browser/art campaigns and remaining reconnect acceptance cannot resume safely.
-Source-only settings repair and hosted CI continue; no unrelated files or system
-swap are removed.
+2026-10-13: free disk measured 767MiB on resume, later1.5GiB, then recovered
+to3.8GiB. One build and one owned8788 server/browser ran with3.7GiB remaining;
+the interrupted graceful reconnect subcase completed. The unchanged3GiB floor
+still prevents parallel heavy campaigns; sustained capacity work needs suitable
+hardware/storage. No unrelated files or system swap were removed.
 
 Local disk initially ~4.5GiB free; local full integrated testing was interrupted after swap pressure reduced free space to ~1GiB. Owned heavy processes stopped; subsequent hosted full PostgreSQL/native test gates passed, latest workflow52 at `4565e40` (381 JavaScript,49 Python,zero skips). Sustained capacity gates remain unpassed. Existing conservative 150-pet warm storage needs ≥8.12GiB free and production planning >26GiB excluding other overhead. Do not run unsafe soaks or delete unrelated owner data. Suitable capacity hardware/storage, public staging/production authorization, production secrets and legal/financial launch decisions remain external. Independent development continues.
 
