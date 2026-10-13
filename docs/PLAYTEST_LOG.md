@@ -208,3 +208,14 @@ Local evidence images: `mochi-recovery-before-pack-20261013.png`,
 transport subcase that was safety-interrupted on Oct10. It does not complete
 independent BM acceptance, unsaved-home/native-worker crash, combat/death,
 stale-target, full-inventory, WAN or150-CCU failure certification.
+
+### Appearance reload sample — 2026-10-13
+
+On the same owned fixture at `6e57a666f025417c9ea2c022c68ec9becc17f587`, Settings
+showed the original Chestnut style and clothing color #659db1. The supervisor
+selected Dark curls, saved through the visible form, reloaded the page, waited
+for Online, and reopened Settings. Dark curls remained selected; the visible
+world avatar changed with it. Screenshot `mochi-style-reload-20261013.png` records
+the retained selection. The original Chestnut style was then saved again.
+This is a reload/persistence sample, not fresh sign-in, cosmetic attachment,
+all-direction art approval or complete BL acceptance. No currency/items changed.

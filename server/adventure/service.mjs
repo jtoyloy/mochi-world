@@ -1136,17 +1136,25 @@ export class AdventureService {
       const players = [
         ...(this.multiplayer.store.rooms.get(key)?.players.values() ?? []),
       ];
+      // A defeat can join Town while this room's enemy loop is still running.
+      // Recheck the live body boundary instead of trusting the captured roster.
+      const live = (p) => p.room === key && p.roomId === room.roomId &&
+        this.multiplayer.store.players.get(p.userId) === p &&
+        this.multiplayer.store.rooms.get(key)?.players.get(p.userId) === p;
       for (const m of room.mobs.values()) {
         if (m.hp <= 0) continue;
-        let p = players.find((p) => p.userId === m.target);
+        let p = players.find((p) => live(p) && p.userId === m.target);
         if (!p && m.behavior !== "passive") {
           p = players.find(
-            (p) => dist(p, m) < (m.behavior === "aggressive" ? 240 : 135),
+            (p) => live(p) && dist(p, m) < (m.behavior === "aggressive" ? 240 : 135),
           );
           if (p) {
             m.target = p.userId;
             const s = await this.state(p.userId);
-            if (!s.target) s.target = m.id;
+            if (!live(p)) {
+              m.target = null;
+              p = null;
+            } else if (!s.target) s.target = m.id;
           }
         }
         if (!p || dist(p, m.home) > 420 || dist(p, m) > 500) {
@@ -1182,7 +1190,7 @@ export class AdventureService {
           continue;
         }
         const s = await this.state(p.userId);
-        if (s.hp <= 0) continue;
+        if (!live(p) || s.hp <= 0) continue;
         if (dist(p, m) > m.range) {
           m.state = "CHASE";
           const d = dist(m, p),
@@ -1252,11 +1260,12 @@ export class AdventureService {
           await this.save(p.userId, s);
         }
       }
-      if (players[0])
+      const viewer = players.find(live);
+      if (viewer)
         this.multiplayer.broadcast(
           key,
           "adventureRoom",
-          this.publicRoom(players[0]),
+          this.publicRoom(viewer),
         );
     }
   }

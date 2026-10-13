@@ -30,3 +30,10 @@ Local disk initially ~4.5GiB free; local full integrated testing was interrupted
 ## POST_RELEASE
 
 Guilds, auctions, free-form public messaging, mining/foraging/herbalism, music/voice acting and historical 3D prototypes. They are not advertised as completed release mechanics.
+
+Failure audit continuation: a measured old-room post-defeat damage race is repaired
+with live body/room checks and six regressions;23 focused tests and independent
+review pass, hosted/runtime acceptance pending. Bag slots currently have no count
+limit; a normal “full bag” cannot be manufactured honestly. PostgreSQL integer
+stack overflow and its error/rollback UX still need explicit acceptance. The
+existing commerce oversized-request checks do not establish that boundary.

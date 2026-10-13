@@ -213,3 +213,14 @@ owned server/browser). The supervisor completed the interrupted graceful restart
 subcase without page reload: fresh gear/spell/inventory/guide/315Coins requests
 matched before/after, with the same companion. PLAYTEST_LOG records the scope.
 The3GiB floor remains unchanged; no capacity certification or full BM closure.
+
+Death/respawn audit measured a separate old-room race: with two enemies, defeat
+restored the player in Town, then a later old-room enemy damaged that restored
+body (100→93) and the emptied room attempted a frame from the departed viewer.
+The correction checks live room/global body identity during enemy selection and
+after awaited state reads, then broadcasts using a remaining live viewer.
+Six regressions cover restored HP/target protection, empty/remaining room frames,
+remaining-player valid damage and identity replacement across both await paths.
+Two specialists reviewed the source and independently passed23 focused checks,
+zero skips. Exact-source full hosted verification and actual corrected-runtime
+defeat remain pending; no Cadence mechanism or published pack changes.
