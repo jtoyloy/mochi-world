@@ -19,6 +19,12 @@
 
 ## EXTERNAL_DEPENDENCIES
 
+2026-10-13: free disk measured 767MiB on resume, later 1.5GiB; still below the
+unchanged 3GiB floor. Owned 8788 server is stopped. Local heavy builds, native runs,
+browser/art campaigns and remaining reconnect acceptance cannot resume safely.
+Source-only settings repair and hosted CI continue; no unrelated files or system
+swap are removed.
+
 Local disk initially ~4.5GiB free; local full integrated testing was interrupted after swap pressure reduced free space to ~1GiB. Owned heavy processes stopped; subsequent hosted full PostgreSQL/native test gates passed, latest workflow52 at `4565e40` (381 JavaScript,49 Python,zero skips). Sustained capacity gates remain unpassed. Existing conservative 150-pet warm storage needs ≥8.12GiB free and production planning >26GiB excluding other overhead. Do not run unsafe soaks or delete unrelated owner data. Suitable capacity hardware/storage, public staging/production authorization, production secrets and legal/financial launch decisions remain external. Independent development continues.
 
 ## POST_RELEASE

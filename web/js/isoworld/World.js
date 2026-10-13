@@ -22,6 +22,8 @@ import {
 import { animationCommands } from "./animation/events.js";
 import { loadFoliage } from "./animation/foliage.js";
 import { WorldTextures } from "./animation/texture-lifecycle.js";
+import { GraphicsQualityPreference, readMotionPreference, saveMotionPreference } from "./preferences.js";
+import { bindAudioControls } from "./audio-controls.js";
 import { AppearanceCache } from "./animation/appearance.js";
 import { openAnimationViewer } from "./animation/viewer.js";
 import { VENDORS, COMBAT_VENDORS, RESOURCE_NODES } from "../game/adventure.js";
@@ -95,9 +97,11 @@ export class IsometricWorld {
     this.motionOverride = null;
   }
   async init() {
+    this.graphicsQuality = new GraphicsQualityPreference();
     this.motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const savedMotion = window.localStorage.getItem("mochi-reduced-motion");
-    this.motionOverride = savedMotion === null ? null : savedMotion === "true";
+    const savedMotion = readMotionPreference();
+    this.motionOverride = savedMotion.override;
+    this.motionPersistenceNotice = savedMotion.notice;
     this.reducedMotion = this.motionOverride ?? this.motionPreference.matches;
     this.onMotionPreference = (event) => {
       if (this.motionOverride !== null) return;
@@ -112,7 +116,7 @@ export class IsometricWorld {
       resizeTo: this.host,
       background: "#dde6ca",
       antialias: true,
-      resolution: Math.min(devicePixelRatio, 2),
+      resolution: this.graphicsQuality.profile().resolution,
       autoDensity: true,
       preference: "webgl",
     });
@@ -120,6 +124,7 @@ export class IsometricWorld {
       this.app.destroy(true);
       return;
     }
+    this.graphicsQuality.apply(this.app);
     this.host.append(this.app.canvas);
     this.app.canvas.setAttribute(
       "aria-label",
@@ -1409,6 +1414,12 @@ export class IsometricWorld {
     this.motionControl.setAttribute("aria-pressed", String(this.reducedMotion));
     this.motionControl.textContent = this.reducedMotion ? "◎" : "◌";
     this.motionControl.title = `Reduced decorative motion: ${this.reducedMotion ? "on" : "off"}`;
+    if (this.motionStatus) this.motionStatus.textContent = this.motionPersistenceNotice ?? "";
+  }
+  updateQualityControl() {
+    if (this.qualityControl) this.qualityControl.value = this.graphicsQuality.value;
+    if (this.qualityStatus) this.qualityStatus.textContent = this.graphicsQuality.status(this.app);
+    if (this.fpsControl) this.fpsControl.value = String(this.app.ticker.maxFPS);
   }
   makeControls() {
     this.title = el("div", "iso-room-title");
@@ -1445,21 +1456,45 @@ export class IsometricWorld {
     sound.min = 0;
     sound.max = 0.5;
     sound.step = 0.01;
-    sound.value = this.scene.audio.volume;
     sound.setAttribute("aria-label", "Sound volume");
-    sound.oninput = () => this.scene.audio.setVolume(Number(sound.value));
-    this.controls.append(sound);
+    const mute = el("button", "iso-mute-control");
+    mute.type = "button";
+    const audioStatus = el("span", "iso-preference-status");
+    audioStatus.setAttribute("role", "status");
+    bindAudioControls({ audio: this.scene.audio, slider: sound, mute, status: audioStatus });
+    this.controls.append(sound, mute, audioStatus);
     this.motionControl = el("button", "", "◌");
     this.motionControl.type = "button";
     this.motionControl.setAttribute("aria-label", "Reduce decorative motion");
     this.motionControl.onclick = () => {
       this.reducedMotion = !this.reducedMotion;
       this.motionOverride = this.reducedMotion;
-      window.localStorage.setItem("mochi-reduced-motion", String(this.reducedMotion));
+      this.motionPersistenceNotice = saveMotionPreference(this.reducedMotion);
       this.updateMotionControl();
     };
     this.updateMotionControl();
     this.controls.append(this.motionControl);
+    this.motionStatus = el("span", "iso-preference-status");
+    this.motionStatus.setAttribute("role", "status");
+    this.controls.append(this.motionStatus);
+    this.updateMotionControl();
+    const qualityLabel = el("label", "iso-quality-label", "Graphics quality ");
+    this.qualityControl = el("select", "");
+    this.qualityControl.setAttribute("aria-label", "Graphics quality");
+    for (const [value, text] of [["standard", "Standard"], ["low", "Low power"]]) {
+      const option = el("option", "", text);
+      option.value = value;
+      this.qualityControl.append(option);
+    }
+    this.qualityControl.onchange = () => {
+      this.graphicsQuality.select(this.qualityControl.value, this.app);
+      this.updateQualityControl();
+    };
+    qualityLabel.append(this.qualityControl);
+    this.qualityStatus = el("span", "iso-preference-status");
+    this.qualityStatus.setAttribute("role", "status");
+    this.controls.append(qualityLabel, this.qualityStatus);
+    this.updateQualityControl();
     this.host.append(this.controls);
     this.minimap = document.createElement("canvas");
     this.minimap.width = 180;
@@ -1528,8 +1563,12 @@ export class IsometricWorld {
         fpsSelect.append(option);
       }
       fpsSelect.setAttribute("aria-label", "Render cap FPS");
-      fpsSelect.onchange = () =>
-        (this.app.ticker.maxFPS = Number(fpsSelect.value));
+      this.fpsControl = fpsSelect;
+      fpsSelect.value = String(this.app.ticker.maxFPS);
+      fpsSelect.onchange = () => {
+        this.app.ticker.maxFPS = Number(fpsSelect.value);
+        this.updateQualityControl();
+      };
       fpsLabel.append(fpsSelect);
       this.dev.append(fpsLabel);
       this.motionDebug = el("p", "");

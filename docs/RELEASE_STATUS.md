@@ -1,6 +1,6 @@
 # Autonomous release status
 
-Updated 2026-10-10. PRODUCT COMPLETE: NO. Ready for production launch: NO. Ready for full staging acceptance: NO (local/test validation permitted).
+Updated 2026-10-13. PRODUCT COMPLETE: NO. Ready for production launch: NO. Ready for full staging acceptance: NO (local/test validation permitted).
 
 Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Current integration branch: codex/autonomous-release. Release candidate: not designated. Current main already includes Wave 4; nothing was discarded. Main remains unchanged pending independent milestone review and exact-SHA gates.
 
@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow 52 passed: 381 JavaScript, 49 Python, zero skips, build/audit/diff checks. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow 58 passed: 391 JavaScript, 49 Python, zero skips, build/audit/diff checks. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -115,6 +115,35 @@ playback comparisons preserved Slime/Boar/Guardian controls. Independent loaded
 viewer checks confirmed the defeat ground anchor, contact-slot annotation and
 brief blink timing. The PNG is unchanged; walking drift and missing authored
 directions still block art approval. These repairs do not change server combat.
+
+Hosted workflow 56 passed exact `419f12199c12758950e9b436c288ae7697cdd128`:
+388 JavaScript, 49 Python, zero skips, build, audit (zero vulnerabilities) and diff
+checks. Subsequent focus propagation `342133c` passed independent source review
+and 31 focused DOM checks. It retains outer launchers across async pack/shop/adoption
+replacement and genuine parent controls for nested React/domain panels. Refused
+save still retains its modal/runtime. Its hosted gate and actual React/browser
+acceptance remain pending; no local heavy build was run below the safety floor.
+
+Hosted workflow 58 subsequently passed exact
+`342133c5a1f081a4d431bef64f8e611260db8bce`: 391 JavaScript, 49 Python, zero skips,
+build, dependency audit (zero vulnerabilities) and diff checks. Thus the React
+bundle builds; actual focus verification for those broader paths still awaits
+safe headroom. The next source-only AQ audit found active Pixi quality choices
+missing (legacy 3D settings do not count), no explicit mute restoration, and
+unguarded preference storage reads/writes. Small guarded preference controls are
+being implemented with the existing Standard renderer as their control.
+
+2026-10-13 resume: no prior specialist handles remained live. Disk was 767MiB free
+on inspection (later 1.5GiB), still below the unchanged 3GiB safety floor; owned
+8788 listener is absent. No local browser/server/native/build run was restarted.
+Source-only settings continuation retains Standard DPR≤2/display refresh and adds
+Low power DPR1/30FPS, guarded motion/quality storage, explicit mute with retained
+volume, and readable persistence failures. Existing volume range remains 0–0.5.
+Fourteen tiny preference/audio/overlay checks pass. Independent source/API review
+approved the patch and separately passed the ten audio/preference checks.
+Build, actual control visibility/interaction, live resizing, reload and wider
+responsive acceptance of these new controls remain pending. Low power is a user
+choice, not a relaxation of the Standard performance or capacity gates.
 
 ## Current integration evidence and limitations
 
