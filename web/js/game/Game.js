@@ -183,10 +183,11 @@ export async function mountWorld(
     phrase.value = "";
   };
   emoteActions.append(phrase);
-  const cameraDisclosure = btn("Camera & map", invoker => {
+  function openCameraPanel(invoker) {
     const content = [shell.querySelector(".iso-controls"), shell.querySelector(".iso-minimap")].filter(Boolean);
     if (!cameraDialog && content.length) cameraDialog = disclose("Camera & map", invoker, content, "world-camera-dialog", () => { cameraDialog = null; });
-  });
+  }
+  const cameraDisclosure = btn("Camera & map", openCameraPanel);
   cameraDisclosure.className = "world-camera-disclosure";
   cameraDisclosure.setAttribute("aria-haspopup", "dialog");
   cameraDisclosure.setAttribute("aria-expanded", "false");
@@ -687,6 +688,10 @@ export async function mountWorld(
     await refresh();
     const d = dialog("Your adventurer", invoker),
       form = element("form");
+    const preferences = btn("Sound, motion & graphics", openCameraPanel);
+    preferences.setAttribute("aria-haspopup", "dialog");
+    preferences.setAttribute("aria-expanded", "false");
+    d.append(preferences);
     const name = element("input");
     name.value = avatar.display_name;
     name.maxLength = 24;

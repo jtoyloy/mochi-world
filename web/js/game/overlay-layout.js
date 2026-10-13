@@ -36,8 +36,10 @@ export function observeOverlayLayout(shell, Observer = globalThis.ResizeObserver
   let compact = null;
   function update() {
     if (compact !== true) {
-      cameraWidth = camera?.getBoundingClientRect().width ?? cameraWidth;
-      mapWidth = map?.getBoundingClientRect().width ?? mapWidth;
+      // A Settings dialog can temporarily own these nodes on desktop. Its
+      // wider dialog layout must not replace the world's cached edge widths.
+      if (camera && shell.contains(camera)) cameraWidth = camera.getBoundingClientRect().width;
+      if (map && shell.contains(map)) mapWidth = map.getBoundingClientRect().width;
     }
     const nextCompact = compactOverlayViewport({ width: shell.clientWidth, height: shell.clientHeight,
       hudWidth: panels[2]?.getBoundingClientRect().width ?? 0, cameraWidth, mapWidth });

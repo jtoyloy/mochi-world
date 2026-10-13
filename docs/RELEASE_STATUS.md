@@ -145,6 +145,13 @@ Build, actual control visibility/interaction, live resizing, reload and wider
 responsive acceptance of these new controls remain pending. Low power is a user
 choice, not a relaxation of the Standard performance or capacity gates.
 
+Settings also exposes a named Sound, motion & graphics shortcut to the existing
+live control nodes. Desktop modal widths are excluded from the world's cached
+edge-control measurements, preventing a false compact-layout transition. Eight
+overlay/focus checks pass, including a wider-modal/narrower-world regression;
+independent source review approved the shortcut, nested focus target and layout
+cache guard. Actual nested-modal and WebGL browser verification remains pending.
+
 ## Current integration evidence and limitations
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.

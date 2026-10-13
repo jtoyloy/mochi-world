@@ -45,6 +45,7 @@ test("actual panel resize updates phone offsets and desktop/teardown restore CSS
   let resize, disconnected = false;
   const observed = [];
   const shell = { clientWidth: 375,
+    contains: node => panels.includes(node),
     querySelector: selector => panels[selectors.indexOf(selector)],
     style: { setProperty: (key, value) => values.set(key, value), removeProperty: key => values.delete(key) },
   };
@@ -59,4 +60,24 @@ test("actual panel resize updates phone offsets and desktop/teardown restore CSS
   shell.clientWidth = 1280; resize(); assert.equal(values.size, 0);
   shell.clientWidth = 320; resize(); assert.equal(values.size, 3);
   stop(); assert.equal(disconnected, true); assert.equal(values.size, 0);
+});
+
+test("desktop Settings disclosure does not replace cached world widths with wider modal controls", () => {
+  const panel = (width, height) => ({ inShell: true, width, getBoundingClientRect() { return { width: this.width, height }; } });
+  const nodes = { ".world-dock": panel(636, 62), ".world-emotes": panel(563, 59),
+    ".adventure-hud": panel(359, 114), ".iso-controls": panel(280, 130), ".iso-minimap": panel(150, 108) };
+  let resize;
+  const modes = [];
+  const shell = { clientWidth: 1280, clientHeight: 720,
+    contains: node => node.inShell, querySelector: selector => nodes[selector],
+    style: { setProperty() {}, removeProperty() {} } };
+  class Observer { constructor(callback) { resize = callback; } observe() {} disconnect() {} }
+  const stop = observeOverlayLayout(shell, Observer, { onCompactChange: compact => modes.push(compact) });
+  nodes[".iso-controls"].inShell = nodes[".iso-minimap"].inShell = false;
+  nodes[".iso-controls"].width = 570;
+  shell.clientWidth = 1200; resize();
+  assert.deepEqual(modes, [false], "modal width must not trigger a false compact transition");
+  shell.clientWidth = 768; resize();
+  assert.deepEqual(modes, [false, true], "real tablet size still triggers compact mode");
+  stop();
 });
