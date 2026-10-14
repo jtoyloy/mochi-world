@@ -57,3 +57,10 @@ other cases passing. Integrate the independently reviewed expiry fix and require
 its exact-source hosted gate. Recovered3.7GiB headroom permitted the supervisor's
 fresh-state graceful restart continuation; independent complete BM and remaining
 combat/failure/art/security acceptance remain open.
+
+Failure continuation now includes independently reviewed old-room respawn guards,
+real integer-stack rollback and harvest retry identity. Preserve workflow72's
+407/408 failure from the incomplete chase fixture, and require full hosted gates
+for the corrected fixture/stack/harvest sources. Ordinary corrected-runtime natural
+defeat retained full vitals/gear/315Coins; two-enemy race remains test evidence.
+Audit failed combat-loot grants next, then resume broader failure/player/art gates.

@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow66 passed:402 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow70 passed:402 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -246,3 +246,21 @@ suite passes independently in a disposable schema, including failed retry with
 unchanged Coins/items/ledger/receipts/events, then same request success after
 consuming one item and idempotent replay. No bag-slot limit was added. Full hosted
 source verification and UI failure acceptance remain pending.
+
+Notice correction exact `6e57a666f025417c9ea2c022c68ec9becc17f587` passed
+workflow70:402 JavaScript,49 Python,zero skips,all seven browser cases in4.3minutes,
+build/audit/diff. Run68 remains the measured red control. Current integrated
+`d3325827ec272e527625c5342b0ff10d72d61a72` includes reviewed respawn and integer-stack
+fixes plus corrected chase fixture; workflow74 is running and is not yet passed.
+Main remains at99f31e1; no RC, capacity certification or Cadence promotion.
+
+Gather failure continuation: actual gather/finish handlers in a disposable schema
+reproduced a full-stack refusal followed by a successful retry with a different
+catch. New harvests now privately persist a single selected reward in the existing
+start transaction; completion rereads it under lock. Public start/status omit it.
+Legacy origin-only rows use a stable hash of their server-generated ID; discarded
+pre-upgrade random draws cannot be reconstructed. Probability tables, expiry,
+movement/room checks and grant/XP/progress transaction remain unchanged.
+Independent review approved;13 PostgreSQL commerce/harvest tests and30 source
+checks pass,zero skips. Restart durability is supported by database-source review,
+not a fresh-process test. Exact-source full hosted gate is pending.

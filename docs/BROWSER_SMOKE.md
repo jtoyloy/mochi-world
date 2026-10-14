@@ -76,3 +76,8 @@ text. Artifact 11859469033 preserves the failure (ZIP SHA256
 `5ad620a2a3289503febeb0f164cf832124b38308e26fc52ad1bda0aa1bd44037`).
 The correction clears text in the same five-second callback; independent source
 review approved it. Its exact-source hosted verification remains pending.
+
+The correction passed hosted run70 at exact
+`6e57a666f025417c9ea2c022c68ec9becc17f587`: all seven browser cases in4.3minutes,
+402 JavaScript tests,49 Python tests,zero skips,build/audit/diff. The formerly
+failing expiry assertion now passes without changing its timeout or requirements.

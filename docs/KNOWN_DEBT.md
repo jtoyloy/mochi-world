@@ -44,3 +44,9 @@ The guarded409 refusal is implemented; browser error presentation and full share
 call-path/token acceptance are still open. The failed workflow72 chase fixture was
 corrected to use production membership, retaining original motion assertions;
 30 focused tests and independent review pass, exact-source full CI pending.
+
+A full-stack completion retry could reroll a timed harvest. The measured case is
+repaired by private persisted selection at start and stable legacy-ID fallback;
+13 actual database tests/independent review pass. Full hosted gate and browser
+failure/restart acceptance remain open. Separate combat-loot failed-grant retry
+selection is under audit and is not claimed fixed by this harvest correction.

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { GameError, integer } from "../world/service.mjs";
+import { GameError, integer, hashNumber } from "../world/service.mjs";
 import { BattleBrains } from "./battle.mjs";
 import { ResourceRewards } from "./rewards.mjs";
 import {
@@ -40,6 +40,17 @@ const fresh = () => ({
   starter: true,
 });
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const harvestReward = (node, roll) => {
+  let entry = node.table.at(-1);
+  for (const e of node.table) {
+    roll -= e[1];
+    if (roll < 0) {
+      entry = e;
+      break;
+    }
+  }
+  return { itemId: entry[0], quantity: 1, xp: entry[2], kind: node.kind };
+};
 export function petBattleAbility(pet) {
   const variant = String(pet.profile?.variant ?? "").toLowerCase(),
       species =
@@ -612,7 +623,10 @@ export class AdventureService {
           node.id,
           now,
           now + node.durationMs,
-          { origin: { room: p.room, x: p.x, y: p.y } },
+          {
+            origin: { room: p.room, x: p.x, y: p.y },
+            reward: harvestReward(node, this.random()),
+          },
         ],
       );
       await tx.query(
@@ -664,21 +678,11 @@ export class AdventureService {
         (h.result?.origin && p.room !== h.result.origin.room)
       )
         throw new GameError("Stay at the node to finish gathering", 409);
-      let roll = this.random(),
-        entry = node.table.at(-1);
-      for (const e of node.table) {
-        roll -= e[1];
-        if (roll < 0) {
-          entry = e;
-          break;
-        }
-      }
-      const result = {
-        itemId: entry[0],
-        quantity: 1,
-        xp: entry[2],
-        kind: node.kind,
-      };
+      // Older pending rows contain only their origin. A stable draw prevents
+      // those rows from rerolling too, without changing their original lifetime.
+      const result = h.result?.reward ?? harvestReward(
+        node, hashNumber("harvest:" + h.id) / 0x100000000,
+      );
       await this.service.inventory(tx, p.userId, result.itemId, 1);
       // XP and result commit together; a duplicate completion can never credit either again.
       next.xp[node.kind] += result.xp;

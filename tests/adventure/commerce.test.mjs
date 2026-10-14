@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import pg from 'pg';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
-import {WorldService,GameError} from '../../server/world/service.mjs';
+import {WorldService,GameError,hashNumber} from '../../server/world/service.mjs';
 import {AdventureCommerce} from '../../server/adventure/commerce.mjs';
 import {TokenService} from '../../server/social/tokens.mjs';
 import {ResourceRewards} from '../../server/adventure/rewards.mjs';
@@ -182,5 +182,73 @@ test('two actual timed wood harvests finance one replacement potion without a wa
    await market.buy(user.id,{id:randomUUID(),vendor:'apothecary',itemId:'small-potion'},actor(user,COIN_SHOPS.apothecary));
    assert.equal(await coins(user),0);assert.equal(await quantity(user,'small-potion'),before+1);
    assert.equal(await quantity(user,'softwood'),0);assert.equal((await market.catalog(user.id)).woodSales,1);
+ }finally{await game.close();}
+});
+
+test('a stack-full timed harvest retains its chosen reward across completion retries',async()=>{
+ const {AdventureService}=await import('../../server/adventure/service.mjs');
+ const {RESOURCE_NODES}=await import('../../web/js/game/adventure.js');
+ let now=2000000,draws=0;
+ const service=new WorldService(pool,{now:()=>now}),user=await account();
+ const game=new AdventureService(service,{random:()=>draws++===0?.1:.99,brains:{close(){}},rewards:{balance:async()=>({})}});
+ const node=RESOURCE_NODES.find(n=>n.id==='lake-dock');
+ const p={userId:user.id,roomId:node.room,room:'retained-harvest',x:node.x,y:node.y,companion:null};
+ try{
+   const state=await game.state(user.id);
+   await service.transaction([user.id],tx=>service.inventory(tx,user.id,'common-minnow',2147483647));
+   const start=await game.action(p,{action:'gather',nodeId:node.id});
+   assert.equal(draws,1,'a successful new harvest chooses its reward once at start');
+   assert.equal('reward' in start,false);
+   const publicHarvest=(await game.status(user.id)).harvest;
+   assert.deepEqual(Object.keys(publicHarvest).sort(),['id','node_id','ready_at']);
+   now+=node.durationMs;
+   const before=structuredClone(state);
+   const pending=async()=>(await pool.query('SELECT status,result FROM resource_harvests WHERE id=$1',[start.id])).rows[0];
+   for(let retry=0;retry<2;retry++){
+     await assert.rejects(game.action(p,{action:'finishGather',harvestId:start.id}),/item stack is full/i);
+     assert.equal((await pending()).status,'pending');
+     assert.deepEqual(state,before,'no XP or in-memory progress is granted on refusal');
+     assert.equal(await quantity(user,'common-minnow'),2147483647);
+     assert.equal(await quantity(user,'moonfish'),0,'a retry cannot reroll into another reward');
+   }
+   await service.transaction([user.id],tx=>service.inventory(tx,user.id,'common-minnow',-1));
+   const result=await game.action(p,{action:'finishGather',harvestId:start.id});
+   assert.equal(result.itemId,'common-minnow');
+   assert.equal(draws,1);
+   assert.equal(await quantity(user,'common-minnow'),2147483647);
+   assert.equal(state.xp.fishing,12);
+   assert.equal((await pending()).status,'complete');
+   await assert.rejects(game.action(p,{action:'finishGather',harvestId:start.id}),/already granted/);
+   assert.equal(state.xp.fishing,12);
+ }finally{await game.close();}
+});
+
+test('legacy origin-only pending harvests use one stable outcome across stack-full retries',async()=>{
+ const {AdventureService}=await import('../../server/adventure/service.mjs');
+ const {RESOURCE_NODES}=await import('../../web/js/game/adventure.js');
+ let now=3000000,draws=0;
+ const service=new WorldService(pool,{now:()=>now}),user=await account();
+ const game=new AdventureService(service,{random:()=>{draws++;return .99;},brains:{close(){}},rewards:{}});
+ const node=RESOURCE_NODES.find(n=>n.id==='lake-dock');
+ const p={userId:user.id,roomId:node.room,room:'legacy-harvest',x:node.x,y:node.y,companion:null};
+ try{
+   const state=await game.state(user.id),id=randomUUID();
+   let roll=hashNumber('harvest:'+id)/0x100000000,entry=node.table.at(-1);
+   for(const candidate of node.table){roll-=candidate[1];if(roll<0){entry=candidate;break;}}
+   await service.transaction([user.id],async tx=>{
+     await service.inventory(tx,user.id,entry[0],2147483647);
+     await tx.query("INSERT INTO resource_harvests(id,user_id,node_id,status,starts_at,ready_at,result) VALUES($1,$2,$3,'pending',$4,$5,$6)",
+       [id,user.id,node.id,now-node.durationMs,now,{origin:{room:p.room,x:p.x,y:p.y}}]);
+   });
+   for(let retry=0;retry<2;retry++)
+     await assert.rejects(game.action(p,{action:'finishGather',harvestId:id}),/item stack is full/i);
+   assert.equal(draws,0,'legacy completion does not sample a new random outcome');
+   assert.equal(state.xp.fishing,0);
+   await service.transaction([user.id],tx=>service.inventory(tx,user.id,entry[0],-1));
+   const result=await game.action(p,{action:'finishGather',harvestId:id});
+   assert.equal(result.itemId,entry[0]);
+   assert.equal(state.xp.fishing,entry[2]);
+   assert.equal(await quantity(user,entry[0]),2147483647);
+   assert.equal(draws,0);
  }finally{await game.close();}
 });
