@@ -16,6 +16,7 @@ import {
   plainText,
 } from "../../web/js/game/model.js";
 import { GameError } from "../world/service.mjs";
+const admittedSocketEvent = Symbol("admitted socket event");
 export class MemoryRoomStore {
   constructor() {
     this.rooms = new Map();
@@ -318,7 +319,7 @@ export class Multiplayer {
           entry.raw = null;
           const startedAt = performance.now();
           try {
-            await this.handle(p, msg);
+            await this.handle(p, msg, admittedSocketEvent);
           } finally {
             if (msg.type === "move")
               this.metrics?.time(
@@ -596,7 +597,7 @@ export class Multiplayer {
       originWalkable: walkable(p.roomId, p.seated?.approach.x ?? p.x, p.seated?.approach.y ?? p.y),
       destinationWalkable: Number.isFinite(data.x) ? walkable(p.roomId, data.x, data.y) : null});
   }
-  async handle(p, msg) {
+  async handle(p, msg, admission) {
     if (
       !msg ||
       typeof msg.type !== "string" ||
@@ -608,13 +609,15 @@ export class Multiplayer {
     const { type, data } = msg;
     const now = this.now();
     p.lastSeen = now;
-    if (now - p.windowAt >= 1000) {
-      p.windowAt = now;
-      p.eventCount = 0;
-    }
-    if (++p.eventCount > 25) {
-      p.ws.close(1008, "Socket rate limit");
-      throw new GameError("Too many socket events");
+    if (admission !== admittedSocketEvent) {
+      if (now - p.windowAt >= 1000) {
+        p.windowAt = now;
+        p.eventCount = 0;
+      }
+      if (++p.eventCount > 25) {
+        p.ws.close(1008, "Socket rate limit");
+        throw new GameError("Too many socket events");
+      }
     }
     if (type === "joinRoom") return this.join(p, data.roomId);
     if (type === "leaveRoom") return this.leave(p);

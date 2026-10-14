@@ -55,6 +55,33 @@ test('pending message budget bounds a blocked handler even across admitted rate 
   }finally{f.release();f.game.close();}
 });
 
+test('compliant messages across admission windows can drain after a delayed handler without another rate charge',async()=>{
+  const f=await fixture();
+  try{
+    f.emit('blocked');await flush();
+    for(let i=0;i<15;i++)f.emit('first-'+i);
+    f.advance();
+    for(let i=0;i<15;i++)f.emit('second-'+i);
+    assert.equal(f.body.ingress.entries.size,31);
+    f.release();await flush();
+    assert.equal(f.socket.code,undefined);
+    assert.deepEqual(f.joins,['blocked',...Array.from({length:15},(_,i)=>'first-'+i),...Array.from({length:15},(_,i)=>'second-'+i)]);
+    assert.equal(f.body.ingress.entries.size,0);
+    assert.equal(f.body.ingress.bytes,0);
+  }finally{f.release();f.game.close();}
+});
+
+test('direct handler calls cannot forge admission with booleans or client fields',async()=>{
+  const f=await fixture();
+  try{
+    const message={type:'joinRoom',admitted:true,data:{roomId:'direct'}};
+    for(let i=0;i<25;i++)await f.game.handle(f.body,message,true);
+    await assert.rejects(f.game.handle(f.body,message,true),/Too many socket events/);
+    assert.equal(f.socket.code,1008);
+    assert.equal(f.joins.length,25);
+  }finally{f.release();f.game.close();}
+});
+
 test('pending byte budget is enforced before scheduling and releases retained buffers',async()=>{
   const f=await fixture();
   try{

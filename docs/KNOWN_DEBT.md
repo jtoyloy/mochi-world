@@ -70,3 +70,8 @@ review/12 tiny checks; exact-source full hosted integration remains pending.
 64MiB body reservation is not total heap certification. Full security/operations
 and sustained capacity acceptance remain open; local disk fell further to299MiB,
 with owned game/browser stopped and no heavy local work resumed.
+
+The socket admission/dispatch follow-up found compliant delayed queues being
+charged twice. The private admission-token correction passes independent review
+and14 tiny ingress tests; hosted integration remains pending. All original ingress
+limits remain. Headroom is only426MiB; local heavy acceptance stays suspended.

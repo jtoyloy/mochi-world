@@ -332,3 +332,18 @@ Independent review and12 tiny Readable/socket-source checks pass,zero skips,
 with source syntax/diff checks. Real integrated HTTP/socket/browser/DB verification
 is deferred to the hosted exact-source gate, not claimed locally. Full security
 acceptance remains open. Disk is now299MiB; owned heavy processes remain stopped.
+
+A follow-up socket interaction reproduced31 compliant admissions across two rate
+windows draining only26 handlers before close1008: the old handler rate counter
+charged the already admitted queue again. A module-private admission Symbol now
+skips only that duplicate dispatch charge. Direct-handler calls and client boolean
+fields cannot bypass25/s; shape/action checks and32-entry/32KiB/2KiB bounds remain.
+Independent review and14 tiny ingress checks pass,zero skips; full hosted gate
+remains pending.
+
+Disk briefly reached120MiB and file writes failed. Root deleted only its own
+30833908-byte downloaded run64 artifact ZIP after matching SHA256
+a31b1846b055371b36e4e5ef86cd4e9208f77b282609a107ba5cb908d4ee204c; committed
+failure evidence, extracted screenshots and hosted artifact11859286017 remain.
+Headroom later recovered to435MiB (426MiB on recheck), still below3GiB. No owned
+game/browser/native process was restarted and no unrelated data/swap was removed.
