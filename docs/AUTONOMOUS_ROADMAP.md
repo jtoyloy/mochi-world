@@ -78,3 +78,14 @@ HTTP buffering findings with reviewed bounded ingress; require hosted full gate
 and preserve limits of source-only local evidence. Workflow80 already passes the
 expected combat-capacity correction. Continue remaining independent security and
 full player/art/operations acceptance; no product gate is closed by these patches.
+
+
+2026-10-14 payment recovery continuation: ingress workflow88 passes443JS/49Python/
+seven browser cases. Independent economy audit R13 takes priority: durable verified
+payment proof must survive failed item delivery, deadlines and cancellation.
+Implement and independently review retained reservations, currency provenance,
+owned recovery pagination and safe UI retry; require hosted PostgreSQL race/migration
+coverage before integration claims. Late already-released marketplace stock needs
+explicit reconciliation without duplicate grants or autonomous refunds. Full
+wallet/security/player acceptance remains open; local heavy work remains suspended
+below3GiB free.

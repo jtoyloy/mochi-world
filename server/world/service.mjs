@@ -1040,7 +1040,7 @@ export class WorldService {
       return { message: "A little treasure changed hands" };
     });
   }
-  async cancelListing(userId, listingId) {
+  async cancelListing(userId, listingId, {assertCancelable} = {}) {
     return this.transaction([userId], async (tx) => {
       const listing = (
         await tx.query(
@@ -1049,6 +1049,7 @@ export class WorldService {
         )
       ).rows[0];
       if (!listing) throw new GameError("Listing not found");
+      if (assertCancelable) await assertCancelable(tx, listing);
       await this.inventory(tx, userId, listing.item_id, listing.quantity);
       await tx.query("DELETE FROM player_shop_listings WHERE id=$1", [
         listingId,

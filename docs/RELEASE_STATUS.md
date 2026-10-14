@@ -18,22 +18,37 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow84 passed:433 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow88 passed at0549b08:443 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists normally use isolated branches/worktrees at the exact validated base. During the disk safety interruption, tiny source-only tasks share this checkout with explicit file ownership and independent review before commit; no parallel heavy processes run. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
 ## Current continuation
 
-Latest code includes socket setup and all-API work admission. Latest completed
-full gate: workflow84 at1470b8cf27e7fbbf3d70055cf266e5430ced3ddc,433JS/49Python/
-zero skips/seven browser cases/build/audit/diff. Workflow86 checks setup work;
-the all-API request correction requires its subsequent exact-source gate. Neither
-is passed until authoritative completion. Full security acceptance remains open.
+Latest completed full gate: workflow88 at
+`0549b08c00bd28504610d55bc3ed3894f5014bbe` (run38577482404,
+job115898298020):443 JavaScript tests,49 Python tests,zero skips,seven functional
+browser cases (3.4 minutes),build/audit/diff all passed. Workflow86 also passed
+440JS/49Python/seven browser cases for socket setup admission. These validate
+bounded ingress, not full security or capacity acceptance.
 
-Owned8788 server/browser are stopped; disk fluctuates around430MiB and remains
+Current continuation repairs the durable-proof portion of R13 payment recovery. Real verification
+is being separated from fallible item delivery with immutable owned proof,
+currency provenance, retained paid reservations and explicit reconciliation when
+stock has already been released. Wallet recovery lists existing checkouts and
+retries delivery without another transfer. Seller cancellation now delegates to
+the reservation guard inside the listing transaction. Fifteen focused control/UI tests pass (zero skips),
+including a lost verification response. Independent phase A financial/source
+review approved all backend/schema/cancellation/UI changes with no remaining
+actionable findings; exact-source hosted PostgreSQL/migration/race validation
+remains pending. Seven dedicated PostgreSQL regressions are authored for CI. No real funds or chain
+transactions have been used. Late released marketplace stock reconciliation remains
+a release blocker; this phase does not close AK/BE.
+
+Owned8788 server/browser remain stopped. Disk measured1.2GiB on continuation,
 below the unchanged3GiB floor. No local DB/native/build/browser/full suite may
-resume until safe headroom returns. Cadence remains NO PROMOTION;150CCU remains
-NOT CERTIFIED. All PRODUCT_DONE sections remain open pending their actual gates.
+resume until safe headroom returns. Only tiny source/control checks and hosted
+gates continue. Cadence remains NO PROMOTION;150CCU remains NOT CERTIFIED.
+All PRODUCT_DONE sections remain open pending their actual gates.
 
 ## Integration audit trail
 

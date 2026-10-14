@@ -113,26 +113,38 @@ export async function tokenCheckout(data) {
     const signature = node("input");
     signature.placeholder = "Confirmed transaction signature";
     signature.setAttribute("aria-label", "Payment transaction signature");
-    d.append(
-      signature,
-      button(
+    let paymentVerified = false;
+    const verify = button(
         "Verify & deliver item",
         async () => {
+          const existingSignature = signature.value.trim();
+          if (!paymentVerified && !existingSignature)
+            throw new Error("Paste the signature of the payment you already sent.");
+          // Once verifying an existing transfer, keep retries on that transfer
+          // even if the response is lost after the server records payment.
+          link.remove();
           const result = await api("/api/token/verify", {
             intentId: intent.id,
-            signature: signature.value,
+            ...(paymentVerified ? {} : { signature: existingSignature }),
           });
+          paymentVerified = true;
           complete = true;
+          link.remove();
+          signature.remove();
+          if (result.status === "verified") verify.textContent = "Retry item delivery";
+          else verify.remove();
           status.textContent = result.message;
         },
         status,
-      ),
-    );
+      );
+    d.append(signature, verify);
   }
-  d.append(button("Cancel checkout", () => d.close(), status));
+  if (!intent.mock)
+    d.append(node("p", "You can close this window and recover an existing payment from your wallet page."));
+  d.append(button(intent.mock ? "Cancel checkout" : "Close checkout", () => d.close(), status));
   document.body.append(d);
   d.onclose = () => {
-    if (!complete)
+    if (!complete && intent.mock)
       api("/api/token/cancel", { intentId: intent.id }).catch(() => {});
     d.remove();
   };
@@ -141,10 +153,61 @@ export async function tokenCheckout(data) {
     d.addEventListener("close", resolve, { once: true }),
   );
 }
+export async function paymentRecovery(app, { request = api, element = node, control = button } = {}) {
+  const section = element("section"), entries = element("div"), status = element("p");
+  const loading = "Loading open checkouts…";
+  status.textContent = loading;
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  section.append(element("h2", "Open token checkouts"),
+    element("p", "Verify a payment already sent, or retry delivery of a verified purchase."), entries, status);
+  app.append(section);
+  let nextCursor = null;
+  const load = async (after = null) => {
+    const page = await request("/api/token/payments" + (after ? "?after=" + encodeURIComponent(after) : ""));
+    if (!after) entries.replaceChildren();
+    for (const payment of page.payments) {
+      const mock = payment.mock ?? page.mock;
+      const row = element("article"), feedback = element("p");
+      feedback.setAttribute("role", "status");
+      row.append(element("h3", `${payment.quantity} ${payment.itemName}`),
+        element("p", `${payment.formatted} ${mock ? "TEST $MOCHI" : "$MOCHI"}`),
+        element("p", "Opened " + new Date(payment.createdAt).toLocaleString()),
+        element("p", payment.message), feedback);
+      if (payment.canRetry) {
+        let signature;
+        if (payment.requiresSignature) {
+          signature = element("input");
+          signature.setAttribute("aria-label", `Existing payment signature for ${payment.itemName}`);
+          signature.placeholder = "Confirmed transaction signature";
+          row.append(signature);
+        }
+        row.append(control(payment.requiresSignature ? "Verify existing payment" : mock ? "Complete test checkout" : "Retry item delivery", async () => {
+          const result = await request("/api/token/verify", {
+            intentId: payment.id,
+            ...(signature ? { signature: signature.value.trim() } : {}),
+          });
+          status.textContent = result.message;
+          await load();
+        }, feedback));
+      }
+      entries.append(row);
+    }
+    nextCursor = page.nextCursor;
+    more.hidden = !nextCursor;
+    if (!entries.children.length) entries.append(element("p", "No open token checkouts."));
+    if (status.textContent === loading) status.textContent = "";
+  };
+  const more = control("Load more checkouts", () => { status.textContent = loading; return load(nextCursor); }, status);
+  more.hidden = true;
+  section.append(control("Refresh checkouts", () => { status.textContent = loading; return load(); }, status), more);
+  try { await load(); }
+  catch (error) { status.textContent = error.message; }
+}
 export async function walletPage(app) {
   const balance = await api("/api/token/balance");
   app.append(
-    node("h1", "Your wallet, your penguin"),
+    node("h1", "Your wallet"),
     node(
       "p",
       `${balance.formatted} ${balance.mock ? "TEST $MOCHI — fake development currency" : "$MOCHI"}`,
@@ -200,6 +263,7 @@ export async function walletPage(app) {
         : "On-chain balances are authoritative. Refresh uses the server RPC cache. Game rewards are not automatic token transfers.",
     ),
   );
+  await paymentRecovery(app);
 }
 export async function treasuryPage(app) {
   const state = await api("/api/treasury");

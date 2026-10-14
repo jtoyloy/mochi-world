@@ -31,3 +31,20 @@ The integrated JavaScript gate was interrupted when host free space fell to ~1Gi
 ## 2026-10-06 — Ordinary Coins and durable trade identity
 
 Add separate ordinary Coins vendors/buyers so combat/gathering progression works without a wallet or funded token rewards. Atomic immutable receipts own each transaction. Persist ambiguous requests under their original account; bind every POST to expectedOwner at the authenticated HTTP boundary before replay or mutation. Freeze the legacy mock SPL baseline before soft Coins change. These changes require PostgreSQL and full browser acceptance before promotion.
+
+## 2026-10-14 — Verified payments survive delivery failure
+
+R13 demonstrated that external payment verification followed by a single delivery
+transaction loses local proof when inventory refuses delivery. Preserve verified
+real-payment evidence in an immutable receipt committed before delivery; freeze
+intent details and verification currency provenance. Retain paid marketplace
+reservations across deadlines and guard seller cancellation inside the listing
+transaction. Retry known proof without another RPC verification or wallet payment.
+Mock checkout stays one atomic simulated debit/delivery transaction.
+
+When reservation ownership is already lost, record reconciliation rather than
+invent inventory or initiate refunds. Legacy intents without currency provenance
+also require reconciliation after successful verification; do not infer a network
+from the current server setting. This phase does not close production financial
+reconciliation or AK/BE. Require independent review and hosted PostgreSQL race,
+migration and replay checks; local disk remains below the unchanged3GiB floor.

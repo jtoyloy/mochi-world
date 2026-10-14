@@ -252,6 +252,8 @@ const server = createServer(async (req, res) => {
           200,
           await tokens.balance(user, url.searchParams.has("refresh")),
         );
+      if (path === "/api/token/payments" && req.method === "GET")
+        return json(res, 200, await tokens.payments(user, { after: url.searchParams.get("after") }));
       if (path === "/api/treasury")
         return json(res, 200, await tokens.treasury());
       if (path.startsWith("/api/dialogue/") && req.method === "GET")
@@ -544,19 +546,7 @@ const server = createServer(async (req, res) => {
             answer = await service.buyListing(user, b);
             break;
           case "/api/listings/cancel":
-            if (
-              (
-                await pool.query(
-                  "SELECT 1 FROM listing_reservations r JOIN player_shop_listings l ON l.id=r.listing_id WHERE l.id=$1 AND l.seller_id=$2 AND r.expires_at>now()",
-                  [b.listingId, user],
-                )
-              ).rowCount
-            )
-              throw new GameError(
-                "An active checkout reserved this listing",
-                409,
-              );
-            answer = await service.cancelListing(user, b.listingId);
+            answer = await tokens.cancelListing(user, b.listingId);
             break;
           case "/api/friends/request":
             answer = await service.friendRequest(user, b.username);

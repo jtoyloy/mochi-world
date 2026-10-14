@@ -16,6 +16,7 @@
 | R10 | Equipment/supplies/gather timers UX defects | Audit found rejected slot offers, missing consumable controls and obsolete timers; handler fixes integrated and bounded checks pass; full browser acceptance remains |
 | R11 | Audio/settings/accessibility/responsive completeness | Compact disclosures repaired measured320px/768px/844×390 collisions, with actual dialog actions, map visibility, desktop restoration and Settings Escape focus verified. Independent review and19 focused checks pass. Mute/motion retained on reload. General legacy-modal focus, physical devices and full accessibility acceptance remain open |
 | R12 | World label collisions obstruct interactions/readability | At Iris, the Mage Atelier button's center hit the companion name and opened its panel twice. Pointer-priority repair passed actual center-hit and mouse-open checks; broader spacing, crowded labels and independent acceptance remain open |
+| R13 | Verified token payment can lose its recoverable delivery entitlement | Independent actual-fulfill injected-capacity probe verifies payment, rolls back local signature/status with delivery failure, then expiry/cancel can release stock and block retry. Durable proof/owed-delivery repair and wallet retry UI now pass15 tiny control/UI tests; independent phase A financial review approved; hosted PostgreSQL race/migration checks remain pending. Late released marketplace stock and unknown legacy currency provenance need explicit reconciliation. Full AK/BE remains blocked; no real funds tested |
 
 ## EXTERNAL_DEPENDENCIES
 
