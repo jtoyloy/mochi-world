@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow80 passed:419 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow82 passed:431 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -347,3 +347,19 @@ a31b1846b055371b36e4e5ef86cd4e9208f77b282609a107ba5cb908d4ee204c; committed
 failure evidence, extracted screenshots and hosted artifact11859286017 remain.
 Headroom later recovered to435MiB (426MiB on recheck), still below3GiB. No owned
 game/browser/native process was restarted and no unrelated data/swap was removed.
+
+Workflow82 passed exact cdea11d7fa029f4e06c69eed0102f2e6a33aba2d:431 JavaScript,
+49 Python,zero skips,seven browser cases in4.8minutes and build/audit/diff, covering
+HTTP body and socket message admission. Follow-up delayed-drain source1470b8c
+remains in workflow84 pending authoritative completion.
+
+Further setup audit reproduced64 concurrent unauthenticated upgrade lookups and
+32 closed sockets still starting subsequent avatar/session reads. Setup work now
+has32 process-local admission slots before authentication, held through account,
+avatar and revalidation. A30-second deadline closes raw/upgraded transports while
+retaining slots until uncancellable work actually settles. Initial and between-read
+closed checks prevent wasted downstream work. Malformed/missing-callback/throw
+paths release slots; two counters record refusals/timeouts. Independent review and
+15 tiny setup/ingress checks pass,zero skips. Installed ws synchronous callback
+behavior was inspected for this fixed no-verifyClient configuration. Full hosted
+integration remains pending; no CCU or final security certification is implied.

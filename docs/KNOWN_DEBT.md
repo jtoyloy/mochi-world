@@ -75,3 +75,8 @@ The socket admission/dispatch follow-up found compliant delayed queues being
 charged twice. The private admission-token correction passes independent review
 and14 tiny ingress tests; hosted integration remains pending. All original ingress
 limits remain. Headroom is only426MiB; local heavy acceptance stays suspended.
+
+Hosted82 passes431JS/49Python/seven browser cases atcdea11d for body/message
+admission. The separate pre-actor socket setup audit found unbounded auth/connect
+work;32 pending-work slots, deadline and closed checks now pass independentreview
+and15 tiny checks. Exact-source hosted integration/finalBE remain open.

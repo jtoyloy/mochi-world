@@ -50,9 +50,13 @@ export class Multiplayer {
       );
     if (!Number.isInteger(capacity) || capacity < 1 || capacity > 100)
       throw new Error("MAX_PLAYERS_PER_ROOM must be 1–100");
+    this.pendingSetups = 0;
     if (server) {
       this.wss = new WebSocketServer({ noServer: true, maxPayload: 2048 });
       server.on("upgrade", async (req, socket, head) => {
+        if (socket.destroyed) return;
+        let admitted = false, timer, upgraded;
+        let expired = false;
         try {
           if (new URL(req.url, "http://localhost").pathname !== "/socket")
             throw new Error("Unknown socket");
@@ -61,17 +65,45 @@ export class Multiplayer {
             req.headers.origin !== `https://${req.headers.host}`
           )
             throw new Error("Socket origin refused");
+          if (this.pendingSetups >= 32) {
+            this.metrics?.count("socketSetupRefusals");
+            socket.write("HTTP/1.1 503 Service Unavailable\r\n\r\n");
+            socket.destroy();
+            return;
+          }
+          this.pendingSetups++;
+          admitted = true;
+          timer = setTimeout(() => {
+            expired = true;
+            this.metrics?.count("socketSetupTimeouts");
+            upgraded?.close(1013, "Connection setup timed out");
+            socket.destroy();
+          }, 30000);
+          timer.unref();
           const userId = await authenticate(req);
+          if (expired || socket.destroyed) return;
+          let connecting;
+          // This server has no async verifyClient: ws invokes the callback
+          // synchronously on success, and omits it for rejected handshakes.
           this.wss.handleUpgrade(req, socket, head, (ws) => {
+            upgraded = ws;
             ws.sessionExpiresAt = req.sessionExpiresAt;
             ws.revalidateSession = () => authenticate(req);
-            this.connect(ws, userId).catch(() =>
-              ws.close(1011, "Room unavailable"),
-            );
+            connecting = this.connect(ws, userId);
           });
+          if (connecting) await connecting;
+          else if (!socket.destroyed) socket.destroy();
         } catch {
-          socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-          socket.destroy();
+          if (upgraded) upgraded.close(1011, "Room unavailable");
+          else if (!socket.destroyed) {
+            socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+            socket.destroy();
+          }
+        } finally {
+          clearTimeout(timer);
+          // A deadline closes the transport, but uncancellable database work
+          // owns this slot until its promise has actually settled.
+          if (admitted) this.pendingSetups--;
         }
       });
     }
@@ -248,8 +280,11 @@ export class Multiplayer {
     ingress.bytes = 0;
   }
   async connect(ws, userId) {
-    const user = await this.world.account(userId),
-      avatar = await this.avatars.get(userId);
+    if (ws.readyState !== 1) return;
+    const user = await this.world.account(userId);
+    if (ws.readyState !== 1) return;
+    const avatar = await this.avatars.get(userId);
+    if (ws.readyState !== 1) return;
     // Account revocation may occur while the avatar is loading after upgrade.
     if (ws.revalidateSession && await ws.revalidateSession() !== userId) {
       ws.close(4003, "Sign in again");
