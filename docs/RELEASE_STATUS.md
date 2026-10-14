@@ -1,6 +1,6 @@
 # Autonomous release status
 
-Updated 2026-10-13. PRODUCT COMPLETE: NO. Ready for production launch: NO. Ready for full staging acceptance: NO (local/test validation permitted).
+Updated 2026-10-14. PRODUCT COMPLETE: NO. Ready for production launch: NO. Ready for full staging acceptance: NO (local/test validation permitted).
 
 Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Current integration branch: codex/autonomous-release. Release candidate: not designated. Current main already includes Wave 4; nothing was discarded. Main remains unchanged pending independent milestone review and exact-SHA gates.
 
@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow70 passed:402 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow78 passed:415 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -278,3 +278,37 @@ Next measured failure: an automatic stack-full loot refusal rejects tick before
 the global enemy stage, sends no player notice and leaves auto-target selected.
 A tiny actual-tick probe recorded enemy-stagecalls0/playerMessages0. This is under
 repair; unexpected persistence/native errors must retain their failing barrier.
+
+Workflow74 passed exact `d3325827ec272e527625c5342b0ff10d72d61a72`:
+409 JavaScript,49 Python,zero skips,all seven browser cases in3.4minutes,
+build/audit/diff. This validates the corrected chase fixture, respawn guards and
+inventory stack guard together; run72's407/408 failure remains recorded.
+Later harvest/loot changes require their own hosted gates and do not inherit this
+source's success. Owned browser remains idle in Town; server loaded `a42310c`, so
+no later harvest/loot runtime claim is made. Disk recovered to3.9GiB; unchanged
+3GiB floor and no parallel local heavy campaigns.
+
+2026-10-14 continuation confirms workflow76 at
+`273f699644764436c9c48d95fc54aa3068f99451` passed411 JavaScript/49 Python/zero skips,
+seven browser cases in5.0minutes and build/audit/diff. Workflow78 at
+`9d73167243dd5e2a698a5b7cf36498ef797bd18c` passed415 JavaScript/49 Python/zero skips,
+seven browser cases in4.9minutes and build/audit/diff. Thus private harvest and
+runtime spawn-loot retention have exact-source full hosted evidence.
+
+Headroom subsequently fell to523MiB. The owned8788 server exited0 after SIGTERM
+and the owned IAB tab closed. Local heavy/DB/native/build/browser work is stopped
+at the unchanged3GiB floor; no unrelated files/swap were removed. The specialist
+implementation turn also ended at an account usage limit. Root continued the
+existing small source regression: automatic capacity refusal was red2/4, then
+38 focused source tests passed after the narrow InventoryCapacityError handling.
+The expected refusal clears the attacker's target and sends a notice while
+allowing other-room combat/enemies; executed pet action still acknowledges and
+finishes before enemies. Generic409/database failures retain the failing barrier.
+Independent review and full hosted verification of this final correction remain
+pending. No broader failure/capacity/production acceptance is inferred.
+
+The automatic capacity correction then passed independent review and an independent
+4/4 focused test run,zero skips,syntax/diff checks. Root's broader38 source checks
+also pass. No DB/native/browser/build/full local run was attempted below the
+floor. The correction is ready for its exact-source hosted gate; that result is
+still pending.

@@ -20,6 +20,11 @@ export class GameError extends Error {
     this.status = status;
   }
 }
+export class InventoryCapacityError extends GameError {
+  constructor(message = "This item stack is full. Make room before adding more.") {
+    super(message, 409);
+  }
+}
 export const integer = (value, min = 1, max = 1000000) => {
   if (!Number.isSafeInteger(value) || value < min || value > max)
     throw new GameError("Enter a valid whole number");
@@ -148,7 +153,7 @@ export class WorldService {
         [userId, itemId, location, amount],
       );
       if (!result.rowCount)
-        throw new GameError("This item stack is full. Make room before adding more.", 409);
+        throw new InventoryCapacityError();
       await tx.query(
         "INSERT INTO collection_entries(user_id,item_id,discovered_at) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
         [userId, itemId, new Date(this.now())],

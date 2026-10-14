@@ -56,3 +56,9 @@ full hosted gate remains pending. An actual-tick probe then found expected
 stack-full autoattack refusals suppress that tick's global enemy stage and give
 no player feedback. This remains an open correctness/UX repair; unexpected
 persistence/native failures must not be swallowed while fixing expected refusal.
+
+2026-10-14: latest exact-source hosted gate78 passed415JS/49Python/zero skips and
+seven Chromium cases/build/audit/diff at9d73167, covering harvest/loot retention.
+Disk then fell to523MiB; root stopped owned server/browser and suspended local
+heavy work under the unchanged3GiB floor. Automatic capacity notice/enemy-stage
+repair passes38 tiny source checks; independent review/full hosted gate pending.

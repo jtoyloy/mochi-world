@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { GameError, integer, hashNumber } from "../world/service.mjs";
+import { GameError, InventoryCapacityError, integer, hashNumber } from "../world/service.mjs";
 import { BattleBrains } from "./battle.mjs";
 import { ResourceRewards } from "./rewards.mjs";
 import {
@@ -762,6 +762,11 @@ export class AdventureService {
       m.hp = 1;
       m.state = "CHASE";
       m.respawnAt = 0;
+      if (error instanceof InventoryCapacityError) {
+        s.target = null;
+        this.multiplayer.send(p, "adventureNotice", { message: error.message });
+        return;
+      }
       throw error;
     }
     if (!inserted) return;
@@ -1004,7 +1009,7 @@ export class AdventureService {
             await this.ownerAttack(p, s, m, now);
             if (this.multiplayer.store.players.get(p.userId) !== p || p.room !== roomKey) continue;
             if (
-              m.hp > 0 &&
+              m.hp > 0 && s.target === m.id &&
               p.companion &&
               s.petHp > 0 &&
               (s.petDecisionAt ?? 0) <= now

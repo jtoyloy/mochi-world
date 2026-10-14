@@ -64,3 +64,11 @@ real integer-stack rollback and harvest retry identity. Preserve workflow72's
 for the corrected fixture/stack/harvest sources. Ordinary corrected-runtime natural
 defeat retained full vitals/gear/315Coins; two-enemy race remains test evidence.
 Audit failed combat-loot grants next, then resume broader failure/player/art gates.
+
+2026-10-14: hosted78 passes415JS/49Python/seven functional browser cases for
+private harvest and runtime loot retention. The next actual-tick failure is now
+repaired and independently reviewed: expected inventory capacity stops only the
+attacker's target and informs them, preserving pet execution settlement and
+other-room/enemy progress; unexpected faults retain their barrier. Require its
+exact-source hosted gate. Local heavy work is again suspended at523MiB free;
+source/hosted development continues without weakening capacity/player/art gates.
