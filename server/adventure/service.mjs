@@ -80,6 +80,7 @@ export class AdventureService {
     this.lastError = null;
     this.encounterTtlMs = encounterTtlMs;
     this.encounters = new Map();
+    this.lootRolls = new WeakMap();
     this.stopping = false;
   }
   // Invalidate synchronously at the body boundary; native work may still be running.
@@ -725,10 +726,16 @@ export class AdventureService {
       (m.zone.respawnMinSeconds +
         this.random() * (m.zone.respawnMaxSeconds - m.zone.respawnMinSeconds)) *
         1000;
-    const loot = [];
-    for (const [id, chance, min, max] of m.drops)
-      if (this.random() < chance)
-        loot.push([id, min + Math.floor(this.random() * (max - min + 1))]);
+    // The reward belongs to this spawned body, including an empty drop roll.
+    // Keep it private so a failed grant cannot reroll or expose its outcome.
+    let loot = this.lootRolls.get(m);
+    if (!loot) {
+      loot = [];
+      for (const [id, chance, min, max] of m.drops)
+        if (this.random() < chance)
+          loot.push([id, min + Math.floor(this.random() * (max - min + 1))]);
+      this.lootRolls.set(m, loot);
+    }
     const next = structuredClone(s);
     let inserted = false;
     try {

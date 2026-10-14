@@ -50,3 +50,9 @@ repaired by private persisted selection at start and stable legacy-ID fallback;
 13 actual database tests/independent review pass. Full hosted gate and browser
 failure/restart acceptance remain open. Separate combat-loot failed-grant retry
 selection is under audit and is not claimed fixed by this harvest correction.
+
+Combat-loot roll retention now passes independent source review/34 focused tests;
+full hosted gate remains pending. An actual-tick probe then found expected
+stack-full autoattack refusals suppress that tick's global enemy stage and give
+no player feedback. This remains an open correctness/UX repair; unexpected
+persistence/native failures must not be swallowed while fixing expected refusal.

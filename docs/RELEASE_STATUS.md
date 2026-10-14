@@ -264,3 +264,17 @@ movement/room checks and grant/XP/progress transaction remain unchanged.
 Independent review approved;13 PostgreSQL commerce/harvest tests and30 source
 checks pass,zero skips. Restart durability is supported by database-source review,
 not a fresh-process test. Exact-source full hosted gate is pending.
+
+Combat-loot failure continuation reproduced a same-spawn retry changing Thorn
+Fiber1→3 after an injected inventory refusal. The first rolled list, including
+empty results, is now held in a private WeakMap keyed by the actual mob object.
+Cross-owner retries retain it; actual respawn replacement/new UUID draws anew.
+Public frames and existing receipt/XP transactions are unchanged. Independent
+review and34 focused source tests pass,zero skips. These are injected-transaction
+checks, not new real-DB rollback/restart certification; runtime mob instances are
+already discarded on server restart. Full hosted gate remains pending.
+
+Next measured failure: an automatic stack-full loot refusal rejects tick before
+the global enemy stage, sends no player notice and leaves auto-target selected.
+A tiny actual-tick probe recorded enemy-stagecalls0/playerMessages0. This is under
+repair; unexpected persistence/native errors must retain their failing barrier.
