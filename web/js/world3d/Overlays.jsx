@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import { restoreDialogInvoker } from "../game/dialog-focus.js";
 const request = async (path, data) => {
   const r = await fetch(
     path,
@@ -40,7 +41,7 @@ function Window({ title, close, children }) {
     </>
   );
 }
-export function reactDialog(title, render, { beforeClose } = {}) {
+export function reactDialog(title, render, { beforeClose, invoker = document.activeElement } = {}) {
   const dialog = document.createElement("dialog");
   dialog.className = "world-dialog react-game-panel";
   document.body.append(dialog);
@@ -68,6 +69,7 @@ export function reactDialog(title, render, { beforeClose } = {}) {
     e.preventDefault();
     close();
   };
+  restoreDialogInvoker(dialog, invoker);
   root.render(
     <Window title={title} close={close}>
       {render(close)}
@@ -76,10 +78,10 @@ export function reactDialog(title, render, { beforeClose } = {}) {
   dialog.showModal();
   return dialog;
 }
-export function openConversation({ pet, bridge, refresh }) {
+export function openConversation({ pet, bridge, refresh, invoker }) {
   return reactDialog("Talk with " + pet.name, (close) => (
     <Conversation pet={pet} bridge={bridge} refresh={refresh} />
-  ));
+  ), { invoker });
 }
 function Conversation({ pet, bridge }) {
   const [history, setHistory] = useState([]),
@@ -160,7 +162,7 @@ function Conversation({ pet, bridge }) {
     </>
   );
 }
-export function openBackpack({ world, refresh, notice, openLegacy }) {
+export function openBackpack({ world, refresh, notice, openLegacy, invoker }) {
   return reactDialog("Your backpack", (close) => (
     <Backpack
       initial={world}
@@ -168,7 +170,7 @@ export function openBackpack({ world, refresh, notice, openLegacy }) {
       notice={notice}
       openLegacy={openLegacy}
     />
-  ));
+  ), { invoker });
 }
 function Backpack({ initial, refresh, notice, openLegacy }) {
   const [world, setWorld] = useState(initial),
@@ -274,7 +276,7 @@ function Backpack({ initial, refresh, notice, openLegacy }) {
                       : "Wear as hat"}
               </button>
             )}
-            <button onClick={() => openLegacy("/items/inventory")}>
+            <button onClick={event => openLegacy("/items/inventory", event.currentTarget)}>
               Inspect / gift / sell
             </button>
           </article>
@@ -335,7 +337,7 @@ function HomeEditor({ pet }) {
   );
 }
 
-export function openDomainPanel(title, url) {
+export function openDomainPanel(title, url, invoker = document.activeElement) {
   return reactDialog(
     title,
     () => (
@@ -346,6 +348,7 @@ export function openDomainPanel(title, url) {
       />
     ),
     {
+      invoker,
       beforeClose: async (dialog) => {
         const frame = dialog.querySelector("iframe");
         const nested =

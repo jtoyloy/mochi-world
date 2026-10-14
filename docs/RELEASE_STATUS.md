@@ -1,0 +1,405 @@
+# Autonomous release status
+
+Updated 2026-10-14. PRODUCT COMPLETE: NO. Ready for production launch: NO. Ready for full staging acceptance: NO (local/test validation permitted).
+
+Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Current integration branch: codex/autonomous-release. Release candidate: not designated. Current main already includes Wave 4; nothing was discarded. Main remains unchanged pending independent milestone review and exact-SHA gates.
+
+| Subsystem | Status | Evidence / next action |
+| --- | --- | --- |
+| Account/session | IN_PROGRESS | Salted scrypt, hashed sessions and revocation implemented; retained-room recovery passed 21 focused checks, independent source review and supervisor real-brain expiry/export/sign-in/save drill. Full returning/failure and production HTTPS acceptance open |
+| Player combat/mobs/spells/equipment/inventory | FUNCTIONAL | Equipment rollback/slots and all consumables repaired; handler checks pass; complete live journeys open |
+| Fishing/woodcutting/vendors/progression | FUNCTIONAL | Stale gather controls repaired; ordered server-backed guide and Coins vendors implemented; native commerce and live progression gates pending |
+| Movement/presence/reconnect | FUNCTIONAL | 42 movement tests historically; sustained capacity/WAN open |
+| Mochi persistence/personality/follow | FUNCTIONAL | Pack and checkpoint controls; full candidate playtest open |
+| Cadence battle | IN_PROGRESS | NO PROMOTION; measured context discrimination weak |
+| Cadence trading | FUNCTIONAL | PAPER only, separate persistent domain |
+| Adventure performance | IN_PROGRESS | Room lanes integrated; matched 25-actor motor p95 272–364ms versus 741–752ms baseline; 50/100/150 and sustained gates pending |
+| Wallet/economy | FUNCTIONAL | Test verification/ledger; real production reconciliation and review open |
+| Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
+| Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
+| 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow88 passed at0549b08:443 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+
+Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists normally use isolated branches/worktrees at the exact validated base. During the disk safety interruption, tiny source-only tasks share this checkout with explicit file ownership and independent review before commit; no parallel heavy processes run. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
+
+## Current continuation
+
+Latest completed full gate: workflow88 at
+`0549b08c00bd28504610d55bc3ed3894f5014bbe` (run38577482404,
+job115898298020):443 JavaScript tests,49 Python tests,zero skips,seven functional
+browser cases (3.4 minutes),build/audit/diff all passed. Workflow86 also passed
+440JS/49Python/seven browser cases for socket setup admission. These validate
+bounded ingress, not full security or capacity acceptance.
+
+Current continuation repairs the durable-proof portion of R13 payment recovery. Real verification
+is being separated from fallible item delivery with immutable owned proof,
+currency provenance, retained paid reservations and explicit reconciliation when
+stock has already been released. Wallet recovery lists existing checkouts and
+retries delivery without another transfer. Seller cancellation now delegates to
+the reservation guard inside the listing transaction. Fifteen focused control/UI tests pass (zero skips),
+including a lost verification response. Independent phase A financial/source
+review approved all backend/schema/cancellation/UI changes with no remaining
+actionable findings; exact-source hosted PostgreSQL/migration/race validation
+remains pending. Seven dedicated PostgreSQL regressions are authored for CI. No real funds or chain
+transactions have been used. Late released marketplace stock reconciliation remains
+a release blocker; this phase does not close AK/BE.
+
+Owned8788 server/browser remain stopped. Disk measured1.2GiB on continuation,
+below the unchanged3GiB floor. No local DB/native/build/browser/full suite may
+resume until safe headroom returns. Only tiny source/control checks and hosted
+gates continue. Cadence remains NO PROMOTION;150CCU remains NOT CERTIFIED.
+All PRODUCT_DONE sections remain open pending their actual gates.
+
+## Integration audit trail
+
+Hosted workflow 40 passed at `af27dea13d5cde6b4fcef1ceb56705aa27ccf96b`.
+Adoption handoff fix `8b22753` passed independent source review, four actual
+handler tests and browser verification on a synthetic local account; build passed.
+The full new-player journey remains open: Training Yard combat exposed a spawn
+identity ownership mismatch, fixed in `6a6e269`; four actual-spawn and nine
+room-lane tests pass, and browser practice completion is verified. The supervisor
+then completed all seven guided steps and verified persistence after reload;
+independent BK acceptance remains open. Live progress publication fix `536fcfb`
+passes a same-tick Trading Hall regression. Backup hardening `eebb0ee` passes
+seven fixture tests; its first actual attempt failed because pg_dump interpreted
+the URI in PGDATABASE as a literal database name. The incomplete private copy is
+retained. Correction `917ad1b` passes nine tests, and the quiescent actual retry
+verified seven checkpoint files and a 257097-byte PostgreSQL custom dump.
+Guarded restore `de69d4e` passed 20 focused backup/restore tests. Actual owned
+local restore, migration, one-worker login/brain load-save, offline Coins replay
+and graceful restart passed at `7fd4838`; source backup re-verification passed.
+Initial retained-room reauthentication fix `7fd4838` passed five handler checks;
+the deeper paused-room save/lease repair `654aeee` passed independent source
+review and 21 focused checks, including a newer heartbeat pause during save.
+The supervisor's actual initialized-room expiry, retained export, original-account
+sign-in, confirmed version-13 save and lease release passed. Guide hydration
+regression `abda789` passed 15 focused checks and actual reload/room-close acceptance.
+Thornling candidate `de54734` passed registration/Pixi ownership checks and build;
+its live Forest body loaded and combat completed, with motion/direction acceptance
+still open. Hosted workflow 42 passed for exact code SHA
+`de5473441128e18327976994fcebd74c8f5011ee`: 377 JavaScript tests, 49 Python tests,
+zero skips, build, dependency audit (zero reported vulnerabilities) and diff checks.
+Independent first-account and moving-art browser review agents stopped at an
+account usage limit before completing acceptance; neither is counted as passed.
+Production operations gates remain open.
+Main has not advanced.
+
+Subsequent code gate: workflow 46 passed exact
+`4eb699fa9911a9cbcaed5239c8db3aa60be9f769` (377 JavaScript, 49 Python, zero skips,
+build/audit/diff). That fix makes offline visual/benchmark fixtures use the shipped
+renderer bundle. Actual viewer opening and remount passed; direction reuse remains
+provisional. Supervisor fishing extended the local journey through Silver Carp
+reward and Neri's wallet-free sale (510 → 535 Coins). See PLAYTEST_LOG for scope;
+none of these samples closes independent full-player or production acceptance.
+
+Latest gameplay fix `6039947`: confirmed spell learning now refreshes consumed
+scroll inventory and learned controls. Seventeen focused UI/guide/progress checks
+pass. Original learned Ice Shard and single-slot ring state persisted on actual
+reload. Live learning found a disable-before-handler wrapper conflict in
+`6039947` despite green workflow 48 (379 JavaScript, 49 Python). The corrected
+pending-state guard passed 17 focused checks and actual purchased Shield
+learning/pack refresh; the correction's hosted gate and independent review remain
+pending. World label hit testing also found the companion name intercepting Mage
+Atelier mouse clicks; R12 records the focused pointer-priority repair and broader
+layout gap.
+
+Corrected wrapped learning/pointer priority code `9230403` passed hosted workflow
+50; previous faulty learning attempt remains documented. Subsequent local phone
+audit found the emote panel covering guide controls at 375×812. Measured overlay
+height stacking passed 14 focused geometry/UI checks, build, actual clear guide
+hit targets at 375×812 and 320×740, and narrow-phone guide activation. Phone
+viewport override was reset. Hosted workflow 52 passed exact
+`4565e40837a2f416b97dc21fc5212bcfa04adda1`: 381 JavaScript, 49 Python, zero skips,
+build, audit (zero reported vulnerabilities) and diff checks. Independent source
+review passed the learning guard, pointer priority and observer lifecycle with 19
+focused checks. It found remaining camera/minimap overlap at 320px and the
+width-only layout skipping short landscape screens; those repairs are in progress.
+The restarted independent new-player browser review completed all seven guide
+steps on that source and is extending purchase, fishing and persistence checks.
+Physical-device/full responsive and final release acceptance remain open.
+
+Independent Chrome acceptance completed the focused seven-step new-player loop,
+Coins sale/potion purchase, learned Ice Shard, staff/ring equip, minnow fishing,
+reload and actual logout/sign-in persistence on `4565e40`; see
+GAMEPLAY_RELEASE_AUDIT.md. Compact repair `1bae014` passed independent source
+review and 19 focused checks. Root actual 320px camera/emote dialogs retained their
+actions, Escape returned focus to Camera/Settings, 768px tablet and 844×390
+landscape bands separated, and resizing an open camera dialog to desktop restored
+the original nodes. An old forced canvas display rule initially defeated minimap
+hiding; narrowed selector passed independent review and actual hidden/visible
+dialog map checks. General legacy-modal focus and physical-device acceptance remain.
+
+During the coordinated owned-server reconnect extension, free disk fell to 2.8GiB,
+below the 3GiB floor. Owned 8788 server and root test browser were stopped; no
+unrelated files or system swap were deleted. The independent browser observed
+Online/Town and its existing 490 Coins panel after restart without reload, but
+fresh catalog/gear verification was incomplete when safety stopped the drill.
+This is partial BM evidence, not full reconnect acceptance. Heavy local runs stay
+paused pending safe headroom; source review and hosted gates may continue.
+
+Thornling presentation repair `d97ebe9` passed independent source review, 25
+focused animation/Pixi checks and build before the safety stop. Another 900
+playback comparisons preserved Slime/Boar/Guardian controls. Independent loaded
+viewer checks confirmed the defeat ground anchor, contact-slot annotation and
+brief blink timing. The PNG is unchanged; walking drift and missing authored
+directions still block art approval. These repairs do not change server combat.
+
+Hosted workflow 56 passed exact `419f12199c12758950e9b436c288ae7697cdd128`:
+388 JavaScript, 49 Python, zero skips, build, audit (zero vulnerabilities) and diff
+checks. Subsequent focus propagation `342133c` passed independent source review
+and 31 focused DOM checks. It retains outer launchers across async pack/shop/adoption
+replacement and genuine parent controls for nested React/domain panels. Refused
+save still retains its modal/runtime. Its hosted gate and actual React/browser
+acceptance remain pending; no local heavy build was run below the safety floor.
+
+Hosted workflow 58 subsequently passed exact
+`342133c5a1f081a4d431bef64f8e611260db8bce`: 391 JavaScript, 49 Python, zero skips,
+build, dependency audit (zero vulnerabilities) and diff checks. Thus the React
+bundle builds; actual focus verification for those broader paths still awaits
+safe headroom. The next source-only AQ audit found active Pixi quality choices
+missing (legacy 3D settings do not count), no explicit mute restoration, and
+unguarded preference storage reads/writes. Small guarded preference controls are
+being implemented with the existing Standard renderer as their control.
+
+2026-10-13 resume: no prior specialist handles remained live. Disk was 767MiB free
+on inspection (later 1.5GiB), still below the unchanged 3GiB safety floor; owned
+8788 listener is absent. No local browser/server/native/build run was restarted.
+Source-only settings continuation retains Standard DPR≤2/display refresh and adds
+Low power DPR1/30FPS, guarded motion/quality storage, explicit mute with retained
+volume, and readable persistence failures. Existing volume range remains 0–0.5.
+Fourteen tiny preference/audio/overlay checks pass. Independent source/API review
+approved the patch and separately passed the ten audio/preference checks.
+Build, actual control visibility/interaction, live resizing, reload and wider
+responsive acceptance of these new controls remain pending. Low power is a user
+choice, not a relaxation of the Standard performance or capacity gates.
+
+Settings also exposes a named Sound, motion & graphics shortcut to the existing
+live control nodes. Desktop modal widths are excluded from the world's cached
+edge-control measurements, preventing a false compact-layout transition. Eight
+overlay/focus checks pass, including a wider-modal/narrower-world regression;
+independent source review approved the shortcut, nested focus target and layout
+cache guard. Actual nested-modal and WebGL browser verification remains pending.
+
+Hosted workflow 60 passed settings source
+`f2a3e847badcf85e4b07c1244a05a7577adb91ea`: 401 JavaScript, 49 Python, zero skips,
+build, audit (zero vulnerabilities), diff. Workflow 62 passed Settings shortcut
+source `ba791e423a47ef842b6cb1c8c19c713de474f05e`: 402 JavaScript, 49 Python,
+zero skips, build, audit (zero vulnerabilities), diff. A hosted browser smoke is being
+prepared to verify functional controls without restarting unsafe local work.
+It will not replace physical-device, sustained performance, WAN or final staging
+acceptance. Playwright is pinned as a development dependency; browser downloads
+and execution are confined to the hosted runner during this safety interruption.
+
+Hosted workflow64 at `7e7eb2466396c1d220341749b287043c1c081af4` passed build,
+402 JavaScript/49 Python tests with zero skips, audit and diff checks, then failed
+the new browser gate: one preferences test passed, four viewport tests failed,
+and two did not run before the unchanged five-minute suite timeout. The passing
+test verified real Standard2×→Low1×→reload→Standard2× canvas density, preserved
+logical viewport, motion/mute retention, restored volume and nested Settings focus.
+This is scoped hosted functional evidence, not full AQ/AR acceptance.
+
+All four failed viewport cases reached the post-disclosure resize to1920×1080
+before failing. Independent trace reviews found 3–4× slower trial clicks and
+roughly1–4-second frame intervals at DPR2 software rendering, with no recorded
+pointer interception. The768 overflow predicate recorded only false, so its
+actual failing dimension is unknown. Artifact11859286017/digest
+`a31b1846b055371b36e4e5ef86cd4e9208f77b282609a107ba5cb908d4ee204c`
+and a private local ZIP preserve failure evidence. The next harness revision
+keeps all seven cases, time limits, overflow/hit/actionability checks and the DPR2
+preferences test; viewport cases use DPR1 and expose offending dimensions.
+No application layout change is justified until those measurements resolve it.
+
+Diagnostic workflow66 passed exact `7a88cdd7ebc88232903d77184de410ed8eb2f03c`:
+402 JavaScript,49 Python,zero skips and all seven browser tests in2.4minutes,
+with build/audit/diff checks. Its scope is DPR1 functional layouts at the six
+declared viewports plus DPR2 settings/density/persistence/focus. Run64 remains a
+failed DPR2 software-rendering sample, not a client performance pass. Physical
+devices, sustained scenes, React panels and complete failure/social journeys remain.
+
+Source review then found a separate notice-expiry defect: Game.showNotice removes
+the toast class after5seconds but retains its text, unlike the page notice helper.
+That can move expired text into normal document flow. A real Talk-without-companion
+notice expiry regression is being verified before the app fix; no layout gate is
+weakened to accept remaining text.
+
+## Baseline and earlier interrupted gates
+
+Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.
+
+The later full integrated JavaScript run was interrupted, not passed: free disk fell through the 3GiB safety floor to ~1GiB while concurrent tests, local game and browser increased swap pressure. Owned test/game/preview processes were stopped and an abandoned schema in the dedicated test database was cleaned up. No unrelated files or operating-system swap were deleted. Hosted workflow run 34 for exact SHA `68c3f83fc1c2614bba1209682aac960abb7b90b8` passed build, full JavaScript/PostgreSQL tests, all 49 brain tests, audit and diff hygiene after the checkout was changed to fetch full history for pack provenance. No 150-player certification, full browser journey, production art approval or Cadence promotion is claimed.
+
+2026-10-13 notice regression: workflow68 failed at exact
+`4d76a1dc88e84a370942cc73a6fff48885288407`, with six browser cases passing and
+only the new1280×720 toast expiry assertion failing. Logs confirm class removal
+while text remains. All402 JavaScript/49 Python tests, build, audit and diff checks
+passed. The one-line text-clear correction has independent source approval;
+exact-source hosted verification is pending. Failed run/artifact are retained in
+BROWSER_SMOKE.md.
+
+Local headroom subsequently recovered to3.8GiB (3.7GiB after one build and one
+owned server/browser). The supervisor completed the interrupted graceful restart
+subcase without page reload: fresh gear/spell/inventory/guide/315Coins requests
+matched before/after, with the same companion. PLAYTEST_LOG records the scope.
+The3GiB floor remains unchanged; no capacity certification or full BM closure.
+
+Death/respawn audit measured a separate old-room race: with two enemies, defeat
+restored the player in Town, then a later old-room enemy damaged that restored
+body (100→93) and the emptied room attempted a frame from the departed viewer.
+The correction checks live room/global body identity during enemy selection and
+after awaited state reads, then broadcasts using a remaining live viewer.
+Six regressions cover restored HP/target protection, empty/remaining room frames,
+remaining-player valid damage and identity replacement across both await paths.
+Two specialists reviewed the source and independently passed23 focused checks,
+zero skips. Exact-source full hosted verification and actual corrected-runtime
+defeat remain pending; no Cadence mechanism or published pack changes.
+
+Workflow72 at `a42310cae99a38858485d26e2c078624f55fa518` passed build but failed
+JavaScript407/408: the existing integrated chase/return fixture lacks body room
+metadata and its global players map is empty, so the live-boundary guard refuses
+it. This failed full gate is preserved; correction must establish realistic
+membership while retaining the original CHASE/RETURN assertions. Later checks
+were skipped and no full success is claimed. An actual corrected-runtime Forest
+defeat separately recovered Town/full vitals with fresh unchanged pack/315Coins;
+PLAYTEST_LOG records ordinary-path scope.
+
+The chase fixture now registers the same body in global/room maps with room
+metadata, supplies real owner-lane state, and removes membership on departure.
+Original CHASE/x410 and RETURN/x490 assertions remain. Independent review approved
+and30 focused tests pass with zero skips; the live boundary guard is unchanged.
+
+Inventory boundary continuation: a real PostgreSQL max-stack purchase initially
+failed the readable-error expectation. Guarded atomic UPSERT now returns409
+“item stack is full” while preserving transaction rollback. The11-test commerce
+suite passes independently in a disposable schema, including failed retry with
+unchanged Coins/items/ledger/receipts/events, then same request success after
+consuming one item and idempotent replay. No bag-slot limit was added. Full hosted
+source verification and UI failure acceptance remain pending.
+
+Notice correction exact `6e57a666f025417c9ea2c022c68ec9becc17f587` passed
+workflow70:402 JavaScript,49 Python,zero skips,all seven browser cases in4.3minutes,
+build/audit/diff. Run68 remains the measured red control. Current integrated
+`d3325827ec272e527625c5342b0ff10d72d61a72` includes reviewed respawn and integer-stack
+fixes plus corrected chase fixture; workflow74 is running and is not yet passed.
+Main remains at99f31e1; no RC, capacity certification or Cadence promotion.
+
+Gather failure continuation: actual gather/finish handlers in a disposable schema
+reproduced a full-stack refusal followed by a successful retry with a different
+catch. New harvests now privately persist a single selected reward in the existing
+start transaction; completion rereads it under lock. Public start/status omit it.
+Legacy origin-only rows use a stable hash of their server-generated ID; discarded
+pre-upgrade random draws cannot be reconstructed. Probability tables, expiry,
+movement/room checks and grant/XP/progress transaction remain unchanged.
+Independent review approved;13 PostgreSQL commerce/harvest tests and30 source
+checks pass,zero skips. Restart durability is supported by database-source review,
+not a fresh-process test. Exact-source full hosted gate is pending.
+
+Combat-loot failure continuation reproduced a same-spawn retry changing Thorn
+Fiber1→3 after an injected inventory refusal. The first rolled list, including
+empty results, is now held in a private WeakMap keyed by the actual mob object.
+Cross-owner retries retain it; actual respawn replacement/new UUID draws anew.
+Public frames and existing receipt/XP transactions are unchanged. Independent
+review and34 focused source tests pass,zero skips. These are injected-transaction
+checks, not new real-DB rollback/restart certification; runtime mob instances are
+already discarded on server restart. Full hosted gate remains pending.
+
+Next measured failure: an automatic stack-full loot refusal rejects tick before
+the global enemy stage, sends no player notice and leaves auto-target selected.
+A tiny actual-tick probe recorded enemy-stagecalls0/playerMessages0. This is under
+repair; unexpected persistence/native errors must retain their failing barrier.
+
+Workflow74 passed exact `d3325827ec272e527625c5342b0ff10d72d61a72`:
+409 JavaScript,49 Python,zero skips,all seven browser cases in3.4minutes,
+build/audit/diff. This validates the corrected chase fixture, respawn guards and
+inventory stack guard together; run72's407/408 failure remains recorded.
+Later harvest/loot changes require their own hosted gates and do not inherit this
+source's success. Owned browser remains idle in Town; server loaded `a42310c`, so
+no later harvest/loot runtime claim is made. Disk recovered to3.9GiB; unchanged
+3GiB floor and no parallel local heavy campaigns.
+
+2026-10-14 continuation confirms workflow76 at
+`273f699644764436c9c48d95fc54aa3068f99451` passed411 JavaScript/49 Python/zero skips,
+seven browser cases in5.0minutes and build/audit/diff. Workflow78 at
+`9d73167243dd5e2a698a5b7cf36498ef797bd18c` passed415 JavaScript/49 Python/zero skips,
+seven browser cases in4.9minutes and build/audit/diff. Thus private harvest and
+runtime spawn-loot retention have exact-source full hosted evidence.
+
+Headroom subsequently fell to523MiB. The owned8788 server exited0 after SIGTERM
+and the owned IAB tab closed. Local heavy/DB/native/build/browser work is stopped
+at the unchanged3GiB floor; no unrelated files/swap were removed. The specialist
+implementation turn also ended at an account usage limit. Root continued the
+existing small source regression: automatic capacity refusal was red2/4, then
+38 focused source tests passed after the narrow InventoryCapacityError handling.
+The expected refusal clears the attacker's target and sends a notice while
+allowing other-room combat/enemies; executed pet action still acknowledges and
+finishes before enemies. Generic409/database failures retain the failing barrier.
+Independent review and full hosted verification of this final correction remain
+pending. No broader failure/capacity/production acceptance is inferred.
+
+The automatic capacity correction then passed independent review and an independent
+4/4 focused test run,zero skips,syntax/diff checks. Root's broader38 source checks
+also pass. No DB/native/browser/build/full local run was attempted below the
+floor. The correction is ready for its exact-source hosted gate; that result is
+still pending.
+
+Workflow80 passed exact `11818db2215c0bc30da8cf6a66f9da26c79132e3`:
+419 JavaScript,49 Python,zero skips,seven browser cases in2.9minutes plus
+build/audit/diff. Expected automatic capacity refusal therefore has an integrated
+hosted gate; actual full-stack browser acceptance remains open.
+
+A bounded independent source security audit found two High availability gaps:
+1000 socket messages behind a delayed join left999 queued before handler rate
+checks; HTTP buffered up to30MB before auth/route rejection. Socket admission now
+checks25/s synchronously with32 pending messages/32KiB and2KiB/message limits,
+releases queued raw references on disconnect and protects replacement identity.
+HTTP now authenticates protected APIs before reading bodies and rejects static
+mutations early. Account/commerce retain4KiB, ordinary actions use64KiB, and exact
+authenticated checkpoint PUT retains30MB. At most16 body-bearing requests reserve
+64MiB of wire-body capacity through their entire handler lifetime; a30-second
+body timer closes stalled readers. This is not a total-heap/capacity claim.
+Independent review and12 tiny Readable/socket-source checks pass,zero skips,
+with source syntax/diff checks. Real integrated HTTP/socket/browser/DB verification
+is deferred to the hosted exact-source gate, not claimed locally. Full security
+acceptance remains open. Disk is now299MiB; owned heavy processes remain stopped.
+
+A follow-up socket interaction reproduced31 compliant admissions across two rate
+windows draining only26 handlers before close1008: the old handler rate counter
+charged the already admitted queue again. A module-private admission Symbol now
+skips only that duplicate dispatch charge. Direct-handler calls and client boolean
+fields cannot bypass25/s; shape/action checks and32-entry/32KiB/2KiB bounds remain.
+Independent review and14 tiny ingress checks pass,zero skips; full hosted gate
+remains pending.
+
+Disk briefly reached120MiB and file writes failed. Root deleted only its own
+30833908-byte downloaded run64 artifact ZIP after matching SHA256
+a31b1846b055371b36e4e5ef86cd4e9208f77b282609a107ba5cb908d4ee204c; committed
+failure evidence, extracted screenshots and hosted artifact11859286017 remain.
+Headroom later recovered to435MiB (426MiB on recheck), still below3GiB. No owned
+game/browser/native process was restarted and no unrelated data/swap was removed.
+
+Workflow82 passed exact cdea11d7fa029f4e06c69eed0102f2e6a33aba2d:431 JavaScript,
+49 Python,zero skips,seven browser cases in4.8minutes and build/audit/diff, covering
+HTTP body and socket message admission. Follow-up delayed-drain source1470b8c
+remains in workflow84 pending authoritative completion.
+
+Further setup audit reproduced64 concurrent unauthenticated upgrade lookups and
+32 closed sockets still starting subsequent avatar/session reads. Setup work now
+has32 process-local admission slots before authentication, held through account,
+avatar and revalidation. A30-second deadline closes raw/upgraded transports while
+retaining slots until uncancellable work actually settles. Initial and between-read
+closed checks prevent wasted downstream work. Malformed/missing-callback/throw
+paths release slots; two counters record refusals/timeouts. Independent review and
+15 tiny setup/ingress checks pass,zero skips. Installed ws synchronous callback
+behavior was inspected for this fixed no-verifyClient configuration. Full hosted
+integration remains pending; no CCU or final security certification is implied.
+
+Workflow84 passed exact1470b8cf27e7fbbf3d70055cf266e5430ced3ddc:433 JavaScript,
+49 Python,zero skips,seven browser cases in4.6minutes and build/audit/diff.
+
+The GET follow-up reproduced300 simultaneous protected API authentication promises
+while body-reader counters stayed0. A separate256-request API admission counter
+now reserves before authentication through handler completion, including GET/auth/
+config. Existing16-reader/64MiB/body-size limits are unchanged; static GET remains
+unreserved. Closed transports retain slots until outstanding auth settles, then
+stop downstream work; normal consumed request streams are accepted. Independent
+review/9 tiny HTTP tests plus a counter-refusal check pass,zero skips. Full hosted
+integration remains pending; no150CCU/heap/final security certificate is implied.

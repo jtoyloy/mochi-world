@@ -7,6 +7,19 @@ CREATE TABLE IF NOT EXISTS mochi_conversation_messages(id text PRIMARY KEY,mochi
 CREATE INDEX IF NOT EXISTS conversations_pet ON mochi_conversation_messages(mochi_id,created_at DESC);
 CREATE TABLE IF NOT EXISTS mochi_memories(id text PRIMARY KEY,mochi_id text NOT NULL REFERENCES mochis(id),type text NOT NULL,summary text NOT NULL,importance integer NOT NULL DEFAULT 1,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS token_payment_intents(id text PRIMARY KEY,user_id text NOT NULL REFERENCES users(id),type text NOT NULL,mint text NOT NULL,decimals integer NOT NULL CHECK(decimals BETWEEN 0 AND 18),amount_raw numeric(40,0) NOT NULL CHECK(amount_raw>0),recipient text NOT NULL,sender text NOT NULL,status text NOT NULL DEFAULT 'pending' CHECK(status IN('pending','confirmed','failed','expired')),signature text UNIQUE,expires_at timestamptz NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),data jsonb NOT NULL);
+ALTER TABLE token_payment_intents DROP CONSTRAINT IF EXISTS token_payment_intents_status_check;
+ALTER TABLE token_payment_intents ADD CONSTRAINT token_payment_intents_status_check CHECK(status IN('pending','verified','reconciliation_pending','confirmed','failed','expired'));
+CREATE TABLE IF NOT EXISTS token_payment_receipts(intent_id text PRIMARY KEY REFERENCES token_payment_intents(id),user_id text NOT NULL REFERENCES users(id),signature text UNIQUE NOT NULL,canonical_intent jsonb NOT NULL,verified_at timestamptz NOT NULL,reservation_held boolean NOT NULL,verification_namespace jsonb NOT NULL);
+ALTER TABLE token_payment_receipts ADD COLUMN IF NOT EXISTS verification_namespace jsonb NOT NULL DEFAULT '{}';
+CREATE INDEX IF NOT EXISTS token_payment_recovery ON token_payment_intents(user_id,created_at DESC,id DESC) WHERE status<>'confirmed';
+CREATE OR REPLACE FUNCTION token_payment_receipt_guard() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+ IF TG_OP<>'INSERT' THEN RAISE EXCEPTION 'Verified payment proofs are immutable'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM token_payment_intents WHERE id=NEW.intent_id AND user_id=NEW.user_id) OR NEW.canonical_intent->>'id' IS DISTINCT FROM NEW.intent_id OR NEW.canonical_intent->>'userId' IS DISTINCT FROM NEW.user_id THEN RAISE EXCEPTION 'Payment proof owner or intent mismatch'; END IF;
+ IF EXISTS(SELECT 1 FROM token_payment_intents WHERE signature=NEW.signature) THEN RAISE EXCEPTION 'Transaction already used'; END IF;
+ RETURN NEW;
+END $$;
+DROP TRIGGER IF EXISTS guard_token_payment_receipt ON token_payment_receipts;
+CREATE TRIGGER guard_token_payment_receipt BEFORE INSERT OR UPDATE OR DELETE ON token_payment_receipts FOR EACH ROW EXECUTE FUNCTION token_payment_receipt_guard();
 CREATE TABLE IF NOT EXISTS listing_reservations(listing_id text PRIMARY KEY REFERENCES player_shop_listings(id) ON DELETE CASCADE,intent_id text UNIQUE NOT NULL REFERENCES token_payment_intents(id),expires_at timestamptz NOT NULL);
 CREATE TABLE IF NOT EXISTS mock_token_balances(user_id text PRIMARY KEY REFERENCES users(id),amount_raw numeric(40,0) NOT NULL CHECK(amount_raw>=0));
 CREATE TABLE IF NOT EXISTS mock_token_ledger(id text PRIMARY KEY,user_id text NOT NULL REFERENCES users(id),amount_raw numeric(40,0) NOT NULL,type text NOT NULL,intent_id text REFERENCES token_payment_intents(id),created_at timestamptz NOT NULL DEFAULT now());

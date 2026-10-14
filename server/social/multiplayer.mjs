@@ -16,6 +16,7 @@ import {
   plainText,
 } from "../../web/js/game/model.js";
 import { GameError } from "../world/service.mjs";
+const admittedSocketEvent = Symbol("admitted socket event");
 export class MemoryRoomStore {
   constructor() {
     this.rooms = new Map();
@@ -49,9 +50,13 @@ export class Multiplayer {
       );
     if (!Number.isInteger(capacity) || capacity < 1 || capacity > 100)
       throw new Error("MAX_PLAYERS_PER_ROOM must be 1–100");
+    this.pendingSetups = 0;
     if (server) {
       this.wss = new WebSocketServer({ noServer: true, maxPayload: 2048 });
       server.on("upgrade", async (req, socket, head) => {
+        if (socket.destroyed) return;
+        let admitted = false, timer, upgraded;
+        let expired = false;
         try {
           if (new URL(req.url, "http://localhost").pathname !== "/socket")
             throw new Error("Unknown socket");
@@ -60,15 +65,45 @@ export class Multiplayer {
             req.headers.origin !== `https://${req.headers.host}`
           )
             throw new Error("Socket origin refused");
+          if (this.pendingSetups >= 32) {
+            this.metrics?.count("socketSetupRefusals");
+            socket.write("HTTP/1.1 503 Service Unavailable\r\n\r\n");
+            socket.destroy();
+            return;
+          }
+          this.pendingSetups++;
+          admitted = true;
+          timer = setTimeout(() => {
+            expired = true;
+            this.metrics?.count("socketSetupTimeouts");
+            upgraded?.close(1013, "Connection setup timed out");
+            socket.destroy();
+          }, 30000);
+          timer.unref();
           const userId = await authenticate(req);
-          this.wss.handleUpgrade(req, socket, head, (ws) =>
-            this.connect(ws, userId).catch(() =>
-              ws.close(1011, "Room unavailable"),
-            ),
-          );
+          if (expired || socket.destroyed) return;
+          let connecting;
+          // This server has no async verifyClient: ws invokes the callback
+          // synchronously on success, and omits it for rejected handshakes.
+          this.wss.handleUpgrade(req, socket, head, (ws) => {
+            upgraded = ws;
+            ws.sessionExpiresAt = req.sessionExpiresAt;
+            ws.revalidateSession = () => authenticate(req);
+            connecting = this.connect(ws, userId);
+          });
+          if (connecting) await connecting;
+          else if (!socket.destroyed) socket.destroy();
         } catch {
-          socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-          socket.destroy();
+          if (upgraded) upgraded.close(1011, "Room unavailable");
+          else if (!socket.destroyed) {
+            socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+            socket.destroy();
+          }
+        } finally {
+          clearTimeout(timer);
+          // A deadline closes the transport, but uncancellable database work
+          // owns this slot until its promise has actually settled.
+          if (admitted) this.pendingSetups--;
         }
       });
     }
@@ -233,9 +268,28 @@ export class Multiplayer {
       seated: p.seated ?? null,
     };
   }
+  clearIngress(p) {
+    const ingress = p.ingress;
+    if (!ingress) return;
+    ingress.closed = true;
+    for (const entry of ingress.entries) {
+      entry.raw = null;
+      entry.released = true;
+    }
+    ingress.entries.clear();
+    ingress.bytes = 0;
+  }
   async connect(ws, userId) {
-    const user = await this.world.account(userId),
-      avatar = await this.avatars.get(userId);
+    if (ws.readyState !== 1) return;
+    const user = await this.world.account(userId);
+    if (ws.readyState !== 1) return;
+    const avatar = await this.avatars.get(userId);
+    if (ws.readyState !== 1) return;
+    // Account revocation may occur while the avatar is loading after upgrade.
+    if (ws.revalidateSession && await ws.revalidateSession() !== userId) {
+      ws.close(4003, "Sign in again");
+      return;
+    }
     if (ws.readyState !== 1) return;
     const existing = this.store.players.get(userId);
     if (existing) {
@@ -263,28 +317,64 @@ export class Multiplayer {
     this.metrics?.count("connects");
     this.store.players.set(userId, p);
     let serial = Promise.resolve();
+    const ingress = p.ingress = {
+      windowAt: this.now(), count: 0, entries: new Set(), bytes: 0, closed: false,
+    };
     ws.on("message", (raw) => {
+      if (ingress.closed || this.store.players.get(userId) !== p) return;
+      const bytes = Buffer.byteLength(raw);
       this.metrics?.count("inboundMessages");
-      this.metrics?.count("inboundBytes", raw.length);
-      const receivedAt = performance.now();
+      this.metrics?.count("inboundBytes", bytes);
+      const now = this.now();
+      if (now - ingress.windowAt >= 1000) {
+        ingress.windowAt = now;
+        ingress.count = 0;
+      }
+      const rateExceeded = ++ingress.count > 25;
+      // Admission must precede the promise chain: a blocked handler must not
+      // retain unlimited future messages, even across separate rate windows.
+      if (rateExceeded || bytes > 2048 || ingress.entries.size >= 32 || ingress.bytes + bytes > 32768) {
+        const code = rateExceeded ? 1008 : bytes > 2048 ? 1009 : 1013;
+        this.disconnect(p);
+        ws.close(code, rateExceeded ? "Socket rate limit" : "Socket input limit; reconnect");
+        return;
+      }
+      const entry = {raw, bytes, receivedAt: performance.now(), released: false};
+      ingress.entries.add(entry);
+      ingress.bytes += bytes;
       serial = serial
         .then(async () => {
-          if (this.store.players.get(userId) !== p) return;
-          const msg = JSON.parse(raw.toString());
+          if (ingress.closed || this.store.players.get(userId) !== p) return;
+          if (p.ws.sessionExpiresAt <= this.now()) {
+            this.disconnect(p);
+            p.ws.close(4003, "Session expired; sign in again");
+            return;
+          }
+          const msg = JSON.parse(entry.raw.toString());
+          entry.raw = null;
           const startedAt = performance.now();
           try {
-            await this.handle(p, msg);
+            await this.handle(p, msg, admittedSocketEvent);
           } finally {
             if (msg.type === "move")
               this.metrics?.time(
                 "movementValidationMs",
                 performance.now() - startedAt,
               );
-            this.metrics?.time("dispatchMs", performance.now() - receivedAt);
+            this.metrics?.time("dispatchMs", performance.now() - entry.receivedAt);
           }
         })
         .catch((e) => {
-          if (!e.responseSent) this.send(p, "error", { message: e.message });
+          if (!ingress.closed && this.store.players.get(userId) === p && !e.responseSent)
+            this.send(p, "error", { message: e.message });
+        })
+        .finally(() => {
+          entry.raw = null;
+          if (!entry.released) {
+            entry.released = true;
+            ingress.entries.delete(entry);
+            ingress.bytes -= entry.bytes;
+          }
         });
     });
     ws.on("close", () => this.disconnect(p));
@@ -485,6 +575,7 @@ export class Multiplayer {
     );
   }
   disconnect(p) {
+    this.clearIngress(p);
     if (this.store.players.get(p.userId) !== p) return;
     this.metrics?.count("disconnects");
     this.persist(p).catch(() => {});
@@ -541,7 +632,7 @@ export class Multiplayer {
       originWalkable: walkable(p.roomId, p.seated?.approach.x ?? p.x, p.seated?.approach.y ?? p.y),
       destinationWalkable: Number.isFinite(data.x) ? walkable(p.roomId, data.x, data.y) : null});
   }
-  async handle(p, msg) {
+  async handle(p, msg, admission) {
     if (
       !msg ||
       typeof msg.type !== "string" ||
@@ -553,13 +644,15 @@ export class Multiplayer {
     const { type, data } = msg;
     const now = this.now();
     p.lastSeen = now;
-    if (now - p.windowAt >= 1000) {
-      p.windowAt = now;
-      p.eventCount = 0;
-    }
-    if (++p.eventCount > 25) {
-      p.ws.close(1008, "Socket rate limit");
-      throw new GameError("Too many socket events");
+    if (admission !== admittedSocketEvent) {
+      if (now - p.windowAt >= 1000) {
+        p.windowAt = now;
+        p.eventCount = 0;
+      }
+      if (++p.eventCount > 25) {
+        p.ws.close(1008, "Socket rate limit");
+        throw new GameError("Too many socket events");
+      }
     }
     if (type === "joinRoom") return this.join(p, data.roomId);
     if (type === "leaveRoom") return this.leave(p);
@@ -741,6 +834,11 @@ export class Multiplayer {
     this.metrics?.time("tickIntervalMs", now - this.tickAt);
     this.tickAt = now;
     for (const p of this.store.players.values()) {
+      if (p.ws.sessionExpiresAt <= now) {
+        this.disconnect(p);
+        p.ws.close(4003, "Session expired; sign in again");
+        continue;
+      }
       if (now - p.lastSeen > 45000) {
         p.ws.terminate?.();
         this.disconnect(p);

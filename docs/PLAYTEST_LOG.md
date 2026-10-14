@@ -1,0 +1,252 @@
+# Release-candidate playtest log
+
+## Returning account and preference recovery — 2026-10-07
+
+Environment: local server on `127.0.0.1:8787`, dedicated `mochi_autonomous_dev`
+PostgreSQL database, mock token mode, rebuilt assets from the integration branch.
+Account `release_playtester` is a synthetic local fixture; no real credentials or
+funds were used.
+
+Observed sequence:
+
+1. Entered Town Square with the persisted account and companion HUD visible.
+2. Set sound volume to `0.31` and enabled reduced decorative motion.
+3. Reloaded the rebuilt bundle and observed reduced motion still `on` and volume
+   still `0.31`.
+4. Opened Settings, selected “Sign out on all devices,” and observed the account
+   gate with Username/Password controls.
+5. Signed back in as the same synthetic account and observed Town Square, the
+   existing `500 TEST $MOCHI` balance, the same player identity, companion HUD,
+   motion preference and volume restored.
+
+This is direct browser evidence for account sign-out/sign-in and preference
+persistence on the local candidate. It does not certify the complete new-player,
+combat, gather, reconnect, responsive, WAN or production staging journeys.
+
+After migrating the dedicated database with `server/world/migrate.mjs`, an
+authenticated request to `/api/adventure/commerce` returned the same account,
+`currency: "Coins"`, 500 starting Coins, inventory, four shops and two buyers.
+The server log remained free of commerce relation errors during that check.
+
+## Adoption handoff — 2026-10-10
+
+Local mock environment as above; synthetic account `adoption_1010`.
+The first new-player run exposed an empty companion picker that remained stale
+after adoption. The repaired handler closes that picker before opening adoption
+and reloads server-owned companions when the adoption panel closes.
+
+Browser verification: opened the empty Mochis picker, selected “Adopt a Mochi,”
+adopted the first available companion, closed adoption and observed a fresh
+picker showing “Mochi · with you.” Selecting that companion closed the picker;
+the first-journey panel recorded both pack and companion steps, then traveled to
+the Training Yard. The handoff passed independent source review, including the
+guard against reopening panels during world teardown. Four handler tests cover
+the handoff and late refresh completion/rejection; the build passed.
+
+The complete new-player journey remains open. The first Training Yard arrival
+lacked an interactive dummy label; reconnecting and traveling again exposed it.
+Targeting moved the body toward the dummy, but the original spawn ownership
+check cancelled battle decisions and cleared the selected target. Fix `6a6e269`
+looks up the spawn slot and checks the exact mob identity, so replacement mobs
+cannot inherit an old encounter. Four actual-spawn tests and nine room-lane
+tests pass. After restarting the owned local server, targeting the dummy reduced
+its health and completed the practice step. The journey panel showed the first
+three steps checked and advanced to the first forest fight. Initial delayed
+labels remain unconfirmed; complete journey acceptance is still open.
+
+The supervisor then followed the visible journey instructions through a forest
+Slime fight (`+18 combat XP`, Slime Resin), Softwood approach and chop (`+12 XP`,
+one Softwood), Alder's Coins buyer (`500 → 510 Coins`, wood removed), and Trading
+Hall arrival. All seven journey steps were checked in the pack. Reload preserved
+the completed guide, companion, loot and starter/progression inventory. No wallet
+was connected. The Trading Hall HUD prompt initially stayed stale until opening
+the pack; live progress publication was corrected in `536fcfb`. This completes the
+supervisor's guided path, but BK's independent first-account acceptance remains
+open. A local screenshot is retained in the session evidence, not as an art or
+responsive certification.
+
+### Resumed local recovery and guide acceptance — 2026-10-10
+
+The restored fixture's guide initially reset to the starter step on a fresh live
+frame because progress was published without starter/companion/sale history.
+Fix `abda789` hydrates full guidance once; 15 focused UI/guide/live-progress checks
+pass, and actual reload and room closure retain `First adventures complete`.
+
+Recovery source `654aeee` passed independent concurrency review and 21 focused
+gate/persistence/snapshot checks. A real initialized room retained the visible
+`Expiry retained` change after the owned synthetic session and lease were expired
+in the dedicated restore database. The top-level gate appeared without removing
+the nested room. DOM inspection confirmed the retained name and paused status.
+Export downloaded the original pack's 9,461,945 brain bytes and matching life
+header while leaving the gate open. Original-account sign-in saved and returned
+to Town; the database confirmed version 13, matching name and released lease.
+Production HTTPS and independent full failure acceptance remain open.
+
+At `de54734`, Forest visibly loaded Thornling's provisional painted action
+body without a rectangular background. A live selected encounter completed
+with `+50 combat XP`; the player reached 30/105 HP and Heal restored 64/105
+while mana fell 60 → 42. This was not a continuous frame-by-frame attack/defeat
+review: planted feet, loop quality and authored directions remain unaccepted.
+Independent complete new-player and moving-art browser review agents were
+assigned but stopped at an account usage limit before completing their reviews.
+Neither acceptance is counted as passed.
+
+### Fishing extension and offline review fixture — 2026-10-10
+
+At `4eb699f`, the supervisor traveled through Map → Moonwater Lake, clicked
+Moonwater Dock to approach, then clicked again to fish. The live HUD displayed
+the fishing wait, followed by `Gathered Silver Carp · +20 XP`. The pack confirmed
+one Silver Carp and fishing progress 1/5. Returning to Town and approaching Neri
+opened the Coins buyer; selling the single carp raised Coins 510 → 535 and
+removed accepted fish from the buyer inventory. No wallet was connected.
+
+While the separate offline art viewer was open, the unattended Forest character
+had died to live mobs: the returning game displayed the Town recovery notice
+and full HP. Subsequent pack inspection retained the earlier Slime Resin, two
+Thorn Fiber, equipment and supplies. This is an observed death/recovery sample,
+not controlled acceptance of all death/reconnect edges.
+
+The repaired offline fixture opened the real renderer and animation viewer.
+Thornling walk and terminal defeat frame 7 rendered; all directions visibly reuse
+or mirror the one authored view. Renderer remount reported previous resources
+released, shared sheets reused, shared sources valid and two host canvases.
+These are supervisor samples; independent visual and complete-player reviews
+remain open. Hosted workflow 46 at exact `4eb699fa9911a9cbcaed5239c8db3aa60be9f769`
+passed 377 JavaScript and 49 Python tests, zero skips, build/audit/diff checks.
+
+Reload retained fishing progress 1/5, removed the sold Carp, preserved all seven
+guide steps and showed 535 Coins in the shops. The earned iron ring equipped in
+accessory1; attempting it in accessory2 was rejected and restored the empty slot.
+Reload preserved that equipment. Learning the earned Ice Shard consumed its scroll
+and persisted the spell, but the original pack left its old Learn button visible.
+Fix `6039947` refreshes the pack after confirmed learning, guards duplicate clicks
+and preserves a rejected scroll/control. Seventeen focused UI/guide/progress checks
+pass; independent review and latest exact-SHA hosted validation remain pending.
+
+The first learning-refresh patch `6039947` passed workflow 48 (379 JavaScript,
+49 Python, zero skips) but failed live learning: its guard checked the button's
+disabled property after the shared wrapper disabled it. No Shield scroll was
+consumed. The correction uses a separate pending flag; the two spell tests now
+exercise the wrapper's real disable-before-handler contract. Seventeen focused
+checks pass. Actual purchased Shield (220 Coins, 535 → 315) then learned through
+the corrected handler, refreshed immediately to a usable Shield button and
+removed the scroll. The earlier passing CI is not acceptance of the faulty patch.
+
+Mouse activation of Mage Atelier opened the companion panel twice. DOM hit testing
+at the building button's center confirmed the overlapping `iso-character-name`
+for `Expiry retained`. Keyboard activation opened Iris's Town resident panel and
+its shop correctly. A focused CSS priority change for interactive place/road
+buttons is being checked; decorative road captions no longer capture pointer
+events. General label spacing and crowded-world readability remain open.
+
+After reloading the CSS fix, the same Mage Atelier button's center hit itself
+(`z-index: 2`), and an ordinary mouse click opened Iris's Town resident panel.
+The focused obstruction is repaired locally; crowded-label and independent
+acceptance remain open.
+
+### Wrapped phone overlay correction — 2026-10-10
+
+At 375×812 the emote panel covered the journey-guide button: DOM hit testing its
+center returned `world-emotes`. The new local overlay observer measures dock,
+emote and Adventure HUD heights, reserves eight-pixel gaps between them, and
+positions camera/minimap controls above the HUD. Wrapped hotbar controls remain
+inside their panel. Resize and teardown remove the phone offsets on desktop.
+Two bounded geometry/observer checks and twelve Adventure UI checks pass; build
+passes. Actual 375×812 and 320×740 guide centers hit the guide itself, and a narrow
+phone mouse click opened the pack. At 320px document width stayed 320px. Viewport
+override was reset. These local checks do not certify physical phones, short
+landscape layouts, every panel or full accessibility.
+
+### Independent continuation and settings samples — 2026-10-10
+
+Independent Chrome review resumed using the existing synthetic `bk_accept_1010`
+and Birch BK after its preserved usage interruption. On `4565e40`, the reviewer
+completed all seven guide checkmarks: starter, companion, dummy, Forest victory
+(18 XP), Softwood, Alder sale and Trading Hall. The sale showed 510 Coins while
+the separate fake token header remained 500. Purchase/fishing/persistence
+extensions are still in progress; this is not complete BK/BL/BM acceptance.
+
+Root's 844×390 sample exposed a HUD/camera corner overlap. Independent source
+review also identified the 320px camera/minimap band exceeding available width.
+Both require compact-layout repair; the earlier guide fix did not resolve them.
+At390×844, Settings opened by keyboard, had labeled fields and scrollable final
+buttons with no horizontal page overflow. Escape closed it but returned focus
+to body, an accessibility defect under repair. Sound volume set to zero through
+the slider and decorative motion switched on both persisted through actual reload
+(slider zero, motion pressed/on). These preference samples do not validate every
+audio cue or full accessibility.
+
+### Owned server reconnect continuation — 2026-10-13
+
+Disk recovered from767MiB/1.5GiB to3.8GiB. A single current client build passed
+(1.55s Vite stage) before starting one owned test server and one IAB tab; headroom
+remained3.7–3.8GiB. No parallel local soak/build/art campaign was started.
+Source/build was `4d76a1dc88e84a370942cc73a6fff48885288407`, with the new notice
+expiry regression awaiting hosted execution; the application notice fix was not
+yet applied. The same owned restored PostgreSQL/checkpoint fixture was reused.
+
+The existing `adoption_1010` session returned without signing in again. Fresh UI
+pack/catalog requests showed315 Coins, Combat2/Fishing1/Woodcutting1, basic sword,
+Iron Ring in accessory1, Fire Bolt/Heal/Ice Shard/Shield, five Small Potions,
+Slime Resin1/Thorn Fiber2, one rod/axe/staff/ring and all seven beginner checks.
+Active companion was Expiry retained, HP105/105, mana60/60, pet HP80/80.
+
+With no open brain, pending purchase, harvest or combat, the owned8788 process
+received SIGTERM and exited0. The unchanged browser showed Reconnecting…; the
+server restarted with the identical restore DB/checkpoints/auth/mock/one-worker
+configuration. No reload or direct state mutation was used. Online/Town returned,
+with one player and the same companion. Newly opened pack and Coins directory
+made fresh server requests and retained all listed gear/spells/inventory/guide
+facts and315 Coins. The optional TEST token header remained500. Closing the Coins
+replacement returned focus to the Adventure launcher.
+
+Local evidence images: `mochi-recovery-before-pack-20261013.png`,
+`mochi-recovery-before-coins-20261013.png`,
+`mochi-recovery-disconnected-20261013.png`,
+`mochi-recovery-after-pack-20261013.png` and
+`mochi-recovery-after-coins-20261013.png`. This completes the supervisor's graceful
+transport subcase that was safety-interrupted on Oct10. It does not complete
+independent BM acceptance, unsaved-home/native-worker crash, combat/death,
+stale-target, full-inventory, WAN or150-CCU failure certification.
+
+### Appearance reload sample — 2026-10-13
+
+On the same owned fixture at `6e57a666f025417c9ea2c022c68ec9becc17f587`, Settings
+showed the original Chestnut style and clothing color #659db1. The supervisor
+selected Dark curls, saved through the visible form, reloaded the page, waited
+for Online, and reopened Settings. Dark curls remained selected; the visible
+world avatar changed with it. Screenshot `mochi-style-reload-20261013.png` records
+the retained selection. The original Chestnut style was then saved again.
+This is a reload/persistence sample, not fresh sign-in, cosmetic attachment,
+all-direction art approval or complete BL acceptance. No currency/items changed.
+
+### Natural defeat sample — 2026-10-13
+
+Before the server loaded the new defeat-boundary patch, the supervisor entered
+Forest through Map and approached the visible Thornling. The actual click selected
+Thornling rather than remaining untargeted. HP declined105→79→57→43→19→4 with no
+manual spells/potions. The companion made101 decisions in the pack sample, most
+used DEFEND OWNER, zero refused settlements; the target remained120/120 in visible
+samples. This is not evidence of strategic battle usefulness or weapon reach.
+
+Natural defeat returned the player to Town without a reload, restored HP105/105,
+MP60/60 and pet80/80, and showed “You recovered in Town. Your items are safe; your
+Mochi can rest here.” A fresh pack retained the basic sword, ring in accessory1,
+four spells, five potions, all recorded resources and seven completed guide steps.
+Screenshot `mochi-defeat-town-20261013.png` records the recovery. The running server
+was still the pre-boundary source loaded before `a42310c`; this ordinary-path
+sample does not validate that race correction. The owned server then exited0 and
+restarted at `a42310cae99a38858485d26e2c078624f55fa518` with identical test-only
+configuration, preparing a second natural defeat sample. No fixture grants or
+direct brain/action injection were used.
+
+The second natural defeat ran the corrected `a42310c` server. No movement/attack
+injection or manual spells/items were used after entering Forest at the retained
+position. Visible HP fell105→52→9, then Town recovery restored105/105,60/60,80/80.
+Fresh pack and Coins requests again retained all listed items/gear/spells/guide
+and315Coins. The battle panel now showed162 cumulative decisions, most used
+DEFEND OWNER, zero refused; target120/120 in the sampled Forest states. The
+recovery screenshot is `mochi-defeat-fixed-town-20261013.png`. This verifies normal
+production join/recovery with the guard, while the exact two-enemy same-tick race
+and replaced-body boundaries are established by focused regressions. Full BM and
+independent full combat acceptance remain open.

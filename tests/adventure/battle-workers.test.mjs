@@ -184,3 +184,41 @@ test('persisted abandoned combat without an in-memory encounter closes during re
  try { await game.tick(); assert.equal(s.inBattle,false); assert.equal(game.states.has(a.user),false); }
  finally { await game.close(); }
 });
+
+for (const stage of ['before-motor','motor-save']) test(`native proposal recovers owned execution after ${stage} failure`,async()=>{
+ const {AdventureService}=await import('../../server/adventure/service.mjs');
+ const {ServerArena,scenario}=await import('../../sim/server_battle.mjs');
+ const a=actors[stage==='before-motor'?23:24];
+ await pool.query('DELETE FROM mochi_battle_brains WHERE mochi_id=$1',[a.id]);
+ const native=new BattleBrains(world,{count:1}), receipts=[];
+ const game=new AdventureService(world,{brains:{decide:async(...args)=>{
+   if(args[4]?.execution)receipts.push(args[4].execution);
+   const answer=await native.decide(...args);
+   // A declared guard motor provides a deterministic body-mutation fault fixture.
+   return args[4]?.executionRequired?{...answer,action:'DEFEND_OWNER'}:answer;
+ },close:()=>native.close()}});
+ const arena=new ServerArena({...scenario(1000,0),geometry:'open',distance:40});
+ const p={...arena.p,userId:a.user,room:'failure-room',roomId:'yard',companion:{...arena.p.companion,id:a.id}};
+ const s=await game.state(a.user);Object.assign(s,arena.s,{activePet:a.id,target:'enemy',petDecisionAt:0,savedAt:world.now()});
+ game.instances.set(p.room,{mobs:new Map([['enemy',arena.m]])});
+ game.multiplayer={store:{players:new Map([[a.user,p]]),rooms:new Map([[p.room,{players:new Map([[a.user,p]])}]])},send(){},broadcast(){}};
+ game.ownerAttack=async()=>{};game.advancePoison=async()=>{};game.advanceEnemies=async()=>{};
+ const save=game.save.bind(game);let fail=true;
+ game.save=async(user,state)=>{if(stage==='motor-save'&&state.ownerGuardUntil&&fail){fail=false;throw Error('motor save failed');}await save(user,state);};
+ const motor=game.petAction.bind(game);
+ game.petAction=async(...args)=>{if(stage==='before-motor')throw Error('before motor failed');await motor(...args);await game.save(a.user,s);};
+ try {
+   await assert.rejects(game.tick(),/failed/);
+   assert.equal(s.pendingBattleRequest,null);
+   assert.equal(s.battleExecution.execution,stage==='before-motor'?'cancel':'ack');
+   const persisted=(await pool.query('SELECT state FROM player_adventure WHERE user_id=$1',[a.user])).rows[0].state;
+   assert.equal(persisted.battleExecution.execution,s.battleExecution.execution);
+   await game.tick();
+   assert.deepEqual(receipts,[stage==='before-motor'?'cancel':'ack']);
+   assert.equal(s.battleExecution,null);
+   const saved=JSON.parse((await pool.query('SELECT checkpoint FROM mochi_battle_brains WHERE mochi_id=$1',[a.id])).rows[0].checkpoint.toString());
+   if(stage==='before-motor') assert.equal(saved.proposal,null);
+   else assert.equal(saved.acknowledged,true);
+   await native.decide(a.id,a.user,obs,0); // A new continuation is admitted after recovery.
+ } finally {await game.close();}
+});

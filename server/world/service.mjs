@@ -20,6 +20,11 @@ export class GameError extends Error {
     this.status = status;
   }
 }
+export class InventoryCapacityError extends GameError {
+  constructor(message = "This item stack is full. Make room before adding more.") {
+    super(message, 409);
+  }
+}
 export const integer = (value, min = 1, max = 1000000) => {
   if (!Number.isSafeInteger(value) || value < min || value > max)
     throw new GameError("Enter a valid whole number");
@@ -86,8 +91,17 @@ export class WorldService {
     metadata = {},
     relatedUser = null,
     itemId = null,
+    { mirrorMockTokens = true } = {},
   ) {
     integer(Math.abs(amount), 0);
+    if (this.tokenConfig?.mock && !mirrorMockTokens) {
+      // Freeze the pre-commerce mock compatibility balance before soft Coins
+      // change; TokenService's lazy initial balance must never include this delta.
+      await tx.query(
+        "INSERT INTO mock_token_balances(user_id,amount_raw) SELECT id,coins::numeric*$2::numeric FROM users WHERE id=$1 ON CONFLICT DO NOTHING",
+        [userId, (10n ** BigInt(this.tokenConfig.decimals)).toString()],
+      );
+    }
     const result = await tx.query(
       "UPDATE users SET coins=coins+$2 WHERE id=$1 AND coins+$2>=0 RETURNING coins",
       [userId, amount],
@@ -106,7 +120,7 @@ export class WorldService {
         new Date(this.now()),
       ],
     );
-    if (this.tokenConfig?.mock && amount > 0) {
+    if (mirrorMockTokens && this.tokenConfig?.mock && amount > 0) {
       const scale = (10n ** BigInt(this.tokenConfig.decimals)).toString();
       await tx.query(
         "INSERT INTO mock_token_balances(user_id,amount_raw) VALUES($1,$2::numeric*$3::numeric) ON CONFLICT(user_id) DO UPDATE SET amount_raw=mock_token_balances.amount_raw+$4::numeric",
@@ -134,10 +148,12 @@ export class WorldService {
     if (!["bag", "storage"].includes(location))
       throw new GameError("Unknown storage location");
     if (amount > 0) {
-      await tx.query(
-        "INSERT INTO player_inventory(user_id,item_id,location,quantity) VALUES($1,$2,$3,$4) ON CONFLICT(user_id,item_id,location) DO UPDATE SET quantity=player_inventory.quantity+$4",
+      const result = await tx.query(
+        "INSERT INTO player_inventory(user_id,item_id,location,quantity) VALUES($1,$2,$3,$4) ON CONFLICT(user_id,item_id,location) DO UPDATE SET quantity=player_inventory.quantity+$4 WHERE player_inventory.quantity<=2147483647-$4 RETURNING quantity",
         [userId, itemId, location, amount],
       );
+      if (!result.rowCount)
+        throw new InventoryCapacityError();
       await tx.query(
         "INSERT INTO collection_entries(user_id,item_id,discovered_at) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
         [userId, itemId, new Date(this.now())],
@@ -155,7 +171,7 @@ export class WorldService {
       );
     }
   }
-  async ensureUser(username, displayName = username) {
+  async ensureUser(username, displayName = username, { passwordHash = null } = {}) {
     if (!/^[a-z0-9_-]{3,24}$/.test(username))
       throw new GameError(
         "Username needs 3–24 lowercase letters, numbers or underscores",
@@ -165,15 +181,19 @@ export class WorldService {
       const old = await tx.query("SELECT * FROM users WHERE username=$1", [
         username,
       ]);
-      if (old.rows[0]) return safeUser(old.rows[0]);
+      if (old.rows[0]) {
+        if (passwordHash) throw new GameError("That username is already in use.", 409);
+        return safeUser(old.rows[0]);
+      }
       const row = await tx.query(
-        "INSERT INTO users(id,username,display_name,coins,profile,created_at) VALUES($1,$2,$3,0,$4,$5) RETURNING *",
+        "INSERT INTO users(id,username,display_name,coins,profile,created_at,password_hash) VALUES($1,$2,$3,0,$4,$5,$6) RETURNING *",
         [
           id,
           username,
           displayName,
           { locations: [], careCount: 0, arcadeGames: 0 },
           new Date(this.now()),
+          passwordHash,
         ],
       );
       await this.coins(tx, id, 500, "admin", { reason: "Starter Coins" });
@@ -1020,7 +1040,7 @@ export class WorldService {
       return { message: "A little treasure changed hands" };
     });
   }
-  async cancelListing(userId, listingId) {
+  async cancelListing(userId, listingId, {assertCancelable} = {}) {
     return this.transaction([userId], async (tx) => {
       const listing = (
         await tx.query(
@@ -1029,6 +1049,7 @@ export class WorldService {
         )
       ).rows[0];
       if (!listing) throw new GameError("Listing not found");
+      if (assertCancelable) await assertCancelable(tx, listing);
       await this.inventory(tx, userId, listing.item_id, listing.quantity);
       await tx.query("DELETE FROM player_shop_listings WHERE id=$1", [
         listingId,

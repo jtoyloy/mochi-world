@@ -1,8 +1,11 @@
+import { commerceUI } from "./CommerceUI.js";
+import { beginnerJourney } from "./beginner-guide.js";
 import {
   WEAPONS,
   SPELLS,
   ACCESSORIES,
   ARMOR,
+  CONSUMABLES,
   RESOURCE_NAMES,
   VENDORS,
   QUESTS,
@@ -17,11 +20,17 @@ export function adventureUI({
   element,
   notice,
   refresh,
+  chooseCompanion,
+  openTokenShop,
 }) {
   let state = null,
     gather = null,
     gatherTimer = null,
-    disposed = false;
+    gatherCompletion = null,
+    disposed = false,
+    guidanceRequest = null,
+    guidanceLoaded = false,
+    coinWoodSales = 0;
   const hud = element("div", null, "adventure-hud"),
     vitals = element("div", "Preparing adventure…", "adventure-vitals"),
     target = element("small", "Town is safe"),
@@ -34,21 +43,50 @@ export function adventureUI({
     ["4 · Potion", () => send({ action: "item", itemId: "small-potion" })],
   ];
   for (const [name, fn] of actions) hotbar.append(btn(name, fn));
-  hotbar.append(btn("Adventure", () => pack()));
-  hud.append(vitals, target, hotbar);
+  hotbar.append(btn("Adventure", invoker => pack(invoker)));
+  const guidance = btn("First adventures", invoker => pack(invoker));
+  guidance.className = "adventure-guidance";
+  hud.append(vitals, target, hotbar, guidance);
   shell.append(hud);
   function update(data) {
-    state = { ...state, ...data };
+    state = { ...state, ...data, player: { ...state?.player, ...data.player } };
+    // Live frames contain progress, but starter/companion and sale history are
+    // supplied by the full overview and commerce snapshot. Hydrate those once
+    // before interpreting absent fields as unfinished journey steps.
+    if (guidanceLoaded && state.player?.progress) {
+      const journey = journeyFor(state);
+      guidance.textContent = journey.next ? "Next: " + journey.next.title : journey.complete ? "First adventures complete" : "Resource sale paused · explore freely";
+    } else reloadGuidance();
     const p = data.player;
     if (p) {
       vitals.textContent = `♥ ${Math.ceil(p.hp)}/${p.stats.maxHp}   ✧ ${Math.ceil(p.mp)}/${p.stats.maxMp}   Mochi ♥ ${Math.ceil(p.petHp)}/80`;
       hud.classList.toggle("in-combat", !!p.target);
     }
   }
-  async function pack() {
-    const s = await request("/api/adventure");
+  function journeyFor(data) {
+    return beginnerJourney({ ...data, rewards: { ...data.rewards,
+      woodSales: (data.rewards?.woodSales ?? 0) + coinWoodSales,
+      enabled: true, // Ordinary Coins buyers remain available without token treasury funding.
+    } });
+  }
+  const commerce = commerceUI({ request, dialog, btn, element, notice, bridge, openTokenShop,
+    openTokenBuyer: tokenVendor, afterSale: reloadGuidance });
+  function reloadGuidance() {
+    if (guidanceRequest || disposed) return guidanceRequest;
+    guidanceRequest = Promise.all([request("/api/adventure"), request("/api/adventure/commerce")])
+      .then(([data, catalog]) => { if (!disposed) { coinWoodSales = catalog.woodSales ?? 0; guidanceLoaded = true; update(data); } })
+      .catch(() => {})
+      .finally(() => { guidanceRequest = null; });
+    return guidanceRequest;
+  }
+  async function pack(invoker = document.activeElement) {
+    const [s, catalog] = await Promise.all([request("/api/adventure"), request("/api/adventure/commerce")]);
+    coinWoodSales = catalog.woodSales ?? 0;
+    guidanceLoaded = true;
     update(s);
-    const d = dialog("Adventure pack");
+    if (s.harvest && gather?.id !== s.harvest.id)
+      trackGather({ id: s.harvest.id }, Math.max(0, Number(s.harvest.ready_at) - s.serverTime));
+    const d = dialog("Adventure pack", invoker);
     d.append(
       element(
         "p",
@@ -66,19 +104,25 @@ export function adventureUI({
       for (const i of s.inventory)
         if (
           (slot === "weapon"
-            ? WEAPONS
+            ? WEAPONS[i.item_id]
             : ["head", "body"].includes(slot)
-              ? ARMOR
-              : ACCESSORIES)[i.item_id]
+              ? ARMOR[i.item_id]?.slot === slot
+              : ACCESSORIES[i.item_id])
         )
           select.append(new Option(i.item_id.replaceAll("-", " "), i.item_id));
       select.value = s.player.equipment[slot] ?? "";
+      let equipped = select.value;
       select.onchange = async () => {
+        select.disabled = true;
         try {
           await send({ action: "equip", slot, itemId: select.value });
+          equipped = select.value;
           notice("Combat equipment saved.");
         } catch (e) {
+          select.value = equipped;
           notice(e.message);
+        } finally {
+          select.disabled = false;
         }
       };
       d.append(element("label", slot), select);
@@ -87,38 +131,73 @@ export function adventureUI({
       d.append(
         element("p", "A gathering activity is pending."),
         btn("Finish gathering", async () => {
-          const r = await send({
-            action: "finishGather",
-            harvestId: s.harvest.id,
-          });
-          notice("Gathered " + RESOURCE_NAMES[r.itemId]);
+          await finishGather(s.harvest.id);
           d.close();
         }),
         btn("Cancel gathering", async () => {
+          if (gather?.id !== s.harvest.id || gatherCompletion?.id === s.harvest.id)
+            throw new Error("This activity has changed. Reopen Adventure to see your current gathering.");
           await send({ action: "cancelGather" });
+          clearGather(s.harvest.id);
           d.close();
         }),
       );
+    const journey = journeyFor(s);
+    d.append(element("h3", "Your first journey"));
+    for (const step of journey.steps)
+      d.append(element("p", `${step.done ? "✓" : step.blocked ? "Paused" : "○"} ${step.title}`));
+    if (journey.next) {
+      const next = journey.next;
+      d.append(element("p", next.detail));
+      if (next.action === "companion" && chooseCompanion)
+        d.append(btn("Choose a Mochi", () => { d.close(); return chooseCompanion(invoker); }));
+      if (next.room)
+        d.append(btn("Travel to " + ({ yard: "Training Yard", forest: "Whispering Forest", town: "Town", exchange: "Trading Hall" }[next.room]), () => {
+          d.close();
+          bridge.join(next.room);
+        }));
+    }
+    const paused = journey.steps.find((step) => step.blocked && !step.done);
+    if (paused) d.append(element("p", paused.detail));
+    d.append(btn("Adventure shops · Coins", () => { d.close(); return commerce.shops(invoker); }));
     d.append(element("h3", "Spells"));
     for (const id of s.player.spells)
       d.append(
         btn(SPELLS[id].name, () => send({ action: "spell", spellId: id })),
       );
     for (const i of s.inventory)
-      if (SPELLS[i.item_id] && !s.player.spells.includes(i.item_id))
-        d.append(
-          btn("Learn " + SPELLS[i.item_id].name, () =>
-            send({ action: "learnSpell", spellId: i.item_id }),
-          ),
-        );
+      if (SPELLS[i.item_id] && !s.player.spells.includes(i.item_id)) {
+        let learning = false;
+        const learn = btn("Learn " + SPELLS[i.item_id].name, async () => {
+          if (learning) return;
+          learning = true;
+          try {
+            await send({ action: "learnSpell", spellId: i.item_id });
+            notice("Learned " + SPELLS[i.item_id].name + ".");
+            d.close();
+            await pack(invoker);
+          } catch (error) { notice(error.message); }
+          finally { learning = false; }
+        });
+        d.append(learn);
+      }
     d.append(element("h3", "Resources & supplies"));
-    for (const i of s.inventory)
+    for (const i of s.inventory) {
       d.append(
         element(
           "p",
           `${RESOURCE_NAMES[i.item_id] ?? i.item_id.replaceAll("-", " ")} ×${i.quantity}`,
         ),
       );
+      if (CONSUMABLES[i.item_id]) {
+        const use = btn("Use " + i.item_id.replaceAll("-", " "), async () => {
+          await send({ action: "item", itemId: i.item_id });
+          d.close();
+          await pack(invoker);
+        });
+        d.append(use);
+      }
+    }
     d.append(element("h3", "Your Mochi in battle"));
     for (const b of s.battle) {
       const counts = b.metrics.actions ?? {},
@@ -145,7 +224,7 @@ export function adventureUI({
     d.append(
       btn("Game rewards", () => {
         d.close();
-        rewards();
+        return rewards(invoker);
       }),
       btn("Stop targeting", () => send({ action: "stop" })),
     );
@@ -161,10 +240,10 @@ export function adventureUI({
       (n / scale).toString() + fraction + (mock ? " TEST $MOCHI" : " $MOCHI")
     );
   }
-  async function rewards() {
+  async function rewards(invoker = document.activeElement) {
     const s = await request("/api/adventure"),
       r = s.rewards,
-      d = dialog("Game rewards");
+      d = dialog("Game rewards", invoker);
     update(s);
     d.append(
       element("p", "Claimable: " + tokenText(r.amountRaw, r.mock)),
@@ -195,10 +274,10 @@ export function adventureUI({
       ),
     );
   }
-  async function vendor(id) {
+  async function tokenVendor(id, invoker = document.activeElement) {
     const s = await request("/api/adventure"),
       v = VENDORS[id],
-      d = dialog(v.name),
+      d = dialog(v.name + " · optional token rewards", invoker),
       selected = {};
     update(s);
     d.append(
@@ -253,6 +332,7 @@ export function adventureUI({
         });
         notice(r.message + " " + tokenText(r.amountRaw, r.mock));
         d.close();
+        await reloadGuidance();
       }),
       btn("Sell all", async () => {
         const items = Object.fromEntries(
@@ -267,10 +347,11 @@ export function adventureUI({
         });
         notice(r.message);
         d.close();
+        await reloadGuidance();
       }),
       btn("Game rewards", () => {
         d.close();
-        rewards();
+        return rewards(invoker);
       }),
     );
     bridge.scene.audio.cue("vendor");
@@ -284,26 +365,49 @@ export function adventureUI({
       return;
     }
     const start = await send({ action: "gather", nodeId: node.id });
-    gather = { ...start, name: node.name };
+    trackGather({ ...start, name: node.name }, start.durationMs);
     target.textContent = `${node.kind === "fishing" ? "Fishing" : "Chopping"} · ${node.name}… stay here`;
+  }
+  function clearGather(id) {
+    if (gather?.id !== id) return;
     clearTimeout(gatherTimer);
-    gatherTimer = setTimeout(async () => {
-      if (disposed) return;
+    gather = null;
+    target.textContent = "Click a mob or resource to interact";
+  }
+  function finishGather(id) {
+    if (gatherCompletion?.id === id) return gatherCompletion.promise;
+    if (gather?.id !== id)
+      return Promise.reject(new Error("This activity has changed. Reopen Adventure to see your current gathering."));
+    clearTimeout(gatherTimer);
+    const promise = (async () => {
       try {
-        const result = await send({
-          action: "finishGather",
-          harvestId: start.id,
-        });
-        notice(`Gathered ${RESOURCE_NAMES[result.itemId]} · +${result.xp} XP`);
-        bridge.scene.audio.cue(result.kind);
+        const result = await send({ action: "finishGather", harvestId: id });
+        if (!disposed) {
+          notice(`Gathered ${RESOURCE_NAMES[result.itemId]} · +${result.xp} XP`);
+          bridge.scene.audio.cue(result.kind);
+          reloadGuidance();
+        }
+        return result;
       } catch (e) {
-        bridge.scene.gatherCancelled = start.id;
-        notice(e.message);
+        if (!disposed) bridge.scene.gatherCancelled = id;
+        throw e;
       } finally {
-        gather = null;
-        target.textContent = "Click a mob or resource to interact";
+        clearGather(id);
+        if (gatherCompletion?.id === id) gatherCompletion = null;
       }
-    }, start.durationMs + 250);
+    })();
+    gatherCompletion = { id, promise };
+    return promise;
+  }
+  function trackGather(activity, remainingMs) {
+    clearTimeout(gatherTimer);
+    gather = activity;
+    gatherTimer = setTimeout(() => {
+      if (disposed || gather?.id !== activity.id) return;
+      finishGather(activity.id).catch((e) => {
+        if (!disposed) notice(e.message);
+      });
+    }, remainingMs + 250);
   }
   const keydown = (e) => {
     if (
@@ -322,7 +426,8 @@ export function adventureUI({
   return {
     update,
     pack,
-    vendor,
+    vendor: commerce.buyer,
+    shop: commerce.shop,
     rewards,
     gatherNode,
     event(type, data) {
@@ -339,7 +444,7 @@ export function adventureUI({
               : "Click a mob to target · click a resource to gather";
         }
       }
-      if (type === "adventureNotice") notice(data.message);
+      if (type === "adventureNotice") { notice(data.message); reloadGuidance(); }
       if (type === "battleDecision") bridge.scene.battleDecision = data;
       if (type === "combatEffect") {
         bridge.scene.combatEffects ??= [];
@@ -347,8 +452,10 @@ export function adventureUI({
         if (bridge.scene.combatEffects.length > 24)
           bridge.scene.combatEffects.shift();
         bridge.scene.audio.cue(data.kind);
-        if (data.kind === "victory" && data.userId === bridge.selfId)
+        if (data.kind === "victory" && data.userId === bridge.selfId) {
           notice(`Victory · +${data.xp} combat XP`);
+          reloadGuidance();
+        }
       }
     },
     destroy() {

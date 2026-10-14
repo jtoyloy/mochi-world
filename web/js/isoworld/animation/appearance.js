@@ -136,7 +136,12 @@ export class AppearanceCache {
     );
   }
   destroy() {
-    for (const a of this.cache.values()) a.texture.source.destroy();
+    for (const a of this.cache.values()) {
+      for (const row of a.rows)
+        for (const frames of Object.values(row))
+          for (const frame of frames) frame.destroy(false);
+      a.texture.destroy(true);
+    }
     this.cache.clear();
   }
 }

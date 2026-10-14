@@ -11,6 +11,7 @@ import { drawRoom } from "./render.js";
 import { BrainLink, brainIndex } from "./brainlink.js";
 import { BrainView, actionName } from "./brainview.js";
 import { Sound } from "./audio.js";
+import { createBrainSaver, createRetainedSnapshot } from "./traders/brain-save.js";
 import {
   saveLife,
   loadLife,
@@ -18,6 +19,7 @@ import {
   lifeToBlob,
   blobToLife,
   releaseRoom,
+  roomReady,
 } from "./traders/persistence.js";
 
 import { TRADER_SPEC as SPEC } from "./traders/brain.js";
@@ -47,6 +49,9 @@ let world = new World({ seed: (Date.now() % 100000) + 1, tod: 0.02 });
 let arousal = new Arousal();
 let brain = null;
 let ready = false,
+  initialized = false,
+  leasePaused = false,
+  snapshotting = 0,
   inFlight = false,
   paused = false;
 let steps = TICK_STEPS,
@@ -78,8 +83,7 @@ let quiet = null; // the last silent moment answered with an everyday action
 let dirty = false,
   calmNow = false,
   savedAt = 0,
-  saving = false,
-  savePromise = null;
+  saving = false;
 const silent = (obs) => {
   for (let cell = 0; cell < HEARING; cell++)
     if (obs[OFFSETS.hearing + cell] > 0.05) return false;
@@ -286,8 +290,9 @@ async function boot() {
         return option;
       }),
     );
-    ready = true;
-    trader.ready = true;
+    initialized = true;
+    ready = !leasePaused;
+    trader.ready = ready;
     trader.renderShop();
     trader.route();
     $("boot").classList.add("done");
@@ -1064,10 +1069,15 @@ function renderNeeds() {
 }
 
 // ------------------------------------------------------------------ saving
-async function snapshot() {
-  while (inFlight) await new Promise((resolve) => setTimeout(resolve, 20));
-  const saved = await brain.call({ op: "save" });
-  return {
+const snapshot = createRetainedSnapshot({
+  initialized: () => initialized,
+  begin: () => { snapshotting++; },
+  end: () => { snapshotting--; },
+  waitForDecision: async () => {
+    while (inFlight) await new Promise((resolve) => setTimeout(resolve, 20));
+  },
+  readBrain: async () => (await brain.call({ op: "save" })).bytes,
+  readState: () => ({
     version: VERSION,
     pack: page.pack,
     at: Date.now(),
@@ -1082,38 +1092,33 @@ async function snapshot() {
       routine: page.routine,
       lessons: page.lessons,
     },
-    brain: saved.bytes,
     trader: trader.state,
-  };
-}
-async function save(announce) {
-  if (!ready) return;
-  if (savePromise) return savePromise;
-  saving = true;
-  savePromise = (async () => {
-    let okay = false;
-    try {
-      await saveLife(await snapshot());
+  }),
+});
+const save = createBrainSaver({
+  state: () => ({ initialized, ready, leasePaused }),
+  snapshot, persist: saveLife,
+  begin: () => { saving = true; },
+  saved: (announce) => {
+      if (leasePaused && roomReady()) {
+        leasePaused = false;
+        ready = true;
+        trader.ready = true;
+      }
       savedAt = performance.now();
       dirty = false;
-      okay = true;
-      $("saved").textContent =
-        `saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+      $("saved").textContent = leasePaused
+        ? "Brain saved · room remains paused. Retry Save to recover its lease before continuing."
+        : `saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
       if (announce) toast("saved to the local game server and browser backup");
-    } catch (error) {
+  },
+  failed: (error, announce) => {
       console.error(error);
-      $("saved").textContent = "not saved";
-      if (announce) toast("saving failed");
-    }
-    saving = false;
-    return okay;
-  })();
-  try {
-    return await savePromise;
-  } finally {
-    savePromise = null;
-  }
-}
+      $("saved").textContent = "Not saved: " + error.message;
+      if (announce) toast(error.message);
+  },
+  end: () => { saving = false; },
+});
 // Saving is automatic: soon after anything was learned, at a calm moment, and at the latest
 // every three minutes; also whenever the tab is hidden or closed.
 function autosave(now) {
@@ -1163,7 +1168,8 @@ async function adopt(saved) {
   while (inFlight) await new Promise((resolve) => setTimeout(resolve, 30));
   await brain.call({ op: "load", bytes: saved.brain.slice(0) });
   restore(saved);
-  ready = true;
+  ready = !leasePaused;
+  trader.ready = ready;
   toast(`${page.name} is home`);
 }
 
@@ -1173,7 +1179,7 @@ function frame(now) {
   last = now;
   view.time += real;
   view.blink = view.time % 4.2 < 0.12;
-  if (ready && !paused) {
+  if (ready && !paused && !snapshotting) {
     const speed = page.speed * (page.skipNight && world.m.asleep ? 4 : 1);
     bank = Math.min(bank + real * speed, 0.4);
     let guard = 0;
@@ -1202,7 +1208,7 @@ function frame(now) {
     : { x: m.x + Math.cos(m.heading) * 60, y: m.y + Math.sin(m.heading) * 60 };
   const d = Math.max(1, Math.hypot(target.x - m.x, target.y - m.y));
   view.look = [(target.x - m.x) / d, (target.y - m.y) / d];
-  trader.frame(world, now);
+  if (!snapshotting) trader.frame(world, now);
   drawRoom(ctx, world, view);
   trader.drawEquipment(ctx, world);
   if (frames++ % 12 === 0) renderNeeds();
@@ -1217,10 +1223,11 @@ window.addEventListener("pagehide", () => {
   if (ticks > 20) save(false);
 });
 document.addEventListener("lease-error", (event) => {
+  leasePaused = true;
   ready = false;
   trader.ready = false;
   toast(event.detail);
-  $("saved").textContent = "Room paused · reload to resume";
+  $("saved").textContent = "Room paused · " + event.detail + " · Keep this page open and retry Save, or export your brain.";
 });
 window.mochi = {
   get world() {
@@ -1240,6 +1247,7 @@ window.mochi = {
   },
   brainView,
   save,
+  snapshot,
   releaseRoom,
   trader,
   version: VERSION,

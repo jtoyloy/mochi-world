@@ -929,3 +929,9 @@ form select {
     font-size: 28px;
   }
 }
+/* Account entry shares the world's readable cards and keyboard controls. */
+.account-gate { max-width: 34rem; margin: 3rem auto; }
+.account-gate form { display: grid; gap: .75rem; }
+.account-gate input { width: 100%; box-sizing: border-box; padding: .8rem; font: inherit; }
+.account-gate [role="alert"]:empty { display: none; }
+.account-gate button:focus-visible, .account-gate input:focus-visible { outline: 3px solid #756197; outline-offset: 3px; }

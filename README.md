@@ -74,7 +74,14 @@ via Mochis → Adopt. The server assigns up to 40 users/instance and creates ano
   Rendering/networking never triggers a financial/brain tick. One native host loads independent
   versioned checkpoints; original browser rooms retain exclusive renewable leases.
 
-Real identity, token reconciliation/refunds, live-wallet integration, training provenance,
+Password account registration/sign-in, hashed sessions and all-device logout are available.
+Set `AUTH_REQUIRED=true` to exercise them in local mock mode; `DEV_MODE=false` always
+requires authentication and emits Secure cookies (serve through HTTPS). Existing development
+accounts cannot be claimed by registration; account migration/recovery requires a separately
+reviewed owner process. Run `db:migrate` before enabling the new account flow; old sessions
+are invalidated by hashed bearer storage. Wallet linking stays optional and separate.
+
+Account recovery/migration, token reconciliation/refunds, live-wallet integration, training provenance,
 shared/distributed workers and multisig treasury execution remain launch requirements.
 Game-item fulfillment after SPL payment is centralized, not trustless atomic settlement.
 No treasury purchase/burn, Solana payment or public deployment was performed in this pass.

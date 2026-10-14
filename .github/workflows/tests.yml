@@ -3,6 +3,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:16
@@ -20,6 +21,8 @@ jobs:
       TEST_DATABASE_URL: postgresql://mochi:mochi_test@127.0.0.1:5432/mochi_test
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -30,6 +33,29 @@ jobs:
       - run: npm ci
       - run: python -m venv .venv
       - run: .venv/bin/python -m pip install numpy pytest web/brains/traders-0.74.0-v1/cadence_net-0.74.0-py3-none-any.whl
+      - name: Initialize dedicated test database and catalog
+        run: node server/world/migrate.mjs
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
       - run: npm run build
       - run: npm test
       - run: npm run test:brain
+      - run: npm audit --omit=dev
+      - run: git diff --check
+      - name: Install hosted browser smoke runtime
+        run: npx playwright install --with-deps chromium
+        timeout-minutes: 5
+      - name: Functional browser smoke
+        id: browser-smoke
+        run: npx playwright test
+        timeout-minutes: 6
+      - name: Upload browser failure evidence
+        if: ${{ failure() && steps.browser-smoke.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-smoke-failure
+          path: |
+            playwright-report/
+            test-results/browser/
+          retention-days: 3
+          if-no-files-found: ignore

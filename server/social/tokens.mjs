@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import bs58 from "bs58";
 import nacl from "tweetnacl";
-import { GameError, integer, itemById } from "../world/service.mjs";
+import { GameError, InventoryCapacityError, integer, itemById } from "../world/service.mjs";
 const pubkey = (key) => {
   try {
     if (bs58.decode(key).length !== 32) throw Error();
@@ -72,6 +72,15 @@ export function formatToken(raw, decimals) {
       : ""
   }`.replace(/\.$/, "");
 }
+const ordered = value => Array.isArray(value) ? value.map(ordered) : value && typeof value === "object"
+  ? Object.fromEntries(Object.keys(value).sort().map(key => [key, ordered(value[key])])) : value;
+const canonicalPayment = p => ({
+  id: p.id, userId: p.user_id, type: p.type, mint: p.mint, decimals: p.decimals,
+  amountRaw: String(p.amount_raw), recipient: p.recipient, sender: p.sender,
+  createdAt: new Date(p.created_at).toISOString(), expiresAt: new Date(p.expires_at).toISOString(), data: p.data,
+});
+const samePayment = (p, proof) => JSON.stringify(ordered(canonicalPayment(p))) === JSON.stringify(ordered(proof.canonical_intent));
+const reconciliation = () => ({status: "reconciliation_pending", message: "Payment verified. Item delivery needs reconciliation; no new payment is needed."});
 export class SolanaVerifier {
   constructor(config) {
     this.config = config;
@@ -222,6 +231,21 @@ export class TokenService {
     this.now = now;
     this.balanceCache = new Map();
   }
+  namespace() {
+    return {mode: this.config.mock ? "mock" : "real", network: this.config.network, mint: this.config.mint, decimals: this.config.decimals};
+  }
+  namespaceMatches(p) {
+    return JSON.stringify(ordered(p.data.paymentNamespace)) === JSON.stringify(ordered(this.namespace()));
+  }
+  async cancelListing(userId, listingId) {
+    return this.world.cancelListing(userId, listingId, {assertCancelable: async (tx, listing) => {
+      const reserved = (await tx.query("SELECT * FROM listing_reservations WHERE listing_id=$1 FOR UPDATE", [listing.id])).rows[0];
+      if (!reserved) return;
+      const paid = (await tx.query("SELECT 1 FROM token_payment_receipts WHERE intent_id=$1", [reserved.intent_id])).rowCount;
+      if (paid || reserved.expires_at === Infinity || reserved.expires_at === "infinity" || new Date(reserved.expires_at).getTime() > this.now())
+        throw new GameError("This listing has a checkout awaiting completion or reconciliation.", 409);
+    }});
+  }
   async init() {
     if (!this.config.mock) await this.verifier.validateMint();
   }
@@ -332,14 +356,14 @@ export class TokenService {
   async expire(tx) {
     const expired = (
       await tx.query(
-        "UPDATE token_payment_intents SET status='expired' WHERE status='pending' AND expires_at<$1 RETURNING *",
-        [new Date(this.now())],
+        "UPDATE token_payment_intents SET status='expired' WHERE status='pending' AND expires_at<$1 AND data->'paymentNamespace'=$2::jsonb AND NOT EXISTS(SELECT 1 FROM token_payment_receipts r WHERE r.intent_id=token_payment_intents.id) RETURNING *",
+        [new Date(this.now()), this.namespace()],
       )
     ).rows;
     for (const p of expired) await this.restoreStock(tx, p);
     await tx.query(
-      "DELETE FROM listing_reservations WHERE expires_at<$1 OR intent_id IN (SELECT id FROM token_payment_intents WHERE status<>'pending')",
-      [new Date(this.now())],
+      "DELETE FROM listing_reservations WHERE (expires_at<$1 OR intent_id IN (SELECT id FROM token_payment_intents WHERE status NOT IN('pending','verified'))) AND EXISTS(SELECT 1 FROM token_payment_intents p WHERE p.id=listing_reservations.intent_id AND p.data->'paymentNamespace'=$2::jsonb) AND NOT EXISTS(SELECT 1 FROM token_payment_intents p WHERE p.id=listing_reservations.intent_id AND p.status='verified')",
+      [new Date(this.now()), this.namespace()],
     );
   }
 
@@ -352,8 +376,8 @@ export class TokenService {
         Number(
           (
             await tx.query(
-              "SELECT count(*) AS n FROM token_payment_intents WHERE user_id=$1 AND status='pending'",
-              [userId],
+              "SELECT count(*) AS n FROM token_payment_intents WHERE user_id=$1 AND status='pending' AND data->'paymentNamespace'=$2::jsonb",
+              [userId, this.namespace()],
             )
           ).rows[0].n,
         ) >= 3
@@ -440,6 +464,7 @@ export class TokenService {
           10n ** BigInt(this.config.decimals)
         ).toString(),
         data = {
+          paymentNamespace: this.namespace(),
           itemId,
           quantity,
           shopId: input.shopId ?? null,
@@ -486,13 +511,19 @@ export class TokenService {
   }
   async cancel(userId, id) {
     return this.world.transaction([userId], async (tx) => {
+      const owned = (await tx.query("SELECT * FROM token_payment_intents WHERE id=$1 AND user_id=$2 FOR UPDATE", [id, userId])).rows[0];
+      if (owned && !this.namespaceMatches(owned)) return {status: "reconciliation_pending", message: "Checkout currency configuration needs reconciliation. Do not pay again."};
       const p = (
         await tx.query(
-          "UPDATE token_payment_intents SET status='failed' WHERE id=$1 AND user_id=$2 AND status='pending' RETURNING *",
+          "UPDATE token_payment_intents SET status='failed' WHERE id=$1 AND user_id=$2 AND status='pending' AND NOT EXISTS(SELECT 1 FROM token_payment_receipts r WHERE r.intent_id=token_payment_intents.id) RETURNING *",
           [id, userId],
         )
       ).rows[0];
       if (p) await this.restoreStock(tx, p);
+      if (!p) {
+        const owed = (await tx.query("SELECT status FROM token_payment_intents WHERE id=$1 AND user_id=$2 AND status IN('verified','reconciliation_pending')", [id, userId])).rows[0];
+        if (owed) return owed.status === "reconciliation_pending" ? reconciliation() : {status: "verified", message: "Payment is verified and awaiting item delivery. Retry delivery without paying again."};
+      }
       await tx.query(
         "DELETE FROM listing_reservations WHERE intent_id=$1 AND intent_id IN (SELECT id FROM token_payment_intents WHERE user_id=$2 AND status='failed')",
         [id, userId],
@@ -501,34 +532,97 @@ export class TokenService {
     });
   }
 
+  checkProof(p, proof, signature) {
+    if (proof.user_id !== p.user_id || !samePayment(p, proof))
+      throw new GameError("Stored payment details differ. Delivery needs reconciliation.", 409);
+    if (JSON.stringify(ordered(proof.verification_namespace)) !== JSON.stringify(ordered(this.namespace())))
+      throw new GameError("Verified payment currency configuration differs. Reconciliation is required.", 409);
+    if (signature !== undefined && signature !== proof.signature)
+      throw new GameError("This checkout already has a different verified payment.", 409);
+  }
+  async recordProof(userId, initial, signature) {
+    try {
+      return await this.world.transaction([userId], async tx => {
+        const p = (await tx.query("SELECT * FROM token_payment_intents WHERE id=$1 AND user_id=$2 FOR UPDATE", [initial.id, userId])).rows[0];
+        if (!p) throw new GameError("Payment intent not found", 404);
+        const prior = (await tx.query("SELECT * FROM token_payment_receipts WHERE intent_id=$1", [p.id])).rows[0];
+        if (prior) { this.checkProof(p, prior, signature); return {intent: p, proof: prior}; }
+        if (JSON.stringify(ordered(canonicalPayment(p))) !== JSON.stringify(ordered(canonicalPayment(initial))))
+          throw new GameError("Payment details changed. Delivery needs reconciliation.", 409);
+        if (p.status === "confirmed" || (await tx.query("SELECT 1 FROM token_payment_intents WHERE signature=$1", [signature])).rowCount)
+          throw new GameError("Transaction already used", 409);
+        let held = p.status === "pending" && this.namespaceMatches(p);
+        if (held && p.data.listingId) {
+          const listing = (await tx.query("SELECT * FROM player_shop_listings WHERE id=$1 FOR UPDATE", [p.data.listingId])).rows[0];
+          const reserved = (await tx.query("SELECT * FROM listing_reservations WHERE listing_id=$1 FOR UPDATE", [p.data.listingId])).rows[0];
+          held = !!listing && listing.seller_id === p.data.sellerId && listing.item_id === p.data.itemId && listing.quantity >= p.data.quantity && reserved?.intent_id === p.id;
+          if (held) await tx.query("UPDATE listing_reservations SET expires_at='infinity' WHERE intent_id=$1", [p.id]);
+        }
+        const proof = {intent_id: p.id, user_id: userId, signature, canonical_intent: canonicalPayment(p), verified_at: new Date(this.now()), reservation_held: held, verification_namespace: this.namespace()};
+        await tx.query("INSERT INTO token_payment_receipts(intent_id,user_id,signature,canonical_intent,verified_at,reservation_held,verification_namespace) VALUES($1,$2,$3,$4,$5,$6,$7)", [p.id, userId, signature, proof.canonical_intent, proof.verified_at, held, proof.verification_namespace]);
+        p.status = held ? "verified" : "reconciliation_pending";
+        await tx.query("UPDATE token_payment_intents SET status=$2 WHERE id=$1", [p.id, p.status]);
+        return {intent: p, proof};
+      });
+    } catch (error) {
+      if (error.code === "23505" || error.message === "Transaction already used")
+        throw new GameError("Transaction already used", 409);
+      throw error;
+    }
+  }
+
+  async payments(userId, {after = null} = {}) {
+    let cursor = null;
+    if (after !== null && after !== "") {
+      try {
+        if (typeof after !== "string" || after.length > 2048 || !/^[A-Za-z0-9_-]+$/.test(after)) throw Error();
+        cursor = JSON.parse(Buffer.from(after, "base64url").toString());
+        if (Object.keys(cursor).sort().join() !== "at,id" || typeof cursor.at !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/.test(cursor.at) || new Date(cursor.at).toISOString() !== cursor.at.slice(0, 23) + "Z" || typeof cursor.id !== "string" || !cursor.id.length || Buffer.byteLength(cursor.id) > 1024 || cursor.id.includes("\0")) throw Error();
+      } catch { throw new GameError("Invalid checkout history cursor", 400); }
+    }
+    const rows = (await this.pool.query(
+      "SELECT p.*,to_char(p.created_at AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') AS cursor_at,r.signature AS proof_signature,r.verification_namespace AS proof_namespace,r.canonical_intent AS proof_canonical FROM token_payment_intents p LEFT JOIN token_payment_receipts r ON r.intent_id=p.id AND r.user_id=p.user_id WHERE p.user_id=$1 AND p.status<>'confirmed' AND ($2::timestamptz IS NULL OR (p.created_at,p.id)<($2::timestamptz,$3::text)) ORDER BY p.created_at DESC,p.id DESC LIMIT 51",
+      [userId, cursor?.at ?? null, cursor?.id ?? null],
+    )).rows;
+    const page = rows.slice(0, 50), last = page.at(-1);
+    return {mock: this.config.mock, payments: page.map(p => {
+      const paid = !!p.proof_signature, mismatch = ((!!p.data.paymentNamespace || this.config.mock) && !this.namespaceMatches(p)) || (paid && (JSON.stringify(ordered(p.proof_namespace)) !== JSON.stringify(ordered(this.namespace())) || !samePayment(p, {canonical_intent: p.proof_canonical})));
+      const retry = !mismatch && (paid ? p.status === "verified" : this.config.mock ? this.namespaceMatches(p) && p.status === "pending" : true);
+      const detail = paid ? p.proof_canonical : canonicalPayment(p);
+      return {id: p.id, itemId: detail.data.itemId, itemName: itemById.get(detail.data.itemId)?.name ?? detail.data.itemId, quantity: detail.data.quantity, amountRaw: detail.amountRaw, formatted: formatToken(detail.amountRaw, detail.decimals), createdAt: detail.createdAt, expiresAt: detail.expiresAt, status: mismatch ? "reconciliation_pending" : p.status, paymentVerified: paid, requiresSignature: !mismatch && !this.config.mock && !paid, canRetry: retry, signature: p.proof_signature ?? null, message: mismatch ? "Checkout payment details need reconciliation. Do not pay again." : paid ? p.status === "reconciliation_pending" ? reconciliation().message : "Payment verified. Retry item delivery without paying again." : this.config.mock ? p.status === "pending" ? "Complete this test checkout." : "This test checkout is closed." : "If already paid, verify the existing transaction signature. Do not pay again."};
+    }), nextCursor: rows.length > 50 ? Buffer.from(JSON.stringify({at: last.cursor_at, id: last.id})).toString("base64url") : null};
+  }
+
   async fulfill(userId, id, signature) {
-    await this.world.transaction([], (tx) => this.expire(tx));
-    const initial = (
+    if (this.config.mock) await this.world.transaction([], (tx) => this.expire(tx));
+    let initial = (
       await this.pool.query(
         "SELECT * FROM token_payment_intents WHERE id=$1 AND user_id=$2",
         [id, userId],
       )
     ).rows[0];
     if (!initial) throw new GameError("Payment intent not found", 404);
-    if (initial.status !== "pending")
+    if (initial.mint !== this.config.mint || initial.decimals !== this.config.decimals || ((initial.data.paymentNamespace || this.config.mock) && !this.namespaceMatches(initial)))
+      throw new GameError("Checkout currency configuration differs. Reconciliation is required.", 409);
+    if (initial.status === "confirmed" || (this.config.mock && initial.status !== "pending"))
       throw new GameError("Intent is already fulfilled or closed", 409);
+    let proof;
     if (!this.config.mock) {
-      try {
+      proof = (await this.pool.query("SELECT * FROM token_payment_receipts WHERE intent_id=$1 AND user_id=$2", [id, userId])).rows[0];
+      if (proof) this.checkProof(initial, proof, signature);
+      else {
+        if (typeof signature !== "string" || !signature.length || signature.length > 256)
+          throw new GameError("Provide the existing payment transaction signature.", 400);
         await this.verifier.verify(initial, signature);
-      } catch (e) {
-        console.info(
-          JSON.stringify({
-            event: "token_payment_rejected",
-            intentId: id,
-            reason: e.message,
-          }),
-        );
-        throw e;
+        const saved = await this.recordProof(userId, initial, signature);
+        initial = saved.intent;
+        proof = saved.proof;
       }
+      if (initial.status === "reconciliation_pending") return reconciliation();
     }
     const seller = initial.data.sellerId;
     if (this.config.mock && seller) await this.balance(seller);
-    return this.world.transaction(
+    try { return await this.world.transaction(
       [userId, ...(seller ? [seller] : [])],
       async (tx) => {
         await this.expire(tx);
@@ -538,12 +632,19 @@ export class TokenService {
             [id],
           )
         ).rows[0];
-        if (
-          p.status !== "pending" ||
-          new Date(p.expires_at).getTime() < this.now()
-        )
+        if (!p || p.user_id !== userId) throw new GameError("Payment intent not found", 404);
+        if (this.config.mock && !this.namespaceMatches(p))
+          throw new GameError("Checkout currency configuration differs. Reconciliation is required.", 409);
+        if (!this.config.mock) {
+          const stored = (await tx.query("SELECT * FROM token_payment_receipts WHERE intent_id=$1 AND user_id=$2", [id, userId])).rows[0];
+          if (!stored) throw new GameError("Verified payment proof unavailable", 409);
+          this.checkProof(p, stored, signature);
+          proof = stored;
+          if (p.status === "reconciliation_pending") return reconciliation();
+        }
+        if (this.config.mock ? p.status !== "pending" || new Date(p.expires_at).getTime() < this.now() : p.status !== "verified")
           throw new GameError("Intent expired or already fulfilled", 409);
-        const sig = this.config.mock ? "mock:" + id : signature;
+        const sig = this.config.mock ? "mock:" + id : proof.signature;
         if (
           (
             await tx.query(
@@ -587,10 +688,14 @@ export class TokenService {
           ).rows[0];
           if (
             !listing ||
+            listing.seller_id !== d.sellerId || listing.item_id !== d.itemId ||
             listing.quantity < d.quantity ||
             reservation?.intent_id !== id
-          )
-            throw new GameError("Listing reservation lost");
+          ) {
+            if (this.config.mock) throw new GameError("Listing reservation lost");
+            await tx.query("UPDATE token_payment_intents SET status='reconciliation_pending' WHERE id=$1", [id]);
+            return reconciliation();
+          }
           await tx.query(
             "DELETE FROM listing_reservations WHERE intent_id=$1",
             [id],
@@ -646,9 +751,13 @@ export class TokenService {
             mock: this.config.mock,
           }),
         );
-        return { message: "Payment verified. Item delivered once." };
+        return { status: "confirmed", message: "Payment verified. Item delivered once." };
       },
-    );
+    ); } catch (error) {
+      if (!this.config.mock && proof && error instanceof InventoryCapacityError)
+        return {status: "verified", delivered: false, message: "Payment verified. Make room in your bag, then retry delivery from your wallet."};
+      throw error;
+    }
   }
   async revenue(tx, id, source, amount) {
     const a = allocation(amount, this.config.bps),

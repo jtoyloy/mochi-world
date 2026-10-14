@@ -1,4 +1,12 @@
-# 3D measurement notes
+# Renderer measurement notes
+
+The active game uses PixiJS/WebGL. The opening 3D measurements below are retained
+historical prototype evidence; their shadow/quality controls are not active Pixi
+settings. Current Pixi measurements begin at "Current Pixi isometric pivot".
+Short local samples do not pass the sustained client or 150 CCU release gates in
+QUALITY_GATES.md.
+
+## Historical 3D measurements
 
 Browser: local Codex in-app browser,1280×720,1 authenticated player +1 Mochi,
 Town Square, auto→medium, realtime shadows. Observed about60FPS,301 draw calls,
