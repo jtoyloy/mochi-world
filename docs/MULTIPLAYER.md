@@ -22,6 +22,28 @@ Home instances are owner/accepted-friend only. Presence is ephemeral and restart
 membership. Multi-process deployment needs Redis/pubsub, distributed room assignment,
 session revalidation and rate counters; the store boundary is present but Redis is not implemented.
 
+## Ingress admission
+
+Socket input is admitted at25 events/second before the serial handler queue.
+Each active body retains at most32 pending messages/32KiB, with a2048-byte
+message ceiling. Rate overflow closes1008, size overflow1009 and backlog overflow
+1013. Disconnect clears queued raw buffers. Already admitted messages retain
+order when a slow handler drains; they are not charged a second dispatch rate.
+
+At most32 socket setups may be authenticating/loading identity at once. A30-second
+setup deadline closes transports, while uncancellable database work retains its
+slot until it settles. Refusal and timeout counters are socketSetupRefusals and
+socketSetupTimeouts. These process-local limits do not certify150CCU.
+
+HTTP reserves at most256 API requests through authentication and handler completion.
+Body-bearing requests additionally reserve at most16 readers and64MiB of maximum
+wire-body capacity. Account/commerce bodies allow4096 bytes; ordinary actions
+allow65536 bytes. Authenticated checkpoint PUT retains its30000000-byte limit.
+Body reads have a30-second deadline; admission saturation returns503. Static GET
+requests remain outside API admission; public auth configuration remains
+unauthenticated but shares its API work budget. These are admission bounds, not
+a total-heap or sustained performance certificate.
+
 ## Current presentation
 
 The main world uses PixiJS painterly isometric rendering. Three.js/React Three

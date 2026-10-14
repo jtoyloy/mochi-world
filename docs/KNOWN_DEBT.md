@@ -80,3 +80,8 @@ Hosted82 passes431JS/49Python/seven browser cases atcdea11d for body/message
 admission. The separate pre-actor socket setup audit found unbounded auth/connect
 work;32 pending-work slots, deadline and closed checks now pass independentreview
 and15 tiny checks. Exact-source hosted integration/finalBE remain open.
+
+Hosted84 passed433JS/49Python/seven browser cases for delayed queue draining.
+The follow-up protectedGET auth backlog is now bounded by256 API work reservations;
+9 tiny HTTP tests/independent review pass, exact-source full hosted integration
+pending. Full BE/performance/player/operations acceptance remains open.

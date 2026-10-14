@@ -18,11 +18,24 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow82 passed:431 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow84 passed:433 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
-Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
+Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists normally use isolated branches/worktrees at the exact validated base. During the disk safety interruption, tiny source-only tasks share this checkout with explicit file ownership and independent review before commit; no parallel heavy processes run. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
 ## Current continuation
+
+Latest code includes socket setup and all-API work admission. Latest completed
+full gate: workflow84 at1470b8cf27e7fbbf3d70055cf266e5430ced3ddc,433JS/49Python/
+zero skips/seven browser cases/build/audit/diff. Workflow86 checks setup work;
+the all-API request correction requires its subsequent exact-source gate. Neither
+is passed until authoritative completion. Full security acceptance remains open.
+
+Owned8788 server/browser are stopped; disk fluctuates around430MiB and remains
+below the unchanged3GiB floor. No local DB/native/build/browser/full suite may
+resume until safe headroom returns. Cadence remains NO PROMOTION;150CCU remains
+NOT CERTIFIED. All PRODUCT_DONE sections remain open pending their actual gates.
+
+## Integration audit trail
 
 Hosted workflow 40 passed at `af27dea13d5cde6b4fcef1ceb56705aa27ccf96b`.
 Adoption handoff fix `8b22753` passed independent source review, four actual
@@ -194,7 +207,7 @@ That can move expired text into normal document flow. A real Talk-without-compan
 notice expiry regression is being verified before the app fix; no layout gate is
 weakened to accept remaining text.
 
-## Current integration evidence and limitations
+## Baseline and earlier interrupted gates
 
 Baseline `99f31e1`: JavaScript 262 passed, Python 49 passed, zero skips. Integrated authentication tests: 11 passed; Python 49 passed and build passed before the last commerce/foliage followups. Small actual-handler, animation ownership and crop tests passed on their reported sources. Independent specialists reviewed authentication, scheduling, gather controls, texture ownership and commerce retries; their scope does not constitute final product/security review.
 
@@ -363,3 +376,15 @@ paths release slots; two counters record refusals/timeouts. Independent review a
 15 tiny setup/ingress checks pass,zero skips. Installed ws synchronous callback
 behavior was inspected for this fixed no-verifyClient configuration. Full hosted
 integration remains pending; no CCU or final security certification is implied.
+
+Workflow84 passed exact1470b8cf27e7fbbf3d70055cf266e5430ced3ddc:433 JavaScript,
+49 Python,zero skips,seven browser cases in4.6minutes and build/audit/diff.
+
+The GET follow-up reproduced300 simultaneous protected API authentication promises
+while body-reader counters stayed0. A separate256-request API admission counter
+now reserves before authentication through handler completion, including GET/auth/
+config. Existing16-reader/64MiB/body-size limits are unchanged; static GET remains
+unreserved. Closed transports retain slots until outstanding auth settles, then
+stop downstream work; normal consumed request streams are accepted. Independent
+review/9 tiny HTTP tests plus a counter-refusal check pass,zero skips. Full hosted
+integration remains pending; no150CCU/heap/final security certificate is implied.
