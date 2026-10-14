@@ -62,3 +62,11 @@ seven Chromium cases/build/audit/diff at9d73167, covering harvest/loot retention
 Disk then fell to523MiB; root stopped owned server/browser and suspended local
 heavy work under the unchanged3GiB floor. Automatic capacity notice/enemy-stage
 repair passes38 tiny source checks; independent review/full hosted gate pending.
+
+Workflow80 passed419JS/49Python/seven browser cases at11818db for expected combat
+capacity refusal. Source security audit then found unbounded pre-rate socket
+queueing and pre-auth HTTP body buffering. Bounded ingress repairs pass independent
+review/12 tiny checks; exact-source full hosted integration remains pending.
+64MiB body reservation is not total heap certification. Full security/operations
+and sustained capacity acceptance remain open; local disk fell further to299MiB,
+with owned game/browser stopped and no heavy local work resumed.

@@ -72,3 +72,9 @@ attacker's target and informs them, preserving pet execution settlement and
 other-room/enemy progress; unexpected faults retain their barrier. Require its
 exact-source hosted gate. Local heavy work is again suspended at523MiB free;
 source/hosted development continues without weakening capacity/player/art gates.
+
+Security continuation: address measured pre-admission socket queue and pre-auth
+HTTP buffering findings with reviewed bounded ingress; require hosted full gate
+and preserve limits of source-only local evidence. Workflow80 already passes the
+expected combat-capacity correction. Continue remaining independent security and
+full player/art/operations acceptance; no product gate is closed by these patches.

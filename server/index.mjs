@@ -1,5 +1,6 @@
 import { RuntimeMetrics } from "./world/runtime-metrics.mjs";
 import { AccountAuth } from "./world/auth.mjs";
+import { HttpIngress } from "./world/http-ingress.mjs";
 import { AdventureService } from "./adventure/service.mjs";
 import { AdventureCommerce } from "./adventure/commerce.mjs";
 import { AvatarService } from "./social/avatar.mjs";
@@ -122,18 +123,6 @@ const json = (res, status, data) => {
   });
   res.end(JSON.stringify(data));
 };
-async function body(req, maximum = 30000000) {
-  let size = 0;
-  const chunks = [];
-  for await (const c of req) {
-    size += c.length;
-    if (size > maximum) throw new GameError("Request is too large", 413);
-    chunks.push(c);
-  }
-  if (!chunks.length) return {};
-  try { return JSON.parse(Buffer.concat(chunks).toString()); }
-  catch { throw new GameError("Invalid JSON request.", 400); }
-}
 async function session(req, res) {
   const userId = await auth.identify(req);
   if (userId) return userId;
@@ -144,20 +133,14 @@ async function login(res, username) {
   const user = await service.ensureUser(username);
   return auth.issue(res, user.id);
 }
+const httpIngress = new HttpIngress();
 const server = createServer(async (req, res) => {
+  let admission;
   try {
     const url = new URL(req.url, "http://localhost"),
       path = url.pathname;
-    let b = {};
-    if (!["GET", "HEAD"].includes(req.method)) {
-      if (
-        req.headers.origin &&
-        req.headers.origin !== `http://${req.headers.host}` &&
-        req.headers.origin !== `https://${req.headers.host}`
-      )
-        throw new GameError("Cross-origin action refused", 403);
-      b = await body(req, path.startsWith("/api/auth/") || path.startsWith("/api/adventure/commerce/") ? 4096 : 30000000);
-    }
+    admission = await httpIngress.prepare(req, path, () => session(req, res));
+    const b = admission.body;
     if (path.startsWith("/api/")) {
       if (path === "/api/auth/config" && req.method === "GET")
         return json(res, 200, { required: authRequired, development: dev });
@@ -175,7 +158,7 @@ const server = createServer(async (req, res) => {
         }
         return json(res, 200, { message: "Signed out on all devices." });
       }
-      const user = await session(req, res);
+      const user = admission.user;
       if (path === "/api/adventure/commerce" && req.method === "GET")
         return json(res, 200, await commerce.catalog(user));
       if (["/api/adventure/commerce/buy", "/api/adventure/commerce/sell"].includes(path) && req.method === "POST") {
@@ -683,6 +666,8 @@ const server = createServer(async (req, res) => {
     json(res, error.status ?? (error.code === "ENOENT" ? 404 : 400), {
       error: error.message,
     });
+  } finally {
+    admission?.release();
   }
 });
 multiplayer = new Multiplayer({

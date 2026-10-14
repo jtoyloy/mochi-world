@@ -18,7 +18,7 @@ Validated base/main/origin/main: 99f31e15ab10a23e1985280d3508af3063f96b1a. Curre
 | Art/animation/world/UI | IN_PROGRESS | Shared texture teardown and remount verified; foliage and new 40-cell Thornling action atlas provisional. Thornling loaded in Forest; continuous motion/directions/mobs/cosmetics acceptance open |
 | Audio/accessibility/responsive | IN_PROGRESS | Reduced decorative motion and named map/zoom controls implemented; complete persistent settings/audio/accessibility open |
 | 150 CCU/storage capacity | BLOCKED | Local full gate interrupted at ~1GiB free with swap pressure; ≥3GiB floor; NOT CERTIFIED |
-| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow78 passed:415 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
+| Security/CI/observability/backup/deployment | IN_PROGRESS | Hosted workflow80 passed:419 JavaScript,49 Python,zero skips plus7 functional Chromium tests/build/audit/diff. Private backup and owned local restore/restart passed; staging, offsite recovery, alerts and deployment smoke remain |
 
 Supervisor maintains PRODUCT_DONE, QUALITY_GATES, ROADMAP and KNOWN_DEBT. Specialists use isolated branches/worktrees at the exact validated base. On return inspect patches/tests/methodology, then independent review before integration. Existing failed evidence and pack bytes remain protected. No public deployment or real-money action authorized.
 
@@ -312,3 +312,23 @@ The automatic capacity correction then passed independent review and an independ
 also pass. No DB/native/browser/build/full local run was attempted below the
 floor. The correction is ready for its exact-source hosted gate; that result is
 still pending.
+
+Workflow80 passed exact `11818db2215c0bc30da8cf6a66f9da26c79132e3`:
+419 JavaScript,49 Python,zero skips,seven browser cases in2.9minutes plus
+build/audit/diff. Expected automatic capacity refusal therefore has an integrated
+hosted gate; actual full-stack browser acceptance remains open.
+
+A bounded independent source security audit found two High availability gaps:
+1000 socket messages behind a delayed join left999 queued before handler rate
+checks; HTTP buffered up to30MB before auth/route rejection. Socket admission now
+checks25/s synchronously with32 pending messages/32KiB and2KiB/message limits,
+releases queued raw references on disconnect and protects replacement identity.
+HTTP now authenticates protected APIs before reading bodies and rejects static
+mutations early. Account/commerce retain4KiB, ordinary actions use64KiB, and exact
+authenticated checkpoint PUT retains30MB. At most16 body-bearing requests reserve
+64MiB of wire-body capacity through their entire handler lifetime; a30-second
+body timer closes stalled readers. This is not a total-heap/capacity claim.
+Independent review and12 tiny Readable/socket-source checks pass,zero skips,
+with source syntax/diff checks. Real integrated HTTP/socket/browser/DB verification
+is deferred to the hosted exact-source gate, not claimed locally. Full security
+acceptance remains open. Disk is now299MiB; owned heavy processes remain stopped.

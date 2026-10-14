@@ -235,6 +235,17 @@ export class Multiplayer {
       seated: p.seated ?? null,
     };
   }
+  clearIngress(p) {
+    const ingress = p.ingress;
+    if (!ingress) return;
+    ingress.closed = true;
+    for (const entry of ingress.entries) {
+      entry.raw = null;
+      entry.released = true;
+    }
+    ingress.entries.clear();
+    ingress.bytes = 0;
+  }
   async connect(ws, userId) {
     const user = await this.world.account(userId),
       avatar = await this.avatars.get(userId);
@@ -270,19 +281,41 @@ export class Multiplayer {
     this.metrics?.count("connects");
     this.store.players.set(userId, p);
     let serial = Promise.resolve();
+    const ingress = p.ingress = {
+      windowAt: this.now(), count: 0, entries: new Set(), bytes: 0, closed: false,
+    };
     ws.on("message", (raw) => {
+      if (ingress.closed || this.store.players.get(userId) !== p) return;
+      const bytes = Buffer.byteLength(raw);
       this.metrics?.count("inboundMessages");
-      this.metrics?.count("inboundBytes", raw.length);
-      const receivedAt = performance.now();
+      this.metrics?.count("inboundBytes", bytes);
+      const now = this.now();
+      if (now - ingress.windowAt >= 1000) {
+        ingress.windowAt = now;
+        ingress.count = 0;
+      }
+      const rateExceeded = ++ingress.count > 25;
+      // Admission must precede the promise chain: a blocked handler must not
+      // retain unlimited future messages, even across separate rate windows.
+      if (rateExceeded || bytes > 2048 || ingress.entries.size >= 32 || ingress.bytes + bytes > 32768) {
+        const code = rateExceeded ? 1008 : bytes > 2048 ? 1009 : 1013;
+        this.disconnect(p);
+        ws.close(code, rateExceeded ? "Socket rate limit" : "Socket input limit; reconnect");
+        return;
+      }
+      const entry = {raw, bytes, receivedAt: performance.now(), released: false};
+      ingress.entries.add(entry);
+      ingress.bytes += bytes;
       serial = serial
         .then(async () => {
-          if (this.store.players.get(userId) !== p) return;
+          if (ingress.closed || this.store.players.get(userId) !== p) return;
           if (p.ws.sessionExpiresAt <= this.now()) {
             this.disconnect(p);
             p.ws.close(4003, "Session expired; sign in again");
             return;
           }
-          const msg = JSON.parse(raw.toString());
+          const msg = JSON.parse(entry.raw.toString());
+          entry.raw = null;
           const startedAt = performance.now();
           try {
             await this.handle(p, msg);
@@ -292,11 +325,20 @@ export class Multiplayer {
                 "movementValidationMs",
                 performance.now() - startedAt,
               );
-            this.metrics?.time("dispatchMs", performance.now() - receivedAt);
+            this.metrics?.time("dispatchMs", performance.now() - entry.receivedAt);
           }
         })
         .catch((e) => {
-          if (!e.responseSent) this.send(p, "error", { message: e.message });
+          if (!ingress.closed && this.store.players.get(userId) === p && !e.responseSent)
+            this.send(p, "error", { message: e.message });
+        })
+        .finally(() => {
+          entry.raw = null;
+          if (!entry.released) {
+            entry.released = true;
+            ingress.entries.delete(entry);
+            ingress.bytes -= entry.bytes;
+          }
         });
     });
     ws.on("close", () => this.disconnect(p));
@@ -497,6 +539,7 @@ export class Multiplayer {
     );
   }
   disconnect(p) {
+    this.clearIngress(p);
     if (this.store.players.get(p.userId) !== p) return;
     this.metrics?.count("disconnects");
     this.persist(p).catch(() => {});
