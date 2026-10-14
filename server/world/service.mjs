@@ -143,10 +143,12 @@ export class WorldService {
     if (!["bag", "storage"].includes(location))
       throw new GameError("Unknown storage location");
     if (amount > 0) {
-      await tx.query(
-        "INSERT INTO player_inventory(user_id,item_id,location,quantity) VALUES($1,$2,$3,$4) ON CONFLICT(user_id,item_id,location) DO UPDATE SET quantity=player_inventory.quantity+$4",
+      const result = await tx.query(
+        "INSERT INTO player_inventory(user_id,item_id,location,quantity) VALUES($1,$2,$3,$4) ON CONFLICT(user_id,item_id,location) DO UPDATE SET quantity=player_inventory.quantity+$4 WHERE player_inventory.quantity<=2147483647-$4 RETURNING quantity",
         [userId, itemId, location, amount],
       );
+      if (!result.rowCount)
+        throw new GameError("This item stack is full. Make room before adding more.", 409);
       await tx.query(
         "INSERT INTO collection_entries(user_id,item_id,discovered_at) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
         [userId, itemId, new Date(this.now())],

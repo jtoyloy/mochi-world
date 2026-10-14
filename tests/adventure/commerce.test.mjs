@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import pg from 'pg';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
-import {WorldService} from '../../server/world/service.mjs';
+import {WorldService,GameError} from '../../server/world/service.mjs';
 import {AdventureCommerce} from '../../server/adventure/commerce.mjs';
 import {TokenService} from '../../server/social/tokens.mjs';
 import {ResourceRewards} from '../../server/adventure/rewards.mjs';
@@ -87,6 +87,36 @@ test('item, quantity, buyer and overflow validation cannot change inventory or p
    await assert.rejects(commerce.sell(user.id,{id:randomUUID(),vendor:'wood',items},actor(user,COIN_BUYERS.wood)));
  await assert.rejects(commerce.sell(user.id,{id:randomUUID(),vendor:'__proto__',items:{softwood:1}},actor(user,COIN_BUYERS.wood)),/Invalid vendor/);
  assert.equal(await coins(user),500);assert.equal(await quantity(user,'small-potion'),0);
+});
+
+test('a full integer item stack refuses purchases atomically and the same receipt can succeed after room is made',async()=>{
+ const user=await account(),itemId='small-potion',maximum=2147483647;
+ await grant(user,itemId,maximum);
+ const input={id:randomUUID(),vendor:'apothecary',itemId,quantity:1},p=actor(user,COIN_SHOPS.apothecary);
+ const snapshot=async()=>({
+   coins:await coins(user),quantity:await quantity(user,itemId),
+   history:await Promise.all(['currency_transactions','adventure_commerce_receipts','user_events'].map(async table=>
+     (await pool.query(`SELECT count(*)::int AS n FROM ${table} WHERE user_id=$1`,[user.id])).rows[0].n)),
+ });
+ const before=await snapshot();
+ for(let retry=0;retry<2;retry++){
+   await assert.rejects(commerce.buy(user.id,input,p),error=>{
+     assert.ok(error instanceof GameError);
+     assert.equal(error.status,409);
+     assert.match(error.message,/item stack is full/i);
+     return true;
+   });
+   assert.deepEqual(await snapshot(),before,'failed purchase and retry leave inventory, Coins and all histories unchanged');
+ }
+ await world.transaction([user.id],tx=>world.inventory(tx,user.id,itemId,-1));
+ const result=await commerce.buy(user.id,input,p);
+ assert.equal(result.coins,before.coins-20);
+ assert.equal(await quantity(user,itemId),maximum);
+ const committed=await snapshot();
+ assert.deepEqual(committed.history,before.history.map(n=>n+1));
+ const replay=await commerce.buy(user.id,input,null);
+ assert.equal(replay.replayed,true);
+ assert.deepEqual(await snapshot(),committed,'committed replay neither charges nor grants twice');
 });
 
 test('mixed sale failure and downstream receipt/event failure roll back all inventory and Coins',async()=>{

@@ -219,3 +219,34 @@ world avatar changed with it. Screenshot `mochi-style-reload-20261013.png` recor
 the retained selection. The original Chestnut style was then saved again.
 This is a reload/persistence sample, not fresh sign-in, cosmetic attachment,
 all-direction art approval or complete BL acceptance. No currency/items changed.
+
+### Natural defeat sample — 2026-10-13
+
+Before the server loaded the new defeat-boundary patch, the supervisor entered
+Forest through Map and approached the visible Thornling. The actual click selected
+Thornling rather than remaining untargeted. HP declined105→79→57→43→19→4 with no
+manual spells/potions. The companion made101 decisions in the pack sample, most
+used DEFEND OWNER, zero refused settlements; the target remained120/120 in visible
+samples. This is not evidence of strategic battle usefulness or weapon reach.
+
+Natural defeat returned the player to Town without a reload, restored HP105/105,
+MP60/60 and pet80/80, and showed “You recovered in Town. Your items are safe; your
+Mochi can rest here.” A fresh pack retained the basic sword, ring in accessory1,
+four spells, five potions, all recorded resources and seven completed guide steps.
+Screenshot `mochi-defeat-town-20261013.png` records the recovery. The running server
+was still the pre-boundary source loaded before `a42310c`; this ordinary-path
+sample does not validate that race correction. The owned server then exited0 and
+restarted at `a42310cae99a38858485d26e2c078624f55fa518` with identical test-only
+configuration, preparing a second natural defeat sample. No fixture grants or
+direct brain/action injection were used.
+
+The second natural defeat ran the corrected `a42310c` server. No movement/attack
+injection or manual spells/items were used after entering Forest at the retained
+position. Visible HP fell105→52→9, then Town recovery restored105/105,60/60,80/80.
+Fresh pack and Coins requests again retained all listed items/gear/spells/guide
+and315Coins. The battle panel now showed162 cumulative decisions, most used
+DEFEND OWNER, zero refused; target120/120 in the sampled Forest states. The
+recovery screenshot is `mochi-defeat-fixed-town-20261013.png`. This verifies normal
+production join/recovery with the guard, while the exact two-enemy same-tick race
+and replaced-body boundaries are established by focused regressions. Full BM and
+independent full combat acceptance remain open.

@@ -69,18 +69,22 @@ test('execution rechecks range after observation; a previously valid attack beco
 test('integrated mob chase and return advance on clear ground', async () => {
  const {AdventureService}=await import('../../server/adventure/service.mjs');
  const a=new AdventureService({pool:{},now:()=>10000},{brains:{},rewards:{}});
- const owner={userId:'owner',x:600,y:400};
+ const owner={userId:'owner',room:'yard-test',roomId:'yard',x:600,y:400};
  const enemy={id:'enemy',hp:45,x:400,y:400,home:{x:400,y:400},speed:100,range:40,behavior:'aggressive',target:'owner'};
  const occupants=new Map([['owner',owner]]);
- a.multiplayer={store:{rooms:new Map([['yard-test',{players:occupants}]]),players:new Map()},broadcast(){}};
+ a.multiplayer={store:{rooms:new Map([['yard-test',{players:occupants}]]),players:new Map([['owner',owner]])},broadcast(){},send(){}};
  a.instances.set('yard-test',{roomId:'yard',mobs:new Map([['enemy',enemy]])});
- a.state=async()=>({hp:100});
+ const state={hp:100,mp:60,petHp:80,activePet:null,target:null,
+   stats:{maxHp:100,maxMp:60},xp:{combat:0,fishing:0,woodcutting:0},progress:{},cooldowns:{},savedAt:10000};
+ a.state=async()=>state;
  a.publicRoom=()=>({});
  a.tickAt=9900;
  await a.tick();
  assert.equal(enemy.state,'CHASE');
  assert.equal(enemy.x,410);
  occupants.clear();
+ a.multiplayer.store.players.delete(owner.userId);
+ owner.room=null;
  enemy.x=500;
  a.tickAt=9900;
  await a.tick();

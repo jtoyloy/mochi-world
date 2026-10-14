@@ -224,3 +224,25 @@ remaining-player valid damage and identity replacement across both await paths.
 Two specialists reviewed the source and independently passed23 focused checks,
 zero skips. Exact-source full hosted verification and actual corrected-runtime
 defeat remain pending; no Cadence mechanism or published pack changes.
+
+Workflow72 at `a42310cae99a38858485d26e2c078624f55fa518` passed build but failed
+JavaScript407/408: the existing integrated chase/return fixture lacks body room
+metadata and its global players map is empty, so the live-boundary guard refuses
+it. This failed full gate is preserved; correction must establish realistic
+membership while retaining the original CHASE/RETURN assertions. Later checks
+were skipped and no full success is claimed. An actual corrected-runtime Forest
+defeat separately recovered Town/full vitals with fresh unchanged pack/315Coins;
+PLAYTEST_LOG records ordinary-path scope.
+
+The chase fixture now registers the same body in global/room maps with room
+metadata, supplies real owner-lane state, and removes membership on departure.
+Original CHASE/x410 and RETURN/x490 assertions remain. Independent review approved
+and30 focused tests pass with zero skips; the live boundary guard is unchanged.
+
+Inventory boundary continuation: a real PostgreSQL max-stack purchase initially
+failed the readable-error expectation. Guarded atomic UPSERT now returns409
+“item stack is full” while preserving transaction rollback. The11-test commerce
+suite passes independently in a disposable schema, including failed retry with
+unchanged Coins/items/ledger/receipts/events, then same request success after
+consuming one item and idempotent replay. No bag-slot limit was added. Full hosted
+source verification and UI failure acceptance remain pending.

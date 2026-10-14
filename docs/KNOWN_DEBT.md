@@ -37,3 +37,10 @@ review pass, hosted/runtime acceptance pending. Bag slots currently have no coun
 limit; a normal “full bag” cannot be manufactured honestly. PostgreSQL integer
 stack overflow and its error/rollback UX still need explicit acceptance. The
 existing commerce oversized-request checks do not establish that boundary.
+
+The per-item maximum boundary now has actual disposable-schema purchase/retry
+rollback and same-ID recovery evidence (11 commerce tests, independent review).
+The guarded409 refusal is implemented; browser error presentation and full shared
+call-path/token acceptance are still open. The failed workflow72 chase fixture was
+corrected to use production membership, retaining original motion assertions;
+30 focused tests and independent review pass, exact-source full CI pending.
